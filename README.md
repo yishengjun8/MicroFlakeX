@@ -18,6 +18,7 @@ int APIENTRY wWinMain(
 	_In_ LPWSTR lpCmdLine,
 	_In_ int nShowCmd
 )
+
 {
 
 	MfxUI* a1 = new MfxUI(Gdiplus::Rect(0, 0, 500, 500), MFXWINDTYPE_NORMAL,
