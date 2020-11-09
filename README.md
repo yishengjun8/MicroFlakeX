@@ -1,7 +1,7 @@
 # MicroFlakeX
 一个运行在Windows上的简单的DirectUI库。
 
-/* 目前比较简陋，请使用下面的代码测试是否正确运行 */
+/* 目前比较简单，请使用下面的代码测试是否正确运行 */
 
 #include "MfxMedPart.h"
 
@@ -39,3 +39,13 @@ int APIENTRY wWinMain(
 
 	return app.AppRun();
 }
+
+未来的控件计划：
+
+MfxRichButton.h、MfxEdit.h
+
+未来将会有一次重新的命名和对部分类的移动归类，但是整体框架不会改变了。
+
+注意事项：
+
+继承UI类时，重写消息时候，必须使用装饰的设计模式！
