@@ -17,8 +17,8 @@ namespace MicroFlakeX
 	class MFX_MEDPART_IMPORT MfxControl;
 	class MFX_MEDPART_IMPORT MfxControlMessageServer;
 	
-	typedef LONG_PTR MFXRETURE;/* 函数返回值 */
-	enum MFXRETURE_ENUM/* 函数返回值枚举 - 最大为30种错误 */
+	typedef LONG_PTR MFXRETURE;// 函数返回值 
+	enum MFXRETURE_ENUM// 函数返回值枚举 - 最大为30种错误 
 	{
 		MFXRETURE_OK = 0x0000, //成功，已处理
 		MFXRETURE_ERROR = 0xBFFF - 1, //失败
@@ -26,14 +26,13 @@ namespace MicroFlakeX
 		MFXRETURE_FINE = 0xBFFF - 3 //完成任务
 	};
 
-	enum MFXUIMESSAGE_ENUM/* UI发出的消息 - 最大为x种 */
+	enum MFXUIMESSAGE_ENUM// UI发出的消息 - 最大为x种 
 	{
-		/* UICHANGESIZE* getSize = (UICHANGESIZE*)lParam; */
-		MFXUIMSG_SIZE = 0xBFFF - 30
+		MFXUIMSG_SIZE = 0xBFFF - 30 //UICHANGESIZE* getSize = (UICHANGESIZE*)lParam; 
 	};
 
-	typedef unsigned long MFXWINDTYPE;/* UI样式 */
-	enum MFXWINDTYPE_ENUM/* 函数返回值枚举 */
+	typedef unsigned long MFXWINDTYPE;// UI样式 
+	enum MFXWINDTYPE_ENUM// 函数返回值枚举 
 	{
 		MFXWINDTYPE_ANTIFLICKER = WS_CLIPCHILDREN | WS_CLIPSIBLINGS, //防止闪烁 - 必须添加的属性
 		MFXWINDTYPE_NORMAL = WS_OVERLAPPEDWINDOW | WS_VISIBLE | MFXWINDTYPE_ANTIFLICKER, //带边框窗口
@@ -41,14 +40,14 @@ namespace MicroFlakeX
 		MFXWINDTYPE_CHILD = WS_CHILD, //子窗口
 	};
 
-	typedef struct UICHANGESIZE
+	typedef struct UICHANGESIZE//如果UI改变了大小，将会将这个结构体指针发送到MFXUIMSG_SIZE的lParam中
 	{
 		Gdiplus::Rect bRect; //改变前的
 		Gdiplus::Rect aRect; //改变后的
 	}UICHANGESIZE;
 
 
-	/* UI列表 */
+	// UI列表
 	typedef std::vector<MfxUI*> MFXUI_LIST;
 	typedef MFXUI_LIST::iterator MFXUI_LIST_ITERA;
 
@@ -58,28 +57,28 @@ namespace MicroFlakeX
 	typedef std::vector<MfxControlMessageServer*> SERVER_LIST;
 	typedef SERVER_LIST::iterator SERVER_LIST_ITERA;*/
 
-	/* 控件列表 */
+	// 控件列表 
 	typedef std::vector<MfxControl*> MFXCONTROL_LIST;
 	typedef MFXCONTROL_LIST::iterator MFXCONTROL_LIST_ITERA;
 
-	/* 快捷键栈-表 */
+	// 快捷键栈-表
 	typedef std::stack<UINT> SHORTCUTKEY;
 	typedef std::map<UINT, SHORTCUTKEY> SHORTCUTKEY_MAP;
 
-	/* WndClass映射 */
+	// WndClass映射
 	typedef std::map<std::wstring, std::wstring> WNDCLASSEXW_MAP;
 	typedef WNDCLASSEXW_MAP::value_type WNDCLASSEXW_MAP_ELEM;
 	typedef WNDCLASSEXW_MAP::iterator WNDCLASSEXW_MAP_ITERA;
 	typedef std::pair<WNDCLASSEXW_MAP::iterator, bool> WNDCLASSEXW_MAP_PAIR;
 
-	/* 服务器映射 */
+	// 服务器映射
 	typedef std::map<HWND, MfxControlMessageServer*> MFXCONTROL_SERVER_MAP;
 	typedef MFXCONTROL_SERVER_MAP::value_type MFXCONTROL_SERVER_MAP_ELEM;
 	typedef MFXCONTROL_SERVER_MAP::iterator MFXCONTROL_SERVER_MAP_ITERA;
 	typedef std::pair<MFXCONTROL_SERVER_MAP::iterator, bool> MFXCONTROL_SERVER_MAP_PAIR;
 
 
-	/* UI方法映射 */  //MfxControl* con, UINT message, 
+	// UI方法映射  //MfxControl* con, UINT message, 
 	typedef struct CONCTROLMSG
 	{
 		MfxControl* control;
@@ -101,7 +100,7 @@ namespace MicroFlakeX
 	typedef MFXUI_MESSAGE_FUNC_MAP::iterator MFXUI_MESSAGE_FUNC_MAP_ITERA;
 	typedef std::pair<MFXUI_MESSAGE_FUNC_MAP::iterator, bool> MFXUI_MESSAGE_FUNC_MAP_PAIR;
 
-	/* CONTROL方法映射 */
+	// CONTROL方法映射
 	typedef MFXRETURE(MfxControl::* MFXCONTROL_MESSAGE_FUNC)(WPARAM, LPARAM);
 	typedef std::map<UINT, MFXCONTROL_MESSAGE_FUNC> MFXCONTROL_MESSAGE_FUNC_MAP;
 	typedef MFXCONTROL_MESSAGE_FUNC_MAP::value_type MFXCONTROL_MESSAGE_FUNC_MAP_ELEM;
@@ -166,9 +165,10 @@ namespace MicroFlakeX
 	class MfxUI/* >>窗口唯一<< 每个UI等同于一个窗口，UI仅支持双缓冲绘图 - 必须继承重写 */
 	{
 	public:
-		/* 创建一个新的UI(仅支持wchar_t窗口) - 窗口大小、窗口样式、窗口名字、父窗口、wndClassName */
+		/* 创建一个新的UI(仅支持wchar_t窗口) - 窗口大小、窗口扩展样式、窗口样式、窗口名字、父窗口、wndClassName */
 		MfxUI(
 			Gdiplus::Rect theRect = Gdiplus::Rect(20, 20, 80, 80),
+			DWORD exStyle = 0, //可以不填
 			DWORD dwStyle = MFXWINDTYPE_NORMAL,
 			std::wstring titleName = L"MfxUI",
 			MfxUI* father = nullptr,
@@ -192,10 +192,10 @@ namespace MicroFlakeX
 		bool UICleanBufferDc();
 		/* 自动更新UI，默认自动开启 - 未实现 */
 		bool UIAutomation(bool runType = true);
-		virtual MfxImage* SetUIBack(MfxImage* uiBack);
-		virtual MfxImage* SetUIMask(MfxImage* uiMask);
+		MfxImage* SetUIBack(MfxImage* uiBack);
+		MfxImage* SetUIMask(MfxImage* uiMask);
 		/* 是否在重绘主界面的时候，重绘子界面 - 当发生显示异常时，开启这一个选项 */
-		virtual void SetUIPaintEnum(bool enumType = false);
+		void SetUIPaintEnum(bool enumType = false);
 	protected:
 		MFXCONTROL_LIST myControlList; //UI所持有的全部控件
 	public:
@@ -245,17 +245,18 @@ namespace MicroFlakeX
 		MfxControlMessageServer* myMessageServer; //UI窗口消息服务器 - 需要释放
 
 	protected:
-		virtual MFXRETURE OnUIDestroy(WPARAM wParam, LPARAM lParam);  //销毁
-		virtual MFXRETURE OnUIEachFrame(WPARAM wParam, LPARAM lParam);  //每一帧
-		virtual MFXRETURE OnUIPaint(WPARAM wParam, LPARAM lParam);  //绘制
-		virtual MFXRETURE OnUISize(WPARAM wParam, LPARAM lParam);  //大小发生变化 - WM_SIZING正在发生变化
-		virtual MFXRETURE OnUISizing(WPARAM wParam, LPARAM lParam);  //大小发生变化 - WM_SIZING正在发生变化
-		virtual MFXRETURE OnUIMove(WPARAM wParam, LPARAM lParam);  //移动窗口
-		virtual MFXRETURE OnUISysCommand(WPARAM wParam, LPARAM lParam);  //系统消息
-		virtual MFXRETURE OnUIEraseBkGnd(WPARAM wParam, LPARAM lParam); //重绘背景 - 如果开启双缓冲则忽略这一项
-		virtual MFXRETURE OnUIChildActivate(WPARAM wParam, LPARAM lParam);  //系统消息 
+		// 重写基类响应，应该采用装饰的方法重写
+		MFXRETURE OnUIDestroy(WPARAM wParam, LPARAM lParam);  //销毁
+		MFXRETURE OnUIEachFrame(WPARAM wParam, LPARAM lParam);  //每一帧
+		MFXRETURE OnUIPaint(WPARAM wParam, LPARAM lParam);  //绘制
+		MFXRETURE OnUISize(WPARAM wParam, LPARAM lParam);  //大小发生变化 - WM_SIZING正在发生变化
+		MFXRETURE OnUISizing(WPARAM wParam, LPARAM lParam);  //大小发生变化 - WM_SIZING正在发生变化
+		MFXRETURE OnUIMove(WPARAM wParam, LPARAM lParam);  //移动窗口
+		MFXRETURE OnUISysCommand(WPARAM wParam, LPARAM lParam);  //系统消息
+		MFXRETURE OnUIEraseBkGnd(WPARAM wParam, LPARAM lParam); //重绘背景 - 如果开启双缓冲则忽略这一项
+		MFXRETURE OnUIChildActivate(WPARAM wParam, LPARAM lParam);  //系统消息 
 
-		virtual MFXRETURE OnUIMSGSize(WPARAM wParam, LPARAM lParam); //父UI消息 - 父窗口改变大小
+		MFXRETURE OnUIMSGSize(WPARAM wParam, LPARAM lParam); //父UI消息 - 父窗口改变大小
 	};
 
 

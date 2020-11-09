@@ -9,6 +9,7 @@ FILE* gFileOut;
 
 MicroFlakeX::MfxUI::MfxUI(
 	Gdiplus::Rect theRect,
+	DWORD exStyle,
 	DWORD dwStyle,
 	std::wstring titleName,
 	MfxUI* father,
@@ -45,13 +46,13 @@ MicroFlakeX::MfxUI::MfxUI(
 	myWndCreateSuccess = true;
 	myUIPaintEnum = false;
 	myBackBitmap = nullptr;
-	myBackImage = nullptr; //等待完善
+	myBackImage = nullptr; 
 	myMaskImage = nullptr;
 	myRect = theRect; //UI的大小 - 会随窗口大小而自动调整
 
 	MfxFunc_GetApp()->SetCreatUI(this);
 
-	CreateWindow(wndClassName.c_str(), titleName.c_str(), dwStyle// | WS_MINIMIZE,
+	CreateWindowEx(exStyle, wndClassName.c_str(), titleName.c_str(), dwStyle// | WS_MINIMIZE,
 		,theRect.X, theRect.Y,
 		theRect.Width, theRect.Height,
 		father ? father->GetWnd() : NULL,
@@ -387,6 +388,12 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::OnUISize(WPARAM wParam, LPARAM lParam
 	myRect.Width = tSize.aRect.Width;
 	myRect.Height = tSize.aRect.Height;
 
+
+	/*
+		HBRUSH brush;
+		brush = CreatePatternBrush(myBackBitmap);
+		SetClassLong(hWnd,GCL_HBRBACKGROUND,(long)brush);
+	*/
 	if (myBackImage != NULL)
 	{
 		myBackImage->SetImageSize(Gdiplus::Size(myRect.Width, myRect.Height));
@@ -425,7 +432,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::OnUISysCommand(WPARAM wParam, LPARAM 
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::OnUIEraseBkGnd(WPARAM wParam, LPARAM lParam)
 {
-	/* 什么也不做，因为我是DirectUI库，而且双缓冲绘图，所以不需要擦除背景 */
+	/* 什么也不做，因为我是DirectUI库，而且双缓冲绘图，所以不需要擦除主画板的背景 */
 	return 0;
 }
 
