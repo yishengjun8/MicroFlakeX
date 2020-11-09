@@ -168,6 +168,7 @@
     <ClCompile Include="MfxUI.cpp" />
     <ClCompile Include="MfxMessageServer.cpp" />
     <ClCompile Include="MfxApplication.cpp" />
+    <ClCompile Include="MfxButton.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

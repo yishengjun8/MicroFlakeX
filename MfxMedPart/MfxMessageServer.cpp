@@ -40,10 +40,9 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControlMessageServer::DelRegisterControl(
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControlMessageServer::ForwardMessageToControl(UINT message, WPARAM wParam, LPARAM lParam)
 {
     /**/
-    MFXCONTROL_LIST_ITERA forIter = myRegisterControlList.begin();
-    while (forIter != myRegisterControlList.end())
+    for (int i = 0; i < myRegisterControlList.size(); i++)
     {
-        (*forIter)->ReceiveMessage(message, wParam, lParam);
+        (myRegisterControlList[i])->ReceiveMessage(message, wParam, lParam);
     }
     return MFXRETURE_OK;
     /**/

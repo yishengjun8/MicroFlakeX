@@ -8,7 +8,7 @@ MicroFlakeX::MfxControl::MfxControl(MfxUI* getUI, Gdiplus::Rect setRect)
     myUI->GetMessageServer()->RegisterControl(this); // 服务器注册
     myUI->RegisterControl(this); //注册UI列表
     myRect = setRect;
-    myGraphics = myUI->GetGraphics();
+    myGraphics = myUI->GetBufferGraphics();
 
     myType = L"MfxBasicsControl";
     /**/
@@ -56,6 +56,18 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::DelRegisterControl(UINT keyMsg)
     /**/
     return 0;
 }
+void MicroFlakeX::MfxControl::SetX(int set)
+{
+}
+void MicroFlakeX::MfxControl::SetY(int set)
+{
+}
+void MicroFlakeX::MfxControl::SetWidth(int set)
+{
+}
+void MicroFlakeX::MfxControl::SetHeight(int set)
+{
+}
 MicroFlakeX::MfxUI* MicroFlakeX::MfxControl::GetMyUI()
 {
     return myUI;
@@ -65,7 +77,22 @@ std::wstring MicroFlakeX::MfxControl::GetMyType()
     return myType;
 }
 
+Gdiplus::Rect MicroFlakeX::MfxControl::GetRect()
+{
+    return Gdiplus::Rect();
+}
+
+Gdiplus::Point MicroFlakeX::MfxControl::GetPoint()
+{
+    return Gdiplus::Point();
+}
+
 Gdiplus::Size MicroFlakeX::MfxControl::GetSize()
 {
     return Gdiplus::Size(myRect.Width, myRect.Height);
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::OnEachFrame(WPARAM wParam, LPARAM lParam)
+{
+    return MFXRETURE();
 }

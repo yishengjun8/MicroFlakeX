@@ -44,5 +44,8 @@
     <ClCompile Include="MfxControl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MfxButton.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

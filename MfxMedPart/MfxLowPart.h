@@ -103,13 +103,14 @@
 
 			/* 克隆一份崭新的MfxImage，可以理解为深拷贝 */
 			MfxImage* Clone();
-			/* 获取Bitmap的克隆版，需要释放 */
-			Gdiplus::Bitmap* GetBitmapClone();
+			/* 获取Bitmap */
+			Gdiplus::Bitmap* GetBitmap();
 
 		protected:
 			Gdiplus::Graphics* myGraphics;
 
 			Gdiplus::Rect myRect;
+			Gdiplus::Bitmap* myMainBitmap;
 			Gdiplus::Bitmap* myBitmap;
 			Gdiplus::CachedBitmap* myBitmapQuick;
 
