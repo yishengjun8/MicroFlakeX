@@ -2,22 +2,22 @@
 #include "MfxLowPart.h"
 
 std::wstring MicroFlakeX::MfxWords::Global_FontName = L"Consolas";
-int MicroFlakeX::MfxWords::Global_WordsSize = 14;
+int MicroFlakeX::MfxWords::Global_FontSize = 14;
 int MicroFlakeX::MfxWords::Global_LineSize = 6;
 
 MicroFlakeX::MfxWords::MfxWords(Gdiplus::Graphics* myGraphics)
 {
-	words = L"<Sample Words>\n<__Ê¾ÀýÎÄ×Ö__>\n<Sample Words>";
-	wordsFontName = Global_FontName;
-	wordsSize = Global_WordsSize;
-	wordsRectF = Gdiplus::RectF(0, 0, 160, 90);
-	wordsOffset = Gdiplus::PointF(Global_LineSize / 4, Global_LineSize / 2);
-	wordsFormatXY = MFXWORDS_FORMATX_NEAR | MFXWORDS_FORMATY_NEAR;
-	lineSize = Global_LineSize;
+	myWords = L"<Sample Words>\n<__Ê¾ÀýÎÄ×Ö__>\n<Sample Words>";
+	myFontName = Global_FontName;
+	myFontSize = Global_FontSize;
+	myRect = Gdiplus::Rect(0, 0, 160, 90);
+	myFontOffset = Gdiplus::Point(Global_LineSize / 4, Global_LineSize / 2);
+	myFormatXY = MFXWORDS_FORMATX_NEAR | MFXWORDS_FORMATY_NEAR;
+	myLineSize = Global_LineSize;
 
-	myGraphics = myGraphics;
+	this->myGraphics = myGraphics;
 
-	wordsFont = new Gdiplus::Font(wordsFontName.c_str(), wordsSize);
+	wordsFont = new Gdiplus::Font(myFontName.c_str(), myFontSize);
 	wordsFormat.SetAlignment(Gdiplus::StringAlignmentNear);
 
 	wordsColor = Gdiplus::Color::Black;//ÎÄ×ÖÑÕÉ«
@@ -25,7 +25,7 @@ MicroFlakeX::MfxWords::MfxWords(Gdiplus::Graphics* myGraphics)
 	backColor = Gdiplus::Color::Gray;//±³¾°ÑÕÉ«
 
 	worldsBrush = new Gdiplus::SolidBrush(wordsColor);//ÎÄ×Ö»­Ë¢
-	linePen = new Gdiplus::Pen(lineColor, lineSize);//±ß¿ò»­±Ê
+	linePen = new Gdiplus::Pen(lineColor, myLineSize);//±ß¿ò»­±Ê
 	backBrush = new Gdiplus::SolidBrush(backColor);//±³¾°»­Ë¢
 }
 
@@ -38,10 +38,10 @@ MicroFlakeX::MfxWords::~MfxWords()
 	delete backBrush;
 }
 
-std::wstring MicroFlakeX::MfxWords::SetGlobalFont(std::wstring g_wFont)
+std::wstring MicroFlakeX::MfxWords::SetGlobalFont(std::wstring set)
 {
 	std::wstring retFontName = Global_FontName;
-	Global_FontName = g_wFont;
+	Global_FontName = set;
 	return retFontName;
 }
 
@@ -50,22 +50,22 @@ std::wstring MicroFlakeX::MfxWords::GetGlobalFont()
 	return Global_FontName;
 }
 
-int MicroFlakeX::MfxWords::SetGlobalWordsSize(int g_wSize)
+int MicroFlakeX::MfxWords::SetGlobalFontSize(int set)
 {
-	int retSize = Global_WordsSize;
-	Global_WordsSize = g_wSize;
+	int retSize = Global_FontSize;
+	Global_FontSize = set;
 	return retSize;
 }
 
-int MicroFlakeX::MfxWords::GetGlobalWordsSize()
+int MicroFlakeX::MfxWords::GetGlobalFontSize()
 {
-	return Global_WordsSize;
+	return Global_FontSize;
 }
 
-int MicroFlakeX::MfxWords::SetGlobalLineSize(int g_lSize)
+int MicroFlakeX::MfxWords::SetGlobalLineSize(int set)
 {
 	int retSize = Global_LineSize;
-	Global_LineSize = g_lSize;
+	Global_LineSize = set;
 	return retSize;
 }
 
@@ -74,10 +74,10 @@ int MicroFlakeX::MfxWords::GetGlobalLineSize()
 	return Global_LineSize;
 }
 
-std::wstring MicroFlakeX::MfxWords::SetWords(std::wstring wStr)
+std::wstring MicroFlakeX::MfxWords::SetWords(std::wstring set)
 {
-	std::wstring retWords = words;
-	words = wStr;
+	std::wstring retWords = myWords;
+	myWords = set;
 	return retWords;
 }
 
@@ -86,155 +86,164 @@ std::wstring MicroFlakeX::MfxWords::GetWords()
 	return std::wstring();
 }
 
-std::wstring MicroFlakeX::MfxWords::SetWordsFont(std::wstring wFont)
+std::wstring MicroFlakeX::MfxWords::SetFont(std::wstring set)
 {
 	Gdiplus::Font* tFont = nullptr;
-	tFont = new Gdiplus::Font(wFont.c_str(), wordsSize);
+	tFont = new Gdiplus::Font(set.c_str(), myFontSize);
 	if (tFont == nullptr)
 	{
 		return std::wstring{L"Font Error"};
 	}
 
-	std::wstring retStr = wordsFontName;
-	wordsFontName = wFont;
+	std::wstring retStr = myFontName;
+	myFontName = set;
 	delete wordsFont;
 	wordsFont = tFont;
 	return retStr;
 }
 
-std::wstring MicroFlakeX::MfxWords::GetWordsFont()
+std::wstring MicroFlakeX::MfxWords::GetFont()
 {
-	return wordsFontName;
+	return myFontName;
 }
 
 
-int MicroFlakeX::MfxWords::SetWordsSize(int wSize)
+int MicroFlakeX::MfxWords::SetFontSize(int set)
 {
-	if (wSize <= 0)
+	if (set <= 0)
 	{
 		return -1;
 	}
 	Gdiplus::Font* tFont = nullptr;
-	tFont = new Gdiplus::Font(wordsFontName.c_str(), wordsSize);
+	tFont = new Gdiplus::Font(myFontName.c_str(), myFontSize);
 	if (tFont == nullptr)
 	{
 		return -1;
 	}
 
-	int retSize = wordsSize;
-	wordsSize = wSize;
+	int retSize = myFontSize;
+	myFontSize = set;
 	delete wordsFont;
 	wordsFont = tFont;
 	return retSize;
 }
 
-int MicroFlakeX::MfxWords::GetWordsSize()
+int MicroFlakeX::MfxWords::GetFontSize()
 {
-	return wordsSize;
+	return myFontSize;
 }
 
-int MicroFlakeX::MfxWords::SetLineSize(int lSize)
+int MicroFlakeX::MfxWords::SetLineSize(int set)
 {
-	if (linePen->SetWidth(lSize) != Gdiplus::Ok)
+	if (linePen->SetWidth(set) != Gdiplus::Ok)
 	{
 		return -1;
 	}
-	int retSize = lineSize;
-	lineSize = lSize;
+	int retSize = myLineSize;
+	myLineSize = set;
 
 	return retSize;
 }
 
 int MicroFlakeX::MfxWords::GetLineSize()
 {
-	return lineSize;
+	return myLineSize;
 }
 
-Gdiplus::PointF MicroFlakeX::MfxWords::SetWordsPointF(Gdiplus::PointF wPointF)
+Gdiplus::Point MicroFlakeX::MfxWords::SetPoint(Gdiplus::Point set)
 {
-	Gdiplus::PointF retPointF(wordsRectF.X, wordsRectF.Y);
-	wordsRectF.X = wPointF.X;
-	wordsRectF.Y = wPointF.Y;
-	return retPointF;
+	Gdiplus::Point retPoint(myRect.X, myRect.Y);
+	myRect.X = set.X;
+	myRect.Y = set.Y;
+	return retPoint;
 }
 
-Gdiplus::PointF MicroFlakeX::MfxWords::GetWordsPointF()
+Gdiplus::Point MicroFlakeX::MfxWords::GetPoint()
 {
-	Gdiplus::PointF retPointF(wordsRectF.X, wordsRectF.Y);
-	return retPointF;
+	Gdiplus::Point retPoint(myRect.X, myRect.Y);
+	return retPoint;
 }
 
-Gdiplus::SizeF MicroFlakeX::MfxWords::SetWordsSizeF(Gdiplus::SizeF wSizeF)
+Gdiplus::Size MicroFlakeX::MfxWords::SetSize(Gdiplus::Size set)
 {
-	Gdiplus::SizeF retSizeF(wordsRectF.Width, wordsRectF.Height);
-	wordsRectF.Width = wSizeF.Width;
-	wordsRectF.Height = wSizeF.Height;
-	return retSizeF;
+	Gdiplus::Size retSize(myRect.Width, myRect.Height);
+	myRect.Width = set.Width;
+	myRect.Height = set.Height;
+	return retSize;
 }
 
-Gdiplus::SizeF MicroFlakeX::MfxWords::GetWordsSizeF()
+Gdiplus::Size MicroFlakeX::MfxWords::GetSize()
 {
-	Gdiplus::SizeF retSizeF(wordsRectF.Width, wordsRectF.Height);
-	return retSizeF;
+	Gdiplus::Size retSize(myRect.Width, myRect.Height);
+	return retSize;
 }
 
-Gdiplus::RectF MicroFlakeX::MfxWords::GetWordsRectF()
+Gdiplus::Rect MicroFlakeX::MfxWords::SetRect(Gdiplus::Rect set)
 {
-	return wordsRectF;
+	Gdiplus::Rect retRect = myRect;
+	SetPoint(Gdiplus::Point(set.X, set.Y));
+	SetSize(Gdiplus::Size(set.Width, set.Height));
+	myRect = set;
+	return retRect;
 }
 
-Gdiplus::PointF MicroFlakeX::MfxWords::SetWordsOffset(Gdiplus::PointF wOffset)
+Gdiplus::Rect MicroFlakeX::MfxWords::GetRect()
 {
-	Gdiplus::PointF retOffset = wordsOffset;
-	wordsOffset = wOffset;
+	return myRect;
+}
+
+Gdiplus::Point MicroFlakeX::MfxWords::SetFontOffset(Gdiplus::Point set)
+{
+	Gdiplus::Point retOffset = myFontOffset;
+	myFontOffset = set;
 	return retOffset;
 }
 
-Gdiplus::PointF MicroFlakeX::MfxWords::GetWordsOffset()
+Gdiplus::Point MicroFlakeX::MfxWords::GetFontOffset()
 {
-	return wordsOffset;
+	return myFontOffset;
 }
 
-MicroFlakeX::MFXWORDS_FORMAT MicroFlakeX::MfxWords::SetWordsFormat(MFXWORDS_FORMAT wFormat)
+MicroFlakeX::MFXWORDS_FORMAT MicroFlakeX::MfxWords::SetFormat(MFXWORDS_FORMAT set)
 {
-	wordsFormatXY = wFormat;
+	myFormatXY = set;
 
-	wordsFormatXY& MFXWORDS_FORMATX_NEAR ? wordsFormat.SetAlignment(Gdiplus::StringAlignmentNear) : 0;
-	wordsFormatXY& MFXWORDS_FORMATX_CENTER ? wordsFormat.SetAlignment(Gdiplus::StringAlignmentCenter) : 0;
-	wordsFormatXY& MFXWORDS_FORMATX_FAR ? wordsFormat.SetAlignment(Gdiplus::StringAlignmentFar) : 0;
+	myFormatXY& MFXWORDS_FORMATX_NEAR ? wordsFormat.SetAlignment(Gdiplus::StringAlignmentNear) : 0;
+	myFormatXY& MFXWORDS_FORMATX_CENTER ? wordsFormat.SetAlignment(Gdiplus::StringAlignmentCenter) : 0;
+	myFormatXY& MFXWORDS_FORMATX_FAR ? wordsFormat.SetAlignment(Gdiplus::StringAlignmentFar) : 0;
 
-	return wordsFormatXY;
+	return myFormatXY;
 }
 
-MicroFlakeX::MFXWORDS_FORMAT MicroFlakeX::MfxWords::GetWordsFormat()
+MicroFlakeX::MFXWORDS_FORMAT MicroFlakeX::MfxWords::GetFormat()
 {
-	return wordsFormatXY;
+	return myFormatXY;
 }
 
-Gdiplus::Color MicroFlakeX::MfxWords::SetWordsColor(Gdiplus::Color wColor)
+Gdiplus::Color MicroFlakeX::MfxWords::SetFontColor(Gdiplus::Color set)
 {
-	if (worldsBrush->SetColor(wColor) != Gdiplus::Ok)
+	if (worldsBrush->SetColor(set) != Gdiplus::Ok)
 	{
 		return Gdiplus::Color(0, 0, 0, 0);
 	}
 	Gdiplus::Color retColor(wordsColor);
-	wordsColor = wColor;
+	wordsColor = set;
 	return retColor;
 }
 
-Gdiplus::Color MicroFlakeX::MfxWords::GetWordsColor()
+Gdiplus::Color MicroFlakeX::MfxWords::GetFontColor()
 {
 	return wordsColor;
 }
 
-Gdiplus::Color MicroFlakeX::MfxWords::SetLineColor(Gdiplus::Color lColor)
+Gdiplus::Color MicroFlakeX::MfxWords::SetLineColor(Gdiplus::Color set)
 {
-	if (linePen->SetColor(lColor) != Gdiplus::Ok)
+	if (linePen->SetColor(set) != Gdiplus::Ok)
 	{
 		return Gdiplus::Color(0, 0, 0, 0);
 	}
 	Gdiplus::Color retColor(lineColor);
-	lineColor = lColor;
+	lineColor = set;
 	return retColor;
 }
 
@@ -243,14 +252,14 @@ Gdiplus::Color MicroFlakeX::MfxWords::GetLineColor()
 	return lineColor;
 }
 
-Gdiplus::Color MicroFlakeX::MfxWords::SetBackColor(Gdiplus::Color bColor)
+Gdiplus::Color MicroFlakeX::MfxWords::SetBackColor(Gdiplus::Color set)
 {
-	if (backBrush->SetColor(bColor) != Gdiplus::Ok)
+	if (backBrush->SetColor(set) != Gdiplus::Ok)
 	{
 		return Gdiplus::Color(0, 0, 0, 0);
 	}
 	Gdiplus::Color retColor(backColor);
-	backColor = bColor;
+	backColor = set;
 	return retColor;
 }
 
@@ -259,26 +268,31 @@ Gdiplus::Color MicroFlakeX::MfxWords::GetBackColor()
 	return backColor;
 }
 
-BOOL MicroFlakeX::MfxWords::Contains(Gdiplus::PointF ifPointF)
+BOOL MicroFlakeX::MfxWords::Contains(Gdiplus::Point set)
 {
-	return wordsRectF.Contains(ifPointF);
+	return myRect.Contains(set);
 }
 
-Gdiplus::SizeF MicroFlakeX::MfxWords::OffsetWordsSizeF(Gdiplus::SizeF wSizeF)
+Gdiplus::Point MicroFlakeX::MfxWords::OffsetPoint(Gdiplus::Point set)
 {
-	Gdiplus::SizeF retSizeF(wordsRectF.Width, wordsRectF.Height);
-	retSizeF = retSizeF + wSizeF;
-	wordsRectF.Width = retSizeF.Width;
-	wordsRectF.Height = retSizeF.Height;
-	return retSizeF;
+	return Gdiplus::Point();
 }
 
-Gdiplus::Status MicroFlakeX::MfxWords::Draw(MFXWORDS_SHOW_TYPE wType)
+Gdiplus::Size MicroFlakeX::MfxWords::OffsetSize(Gdiplus::Size set)
+{
+	Gdiplus::Size retSize(myRect.Width, myRect.Height);
+	retSize = retSize + set;
+	myRect.Width = retSize.Width;
+	myRect.Height = retSize.Height;
+	return retSize;
+}
+
+Gdiplus::Status MicroFlakeX::MfxWords::Draw(MFXWORDS_DRAWTYPE set)
 {
 	Gdiplus::Status retStatus(Gdiplus::Ok);
-	if (wType & MFXWORDS_SHOW_TYPE_FILL)
+	if (set & MFXWORDS_DRAWTYPE_FILL)
 	{
-		retStatus = myGraphics->FillRectangle(backBrush, wordsRectF);
+		retStatus = myGraphics->FillRectangle(backBrush, myRect);
 	}
 
 	if (retStatus != Gdiplus::Ok)
@@ -287,9 +301,9 @@ Gdiplus::Status MicroFlakeX::MfxWords::Draw(MFXWORDS_SHOW_TYPE wType)
 	}
 
 	retStatus = myGraphics->DrawString(
-		words.c_str(), words.length(),
+		myWords.c_str(), myWords.length(),
 		wordsFont,
-		Gdiplus::RectF(wordsRectF.X, wordsRectF.Y, wordsRectF.Width, wordsRectF.Height),
+		Gdiplus::RectF(myRect.X, myRect.Y, myRect.Width, myRect.Height),
 		&wordsFormat,
 		worldsBrush);
 
@@ -298,9 +312,9 @@ Gdiplus::Status MicroFlakeX::MfxWords::Draw(MFXWORDS_SHOW_TYPE wType)
 		return retStatus;
 	}
 
-	if (wType & MFXWORDS_SHOW_TYPE_LINE)
+	if (set & MFXWORDS_DRAWTYPE_LINE)
 	{
-		retStatus = myGraphics->DrawRectangle(linePen, wordsRectF);
+		retStatus = myGraphics->DrawRectangle(linePen, myRect);
 	}
 	return retStatus;
 }

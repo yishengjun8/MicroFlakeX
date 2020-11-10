@@ -35,47 +35,5 @@
     return new Gdiplus::Graphics(bitmap);
 }
  
- BOOL MicroFlakeX::MfxFunc_CheckIntersectsWith(MfxImage* a, MfxImage* b)
-{
-    return  a->GetImageRect().IntersectsWith(b->GetImageRect());
-}
-
- BOOL MicroFlakeX::MfxFunc_CheckIntersectsWith(MfxImage* a, MfxWords* b)
-{
-    Gdiplus::RectF bRectF = b->GetWordsRectF();
-    Gdiplus::Rect bRect(bRectF.X, bRectF.Y, bRectF.Width, bRectF.Height);
-    return  a->GetImageRect().IntersectsWith(bRect);
-}
-
- BOOL MicroFlakeX::MfxFunc_CheckIntersectsWith(MfxWords* a, MfxWords* b)
-{
-    return  a->GetWordsRectF().IntersectsWith(b->GetWordsRectF());
-}
-
- BOOL MicroFlakeX::MfxFunc_CheckContains(MfxImage* a, MfxImage* b)
-{
-    Gdiplus::Rect bRect = b->GetImageRect();
-    return a->GetImageRect().Contains(bRect);
-}
-
- BOOL MicroFlakeX::MfxFunc_CheckContains(MfxImage* a, MfxWords* b)
-{
-    Gdiplus::RectF bRectF = b->GetWordsRectF();
-    Gdiplus::Rect bRect(bRectF.X, bRectF.Y, bRectF.Width, bRectF.Height);
-    return a->GetImageRect().Contains(bRect);
-}
-
- BOOL MicroFlakeX::MfxFunc_CheckContains(MfxWords* a, MfxImage* b)
-{
-    Gdiplus::Rect bRect = b->GetImageRect();
-    Gdiplus::RectF bRectF(bRect.X, bRect.Y, bRect.Width, bRect.Height);
-    return a->GetWordsRectF().Contains(bRectF);
-}
-
- BOOL MicroFlakeX::MfxFunc_CheckContains(MfxWords* a, MfxWords* b)
-{
-    Gdiplus::RectF bRectF = b->GetWordsRectF();
-    return a->GetWordsRectF().Contains(bRectF);
-}
  /**/
 
