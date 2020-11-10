@@ -1,7 +1,7 @@
 ## MicroFlakeX
     一个运行在Windows上的简单的DirectUI库。
 
-## 目前比较简单，请使用下面的代码测试是否正确运行
+## 请使用下面的代码测试是否正确运行
 
     #include "MfxMedPart.h"
     #include "MfxButton.h"
