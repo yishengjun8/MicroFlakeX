@@ -4,32 +4,27 @@
 ## 目前比较简单，请使用下面的代码测试是否正确运行
 
     #include "MfxMedPart.h"
+    #include "MfxButton.h"
     #pragma comment(lib,"MfxMedPart.lib")
     using namespace MicroFlakeX;
-    MfxApplication app;
     int APIENTRY wWinMain(
         _In_ HINSTANCE hInstance,
         _In_opt_ HINSTANCE hPrevInstance,
         _In_ LPWSTR lpCmdLine,
         _In_ int nShowCmd
-    )
-    {
-        MfxUI* a1 = new MfxUI(Gdiplus::Rect(0, 0, 500, 500), MFXWINDTYPE_NORMAL,
+    ){
+        MfxApplication app;
+        MfxUI* a1 = new MfxUI(Gdiplus::Rect(0, 0, 500, 500),0 , MFXWINDTYPE_NORMAL,
             L"a1");
-        MfxUI* a2 = new MfxUI(Gdiplus::Rect(100, 100, 200, 200), MFXWINDTYPE_NORMAL | MFXWINDTYPE_CHILD,
-            L"a2", a1);
-        MfxUI* a3 = new MfxUI(Gdiplus::Rect(10, 10, 200, 200), MFXWINDTYPE_NORMAL | MFXWINDTYPE_CHILD,
-            L"a3", a1);
-        MfxImage mytest(a1->GetBufferGraphics());
-        mytest.LoadFromFile((WCHAR*)L"D:\\testt.png");
-        a3->SetUIBack(&mytest);
+        MfxButton myButton(a1, Gdiplus::Rect(60, 60, 160, 50));
+        MfxImage mytest(a1->GetBufferGraphics(), (WCHAR*)L"D:\\testt.png");
         a1->SetUIBack(&mytest);
         return app.AppRun();
     }
 
 ## 未来的控件计划：
-    MfxRichButton.h、MfxEdit.h
-    未来将会有一次重新的命名和对部分类的移动归类，但是整体框架不会改变了。
+    MfxButton.h、MfxEdit.h
+    将会有一次重新的命名和对部分类的移动归类，但是整体框架不会改变了。
 
 ## 注意事项：
     当你继承UI类，重写UI消息时候，必须使用装饰的设计模式！
