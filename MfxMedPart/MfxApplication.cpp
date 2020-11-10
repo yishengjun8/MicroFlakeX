@@ -140,7 +140,6 @@ MicroFlakeX::MFXRETURE CALLBACK MicroFlakeX::MfxApplication::ForwardMessageInWnd
 			/* 然后是UI接收消息 */
 			return (handleIter->second)->GetMyUI()->ReceiveUIMessage(message, wParam, lParam);
 		}
-		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	else
 	{
@@ -150,5 +149,5 @@ MicroFlakeX::MFXRETURE CALLBACK MicroFlakeX::MfxApplication::ForwardMessageInWnd
 		return (handleIter->second)->GetMyUI()->ReceiveUIMessage(message, wParam, lParam);
 	}
 	/**/
-	return 0;
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }

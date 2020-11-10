@@ -56,6 +56,10 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::DelRegisterControl(UINT keyMsg)
     /**/
     return 0;
 }
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::ThreadPaint()
+{
+    return 0;
+}
 void MicroFlakeX::MfxControl::SetX(int set)
 {
 }
@@ -92,7 +96,9 @@ Gdiplus::Size MicroFlakeX::MfxControl::GetSize()
     return Gdiplus::Size(myRect.Width, myRect.Height);
 }
 
+/*
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::OnEachFrame(WPARAM wParam, LPARAM lParam)
 {
     return MFXRETURE();
 }
+/**/

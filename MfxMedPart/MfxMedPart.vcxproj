@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="MfxButton.h" />
     <ClInclude Include="MfxMedPart.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

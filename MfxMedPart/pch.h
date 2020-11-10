@@ -9,6 +9,10 @@
 
 // 添加要在此处预编译的标头
 
+#include <windowsx.h>
+#include <functional>
+#include <thread>
+#include <time.h>
 #include <stack>
 #include <queue>
 #include "MfxLowPart.h"
