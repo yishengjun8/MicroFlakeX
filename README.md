@@ -41,5 +41,5 @@
     MfxButton.h、MfxMenu.h、MfxForm、MfxEdit.h、MfxRadioButton、MfxCheckButton.h
 
 ## 注意事项：
-  当你注册消息或事件的时候，请注意添加`MfxRecDefMessage`或者`DefWindowProc`来确保缺省的消息也正常响应！
+  当你注册消息或事件的时候，请注意添加`MfxRecDefMessage`或者`DefWindowProc`来确保缺省的消息也正常响应！  
   目前的`MicroFlakeX不是多线程`，也就是说可能会存在界面卡死的问题！请注意！
