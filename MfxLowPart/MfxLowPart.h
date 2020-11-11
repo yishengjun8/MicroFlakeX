@@ -105,15 +105,30 @@ namespace MicroFlakeX
 {
 	class MfxImage/* 图片类-可存储单张图片，可以配合图集使用，成为图集的子集 */
 	{
+	protected:
+		//void MfxImageInitData();
 	public:
-		MfxImage(Gdiplus::Graphics* set, WCHAR* setPath = 0);
+		MfxImage(Gdiplus::Graphics* set, 
+			Gdiplus::Rect value = Gdiplus::Rect(0, 0, 80, 80));
+
+		MfxImage(Gdiplus::Graphics* set, WCHAR* value);
+
+		MfxImage(Gdiplus::Graphics* set, 
+			Gdiplus::Color valC = Gdiplus::Color::DarkBlue,
+			Gdiplus::Rect valR = Gdiplus::Rect(0, 0, 80, 80));
+
 		~MfxImage();
 		MfxImage* Clone();
 		Gdiplus::Bitmap* GetBitmap();
 
 	protected:
 		Gdiplus::Graphics* myGraphics;
+	public:
+		Gdiplus::Status SetGraphics(Gdiplus::Graphics* set);
+		/* 高速绘制图片 */
+		Gdiplus::Status Draw();
 
+	protected:
 		Gdiplus::Rect myRect;
 		Gdiplus::Bitmap* myMainBitmap;
 		Gdiplus::Bitmap* myBitmap;
@@ -150,9 +165,6 @@ namespace MicroFlakeX
 		Gdiplus::Point OffsetImagePoint(Gdiplus::Point set);
 		/* 偏移图片大小-返回偏移后的大小(iSize+mySize) */
 		Gdiplus::Size OffsetImageSize(Gdiplus::Size set);
-
-		/* 高速绘制图片 */
-		Gdiplus::Status Draw();
 	};
 
 	class MfxImageList/* 图集类-可存储多张MfxImage，并对它们进行统一操作 */
@@ -224,6 +236,7 @@ namespace MicroFlakeX
 	public:
 		MfxWords(Gdiplus::Graphics* myGraphics);
 		~MfxWords();
+		Gdiplus::Status SetGraphics(Gdiplus::Graphics* set);
 
 	protected:
 		static std::wstring	Global_FontName;	/* 全局字体 */

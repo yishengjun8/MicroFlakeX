@@ -1,21 +1,48 @@
 #include "pch.h"
 #include "MfxLowPart.h"
 
-MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* set, WCHAR* setPath)
+MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* set, Gdiplus::Rect value)
 {
 	myGraphics = set;
 
-	myRect = Gdiplus::Rect(0, 0, 80, 80);
+	myRect = value;
 	myMainBitmap = nullptr;
 	myBitmap = nullptr;
 	myBitmapQuick = nullptr;
 
 	myQuality = MFXIMAGE_QUALITY_NORMAL;
 
-	/* 构造纯色图片 */
 	LoadPureColor();
-	if (setPath != 0)LoadFromFile(setPath);
 }
+
+MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* set, WCHAR* value)
+{
+	myGraphics = set;
+
+	//myRect = Gdiplus::Rect(0, 0, 120, 120);
+	myMainBitmap = nullptr;
+	myBitmap = nullptr;
+	myBitmapQuick = nullptr;
+
+	myQuality = MFXIMAGE_QUALITY_NORMAL;
+
+	LoadFromFile(value);
+}
+
+MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* set, Gdiplus::Color valC, Gdiplus::Rect valR)
+{
+	myGraphics = set;
+
+	myRect = valR;
+	myMainBitmap = nullptr;
+	myBitmap = nullptr;
+	myBitmapQuick = nullptr;
+
+	myQuality = MFXIMAGE_QUALITY_NORMAL;
+
+	LoadPureColor(valC);
+}
+
 
 MicroFlakeX::MfxImage::~MfxImage()
 {
@@ -114,9 +141,8 @@ Gdiplus::Status MicroFlakeX::MfxImage::LoadPureColor(Gdiplus::Color set)
 		return Gdiplus::InvalidParameter;//参数错误
 	}
 
-	for (int i = 0; i < myRect.Width; i++)
-		for (int j = 0; j < myRect.Height; j++)
-			t_Bitmap->SetPixel(i, j, set);
+	Gdiplus::Graphics t_Graphics(t_Bitmap);
+	t_Graphics.Clear(set);
 
 	t_BitmapQuick = new Gdiplus::CachedBitmap(t_Bitmap, myGraphics);
 	if (t_BitmapQuick == nullptr)
@@ -263,8 +289,16 @@ Gdiplus::Size MicroFlakeX::MfxImage::OffsetImageSize(Gdiplus::Size set)
 	return retSize;
 }
 
+Gdiplus::Status MicroFlakeX::MfxImage::SetGraphics(Gdiplus::Graphics* set)
+{
+	myGraphics = set;
+	myBitmapQuick = new Gdiplus::CachedBitmap(myBitmap, myGraphics);
+
+	return Gdiplus::Status();
+}
+
 Gdiplus::Status MicroFlakeX::MfxImage::Draw()
 {
-	return myGraphics->DrawCachedBitmap(myBitmapQuick,
-		myRect.X, myRect.Y);
+	//return myGraphics->DrawImage(myMainBitmap, myRect);
+	return myGraphics->DrawCachedBitmap(myBitmapQuick, myRect.X, myRect.Y);
 }

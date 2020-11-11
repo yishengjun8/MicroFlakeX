@@ -38,6 +38,12 @@ MicroFlakeX::MfxWords::~MfxWords()
 	delete backBrush;
 }
 
+Gdiplus::Status MicroFlakeX::MfxWords::SetGraphics(Gdiplus::Graphics* set)
+{
+	myGraphics = set;
+	return Gdiplus::Status();
+}
+
 std::wstring MicroFlakeX::MfxWords::SetGlobalFont(std::wstring set)
 {
 	std::wstring retFontName = Global_FontName;
