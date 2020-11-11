@@ -10,7 +10,7 @@ MicroFlakeX::MfxControlMessageServer::~MfxControlMessageServer()
 {
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxControlMessageServer::RegisterControl(MfxControl* regControl)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControlMessageServer::RegControl(MfxControl* regControl)
 {
     /**/
     myRegisterControlList.push_back(regControl);
@@ -19,7 +19,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControlMessageServer::RegisterControl(Mfx
     return 0;
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxControlMessageServer::DelRegisterControl(MfxControl* canControl)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControlMessageServer::DelControl(MfxControl* canControl)
 {
     /**/
     MFXCONTROL_LIST_ITERA delIter = myRegisterControlList.begin();
@@ -42,7 +42,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControlMessageServer::ForwardMessageToCon
     /**/
     for (int i = 0; i < myRegisterControlList.size(); i++)
     {
-        (myRegisterControlList[i])->ReceiveMessage(message, wParam, lParam);
+        (myRegisterControlList[i])->RecMessage(message, wParam, lParam);
     }
     return MFXRETURE_OK;
     /**/

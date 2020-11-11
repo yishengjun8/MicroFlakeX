@@ -1,14 +1,39 @@
 #include "pch.h"
 #include "MfxMedPart.h"
 
-MicroFlakeX::MfxControl::MfxControl(MfxUI* getUI, Gdiplus::Rect setRect)
+void MicroFlakeX::MfxControl::MfxRegDef()
+{
+    MfxRegDefMessage(WM_PAINT, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnPaint);
+    MfxRegDefMessage(WM_MOUSEMOVE, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnMouseMove);
+
+    MfxRegDefMessage(WM_LBUTTONDOWN, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnLButtonDown);
+    MfxRegDefMessage(WM_LBUTTONUP, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnLButtonUp);
+    MfxRegDefMessage(WM_LBUTTONDBLCLK, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnLDoubleClick);
+
+    MfxRegDefMessage(WM_RBUTTONDOWN, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnRButtonDown);
+    MfxRegDefMessage(WM_RBUTTONUP, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnRButtonUp);
+    MfxRegDefMessage(WM_RBUTTONDBLCLK, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnRDoubleClick);
+}
+
+void MicroFlakeX::MfxControl::MfxInitData(MfxUI* father, Gdiplus::Rect value)
+{
+    myUI = father;
+    myRect = value;
+    myGraphics = myUI->GetBuffGraphics();
+
+    myClick = false; //点击
+    myPress = false; //按压
+    myFloat = false; //悬浮
+
+    myUI->RegControl(this); //注册到UI
+    myUI->GetMessageServer()->RegControl(this); //注册到服务器
+}
+
+MicroFlakeX::MfxControl::MfxControl(MfxUI* father, Gdiplus::Rect value)
 {
     /**/
-    myUI = getUI;
-    myUI->GetMessageServer()->RegisterControl(this); // 服务器注册
-    myUI->RegisterControl(this); //注册UI列表
-    myRect = setRect;
-    myGraphics = myUI->GetBufferGraphics();
+    MfxRegDef();
+    MfxInitData(father, value);
 
     myType = L"MfxBasicsControl";
     /**/
@@ -16,37 +41,41 @@ MicroFlakeX::MfxControl::MfxControl(MfxUI* getUI, Gdiplus::Rect setRect)
 
 MicroFlakeX::MfxControl::~MfxControl()
 {
-    myUI->GetMessageServer()->DelRegisterControl(this); //删除服务器注册
-    myUI->DelRegisterControl(this); //删除UI注册
+    myUI->DelControl(this); //解除UI注册
+    myUI->GetMessageServer()->DelControl(this); //解除服务器注册
 }
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::ReceiveMessage(UINT message, WPARAM wParam, LPARAM lParam)
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::ThreadPaint()
+{
+    return RecMessage(WM_PAINT, 0, 0);
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::RegMessage(UINT message, MFXCONTROL_MESSAGE_FUNC valFunc)
+{
+    /**/
+    MFXCONTROL_MESSAGE_FUNC_MAP_PAIR retPair = myMessageMap.insert(MFXCONTROL_MESSAGE_FUNC_MAP_ELEM(message, valFunc));
+    return retPair.second;
+    /**/
+    return 0;
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::RecMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
     /**/
     MFXCONTROL_MESSAGE_FUNC_MAP_ITERA handleIter = myMessageMap.find(message);
     if (handleIter != myMessageMap.end())
     {
-        //响应控件自己的消息
         return (this->*handleIter->second)(wParam, lParam);
-        //在自己的控件消息里面发送响应事件给UI界面
-        //ret |= myUI->ReceiveControlMessage(this, message, wParam, lParam);
     }
-    return MFXRETURE_NOFIND;
-    /**/
-    return 0;
-    
-}
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::RegisterMessage(UINT keyMsg, MFXCONTROL_MESSAGE_FUNC valFunc)
-{
-    /**/
-    MFXCONTROL_MESSAGE_FUNC_MAP_PAIR retPair = myMessageMap.insert(MFXCONTROL_MESSAGE_FUNC_MAP_ELEM(keyMsg, valFunc));
-    return retPair.second;
+    return MfxRecDefMessage(message, wParam, lParam);
     /**/
     return 0;
 }
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::DelRegisterControl(UINT keyMsg)
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::DelMessage(UINT message)
 {
     /**/
-    MFXCONTROL_MESSAGE_FUNC_MAP_ITERA delIter = myMessageMap.find(keyMsg);
+    MFXCONTROL_MESSAGE_FUNC_MAP_ITERA delIter = myMessageMap.find(message);
     if (delIter != myMessageMap.end())
     {
         myMessageMap.erase(delIter);
@@ -56,15 +85,48 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::DelRegisterControl(UINT keyMsg)
     /**/
     return 0;
 }
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::ThreadPaint()
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxRegDefMessage(UINT message, MFXCONTROL_MESSAGE_FUNC valFunc)
 {
+    /**/
+    MFXCONTROL_MESSAGE_FUNC_MAP_PAIR retPair = myMfxDefMessageMap.insert(MFXCONTROL_MESSAGE_FUNC_MAP_ELEM(message, valFunc));
+    return retPair.second;
+    /**/
     return 0;
 }
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxRecDefMessage(UINT message, WPARAM wParam, LPARAM lParam)
+{
+    /**/
+    MFXCONTROL_MESSAGE_FUNC_MAP_ITERA handleIter = myMfxDefMessageMap.find(message);
+    if (handleIter != myMfxDefMessageMap.end())
+    {
+        return (this->*handleIter->second)(wParam, lParam);
+    }
+    /**/
+    return 0;
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDelDefMessage(UINT message)
+{
+    /**/
+    MFXCONTROL_MESSAGE_FUNC_MAP_ITERA delIter = myMfxDefMessageMap.find(message);
+    if (delIter != myMfxDefMessageMap.end())
+    {
+        myMfxDefMessageMap.erase(delIter);
+        return MFXRETURE_OK;
+    }
+    return MFXRETURE_NOFIND;
+    /**/
+    return 0;
+}
+
 
 MicroFlakeX::MfxUI* MicroFlakeX::MfxControl::GetMyUI()
 {
     return myUI;
 }
+
 std::wstring MicroFlakeX::MfxControl::GetMyType()
 {
     return myType;
@@ -102,9 +164,89 @@ void MicroFlakeX::MfxControl::SetPoint(Gdiplus::Point set)
     myRect.Y = set.Y;
 }
 
-/*
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::OnEachFrame(WPARAM wParam, LPARAM lParam)
+
+/* ———————————————————————————————————————————— */
+/* ——————————————下面的代码是默认响应———————————————————— */
+/* ———————————————————————————————————————————— */
+/* ———————————————————————————————————————————— */
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnPaint(WPARAM wParam, LPARAM lParam)
 {
     return MFXRETURE();
 }
-/**/
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnMouseMove(WPARAM wParam, LPARAM lParam)
+{
+    Gdiplus::Point mousePos = Gdiplus::Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+    if (myRect.Contains(mousePos))
+    {
+        PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_MOUSEFLOAT, wParam, lParam);
+        myFloat = true;
+    }
+    else
+    {
+        myClick = false;
+        myFloat = false;
+    }
+    return 0;
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnLButtonDown(WPARAM wParam, LPARAM lParam)
+{
+    Gdiplus::Point mousePos = Gdiplus::Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+    if (myRect.Contains(mousePos))
+    {
+        myClick = true;
+        myFloat = true;
+        myPress = true;
+    }
+    else
+    {
+        myClick = false;
+        myPress = false;
+        myFloat = false;
+    }
+    return 0;
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnLButtonUp(WPARAM wParam, LPARAM lParam)
+{
+    Gdiplus::Point mousePos = Gdiplus::Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+    if (myRect.Contains(mousePos))
+    {
+        if (myClick == true)
+        {
+            PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_CLICK, wParam, lParam);
+        }
+        myClick = false;
+        myFloat = true;
+        myPress = false;
+    }
+    else
+    {
+        myClick = false;
+        myPress = false;
+        myFloat = false;
+    }
+    return 0;
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnLDoubleClick(WPARAM wParam, LPARAM lParam)
+{
+    return PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_LDOUBLECLICK, wParam, lParam);
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRButtonDown(WPARAM wParam, LPARAM lParam)
+{
+    return MFXRETURE();
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRButtonUp(WPARAM wParam, LPARAM lParam)
+{
+    return MFXRETURE();
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRDoubleClick(WPARAM wParam, LPARAM lParam)
+{
+    return PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_RDOUBLECLICK, wParam, lParam);
+}

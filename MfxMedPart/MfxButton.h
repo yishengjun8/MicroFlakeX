@@ -9,26 +9,21 @@ namespace MicroFlakeX
 		public MfxControl
     {
 	public:
-		MfxButton(MfxUI* getUI, Gdiplus::Rect setRect = Gdiplus::Rect(20, 20, 160, 50));
+		MfxButton(MfxUI* father, Gdiplus::Rect value = Gdiplus::Rect(20, 20, 160, 50));
 		virtual ~MfxButton();
-		MFXRETURE ThreadPaint();  //线程绘制接口
 	protected:
 		MfxImage* myBackImage;
 		MfxWords* myMidWords;
 		MfxImage* myMaskImage;
 
-		bool myFloatImageFlag;
 		MfxImage* myFloatImage;
-		bool myClickImageFlag;
-		MfxImage* myClickImage;
-
-		bool myClick;
-		bool myPress;
-		bool myFloat;
+		MfxImage* myPressImage;
 	protected:
-		virtual MFXRETURE OnPaint(WPARAM wParam, LPARAM lParam);  //
-		virtual MFXRETURE OnMouseMove(WPARAM wParam, LPARAM lParam);  //移动
-		virtual MFXRETURE OnLButtonDown(WPARAM wParam, LPARAM lParam);  //点击
-		virtual MFXRETURE OnLButtonUp(WPARAM wParam, LPARAM lParam);  //鼠标移动
+		virtual MFXRETURE OnPaint(WPARAM wParam, LPARAM lParam);
+
+		virtual MFXRETURE OnMouseMove(WPARAM wParam, LPARAM lParam);
+
+		virtual MFXRETURE OnLButtonDown(WPARAM wParam, LPARAM lParam);
+		virtual MFXRETURE OnLButtonUp(WPARAM wParam, LPARAM lParam);
     };
 }

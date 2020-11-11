@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "MfxMedPart.h"
+
 /*
 #include "cstdio"
 using namespace std;
 FILE* gFileOut;
 /**/
+
 MicroFlakeX::MfxApplication::MfxApplication()
 {
 	/**/
@@ -87,7 +89,7 @@ void MicroFlakeX::MfxApplication::GetCreatUI(HWND uiWnd)
 	}
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::RegisterUI(MfxUI* regUI)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::RegUI(MfxUI* regUI)
 {
 	/**/
 	if (regUI != nullptr)
@@ -101,7 +103,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::RegisterUI(MfxUI* regUI)
 	return 0;
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::DelRegisterUI(MfxUI* regUI)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::DelUI(MfxUI* regUI)
 {
 	/**/
 	MFXUI_LIST_ITERA tUIIt = myUIList.begin();
@@ -123,7 +125,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::DelRegisterUI(MfxUI* regUI)
 	return 0;
 }
 
-MicroFlakeX::MFXRETURE CALLBACK MicroFlakeX::MfxApplication::ForwardMessageInWnd(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::ForwardMessageInWnd(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	//return DefWindowProc(hWnd, message, wParam, lParam);
 	/**/
@@ -138,7 +140,7 @@ MicroFlakeX::MFXRETURE CALLBACK MicroFlakeX::MfxApplication::ForwardMessageInWnd
 			/* 优先给控件发消息 */
 			(handleIter->second)->ForwardMessageToControl(message, wParam, lParam);
 			/* 然后是UI接收消息 */
-			return (handleIter->second)->GetMyUI()->ReceiveUIMessage(message, wParam, lParam);
+			return (handleIter->second)->GetMyUI()->RecUIMessage(message, wParam, lParam);
 		}
 	}
 	else
@@ -146,7 +148,7 @@ MicroFlakeX::MFXRETURE CALLBACK MicroFlakeX::MfxApplication::ForwardMessageInWnd
 		/* 优先给控件发消息 */
 		(handleIter->second)->ForwardMessageToControl(message, wParam, lParam);
 		/* 然后是UI接收消息 */
-		return (handleIter->second)->GetMyUI()->ReceiveUIMessage(message, wParam, lParam);
+		return (handleIter->second)->GetMyUI()->RecUIMessage(message, wParam, lParam);
 	}
 	/**/
 	return DefWindowProc(hWnd, message, wParam, lParam);
