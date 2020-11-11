@@ -106,7 +106,7 @@ namespace MicroFlakeX
 	class MfxImage/* 图片类-可存储单张图片，可以配合图集使用，成为图集的子集 */
 	{
 	public:
-		MfxImage(Gdiplus::Graphics* myGraphics, WCHAR* iPath = 0);
+		MfxImage(Gdiplus::Graphics* set, WCHAR* setPath = 0);
 		~MfxImage();
 		MfxImage* Clone();
 		Gdiplus::Bitmap* GetBitmap();
@@ -121,35 +121,35 @@ namespace MicroFlakeX
 		MFXIMAGE_QUALITY myQuality;
 	public:
 		/* 从文件加载图片-图片大小会重置为这张图片大小 */
-		Gdiplus::Status LoadFromFile(WCHAR*);
+		Gdiplus::Status LoadFromFile(WCHAR* set);
 		/* 从Bitmap加载图片-图片大小会重置为这张图片的大小 */
-		Gdiplus::Status LoadFromBitmap(Gdiplus::Bitmap*);
+		Gdiplus::Status LoadFromBitmap(Gdiplus::Bitmap* set);
 		/* 加载纯色图片-不重置图片大小 */
-		Gdiplus::Status LoadPureColor(Gdiplus::Color fillColor = Gdiplus::Color(0, 0, 0, 0));
+		Gdiplus::Status LoadPureColor(Gdiplus::Color set = Gdiplus::Color(0, 0, 0, 0));
 
 		/* 修改图片缩放质量-返回修改前的质量 */
-		MFXIMAGE_QUALITY SetImageQuality(MFXIMAGE_QUALITY iQuality = MFXIMAGE_QUALITY_NORMAL);
+		MFXIMAGE_QUALITY SetImageQuality(MFXIMAGE_QUALITY set = MFXIMAGE_QUALITY_NORMAL);
 		MFXIMAGE_QUALITY GetImageQuality();
 
 		/* 修改图片大小-返回修改前的图片大小 */
-		Gdiplus::Size SetImageSize(Gdiplus::Size iSize);
+		Gdiplus::Size SetImageSize(Gdiplus::Size set);
 		Gdiplus::Size GetImageSize();
 
 		/* 修改图片位置-返回修改前位置 */
-		Gdiplus::Point SetImagePoint(Gdiplus::Point iPoint);
+		Gdiplus::Point SetImagePoint(Gdiplus::Point set);
 		Gdiplus::Point GetImagePoint();
 
 		/* 修改图片Rect，返回图片修改前的Rect */
-		Gdiplus::Rect SetImageRect(Gdiplus::Rect iRect);
+		Gdiplus::Rect SetImageRect(Gdiplus::Rect set);
 		Gdiplus::Rect GetImageRect();
 
 		/* 判断一个点是否在图片内，是则返回true，否则返回false */
-		BOOL Contains(Gdiplus::Point ifPoint);
+		BOOL Contains(Gdiplus::Point set);
 
 		/* 偏移图片坐标-返回偏移后的坐标 */
-		Gdiplus::Point OffsetImagePoint(Gdiplus::Point iPoint);
+		Gdiplus::Point OffsetImagePoint(Gdiplus::Point set);
 		/* 偏移图片大小-返回偏移后的大小(iSize+mySize) */
-		Gdiplus::Size OffsetImageSize(Gdiplus::Size iSize);
+		Gdiplus::Size OffsetImageSize(Gdiplus::Size set);
 
 		/* 高速绘制图片 */
 		Gdiplus::Status Draw();
@@ -159,7 +159,7 @@ namespace MicroFlakeX
 	{
 	public:
 		/* 选择本图集的绘画类 - 删除图集类的时候，会自动调用ClearImage()做收尾工作 */
-		MfxImageList(Gdiplus::Graphics* myGraphics);
+		MfxImageList(Gdiplus::Graphics* set);
 		~MfxImageList();
 	protected:
 		Gdiplus::Graphics* myGraphics;
@@ -171,7 +171,7 @@ namespace MicroFlakeX
 
 	public:
 		/* 通过图片类-添加一张照片，第一张的序号为1，以此类推 */
-		BOOL ListAddImage(MfxImage* addImage);
+		BOOL ListAddImage(MfxImage* set);
 
 		/* 清空图集-但是不删除图集内容 */
 		BOOL ListClearImage();
@@ -179,7 +179,7 @@ namespace MicroFlakeX
 		BOOL ListDeleteImage();
 
 		/* 设定当前图集中被选中的图片 - 返回上一张图片 */
-		int ListSetSelectImageNum(int seNum);
+		int ListSetSelectImageNum(int set);
 		/* 获取当前图集中被选中的图片序号 */
 		int ListGetSelectImageNum();
 
@@ -189,27 +189,27 @@ namespace MicroFlakeX
 		int ListNextImage();
 
 		/* 修改图集缩放质量-返回修改前的质量 */
-		MFXIMAGE_QUALITY SetImageQuality(MFXIMAGE_QUALITY iQuality = MFXIMAGE_QUALITY_NORMAL);
+		MFXIMAGE_QUALITY SetImageQuality(MFXIMAGE_QUALITY set = MFXIMAGE_QUALITY_NORMAL);
 		MFXIMAGE_QUALITY GetImageQuality();
 
 		/* 修改图集大小-返回修改前的图集大小 */
-		Gdiplus::Size SetImageSize(Gdiplus::Size iSize);
+		Gdiplus::Size SetImageSize(Gdiplus::Size set);
 		Gdiplus::Size GetImageSize();
 
 		/* 修改图集位置-返回修改前位置 */
-		Gdiplus::Point SetImagePoint(Gdiplus::Point iPoint);
+		Gdiplus::Point SetImagePoint(Gdiplus::Point set);
 		Gdiplus::Point GetImagePoint();
 
 		/* 获取当前图集的Rect */
 		Gdiplus::Rect GetImageRect();
 
 		/* 判断一个点是否在图集范围内，是则返回true，否则返回false */
-		BOOL Contains(Gdiplus::Point ifPoint);
+		BOOL Contains(Gdiplus::Point set);
 
 		/* 偏移图集坐标-返回偏移后的坐标 */
-		Gdiplus::Point OffsetImagePoint(Gdiplus::Point iPoint);
+		Gdiplus::Point OffsetImagePoint(Gdiplus::Point set);
 		/* 偏移图集大小-返回偏移后的大小(iSize+mySize) */
-		Gdiplus::Size OffsetImageSize(Gdiplus::Size iSize);
+		Gdiplus::Size OffsetImageSize(Gdiplus::Size set);
 
 		/* 高速绘制图集中被选中的图片 */
 		Gdiplus::Status Draw();

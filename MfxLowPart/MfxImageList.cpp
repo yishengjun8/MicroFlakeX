@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "MfxLowPart.h"
 
-MicroFlakeX::MfxImageList::MfxImageList(Gdiplus::Graphics* myGraphics)
+MicroFlakeX::MfxImageList::MfxImageList(Gdiplus::Graphics* set)
 {
-	this->myGraphics = myGraphics;
+	myGraphics = set;
 
 	/* 当前选中的图片 */
 	mySelectImageNum = 0;
@@ -18,16 +18,16 @@ MicroFlakeX::MfxImageList::~MfxImageList()
 	ListClearImage();
 }
 
-BOOL MicroFlakeX::MfxImageList::ListAddImage(MfxImage* addImage)
+BOOL MicroFlakeX::MfxImageList::ListAddImage(MfxImage* set)
 {
-	if (addImage == nullptr)
+	if (set == nullptr)
 	{
 		return 0;
 	}
-	myImageList.push_back(addImage);
-	addImage->SetImagePoint(Gdiplus::Point(myRect.X, myRect.Y));
-	addImage->OffsetImageSize(Gdiplus::Size(myRect.Width, myRect.Height));
-	addImage->SetImageQuality(myQuality);
+	myImageList.push_back(set);
+	set->SetImagePoint(Gdiplus::Point(myRect.X, myRect.Y));
+	set->OffsetImageSize(Gdiplus::Size(myRect.Width, myRect.Height));
+	set->SetImageQuality(myQuality);
 	return 1;
 }
 
@@ -47,14 +47,14 @@ BOOL MicroFlakeX::MfxImageList::ListDeleteImage()
 	return 1;
 }
 
-int MicroFlakeX::MfxImageList::ListSetSelectImageNum(int seNum)
+int MicroFlakeX::MfxImageList::ListSetSelectImageNum(int set)
 {
 	int retNum = mySelectImageNum;
 	if (mySelectImageNum > myImageList.size())
 	{
 		return retNum;
 	}
-	mySelectImageNum = seNum;
+	mySelectImageNum = set;
 	return retNum;
 }
 
@@ -78,14 +78,14 @@ int MicroFlakeX::MfxImageList::ListNextImage()
 	return retNum;
 }
 
-MicroFlakeX::MFXIMAGE_QUALITY MicroFlakeX::MfxImageList::SetImageQuality(MFXIMAGE_QUALITY iQuality)
+MicroFlakeX::MFXIMAGE_QUALITY MicroFlakeX::MfxImageList::SetImageQuality(MFXIMAGE_QUALITY set)
 {
 	MFXIMAGE_QUALITY retQuality = myQuality;
 	for (int i = 0; i < myImageList.size(); i++)
 	{
-		myImageList[i]->SetImageQuality(iQuality);
+		myImageList[i]->SetImageQuality(set);
 	}
-	myQuality = iQuality;
+	myQuality = set;
 	return retQuality;
 }
 
@@ -94,15 +94,15 @@ MicroFlakeX::MFXIMAGE_QUALITY MicroFlakeX::MfxImageList::GetImageQuality()
 	return myQuality;
 }
 
-Gdiplus::Size MicroFlakeX::MfxImageList::SetImageSize(Gdiplus::Size iSize)
+Gdiplus::Size MicroFlakeX::MfxImageList::SetImageSize(Gdiplus::Size set)
 {
 	Gdiplus::Size retSize = Gdiplus::Size(myRect.Width, myRect.Height);
 	for (int i = 0; i < myImageList.size(); i++)
 	{
-		myImageList[i]->SetImageSize(iSize);
+		myImageList[i]->SetImageSize(set);
 	}
-	myRect.Width = iSize.Width;
-	myRect.Height = iSize.Height;
+	myRect.Width = set.Width;
+	myRect.Height = set.Height;
 	return retSize;
 }
 
@@ -111,15 +111,15 @@ Gdiplus::Size MicroFlakeX::MfxImageList::GetImageSize()
 	return Gdiplus::Size(myRect.Width, myRect.Height);
 }
 
-Gdiplus::Point MicroFlakeX::MfxImageList::SetImagePoint(Gdiplus::Point iPoint)
+Gdiplus::Point MicroFlakeX::MfxImageList::SetImagePoint(Gdiplus::Point set)
 {
 	Gdiplus::Point retPoint = Gdiplus::Point(myRect.X, myRect.Y);
 	for (int i = 0; i < myImageList.size(); i++)
 	{
-		myImageList[i]->SetImagePoint(iPoint);
+		myImageList[i]->SetImagePoint(set);
 	}
-	myRect.X = iPoint.Y;
-	myRect.Y = iPoint.X;
+	myRect.X = set.Y;
+	myRect.Y = set.X;
 	return retPoint;
 }
 
@@ -133,24 +133,24 @@ Gdiplus::Rect MicroFlakeX::MfxImageList::GetImageRect()
 	return myRect;
 }
 
-BOOL MicroFlakeX::MfxImageList::Contains(Gdiplus::Point ifPoint)
+BOOL MicroFlakeX::MfxImageList::Contains(Gdiplus::Point set)
 {
-	return myRect.Contains(ifPoint);
+	return myRect.Contains(set);
 }
 
-Gdiplus::Point MicroFlakeX::MfxImageList::OffsetImagePoint(Gdiplus::Point iPoint)
+Gdiplus::Point MicroFlakeX::MfxImageList::OffsetImagePoint(Gdiplus::Point set)
 {
-	myRect.Offset(iPoint);
+	myRect.Offset(set);
 	for (int i = 0; i < myImageList.size(); i++)
 	{
-		myImageList[i]->OffsetImagePoint(iPoint);
+		myImageList[i]->OffsetImagePoint(set);
 	}
 	return Gdiplus::Point(myRect.X, myRect.Y);
 }
 
-Gdiplus::Size MicroFlakeX::MfxImageList::OffsetImageSize(Gdiplus::Size iSize)
+Gdiplus::Size MicroFlakeX::MfxImageList::OffsetImageSize(Gdiplus::Size set)
 {
-	Gdiplus::Size retSize(myRect.Width + iSize.Width, myRect.Height + iSize.Height);
+	Gdiplus::Size retSize(myRect.Width + set.Width, myRect.Height + set.Height);
 	SetImageSize(retSize);
 	return retSize;
 }
