@@ -22,17 +22,29 @@ namespace MicroFlakeX
 	class MFX_MEDPART_IMPORT MfxControlMessageServer;
 	
 	typedef LONG_PTR MFXRETURE;// 函数返回值 
-	enum MFXRETURE_ENUM// 函数返回值枚举 - 最大为30种错误 
+	enum MFXRETURE_ENUM// 函数返回值枚举 - 最大为60种错误 
 	{
 		MFXRETURE_OK = 0x0000, //成功，已处理
 		MFXRETURE_ERROR = 0xBFFF - 1, //失败
 		MFXRETURE_NOFIND = 0xBFFF - 2, //没找到对应的项
-		MFXRETURE_FINE = 0xBFFF - 3 //完成任务
+		MFXRETURE_FINE = 0xBFFF - 3, //完成任务
+		MFXRETURE_ENUM_MAX = 0xBFFF - 60 //最大错误枚举返回值
 	};
 
-	enum MFXUIMESSAGE_ENUM// UI发出的消息 - 最大为x种 
+	enum MFXUIEVENT_ENUM// UI发送的事件 - 最大为120种 
 	{
-		MFXUIMSG_SIZE = 0xBFFF - 30 //UICHANGESIZE* getSize = (UICHANGESIZE*)lParam; 
+		MFXUIEVENT_SIZE = MFXRETURE_ENUM_MAX - 1, //UICHANGESIZE* getSize = (UICHANGESIZE*)lParam;
+
+		MFXUIEVENT_ENUM_MAX = MFXRETURE_ENUM_MAX - 120
+	};
+
+	enum MFXCONTROLEVENT_ENUM// 控件发送的事件 - 最大为120种 
+	{
+		MFXCONTROLEVENT_CLICK = MFXUIEVENT_ENUM_MAX - 1, //点击
+		MFXCONTROLEVENT_DOUBLECLICK = MFXUIEVENT_ENUM_MAX - 2, //双击
+		MFXCONTROLEVENT_MOUSEFLOAT = MFXUIEVENT_ENUM_MAX - 3, //悬浮
+		MFXCONTROLEVENT_MOUSEPRESS = MFXUIEVENT_ENUM_MAX - 4, //长按
+		MFXCONTROLEVENT_ENUM_MAX = MFXUIEVENT_ENUM_MAX - 120
 	};
 
 	typedef unsigned long MFXWINDTYPE;// UI样式 
@@ -168,12 +180,13 @@ namespace MicroFlakeX
 
 	class MfxUI/* >>窗口唯一<< 每个UI等同于一个窗口，UI仅支持双缓冲绘图 - 必须继承重写 */
 	{
+		/* 待增加的功能：用户焦点 */
 	public:
 		/* 创建一个新的UI(仅支持wchar_t窗口) - 窗口大小、窗口扩展样式、窗口样式、窗口名字、父窗口、wndClassName */
 		MfxUI(
 			Gdiplus::Rect theRect = Gdiplus::Rect(20, 20, 80, 80),
 			DWORD exStyle = 0, //可以不填
-			DWORD dwStyle = MFXWINDTYPE_NORMAL,
+			MFXWINDTYPE_ENUM dwStyle = MFXWINDTYPE_NORMAL,
 			std::wstring titleName = L"MfxUI",
 			MfxUI* father = nullptr,
 			std::wstring wndClassName = L"MfxNormal"
@@ -188,29 +201,35 @@ namespace MicroFlakeX
 
 	protected:
 		bool myWndCreateSuccess; //检查是否成功
-		bool myUIPaintEnum; //是否在重绘主界面的时候，重绘子界面
+		bool myUIPaintEnumChild; //是否在重绘主界面的时候，重绘子界面
 		HBITMAP myBackBitmap;
 		MfxImage* myBackImage;
 		MfxImage* myMaskImage;
 	public:
 		bool UIDrawToMainDc();
 		bool UICleanBufferDc();
-
-		MfxImage* SetUIBack(MfxImage* uiBack);
-		MfxImage* SetUIMask(MfxImage* uiMask);
-
+		MfxImage* UISetBack(MfxImage* uiBack);
+		MfxImage* UISetMask(MfxImage* uiMask);
 		/* 是否在重绘主界面的时候，重绘子界面 - 当发生显示异常时，开启这一个选项 */
-		void SetUIPaintEnum(bool enumType = false);
+		void UISetPaintEnumChild(bool enumType = false);
 
 	protected:
-		char myPaintFlag;//线程标志 线程使用0x01，主程序使用0x02
+		char myPaintFlag;//线程标志 线程使用0x01，主程序使用0x02 暂停线程使用0x10，暂停主程序使用0x20
 		unsigned char myPaintFrame; //我的绘制帧率
-		//std::thread* myUIThreadPaint;
-	public:
-		/* 自动更新UI，默认自动开启 - 30帧 */
-		unsigned char UIAutomation(unsigned char frame = 30);
 		void UIThreadPaint();  //线程绘制
-
+	public:
+		enum PAINTFLAG
+		{
+			PAINTFLAG_TDOING = 0x01, //线程正在绘图
+			PAINTFLAG_MDOING = 0x02, //主程序正在绘图
+			PAINTFLAG_TSLEEP = 0x10, //线程绘图挂起
+			PAINTFLAG_MSLEEP = 0x20, //主程序绘图挂起
+		};
+	public:
+		/* 自动更新UI，默认30帧，默认关闭，使用UIDelPainFlag(MfxUI::PAINTFLAG_TSLEEP);开启 */
+		unsigned char UIAutomation(unsigned char frame = 30);
+		void UIAddPainFlag(PAINTFLAG set);
+		void UIDelPainFlag(PAINTFLAG set);
 
 	protected:
 		MFXCONTROL_LIST myControlList; //UI所持有的全部控件
@@ -223,11 +242,11 @@ namespace MicroFlakeX
 	protected:
 		MFXUI_CONCTROL_FUNC_MAP myControlMessageMap; //控件消息映射
 	public:
-		/* 注册控件消息响应 - 控件指针、消息名字、响应函数 - 可以在构造函数中注册 */
+		/* 注册控件事件 - 控件指针、消息名字、响应函数 - 可以在构造函数中注册 */
 		virtual MFXRETURE RegisterControlMessage(MfxControl* con, UINT message, MFXUI_FUNC valFunc);
-		/* 收到的控件消息(会自动转发) - 控件指针、消息名字、消息参数1、消息参数2 */
+		/* 接收控件事件 - 控件指针、消息名字、消息参数1、消息参数2 */
 		virtual MFXRETURE ReceiveControlMessage(MfxControl* con, UINT message, WPARAM wParam, LPARAM lParam);
-		/* 删除控件消息响应 - 随时可以删除 */
+		/* 删除控件事件 - 随时可以删除 */
 		virtual MFXRETURE DelControlMessage(MfxControl* con, UINT message);
 
 	protected:
@@ -241,27 +260,28 @@ namespace MicroFlakeX
 		virtual MFXRETURE DelUIMessage(UINT message);
 
 	protected:
-		MFXUI_MESSAGE_FUNC_MAP myMfxDefUIMessageMap; //UI消息映射
-	public:
+		MFXUI_MESSAGE_FUNC_MAP myMfxDefUIMessageMap; //UI缺省消息映射
+	protected:
 		/* 缺省UI消息响应 - 消息名字、响应函数 - 可以在构造函数中注册 */
-		virtual MFXRETURE MfxRegDefUIMessage(UINT message, MFXUI_FUNC valFunc);
+		virtual MFXRETURE MfxRegDefMessage(UINT message, MFXUI_FUNC valFunc);
 		/* 接收到缺省UI消息 - 消息名字、消息参数1、消息参数2 */
-		virtual MFXRETURE CALLBACK MfxDefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+		virtual MFXRETURE CALLBACK MfxRecDefMessage(UINT message, WPARAM wParam, LPARAM lParam);
 		/* 删除缺省UI消息响应 - 随时可以删除 */
-		virtual MFXRETURE MfxDelDefUIMessage(UINT message);
+		virtual MFXRETURE MfxDelDefMessage(UINT message);
 
 	public:
 		HWND GetWnd();
-		MfxControlMessageServer* GetMessageServer();
-		Gdiplus::Rect GetRect();
-		Gdiplus::Point GetPoint();
-		Gdiplus::Size GetSize();
 		Gdiplus::Graphics* GetBufferGraphics();
+		MfxControlMessageServer* GetMessageServer();
+
+		Gdiplus::Rect GetRect();
+		Gdiplus::Size GetSize();
+		Gdiplus::Point GetPoint();
 	protected:
-		void SetX(int set);
-		void SetY(int set);
-		void SetWidth(int set);
-		void SetHeight(int set);
+		void SetRect(Gdiplus::Rect set);
+		void SetSize(Gdiplus::Size set);
+		void SetPoint(Gdiplus::Point set);
+		
 	protected:
 		HWND myWnd; //UI窗口句柄
 		HDC myMainDc; //UI的主画板 - 需要释放
@@ -295,16 +315,11 @@ namespace MicroFlakeX
 	public:
 		MfxControlMessageServer(MfxUI* myUI);
 		virtual ~MfxControlMessageServer();
-
 	public:
 		virtual MfxUI* GetMyUI();
-		/* 注册控件 */
 		virtual MFXRETURE RegisterControl(MfxControl* regControl);
-
 		/* 根据对象删除注册的控件 - 不会delete控件，仅仅删除注册内容 */
 		virtual MFXRETURE DelRegisterControl(MfxControl* delControl);
-
-		/* 转发消息到每一个注册到本服务的控件 */
 		virtual MFXRETURE ForwardMessageToControl(UINT message, WPARAM wParam, LPARAM lParam);
 	protected:
 		MfxUI* myUI;
@@ -322,29 +337,35 @@ namespace MicroFlakeX
 	public:
 		/* 创建在某个UI上的控件 - 父UI、位置和大小 */
 		MfxControl(MfxUI* getUI, Gdiplus::Rect setRect = Gdiplus::Rect(20, 20, 80, 80));
-		/* 删除UI注册 */
 		virtual ~MfxControl();
 	public:
-		/* 接收到的消息 - 消息名字、消息参数1、消息参数2 */
 		virtual MFXRETURE ReceiveMessage(UINT message, WPARAM wParam, LPARAM lParam);
-
-		/* 注册消息映射 */
 		virtual MFXRETURE RegisterMessage(UINT keyMsg, MFXCONTROL_MESSAGE_FUNC valFunc);
-		/* 删除注册的消息映射 */
 		virtual MFXRETURE DelRegisterControl(UINT keyMsg);
 
 		virtual MFXRETURE ThreadPaint();  //线程绘制接口
+
+
 	protected:
-		void SetX(int set);
-		void SetY(int set);
-		void SetWidth(int set);
-		void SetHeight(int set);
+		//MFXUI_MESSAGE_FUNC_MAP myMfxDefUIMessageMap; //UI缺省消息映射
+	protected:
+		/* 缺省UI消息响应 - 消息名字、响应函数 - 可以在构造函数中注册 */
+		//virtual MFXRETURE MfxRegDefMessage(UINT message, MFXUI_FUNC valFunc);
+		/* 接收到缺省UI消息 - 消息名字、消息参数1、消息参数2 */
+		//virtual MFXRETURE CALLBACK MfxRecDefMessage(UINT message, WPARAM wParam, LPARAM lParam);
+		/* 删除缺省UI消息响应 - 随时可以删除 */
+		//virtual MFXRETURE MfxDelDefMessage(UINT message);
+
 	public:
 		virtual MfxUI* GetMyUI();
 		virtual std::wstring GetMyType();
 		Gdiplus::Rect GetRect();
-		Gdiplus::Point GetPoint();
 		Gdiplus::Size GetSize();
+		Gdiplus::Point GetPoint();
+	protected:
+		void SetRect(Gdiplus::Rect set);
+		void SetSize(Gdiplus::Size set);
+		void SetPoint(Gdiplus::Point set);
 	protected:
 		MfxUI* myUI;// 控件所属UI
 		std::wstring myType;// 控件类型
@@ -353,9 +374,12 @@ namespace MicroFlakeX
 		Gdiplus::Graphics* myGraphics; //因为比较常用
 
 	protected:
-		MFXRETURE MfxDefOnPaint(WPARAM wParam, LPARAM lParam);  //销毁
+		/* 基础事件：鼠标悬浮、鼠标单击、鼠标双击、鼠标滑轮、鼠标持续按压 */
+		/* 用户焦点是否在这里 */
 		//WM_PAINT - 检查WPARAM是否为空，如果为空则为系统刷新，否则则为UI发出的重绘消息，根据ps可以观察自己是否需要重绘
-		//MFXRETURE OnEachFrame(WPARAM wParam, LPARAM lParam);  //每一帧
+		//MFXRETURE MfxDefOnPaint(WPARAM wParam, LPARAM lParam);  //
+		
+		//MFXRETURE OnEachFrame(WPARAM wParam, LPARAM lParam);  //
 		
 	};
 }

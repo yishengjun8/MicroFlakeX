@@ -43,7 +43,7 @@ BOOL CALLBACK MicroFlakeX::MfxEnumRedrawWindow(HWND hWnd, LPARAM lParam)
 
 BOOL CALLBACK MicroFlakeX::MfxEnumFatherSize(HWND hWnd, LPARAM lParam)
 {
-    return PostMessage(hWnd, MFXUIMSG_SIZE, 0, lParam);
+    return PostMessage(hWnd, MFXUIEVENT_SIZE, 0, lParam);
 }
 
 MicroFlakeX::MfxApplication* MicroFlakeX::MfxFunc_GetApp()

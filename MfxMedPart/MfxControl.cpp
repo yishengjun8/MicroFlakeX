@@ -60,18 +60,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::ThreadPaint()
 {
     return 0;
 }
-void MicroFlakeX::MfxControl::SetX(int set)
-{
-}
-void MicroFlakeX::MfxControl::SetY(int set)
-{
-}
-void MicroFlakeX::MfxControl::SetWidth(int set)
-{
-}
-void MicroFlakeX::MfxControl::SetHeight(int set)
-{
-}
+
 MicroFlakeX::MfxUI* MicroFlakeX::MfxControl::GetMyUI()
 {
     return myUI;
@@ -83,17 +72,34 @@ std::wstring MicroFlakeX::MfxControl::GetMyType()
 
 Gdiplus::Rect MicroFlakeX::MfxControl::GetRect()
 {
-    return Gdiplus::Rect();
-}
-
-Gdiplus::Point MicroFlakeX::MfxControl::GetPoint()
-{
-    return Gdiplus::Point();
+    return myRect;
 }
 
 Gdiplus::Size MicroFlakeX::MfxControl::GetSize()
 {
     return Gdiplus::Size(myRect.Width, myRect.Height);
+}
+
+Gdiplus::Point MicroFlakeX::MfxControl::GetPoint()
+{
+    return Gdiplus::Point(myRect.X, myRect.Y);
+}
+
+void MicroFlakeX::MfxControl::SetRect(Gdiplus::Rect set)
+{
+    myRect = set;
+}
+
+void MicroFlakeX::MfxControl::SetSize(Gdiplus::Size set)
+{
+    myRect.Width = set.Width;
+    myRect.Height = set.Height;
+}
+
+void MicroFlakeX::MfxControl::SetPoint(Gdiplus::Point set)
+{
+    myRect.X = set.X;
+    myRect.Y = set.Y;
 }
 
 /*

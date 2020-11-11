@@ -18,6 +18,9 @@ MicroFlakeX::MfxButton::MfxButton(MfxUI* getUI, Gdiplus::Rect setRect)
 	myFloatImageFlag = false;
 	myClickImageFlag = false;
 
+	myClick = false;
+	myPress = false;
+	myFloat = false;
 	/**/
 	myBackImage = new MfxImage(myGraphics);
 	myBackImage->LoadPureColor(Gdiplus::Color::DarkGray);
@@ -75,14 +78,18 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnMouseMove(WPARAM wParam, LPARAM
 	Gdiplus::Point mousePos = Gdiplus::Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 	if (myRect.Contains(mousePos))
 	{
+		PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_MOUSEFLOAT, wParam, lParam);
+		//MessageBox(myUI->GetWnd(), L"MFXCONTROLEVENT_MOUSEFLOAT", L"OnMouseMove", 0);
+		myFloat = true;
 		myFloatImageFlag = true;
 	}
 	else
 	{
+		myPress = false;
+		myFloat = false;
 		myFloatImageFlag = false;
 	}
 	PostMessage(myUI->GetWnd(), WM_PAINT, 0, 0);
-	//myUI->UIDrawToMainDc(); //这个是不对的，应该是主UI每秒30帧自动刷新！！
 	return 0;
 }
 
@@ -92,6 +99,8 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnLButtonDown(WPARAM wParam, LPAR
 	if (myRect.Contains(mousePos))
 	{
 		myClickImageFlag = true;
+		myClick = true;
+		myPress = true;
 	}
 	else
 	{
@@ -103,7 +112,24 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnLButtonDown(WPARAM wParam, LPAR
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnLButtonUp(WPARAM wParam, LPARAM lParam)
 {
-	myClickImageFlag = false;
+	Gdiplus::Point mousePos = Gdiplus::Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+	if (myRect.Contains(mousePos))
+	{
+		if (myClick == true)
+		{
+			PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_CLICK, wParam, lParam);
+			//MessageBox(myUI->GetWnd(), L"MFXCONTROLEVENT_CLICK", L"OnLButtonUp", 0);
+		}
+		myPress = false;
+		myClick = false;
+		myClickImageFlag = false;
+	}
+	else
+	{
+		myPress = false;
+		myClick = false;
+		myClickImageFlag = false;
+	}
 	PostMessage(myUI->GetWnd(), WM_PAINT, 0, 0);
 	return 0;
 }

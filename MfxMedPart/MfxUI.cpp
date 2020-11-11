@@ -10,7 +10,7 @@ FILE* gFileOut;
 MicroFlakeX::MfxUI::MfxUI(
 	Gdiplus::Rect theRect,
 	DWORD exStyle,
-	DWORD dwStyle,
+	MFXWINDTYPE_ENUM dwStyle,
 	std::wstring titleName,
 	MfxUI* father,
 	std::wstring wndClassName
@@ -25,19 +25,19 @@ MicroFlakeX::MfxUI::MfxUI(
 	}
 	/**/
 	/* 注册消息 */
-	//this->MfxRegDefUIMessage(WM_TIMER, (MFXUI_FUNC)&MfxUI::OnUIUpdateBasedTimer);MfxDefOnUIRButtonDown
-	this->MfxRegDefUIMessage(WM_DESTROY, (MFXUI_FUNC)&MfxUI::MfxDefOnUIDestroy);
-	this->MfxRegDefUIMessage(WM_SIZE, (MFXUI_FUNC)&MfxUI::MfxDefOnUISize);
-	this->MfxRegDefUIMessage(WM_SIZING, (MFXUI_FUNC)&MfxUI::MfxDefOnUISizing);
-	this->MfxRegDefUIMessage(WM_PAINT, (MFXUI_FUNC)&MfxUI::MfxDefOnUIPaint);
-	this->MfxRegDefUIMessage(WM_MOVE, (MFXUI_FUNC)&MfxUI::MfxDefOnUIMove);
-	this->MfxRegDefUIMessage(WM_SYSCOMMAND, (MFXUI_FUNC)&MfxUI::MfxDefOnUISysCommand);
-	this->MfxRegDefUIMessage(WM_ERASEBKGND, (MFXUI_FUNC)&MfxUI::MfxDefOnUIEraseBkGnd);
-	this->MfxRegDefUIMessage(WM_CHILDACTIVATE, (MFXUI_FUNC)&MfxUI::MfxDefOnUIChildActivate);
-	this->MfxRegDefUIMessage(WM_LBUTTONDOWN, (MFXUI_FUNC)&MfxUI::MfxDefOnUILButtonDown);
-	this->MfxRegDefUIMessage(WM_RBUTTONDOWN, (MFXUI_FUNC)&MfxUI::MfxDefOnUIRButtonDown);
+	//this->MfxRegDefMessage(WM_TIMER, (MFXUI_FUNC)&MfxUI::OnUIUpdateBasedTimer);MfxDefOnUIRButtonDown
+	this->MfxRegDefMessage(WM_DESTROY, (MFXUI_FUNC)&MfxUI::MfxDefOnUIDestroy);
+	this->MfxRegDefMessage(WM_SIZE, (MFXUI_FUNC)&MfxUI::MfxDefOnUISize);
+	this->MfxRegDefMessage(WM_SIZING, (MFXUI_FUNC)&MfxUI::MfxDefOnUISizing);
+	this->MfxRegDefMessage(WM_PAINT, (MFXUI_FUNC)&MfxUI::MfxDefOnUIPaint);
+	this->MfxRegDefMessage(WM_MOVE, (MFXUI_FUNC)&MfxUI::MfxDefOnUIMove);
+	this->MfxRegDefMessage(WM_SYSCOMMAND, (MFXUI_FUNC)&MfxUI::MfxDefOnUISysCommand);
+	this->MfxRegDefMessage(WM_ERASEBKGND, (MFXUI_FUNC)&MfxUI::MfxDefOnUIEraseBkGnd);
+	this->MfxRegDefMessage(WM_CHILDACTIVATE, (MFXUI_FUNC)&MfxUI::MfxDefOnUIChildActivate);
+	this->MfxRegDefMessage(WM_LBUTTONDOWN, (MFXUI_FUNC)&MfxUI::MfxDefOnUILButtonDown);
+	this->MfxRegDefMessage(WM_RBUTTONDOWN, (MFXUI_FUNC)&MfxUI::MfxDefOnUIRButtonDown);
 
-	this->MfxRegDefUIMessage(MFXUIMSG_SIZE, (MFXUI_FUNC)&MfxUI::MfxDefOnUIMSGSize);
+	this->MfxRegDefMessage(MFXUIEVENT_SIZE, (MFXUI_FUNC)&MfxUI::MfxDefOnUIMSGSize);
 
 
 	myWnd = nullptr;
@@ -46,13 +46,13 @@ MicroFlakeX::MfxUI::MfxUI(
 	myBufferGraphics = nullptr; //UI绘画类，指向UI的缓冲区 - 需要释放
 	myMessageServer = nullptr; //UI窗口消息服务器 - 需要释放
 	myWndCreateSuccess = true;
-	myUIPaintEnum = false;
+	myUIPaintEnumChild = false;
 	myBackBitmap = nullptr;
 	myBackImage = nullptr; 
 	myMaskImage = nullptr;
 
 	myPaintFrame = 30;
-	myPaintFlag = 0;
+	myPaintFlag = PAINTFLAG_TSLEEP; //默认关闭
 	myRect = theRect; //UI的大小 - 会随窗口大小而自动调整
 
 	MfxFunc_GetApp()->SetCreatUI(this);
@@ -73,7 +73,7 @@ MicroFlakeX::MfxUI::MfxUI(
 		myWndCreateSuccess = false;
 	}
 
-	//new std::thread(std::bind(&MfxUI::UIThreadPaint, this));
+	new std::thread(std::bind(&MfxUI::UIThreadPaint, this));
 }
 
 void MicroFlakeX::MfxUI::SetWnd(HWND hWnd)
@@ -143,20 +143,20 @@ unsigned char MicroFlakeX::MfxUI::UIAutomation(unsigned char frame)
 
 void MicroFlakeX::MfxUI::UIThreadPaint()
 {
-	//return;
-	//线程标志 线程使用0x01，主程序使用0x02  myPaintFrame
+	//线程标志 线程使用0x01，主程序使用0x02  
+	//暂停线程使用0x10，暂停主程序使用0x20
 	clock_t t_myBeginTime, t_myOverTime;
 	while (myWndCreateSuccess)
 	{
 		t_myBeginTime = clock();
-		while (1 & myWndCreateSuccess)
+		while (1)
 		{
 			t_myOverTime = clock();
-			if ((t_myOverTime - t_myBeginTime) >= myPaintFrame)
+			if ((t_myOverTime - t_myBeginTime) >= myPaintFrame && !(myPaintFlag & 0x10))
 				break;
 		}
 
-		if (!(myPaintFlag & 0x02))
+		if (!(myPaintFlag & 0x02) && !(myPaintFlag & 0x10))
 		{
 			myPaintFlag |= 0x01; //开始
 
@@ -166,15 +166,18 @@ void MicroFlakeX::MfxUI::UIThreadPaint()
 			if (!myWndCreateSuccess)return;
 			UICleanBufferDc(); //刷新缓冲区背景
 			if (!myWndCreateSuccess)return;
-			this->myMessageServer->ForwardMessageToControl(WM_PAINT, (WPARAM)&ps, 0);
-			if (!myWndCreateSuccess)return;
+			for (int i = 0; i < myControlList.size(); i++)
+			{
+				myControlList[i]->ThreadPaint();
+				if (!myWndCreateSuccess)return;
+			}
 			if (myMaskImage)
 				myMaskImage->Draw(); //绘制最前面的Mask
 			if (!myWndCreateSuccess)return;
 			UIDrawToMainDc(); //绘制到主界面
 			if (!myWndCreateSuccess)return;
-			/* 主界面绘制完毕，开始通知子窗口绘制，防止被遮挡 */
-			if (myUIPaintEnum)
+			//主界面绘制完毕，开始通知子窗口绘制，防止被遮挡 
+			if (myUIPaintEnumChild)
 				EnumChildWindows(myWnd, MfxEnumRedrawWindow, 0);
 			if (!myWndCreateSuccess)return;
 			EndPaint(myWnd, &ps);
@@ -182,11 +185,19 @@ void MicroFlakeX::MfxUI::UIThreadPaint()
 			myPaintFlag &= ~0x01; //结束
 		}
 	}
-	//MessageBox(0, L"??", L"???", 0);
-	//myPaintFlag |= 0x04;
 }
 
-MicroFlakeX::MfxImage* MicroFlakeX::MfxUI::SetUIBack(MfxImage* uiBack)
+void MicroFlakeX::MfxUI::UIAddPainFlag(PAINTFLAG set)
+{
+	myPaintFlag |= set;
+}
+
+void MicroFlakeX::MfxUI::UIDelPainFlag(PAINTFLAG set)
+{
+	myPaintFlag &= ~set;
+}
+
+MicroFlakeX::MfxImage* MicroFlakeX::MfxUI::UISetBack(MfxImage* uiBack)
 {
 	/**/
 	MfxImage* retImage = myBackImage;
@@ -201,7 +212,7 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxUI::SetUIBack(MfxImage* uiBack)
 	return retImage;
 }
 
-MicroFlakeX::MfxImage* MicroFlakeX::MfxUI::SetUIMask(MfxImage* uiMask)
+MicroFlakeX::MfxImage* MicroFlakeX::MfxUI::UISetMask(MfxImage* uiMask)
 {
 	/**/
 	MfxImage* retImage = myMaskImage;
@@ -209,13 +220,12 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxUI::SetUIMask(MfxImage* uiMask)
 	myMaskImage->SetImageSize(Gdiplus::Size(myRect.Width, myRect.Height));
 	/**/
 	//ReceiveUIMessage(WM_PAINT, 0, 0);
-
 	return retImage;
 }
 
-void MicroFlakeX::MfxUI::SetUIPaintEnum(bool enumType)
+void MicroFlakeX::MfxUI::UISetPaintEnumChild(bool enumType)
 {
-	myUIPaintEnum = enumType;
+	myUIPaintEnumChild = enumType;
 }
 
 bool MicroFlakeX::MfxUI::RegisterControl(MfxControl* con)
@@ -305,7 +315,7 @@ MicroFlakeX::MFXRETURE CALLBACK MicroFlakeX::MfxUI::ReceiveUIMessage(UINT messag
 	{
 		return (this->*callIter->second)(wParam, lParam);
 	}
-	return MfxDefWindowProc(message, wParam, lParam);
+	return MfxRecDefMessage(message, wParam, lParam);
 	/**/
 	return 0;
 }
@@ -325,7 +335,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::DelUIMessage(UINT message)
 	return 0;
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxRegDefUIMessage(UINT message, MFXUI_FUNC valFunc)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxRegDefMessage(UINT message, MFXUI_FUNC valFunc)
 {
 	if (!myWndCreateSuccess) return 0;
 	/**/
@@ -335,7 +345,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxRegDefUIMessage(UINT message, MFXU
 	return 0;
 }
 
-MicroFlakeX::MFXRETURE CALLBACK MicroFlakeX::MfxUI::MfxDefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+MicroFlakeX::MFXRETURE CALLBACK MicroFlakeX::MfxUI::MfxRecDefMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (!myWndCreateSuccess) return 0;
 	MFXUI_MESSAGE_FUNC_MAP_ITERA callIter = myMfxDefUIMessageMap.find(message);
@@ -348,7 +358,7 @@ MicroFlakeX::MFXRETURE CALLBACK MicroFlakeX::MfxUI::MfxDefWindowProc(UINT messag
 	return 0;
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDelDefUIMessage(UINT message)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDelDefMessage(UINT message)
 {
 	if (!myWndCreateSuccess) return 0;
 	/**/
@@ -368,6 +378,10 @@ HWND MicroFlakeX::MfxUI::GetWnd()
 	return myWnd;
 }
 
+Gdiplus::Graphics* MicroFlakeX::MfxUI::GetBufferGraphics()
+{
+	return myBufferGraphics;
+}
 
 MicroFlakeX::MfxControlMessageServer* MicroFlakeX::MfxUI::GetMessageServer()
 {
@@ -378,37 +392,31 @@ Gdiplus::Rect MicroFlakeX::MfxUI::GetRect()
 {
 	return myRect;
 }
+Gdiplus::Size MicroFlakeX::MfxUI::GetSize()
+{
+	return Gdiplus::Size(myRect.Width, myRect.Height);
+}
 
 Gdiplus::Point MicroFlakeX::MfxUI::GetPoint()
 {
 	return Gdiplus::Point(myRect.X, myRect.Y);
 }
 
-Gdiplus::Size MicroFlakeX::MfxUI::GetSize()
-{
-	return Gdiplus::Size(myRect.Width, myRect.Height);
-}
-
-Gdiplus::Graphics* MicroFlakeX::MfxUI::GetBufferGraphics()
-{
-	return myBufferGraphics;
-}
-
-void MicroFlakeX::MfxUI::SetX(int set)
+void MicroFlakeX::MfxUI::SetRect(Gdiplus::Rect set)
 {
 }
 
-void MicroFlakeX::MfxUI::SetY(int set)
+void MicroFlakeX::MfxUI::SetSize(Gdiplus::Size set)
 {
 }
 
-void MicroFlakeX::MfxUI::SetWidth(int set)
+void MicroFlakeX::MfxUI::SetPoint(Gdiplus::Point set)
 {
 }
 
-void MicroFlakeX::MfxUI::SetHeight(int set)
-{
-}
+
+
+
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUIDestroy(WPARAM wParam, LPARAM lParam)
 {
@@ -424,8 +432,9 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUIEachFrame(WPARAM wParam, LP
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUIPaint(WPARAM wParam, LPARAM lParam)
 {
-	//线程标志 线程使用0x01，主程序使用0x02  myPaintFrame
-	if (!(myPaintFlag & 0x01))
+	//线程标志 线程使用0x01，主程序使用0x02  
+	//暂停线程使用0x10，暂停主程序使用0x20
+	if (!(myPaintFlag & 0x01) && !(myPaintFlag & 0x20))
 	{
 		myPaintFlag |= 0x02;//开始
 
@@ -443,7 +452,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUIPaint(WPARAM wParam, LPARAM
 		UIDrawToMainDc(); //绘制到主界面
 
 		/* 主界面绘制完毕，开始通知子窗口绘制，防止被遮挡 */
-		if (myUIPaintEnum)
+		if (myUIPaintEnumChild)
 			EnumChildWindows(myWnd, MfxEnumRedrawWindow, 0);
 
 		EndPaint(myWnd, &ps);
@@ -462,7 +471,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUISize(WPARAM wParam, LPARAM 
 	tSize.aRect = Gdiplus::Rect(myRect.X, myRect.Y, LOWORD(lParam), HIWORD(lParam));
 
 	// 通知控件们，大小发生改变 
-	this->myMessageServer->ForwardMessageToControl(MFXUIMSG_SIZE, 0, (LPARAM)&tSize);
+	this->myMessageServer->ForwardMessageToControl(MFXUIEVENT_SIZE, 0, (LPARAM)&tSize);
 	EnumChildWindows(myWnd, MfxEnumFatherSize, (LPARAM)&tSize); // 通知子窗口们，大小发生改变。
 
 	//重设主窗口大小
