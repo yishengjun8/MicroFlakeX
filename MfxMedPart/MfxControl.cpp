@@ -21,8 +21,11 @@ void MicroFlakeX::MfxControl::MfxInitData(MfxUI* father, Gdiplus::Rect value)
     myRect = value;
     myGraphics = myUI->GetBuffGraphics();
 
-    myClick = false; //点击
-    myPress = false; //按压
+    myLButtonClick = false; //点击
+    myLButtonPress = false; //按压
+    myRButtonClick = false; //点击
+    myRButtonPress = false; //按压
+
     myFloat = false; //悬浮
 
     myUI->RegControl(this); //注册到UI
@@ -185,7 +188,8 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnMouseMove(WPARAM wParam,
     }
     else
     {
-        myClick = false;
+        myLButtonClick = false;
+        myRButtonClick = false;
         myFloat = false;
     }
     return 0;
@@ -196,14 +200,14 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnLButtonDown(WPARAM wPara
     Gdiplus::Point mousePos = Gdiplus::Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
     if (myRect.Contains(mousePos))
     {
-        myClick = true;
+        myLButtonClick = true;
+        myLButtonPress = true;
         myFloat = true;
-        myPress = true;
     }
     else
     {
-        myClick = false;
-        myPress = false;
+        myLButtonClick = false;
+        myLButtonPress = false;
         myFloat = false;
     }
     return 0;
@@ -214,18 +218,18 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnLButtonUp(WPARAM wParam,
     Gdiplus::Point mousePos = Gdiplus::Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
     if (myRect.Contains(mousePos))
     {
-        if (myClick == true)
+        if (myLButtonClick == true)
         {
-            PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_CLICK, wParam, lParam);
+            PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_LBUTTONCLICK, wParam, lParam);
         }
-        myClick = false;
+        myLButtonClick = false;
+        myLButtonPress = false;
         myFloat = true;
-        myPress = false;
     }
     else
     {
-        myClick = false;
-        myPress = false;
+        myLButtonClick = false;
+        myLButtonPress = false;
         myFloat = false;
     }
     return 0;
@@ -238,12 +242,42 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnLDoubleClick(WPARAM wPar
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRButtonDown(WPARAM wParam, LPARAM lParam)
 {
-    return MFXRETURE();
+    Gdiplus::Point mousePos = Gdiplus::Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+    if (myRect.Contains(mousePos))
+    {
+        myRButtonClick = true;
+        myRButtonPress = true;
+        myFloat = true;
+    }
+    else
+    {
+        myRButtonClick = false;
+        myRButtonPress = false;
+        myFloat = false;
+    }
+    return 0;
 }
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRButtonUp(WPARAM wParam, LPARAM lParam)
 {
-    return MFXRETURE();
+    Gdiplus::Point mousePos = Gdiplus::Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+    if (myRect.Contains(mousePos))
+    {
+        if (myRButtonClick == true)
+        {
+            PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_RBUTTONCLICK, wParam, lParam);
+        }
+        myRButtonClick = false;
+        myRButtonPress = false;
+        myFloat = true;
+    }
+    else
+    {
+        myRButtonClick = false;
+        myRButtonPress = false;
+        myFloat = false;
+    }
+    return 0;
 }
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRDoubleClick(WPARAM wParam, LPARAM lParam)

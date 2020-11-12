@@ -40,11 +40,12 @@ namespace MicroFlakeX
 
 	enum MFXCONTROLEVENT_ENUM// 控件发送的事件 - 最大为120种 
 	{
-		MFXCONTROLEVENT_CLICK = MFXUIEVENT_ENUM_MAX - 1, //点击
-		MFXCONTROLEVENT_LDOUBLECLICK = MFXUIEVENT_ENUM_MAX - 2, //双击
-		MFXCONTROLEVENT_RDOUBLECLICK = MFXUIEVENT_ENUM_MAX - 3, //双击
-		MFXCONTROLEVENT_MOUSEFLOAT = MFXUIEVENT_ENUM_MAX - 4, //悬浮
-		MFXCONTROLEVENT_MOUSEPRESS = MFXUIEVENT_ENUM_MAX - 5, //长按
+		MFXCONTROLEVENT_LBUTTONCLICK = MFXUIEVENT_ENUM_MAX - 1, //点击
+		MFXCONTROLEVENT_RBUTTONCLICK = MFXUIEVENT_ENUM_MAX - 2, //点击
+		MFXCONTROLEVENT_LDOUBLECLICK = MFXUIEVENT_ENUM_MAX - 3, //双击
+		MFXCONTROLEVENT_RDOUBLECLICK = MFXUIEVENT_ENUM_MAX - 4, //双击
+		MFXCONTROLEVENT_MOUSEFLOAT = MFXUIEVENT_ENUM_MAX - 5, //悬浮
+		MFXCONTROLEVENT_MOUSEPRESS = MFXUIEVENT_ENUM_MAX - 6, //长按
 		MFXCONTROLEVENT_ENUM_MAX = MFXUIEVENT_ENUM_MAX - 120
 	};
 
@@ -314,11 +315,11 @@ namespace MicroFlakeX
 		MFXRETURE MfxDefOnUIMoving(WPARAM wParam, LPARAM lParam);		//正在移动
 
 		MFXRETURE MfxDefOnUILButtonDown(WPARAM wParam, LPARAM lParam);	//左键按下
-		MFXRETURE MfxDefOnUILButtonUp(WPARAM wParam, LPARAM lParam);		//左键释放
+		MFXRETURE MfxDefOnUILButtonUp(WPARAM wParam, LPARAM lParam);	//左键释放
 		MFXRETURE MfxDefOnUILDoubleClick(WPARAM wParam, LPARAM lParam);	//左键双击
 
 		MFXRETURE MfxDefOnUIRButtonDown(WPARAM wParam, LPARAM lParam);	//右键按下
-		MFXRETURE MfxDefOnUIRButtonUp(WPARAM wParam, LPARAM lParam);		//右键释放
+		MFXRETURE MfxDefOnUIRButtonUp(WPARAM wParam, LPARAM lParam);	//右键释放
 		MFXRETURE MfxDefOnUIRDoubleClick(WPARAM wParam, LPARAM lParam);	//右键双击
 
 		MFXRETURE MfxDefOnUIEventSize(WPARAM wParam, LPARAM lParam);	//窗口大小改变事件
@@ -372,8 +373,10 @@ namespace MicroFlakeX
 	
 
 	protected:
-		bool myClick; //点击
-		bool myPress; //按压
+		bool myLButtonClick; //点击
+		bool myLButtonPress; //按压
+		bool myRButtonClick; //点击
+		bool myRButtonPress; //按压
 		bool myFloat; //悬浮
 		/* 基础事件：鼠标滑轮、鼠标持续按压 用户焦点是否在这里 */
 	protected:
