@@ -105,6 +105,7 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetBackImage(MfxImage* set)
 	MfxImage* retImage = myBackImage;
 	myBackImageFlag = true;
 	myBackImage = set;
+	myBackImage->SetImageRect(myRect);
 	return retImage;
 }
 
@@ -118,6 +119,7 @@ MicroFlakeX::MfxWords* MicroFlakeX::MfxButton::SetMidWords(MfxWords* set)
 	MfxWords* retWords = myMidWords;
 	myMidWordsFlag = true;
 	myMidWords = set;
+	myMidWords->SetRect(myRect);
 	return retWords;
 }
 
@@ -131,6 +133,7 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetMaskImage(MfxImage* set)
 	MfxImage* retImage = myMaskImage;
 	myMaskImageFlag = true;
 	myMaskImage = set;
+	myMaskImage->SetImageRect(myRect);
 	return retImage;
 }
 
@@ -144,6 +147,7 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetFloatImage(MfxImage* set)
 	MfxImage* retImage = myFloatImage;
 	myFloatImageFlag = true;
 	myFloatImage = set;
+	myFloatImage->SetImageRect(myRect);
 	return retImage;
 }
 
@@ -157,6 +161,7 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetLButtonPressImage(MfxImage* se
 	MfxImage* retImage = myLButtonPressImage;
 	myLButtonPressImageFlag = true;
 	myLButtonPressImage = set;
+	myLButtonPressImage->SetImageRect(myRect);
 	return retImage;
 }
 
@@ -170,6 +175,7 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetRButtonPressImage(MfxImage* se
 	MfxImage* retImage = myRButtonPressImage;
 	myRButtonPressImageFlag = true;
 	myRButtonPressImage = set;
+	myRButtonPressImage->SetImageRect(myRect);
 	return retImage;
 }
 
