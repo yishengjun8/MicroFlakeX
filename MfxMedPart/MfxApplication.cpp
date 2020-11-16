@@ -106,7 +106,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::RegUI(MfxUI* regUI)
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::DelUI(MfxUI* regUI)
 {
 	/**/
-	MFXUI_LIST_ITERA tUIIt = myUIList.begin();
+	MFXUI_LISTITERA tUIIt = myUIList.begin();
 	for (; tUIIt != myUIList.end(); tUIIt++)
 	{
 		if (*tUIIt == regUI)

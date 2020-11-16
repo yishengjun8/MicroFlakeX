@@ -21,6 +21,9 @@ namespace MicroFlakeX
 	class MFX_MEDPART_IMPORT MfxControl;
 	class MFX_MEDPART_IMPORT MfxControlMessageServer;
 	
+	/* ———————————————————————————————————————————— */
+	/* ———————————————————————————————————————————— */
+
 	typedef LONG_PTR MFXRETURE;// 函数返回值 
 	enum MFXRETURE_ENUM// 函数返回值枚举 - 最大为60种错误 
 	{
@@ -34,7 +37,6 @@ namespace MicroFlakeX
 	enum MFXUIEVENT_ENUM// UI发送的事件 - 最大为120种 
 	{
 		MFXUIEVENT_SIZE = MFXRETURE_ENUM_MAX - 1, //UICHANGESIZE* getSize = (UICHANGESIZE*)lParam;
-
 		MFXUIEVENT_ENUM_MAX = MFXRETURE_ENUM_MAX - 120
 	};
 
@@ -65,23 +67,8 @@ namespace MicroFlakeX
 	}UICHANGESIZE;
 
 
-	// UI列表
-	typedef std::vector<MfxUI*> MFXUI_LIST;
-	typedef MFXUI_LIST::iterator MFXUI_LIST_ITERA;
-
-	typedef std::queue<MfxUI*> MFXUI_QUEUE;
-
-	// 服务器列表
-	typedef std::vector<MfxControlMessageServer*> SERVER_LIST;
-	typedef SERVER_LIST::iterator SERVER_LIST_ITERA;
-
-	// 控件列表 
-	typedef std::vector<MfxControl*> MFXCONTROL_LIST;
-	typedef MFXCONTROL_LIST::iterator MFXCONTROL_LIST_ITERA;
-
-	// 快捷键栈-表
-	typedef std::stack<UINT> SHORTCUTKEY;
-	typedef std::map<UINT, SHORTCUTKEY> SHORTCUTKEY_MAP;
+	/* ———————————————————————————————————————————— */
+	/* ———————————————————————————————————————————— */
 
 	// WndClass映射
 	typedef std::map<std::wstring, std::wstring> WNDCLASSEXW_MAP;
@@ -89,43 +76,83 @@ namespace MicroFlakeX
 	typedef WNDCLASSEXW_MAP::iterator WNDCLASSEXW_MAP_ITERA;
 	typedef std::pair<WNDCLASSEXW_MAP::iterator, bool> WNDCLASSEXW_MAP_PAIR;
 
+	// 服务器列表
+	typedef std::vector<MfxControlMessageServer*> SERVER_LIST;
+	typedef SERVER_LIST::iterator SERVER_LIST_ITERA;
+
 	// 服务器映射
 	typedef std::map<HWND, MfxControlMessageServer*> MFXCONTROL_SERVER_MAP;
 	typedef MFXCONTROL_SERVER_MAP::value_type MFXCONTROL_SERVER_MAP_ELEM;
 	typedef MFXCONTROL_SERVER_MAP::iterator MFXCONTROL_SERVER_MAP_ITERA;
 	typedef std::pair<MFXCONTROL_SERVER_MAP::iterator, bool> MFXCONTROL_SERVER_MAP_PAIR;
 
+	/* ———————————————————————————————————————————— */
+	/* ———————————————————————————————————————————— */
+
+	// UI列表
+	typedef std::vector<MfxUI*> MFXUI_LIST;
+	typedef MFXUI_LIST::iterator MFXUI_LISTITERA;
+
+	typedef std::queue<MfxUI*> MFXUI_QUEUE;
 
 	// UI方法映射  //MfxControl* con, UINT message, 
-	typedef struct CONCTROLMSG
+	typedef struct MFXUI_CONTROLEVENT
 	{
 		MfxControl* control;
 		UINT message;
-		bool operator<(const CONCTROLMSG& get) const noexcept
+		bool operator < (const MFXUI_CONTROLEVENT& get) const
 		{
-			return ((control < get.control) && (message < get.message));
+			return ((control < get.control) || (message < get.message));
 		}
-	}CONCTROLMSG;
+	}MFXUI_CONTROLEVENT;
 	typedef MFXRETURE(MfxUI::* MFXUI_FUNC)(WPARAM, LPARAM);
 
-	typedef std::map<CONCTROLMSG, MFXUI_FUNC> MFXUI_CONCTROL_FUNC_MAP;
-	typedef MFXUI_CONCTROL_FUNC_MAP::value_type MFXUI_CONCTROL_FUNC_MAP_ELEM;
-	typedef MFXUI_CONCTROL_FUNC_MAP::iterator MFXUI_CONCTROL_FUNC_MAP_ITERA;
-	typedef std::pair<MFXUI_CONCTROL_FUNC_MAP::iterator, bool> MFXUI_CONCTROL_FUNC_MAP_PAIR;
+	typedef std::map<MFXUI_CONTROLEVENT, MFXUI_FUNC> MFXUI_CONTROLEVENT_MAP;
+	typedef MFXUI_CONTROLEVENT_MAP::value_type MFXUI_CONTROLEVENT_MAPELEM;
+	typedef MFXUI_CONTROLEVENT_MAP::iterator MFXUI_CONTROLEVENT_MAPITERA;
+	typedef std::pair<MFXUI_CONTROLEVENT_MAP::iterator, bool> MFXUI_CONTROLEVENT_MAPPAIR;
 
-	typedef std::map<UINT, MFXUI_FUNC> MFXUI_MESSAGE_FUNC_MAP;
-	typedef MFXUI_MESSAGE_FUNC_MAP::value_type MFXUI_MESSAGE_FUNC_MAP_ELEM;
-	typedef MFXUI_MESSAGE_FUNC_MAP::iterator MFXUI_MESSAGE_FUNC_MAP_ITERA;
-	typedef std::pair<MFXUI_MESSAGE_FUNC_MAP::iterator, bool> MFXUI_MESSAGE_FUNC_MAP_PAIR;
+	typedef std::map<UINT, MFXUI_FUNC> MFXUI_MESSAGE_MAP;
+	typedef MFXUI_MESSAGE_MAP::value_type MFXUI_MESSAGE_MAPELEM;
+	typedef MFXUI_MESSAGE_MAP::iterator MFXUI_MESSAGE_MAPITERA;
+	typedef std::pair<MFXUI_MESSAGE_MAP::iterator, bool> MFXUI_MESSAGE_MAPPAIR;
+
+	typedef struct MFXUI_CLOCK
+	{
+		MFXUI_CLOCK(UINT message = WM_TIMER, clock_t delay = INTMAX_MAX)
+		{
+			this->message = message;
+			this->delay = delay;
+			this->count = 0;
+		}
+		UINT message;
+		clock_t delay;
+		clock_t count;
+	}MFXUI_CLOCK;
+	typedef std::vector<MFXUI_CLOCK> MFXUI_CLOCK_LIST;
+	typedef MFXUI_CLOCK_LIST::iterator MFXUI_CLOCK_LISTITERA;
+
+	/* ———————————————————————————————————————————— */
+	/* ———————————————————————————————————————————— */
+
+	// 控件列表 
+	typedef std::vector<MfxControl*> MFXCONTROL_LIST;
+	typedef MFXCONTROL_LIST::iterator MFXCONTROL_LISTITERA;
 
 	// CONTROL方法映射
-	typedef MFXRETURE(MfxControl::* MFXCONTROL_MESSAGE_FUNC)(WPARAM, LPARAM);
-	typedef std::map<UINT, MFXCONTROL_MESSAGE_FUNC> MFXCONTROL_MESSAGE_FUNC_MAP;
-	typedef MFXCONTROL_MESSAGE_FUNC_MAP::value_type MFXCONTROL_MESSAGE_FUNC_MAP_ELEM;
-	typedef MFXCONTROL_MESSAGE_FUNC_MAP::iterator MFXCONTROL_MESSAGE_FUNC_MAP_ITERA;
-	typedef std::pair<MFXCONTROL_MESSAGE_FUNC_MAP::iterator, bool> MFXCONTROL_MESSAGE_FUNC_MAP_PAIR;
+	typedef MFXRETURE(MfxControl::* MFXCONTROL_FUNC)(WPARAM, LPARAM);
+	typedef std::map<UINT, MFXCONTROL_FUNC> MFXCONTROL_MESSAGE_MAP;
+	typedef MFXCONTROL_MESSAGE_MAP::value_type MFXCONTROL_MESSAGE_MAPELEM;
+	typedef MFXCONTROL_MESSAGE_MAP::iterator MFXCONTROL_MESSAGE_MAPITERA;
+	typedef std::pair<MFXCONTROL_MESSAGE_MAP::iterator, bool> MFXCONTROL_MESSAGE_MAPPAIR;
+
+	// 快捷键栈-表
+	typedef std::stack<UINT> SHORTCUTKEY;
+	typedef std::map<UINT, SHORTCUTKEY> SHORTCUTKEY_MAP;
 }
 
+#define UIREGMSG(CLASS, MSG, FUNC) RegUIMessage(MSG, (MicroFlakeX::MFXUI_FUNC)&CLASS::FUNC);
+#define UIREGEVE(CLASS, MSG, CONTROL, FUNC) RegControlEvent(CONTROL, MSG, (MicroFlakeX::MFXUI_FUNC)&CLASS::FUNC);
 
 namespace MicroFlakeX
 {
@@ -229,11 +256,12 @@ namespace MicroFlakeX
 		//是否在重绘主界面的时候，重绘子界面 - 当发生显示异常时，开启这一个选项
 		virtual void UISetPaintEnumChild(bool enumType = false);
 
-		/**/
+		/* 不推荐使用的多线程刷新 */
 	protected:
 		char myPaintFlag;
-		int myPaintSleep;
-		virtual void UIThreadPaint();
+		int myPaintDelay;
+		std::thread myPaintThread;
+		virtual void UIPaintThread();
 	public:
 		enum PAINTFLAG
 		{
@@ -244,9 +272,25 @@ namespace MicroFlakeX
 		};
 	public:
 		virtual int UISetPaintSleep(int set = 30);
-		virtual void UIAddPainFlag(PAINTFLAG set);
-		virtual void UIDelPainFlag(PAINTFLAG set);
+		virtual void UIAddPainFlag(UINT set);
+		virtual void UIDelPainFlag(UINT del);
 		/**/
+
+	protected:
+		std::thread myClockThread;
+		virtual void UIClockThread();
+		MFXUI_CLOCK_LIST myClockList;
+	public:
+		/*
+			1,000 纳秒 = 1微秒 	  
+			1,000,000 纳秒 = 1毫秒 		
+			1,000,000,000 纳秒 = 1秒 
+
+		*/
+		//virtual void UISetClockDelay(UINT64 set);
+		//virtual UINT64 UIGetClockDelay();
+		virtual void UIAddClock(MFXUI_CLOCK set);
+		virtual void UIDelClock(UINT message);
 
 	protected:
 		MFXCONTROL_LIST myControlList; //UI所持有的全部控件
@@ -255,26 +299,25 @@ namespace MicroFlakeX
 		virtual bool DelControl(MfxControl* con);
 
 	protected:
-		MFXUI_CONCTROL_FUNC_MAP myControlMessageMap; //控件消息映射
+		MFXUI_CONTROLEVENT_MAP myControlEventMap; //控件消息映射
 	public:
-		virtual MFXRETURE RegControlMessage(MfxControl* con, UINT message, MFXUI_FUNC valFunc);
-		virtual MFXRETURE RecControlMessage(MfxControl* con, UINT message, WPARAM wParam, LPARAM lParam);
-		virtual MFXRETURE DelControlMessage(MfxControl* con, UINT message);
+		virtual MFXRETURE RegControlEvent(MfxControl* con, UINT eventID, MFXUI_FUNC valFunc);
+		virtual MFXRETURE RecControlEvent(MfxControl* con, UINT eventID, WPARAM wParam, LPARAM lParam);
+		virtual MFXRETURE DelControlEvent(MfxControl* con, UINT eventID);
 
 	protected:
-		MFXUI_MESSAGE_FUNC_MAP myUIMessageMap; //UI消息映射
+		MFXUI_MESSAGE_MAP myUIMessageMap; //UI消息映射
 	public:
 		virtual MFXRETURE RegUIMessage(UINT message, MFXUI_FUNC valFunc);
 		virtual MFXRETURE RecUIMessage(UINT message, WPARAM wParam, LPARAM lParam);
 		virtual MFXRETURE DelUIMessage(UINT message);
 
 	protected:
-		MFXUI_MESSAGE_FUNC_MAP myMfxDefUIMessageMap; //UI缺省消息映射
+		MFXUI_MESSAGE_MAP myMfxDefUIMessageMap; //UI缺省消息映射
 	protected:
 		virtual MFXRETURE MfxRegDefMessage(UINT message, MFXUI_FUNC valFunc);
 		virtual MFXRETURE MfxRecDefMessage(UINT message, WPARAM wParam, LPARAM lParam);
 		virtual MFXRETURE MfxDelDefMessage(UINT message);
-
 
 	protected:
 		HWND myWnd;
@@ -342,16 +385,16 @@ namespace MicroFlakeX
 		virtual MFXRETURE ThreadPaint();  //线程绘制接口
 
 	protected:
-		MFXCONTROL_MESSAGE_FUNC_MAP myMessageMap;// 函数映射表
+		MFXCONTROL_MESSAGE_MAP myMessageMap;// 函数映射表
 	public:
-		virtual MFXRETURE RegMessage(UINT message, MFXCONTROL_MESSAGE_FUNC valFunc);
+		virtual MFXRETURE RegMessage(UINT message, MFXCONTROL_FUNC valFunc);
 		virtual MFXRETURE RecMessage(UINT message, WPARAM wParam, LPARAM lParam);
 		virtual MFXRETURE DelMessage(UINT message);
 
 	protected:
-		MFXCONTROL_MESSAGE_FUNC_MAP myMfxDefMessageMap; //UI缺省消息映射
+		MFXCONTROL_MESSAGE_MAP myMfxDefMessageMap; //UI缺省消息映射
 	protected:
-		virtual MFXRETURE MfxRegDefMessage(UINT message, MFXCONTROL_MESSAGE_FUNC valFunc);
+		virtual MFXRETURE MfxRegDefMessage(UINT message, MFXCONTROL_FUNC valFunc);
 		virtual MFXRETURE MfxRecDefMessage(UINT message, WPARAM wParam, LPARAM lParam);
 		virtual MFXRETURE MfxDelDefMessage(UINT message);
 

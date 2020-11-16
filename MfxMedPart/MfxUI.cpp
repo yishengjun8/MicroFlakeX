@@ -29,7 +29,6 @@ void MicroFlakeX::MfxUI::MfxUIRegDef()
 	MfxRegDefMessage(WM_RBUTTONUP, (MFXUI_FUNC)&MfxUI::MfxDefOnUIRButtonUp);
 	MfxRegDefMessage(WM_RBUTTONDBLCLK, (MFXUI_FUNC)&MfxUI::MfxDefOnUIRDoubleClick);
 
-
 	MfxRegDefMessage(MFXUIEVENT_SIZE, (MFXUI_FUNC)&MfxUI::MfxDefOnUIEventSize);
 }
 
@@ -51,7 +50,7 @@ void MicroFlakeX::MfxUI::MfxUIInitData(Gdiplus::Rect value)
 	myUIPaintEnumChild = false; //重绘是否刷新子窗口
 
 	myPaintFlag = PAINTFLAG_TSLEEP; 
-	myPaintSleep = 40; //每次刷新延迟多少毫秒
+	myPaintDelay = 40; //每次刷新延迟多少毫秒
 
 	myRect = value; //窗口显示区域
 }
@@ -67,6 +66,10 @@ void MicroFlakeX::MfxUI::MfxUICreateWindowEx(
 		father ? father->GetWnd() : NULL,
 		NULL, MfxFunc_GetApp()->GetInstance(), NULL
 	);
+	//myPaintThread = std::thread(std::bind(&MfxUI::UIPaintThread, this));//高刷
+	//myPaintThread.detach();
+	//myClockThread = std::thread(std::bind(&MfxUI::UIClockThread, this));//定时器
+	//myClockThread.detach();
 }
 
 void MicroFlakeX::MfxUI::SetWnd(HWND get)
@@ -93,8 +96,7 @@ void MicroFlakeX::MfxUI::SetWnd(HWND get)
 
 MicroFlakeX::MfxUI::MfxUI(
 	Gdiplus::Rect theRect, DWORD exStyle, DWORD dwStyle,
-	std::wstring title, MfxUI* father, std::wstring wndClass
-	)
+	std::wstring title, MfxUI* father, std::wstring wndClass)
 {
 	MfxUIRegDef();
 	MfxUIInitData(theRect);
@@ -109,7 +111,6 @@ MicroFlakeX::MfxUI::MfxUI(
 		MessageBox(NULL, tOut.c_str(), L"Error!", MB_ICONEXCLAMATION | MB_OK);
 		myWndCreateSuccess = false;
 	}
-	//new std::thread(std::bind(&MfxUI::UIThreadPaint, this));//取消注释，以支持多线程
 }
 
 MicroFlakeX::MfxUI::MfxUI(Gdiplus::Rect theRect, DWORD dwStyle, std::wstring title, MfxUI* father)
@@ -198,7 +199,7 @@ void MicroFlakeX::MfxUI::UISetPaintEnumChild(bool enumType)
 	myUIPaintEnumChild = enumType;
 }
 
-void MicroFlakeX::MfxUI::UIThreadPaint()
+void MicroFlakeX::MfxUI::UIPaintThread()
 {
 	//线程标志 线程使用0x01，主程序使用0x02  
 	//暂停线程使用0x10，暂停主程序使用0x20
@@ -209,56 +210,95 @@ void MicroFlakeX::MfxUI::UIThreadPaint()
 		while (1)
 		{
 			t_myOverTime = clock();
-			if ((t_myOverTime - t_myBeginTime) >= myPaintSleep && !(myPaintFlag & 0x10))
+			if ((t_myOverTime - t_myBeginTime) >= myPaintDelay && !(myPaintFlag & PAINTFLAG_TSLEEP))
 				break;
 		}
 
-		if (!(myPaintFlag & 0x02) && !(myPaintFlag & 0x10))
+		myPaintFlag |= PAINTFLAG_TDOING; //开始
+
+		if (!(myPaintFlag & PAINTFLAG_MDOING) && !(myPaintFlag & PAINTFLAG_TSLEEP))
 		{
-			myPaintFlag |= 0x01; //开始
-
 			PAINTSTRUCT ps;
-			if (!myWndCreateSuccess)return;
 			HDC hDc = BeginPaint(myWnd, &ps);
-			if (!myWndCreateSuccess)return;
-			UICleanBufferDc(); //刷新缓冲区背景
-			if (!myWndCreateSuccess)return;
-			for (int i = 0; i < myControlList.size(); i++)
-			{
-				myControlList[i]->ThreadPaint();
-				if (!myWndCreateSuccess)return;
-			}
-			if (myMaskImage)
-				myMaskImage->Draw(); //绘制最前面的Mask
-			if (!myWndCreateSuccess)return;
-			UIDrawToMainDc(); //绘制到主界面
-			if (!myWndCreateSuccess)return;
-			//主界面绘制完毕，开始通知子窗口绘制，防止被遮挡 
-			if (myUIPaintEnumChild)
-				EnumChildWindows(myWnd, MfxEnumRedrawWindow, 0);
-			if (!myWndCreateSuccess)return;
-			EndPaint(myWnd, &ps);
 
-			myPaintFlag &= ~0x01; //结束
+			if (myBackImage)
+				myBackImage->Draw(); //刷新背景
+
+			for (int i = 0; i < myControlList.size(); i++)
+				myControlList[i]->ThreadPaint();
+
+			if (myMaskImage)
+				myMaskImage->Draw(); //添加蒙版
+
+			UIDrawToMainDc(); 
+
+			EnumChildWindows(myWnd, MfxEnumRedrawWindow, 0);
+
+			EndPaint(myWnd, &ps);
 		}
+
+		myPaintFlag &= ~PAINTFLAG_TDOING; //结束
 	}
 }
 
 int MicroFlakeX::MfxUI::UISetPaintSleep(int set)
 {
-	unsigned char retFrame = myPaintSleep;
-	myPaintSleep = set;
+	unsigned char retFrame = myPaintDelay;
+	myPaintDelay = set;
 	return retFrame;
 }
 
-void MicroFlakeX::MfxUI::UIAddPainFlag(PAINTFLAG set)
+void MicroFlakeX::MfxUI::UIAddPainFlag(UINT set)
 {
 	myPaintFlag |= set;
 }
 
-void MicroFlakeX::MfxUI::UIDelPainFlag(PAINTFLAG set)
+void MicroFlakeX::MfxUI::UIDelPainFlag(UINT del)
 {
-	myPaintFlag &= ~set;
+	myPaintFlag &= ~del;
+}
+
+void MicroFlakeX::MfxUI::UIClockThread()
+{
+	//MessageBox(myWnd, L"??", L"ss", 0);
+	clock_t t_myBeginTime, t_myOverTime;
+	while (myWndCreateSuccess)
+	{
+		t_myBeginTime = clock();
+		while (true)
+		{
+			t_myOverTime = clock();
+			if ((t_myOverTime - t_myBeginTime) >= 1)
+				break;
+		}
+		for (int i = 0; i < myClockList.size(); i++)
+		{
+			myClockList[i].count += 1;
+			if (myClockList[i].count >= myClockList[i].delay)
+			{
+				PostMessage(myWnd, myClockList[i].message, myClockList[i].count, myClockList[i].delay);
+				myClockList[i].count = 0;
+			}
+		}
+	}
+}
+
+void MicroFlakeX::MfxUI::UIAddClock(MFXUI_CLOCK set)
+{
+	set.count = 0;
+	myClockList.push_back(set);
+}
+
+void MicroFlakeX::MfxUI::UIDelClock(UINT message)
+{
+	for (MFXUI_CLOCK_LISTITERA it = myClockList.begin(); it != myClockList.end(); it++)
+	{
+		if ((*it).message == message)
+		{
+			myClockList.erase(it);
+			return;
+		}
+	}
 }
 
 bool MicroFlakeX::MfxUI::RegControl(MfxControl* con)
@@ -274,7 +314,7 @@ bool MicroFlakeX::MfxUI::DelControl(MfxControl* con)
 {
 	if (!myWndCreateSuccess) return 0;
 	/**/
-	for (MFXCONTROL_LIST_ITERA delIt = myControlList.begin(); delIt != myControlList.end(); delIt++)
+	for (MFXCONTROL_LISTITERA delIt = myControlList.begin(); delIt != myControlList.end(); delIt++)
 	{
 		if (*delIt == con)
 		{
@@ -286,24 +326,24 @@ bool MicroFlakeX::MfxUI::DelControl(MfxControl* con)
 	return false;
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RegControlMessage(MfxControl* con, UINT message, MFXUI_FUNC valFunc)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RegControlEvent(MfxControl* con, UINT eventID, MFXUI_FUNC valFunc)
 {
 	if (!myWndCreateSuccess) return 0;
 	/**/
-	CONCTROLMSG temp{ con, message };
-	MFXUI_CONCTROL_FUNC_MAP_PAIR retPair = myControlMessageMap.insert(MFXUI_CONCTROL_FUNC_MAP_ELEM(temp, valFunc));
+	MFXUI_CONTROLEVENT temp{ con, eventID };
+	MFXUI_CONTROLEVENT_MAPPAIR retPair = myControlEventMap.insert(MFXUI_CONTROLEVENT_MAPELEM(temp, valFunc));
 	return retPair.second;
 	/**/
 	return 0;
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RecControlMessage(MfxControl* con, UINT message, WPARAM wParam, LPARAM lParam)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RecControlEvent(MfxControl* con, UINT eventID, WPARAM wParam, LPARAM lParam)
 {
 	if (!myWndCreateSuccess) return 0;
 	/**/
-	CONCTROLMSG temp{ con, message };
-	MFXUI_CONCTROL_FUNC_MAP_ITERA callIter = myControlMessageMap.find(temp);
-	if (callIter != myControlMessageMap.end())
+	MFXUI_CONTROLEVENT temp{ con, eventID };
+	MFXUI_CONTROLEVENT_MAPITERA callIter = myControlEventMap.find(temp);
+	if (callIter != myControlEventMap.end())
 	{
 		return (this->*callIter->second)(wParam, lParam);
 	}
@@ -312,15 +352,15 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RecControlMessage(MfxControl* con, UI
 	return 0;
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::DelControlMessage(MfxControl* con, UINT message)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::DelControlEvent(MfxControl* con, UINT eventID)
 {
 	if (!myWndCreateSuccess) return 0;
 	/**/
-	CONCTROLMSG temp{ con, message };
-	MFXUI_CONCTROL_FUNC_MAP_ITERA delIter = myControlMessageMap.find(temp);
-	if (delIter != myControlMessageMap.end())
+	MFXUI_CONTROLEVENT temp{ con, eventID };
+	MFXUI_CONTROLEVENT_MAPITERA delIter = myControlEventMap.find(temp);
+	if (delIter != myControlEventMap.end())
 	{
-		myControlMessageMap.erase(delIter);
+		myControlEventMap.erase(delIter);
 		return MFXRETURE_OK;
 	}
 	return MFXRETURE_NOFIND;
@@ -332,7 +372,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RegUIMessage(UINT message, MFXUI_FUNC
 {
 	if (!myWndCreateSuccess) return 0;
 	/**/
-	MFXUI_MESSAGE_FUNC_MAP_PAIR retPair = myUIMessageMap.insert(MFXUI_MESSAGE_FUNC_MAP_ELEM(message, valFunc));
+	MFXUI_MESSAGE_MAPPAIR retPair = myUIMessageMap.insert(MFXUI_MESSAGE_MAPELEM(message, valFunc));
 	return retPair.second;
 	/**/
 	return 0;
@@ -341,7 +381,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RegUIMessage(UINT message, MFXUI_FUNC
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RecUIMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (!myWndCreateSuccess) return 0;
-	MFXUI_MESSAGE_FUNC_MAP_ITERA callIter = myUIMessageMap.find(message);
+	MFXUI_MESSAGE_MAPITERA callIter = myUIMessageMap.find(message);
 	if (callIter != myUIMessageMap.end())
 	{
 		return (this->*callIter->second)(wParam, lParam);
@@ -355,7 +395,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::DelUIMessage(UINT message)
 {
 	if (!myWndCreateSuccess) return 0;
 	/**/
-	MFXUI_MESSAGE_FUNC_MAP_ITERA delIter = myUIMessageMap.find(message);
+	MFXUI_MESSAGE_MAPITERA delIter = myUIMessageMap.find(message);
 	if (delIter != myUIMessageMap.end())
 	{
 		myUIMessageMap.erase(delIter);
@@ -370,7 +410,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxRegDefMessage(UINT message, MFXUI_
 {
 	if (!myWndCreateSuccess) return 0;
 	/**/
-	MFXUI_MESSAGE_FUNC_MAP_PAIR retPair = myMfxDefUIMessageMap.insert(MFXUI_MESSAGE_FUNC_MAP_ELEM(message, valFunc));
+	MFXUI_MESSAGE_MAPPAIR retPair = myMfxDefUIMessageMap.insert(MFXUI_MESSAGE_MAPELEM(message, valFunc));
 	return retPair.second;
 	/**/
 	return 0;
@@ -379,7 +419,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxRegDefMessage(UINT message, MFXUI_
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxRecDefMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (!myWndCreateSuccess) return 0;
-	MFXUI_MESSAGE_FUNC_MAP_ITERA callIter = myMfxDefUIMessageMap.find(message);
+	MFXUI_MESSAGE_MAPITERA callIter = myMfxDefUIMessageMap.find(message);
 	if (callIter != myMfxDefUIMessageMap.end())
 	{
 		return (this->*callIter->second)(wParam, lParam);
@@ -393,7 +433,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDelDefMessage(UINT message)
 {
 	if (!myWndCreateSuccess) return 0;
 	/**/
-	MFXUI_MESSAGE_FUNC_MAP_ITERA delIter = myMfxDefUIMessageMap.find(message);
+	MFXUI_MESSAGE_MAPITERA delIter = myMfxDefUIMessageMap.find(message);
 	if (delIter != myMfxDefUIMessageMap.end())
 	{
 		myMfxDefUIMessageMap.erase(delIter);
@@ -451,8 +491,6 @@ void MicroFlakeX::MfxUI::SetPoint(Gdiplus::Point set)
 {
 }
 
-
-
 /* ———————————————————————————————————————————— */
 /* ——————————————下面的代码是默认响应———————————————————— */
 /* ———————————————————————————————————————————— */
@@ -460,12 +498,13 @@ void MicroFlakeX::MfxUI::SetPoint(Gdiplus::Point set)
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUIPaint(WPARAM wParam, LPARAM lParam)
 {
-	//线程标志 线程使用0x01，主程序使用0x02  
-	//暂停线程使用0x10，暂停主程序使用0x20
-	if (!(myPaintFlag & 0x01) && !(myPaintFlag & 0x20))
-	{
-		myPaintFlag |= 0x02;//开始
+	// 线程标志 线程使用0x01，主程序使用0x02  
+	// 暂停线程使用0x10，暂停主程序使用0x20
 
+	myPaintFlag |= PAINTFLAG_MDOING; //开始
+
+	if (!(myPaintFlag & PAINTFLAG_TDOING) && !(myPaintFlag & PAINTFLAG_MSLEEP))
+	{
 		PAINTSTRUCT ps;
 		HDC hDc = BeginPaint(myWnd, &ps);
 		//fprintf(gFileOut, "hWnd:%d, message:WM_PAINT, wParam:%d, lParam:%d \n", (long)myWnd, (long)wParam, (long)lParam);
@@ -485,10 +524,9 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUIPaint(WPARAM wParam, LPARAM
 			EnumChildWindows(myWnd, MfxEnumRedrawWindow, 0);
 
 		EndPaint(myWnd, &ps);
-
-		myPaintFlag &= ~0x02; //结束
 	}
 
+	myPaintFlag &= ~PAINTFLAG_MDOING; //结束
 	return 0;
 }
 

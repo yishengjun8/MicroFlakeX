@@ -22,7 +22,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControlMessageServer::RegControl(MfxContr
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControlMessageServer::DelControl(MfxControl* canControl)
 {
     /**/
-    MFXCONTROL_LIST_ITERA delIter = myRegisterControlList.begin();
+    MFXCONTROL_LISTITERA delIter = myRegisterControlList.begin();
     while (delIter != myRegisterControlList.end())
     {
         if (*delIter == canControl)

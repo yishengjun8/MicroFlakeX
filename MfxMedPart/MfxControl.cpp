@@ -3,16 +3,16 @@
 
 void MicroFlakeX::MfxControl::MfxRegDef()
 {
-    MfxRegDefMessage(WM_PAINT, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnPaint);
-    MfxRegDefMessage(WM_MOUSEMOVE, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnMouseMove);
+    MfxRegDefMessage(WM_PAINT, (MFXCONTROL_FUNC)&MfxControl::MfxDefOnPaint);
+    MfxRegDefMessage(WM_MOUSEMOVE, (MFXCONTROL_FUNC)&MfxControl::MfxDefOnMouseMove);
 
-    MfxRegDefMessage(WM_LBUTTONDOWN, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnLButtonDown);
-    MfxRegDefMessage(WM_LBUTTONUP, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnLButtonUp);
-    MfxRegDefMessage(WM_LBUTTONDBLCLK, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnLDoubleClick);
+    MfxRegDefMessage(WM_LBUTTONDOWN, (MFXCONTROL_FUNC)&MfxControl::MfxDefOnLButtonDown);
+    MfxRegDefMessage(WM_LBUTTONUP, (MFXCONTROL_FUNC)&MfxControl::MfxDefOnLButtonUp);
+    MfxRegDefMessage(WM_LBUTTONDBLCLK, (MFXCONTROL_FUNC)&MfxControl::MfxDefOnLDoubleClick);
 
-    MfxRegDefMessage(WM_RBUTTONDOWN, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnRButtonDown);
-    MfxRegDefMessage(WM_RBUTTONUP, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnRButtonUp);
-    MfxRegDefMessage(WM_RBUTTONDBLCLK, (MFXCONTROL_MESSAGE_FUNC)&MfxControl::MfxDefOnRDoubleClick);
+    MfxRegDefMessage(WM_RBUTTONDOWN, (MFXCONTROL_FUNC)&MfxControl::MfxDefOnRButtonDown);
+    MfxRegDefMessage(WM_RBUTTONUP, (MFXCONTROL_FUNC)&MfxControl::MfxDefOnRButtonUp);
+    MfxRegDefMessage(WM_RBUTTONDBLCLK, (MFXCONTROL_FUNC)&MfxControl::MfxDefOnRDoubleClick);
 }
 
 void MicroFlakeX::MfxControl::MfxInitData(MfxUI* father, Gdiplus::Rect value)
@@ -53,10 +53,10 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::ThreadPaint()
     return RecMessage(WM_PAINT, 0, 0);
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::RegMessage(UINT message, MFXCONTROL_MESSAGE_FUNC valFunc)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::RegMessage(UINT message, MFXCONTROL_FUNC valFunc)
 {
     /**/
-    MFXCONTROL_MESSAGE_FUNC_MAP_PAIR retPair = myMessageMap.insert(MFXCONTROL_MESSAGE_FUNC_MAP_ELEM(message, valFunc));
+    MFXCONTROL_MESSAGE_MAPPAIR retPair = myMessageMap.insert(MFXCONTROL_MESSAGE_MAPELEM(message, valFunc));
     return retPair.second;
     /**/
     return 0;
@@ -65,7 +65,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::RegMessage(UINT message, MFXCONT
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::RecMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
     /**/
-    MFXCONTROL_MESSAGE_FUNC_MAP_ITERA handleIter = myMessageMap.find(message);
+    MFXCONTROL_MESSAGE_MAPITERA handleIter = myMessageMap.find(message);
     if (handleIter != myMessageMap.end())
     {
         return (this->*handleIter->second)(wParam, lParam);
@@ -78,7 +78,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::RecMessage(UINT message, WPARAM 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::DelMessage(UINT message)
 {
     /**/
-    MFXCONTROL_MESSAGE_FUNC_MAP_ITERA delIter = myMessageMap.find(message);
+    MFXCONTROL_MESSAGE_MAPITERA delIter = myMessageMap.find(message);
     if (delIter != myMessageMap.end())
     {
         myMessageMap.erase(delIter);
@@ -89,10 +89,10 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::DelMessage(UINT message)
     return 0;
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxRegDefMessage(UINT message, MFXCONTROL_MESSAGE_FUNC valFunc)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxRegDefMessage(UINT message, MFXCONTROL_FUNC valFunc)
 {
     /**/
-    MFXCONTROL_MESSAGE_FUNC_MAP_PAIR retPair = myMfxDefMessageMap.insert(MFXCONTROL_MESSAGE_FUNC_MAP_ELEM(message, valFunc));
+    MFXCONTROL_MESSAGE_MAPPAIR retPair = myMfxDefMessageMap.insert(MFXCONTROL_MESSAGE_MAPELEM(message, valFunc));
     return retPair.second;
     /**/
     return 0;
@@ -101,7 +101,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxRegDefMessage(UINT message, M
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxRecDefMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
     /**/
-    MFXCONTROL_MESSAGE_FUNC_MAP_ITERA handleIter = myMfxDefMessageMap.find(message);
+    MFXCONTROL_MESSAGE_MAPITERA handleIter = myMfxDefMessageMap.find(message);
     if (handleIter != myMfxDefMessageMap.end())
     {
         return (this->*handleIter->second)(wParam, lParam);
@@ -113,7 +113,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxRecDefMessage(UINT message, W
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDelDefMessage(UINT message)
 {
     /**/
-    MFXCONTROL_MESSAGE_FUNC_MAP_ITERA delIter = myMfxDefMessageMap.find(message);
+    MFXCONTROL_MESSAGE_MAPITERA delIter = myMfxDefMessageMap.find(message);
     if (delIter != myMfxDefMessageMap.end())
     {
         myMfxDefMessageMap.erase(delIter);
@@ -123,7 +123,6 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDelDefMessage(UINT message)
     /**/
     return 0;
 }
-
 
 MicroFlakeX::MfxUI* MicroFlakeX::MfxControl::GetMyUI()
 {
@@ -167,7 +166,6 @@ void MicroFlakeX::MfxControl::SetPoint(Gdiplus::Point set)
     myRect.Y = set.Y;
 }
 
-
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 /* ！！！！！！！！！！！！！！和中議旗鷹頁潮範�贄Α�！！！！！！！！！！！！！！！！！！！ */
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
@@ -183,7 +181,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnMouseMove(WPARAM wParam,
     Gdiplus::Point mousePos = Gdiplus::Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
     if (myRect.Contains(mousePos))
     {
-        PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_MOUSEFLOAT, wParam, lParam);
+        myUI->RecControlEvent(this, MFXCONTROLEVENT_MOUSEFLOAT, wParam, lParam);
         myFloat = true;
     }
     else
@@ -220,7 +218,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnLButtonUp(WPARAM wParam,
     {
         if (myLButtonClick == true)
         {
-            PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_LBUTTONCLICK, wParam, lParam);
+            myUI->RecControlEvent(this, MFXCONTROLEVENT_LBUTTONCLICK, wParam, lParam);
         }
         myLButtonClick = false;
         myLButtonPress = false;
@@ -237,7 +235,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnLButtonUp(WPARAM wParam,
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnLDoubleClick(WPARAM wParam, LPARAM lParam)
 {
-    return PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_LDOUBLECLICK, wParam, lParam);
+    return myUI->RecControlEvent(this, MFXCONTROLEVENT_LDOUBLECLICK, wParam, lParam);
 }
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRButtonDown(WPARAM wParam, LPARAM lParam)
@@ -265,7 +263,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRButtonUp(WPARAM wParam,
     {
         if (myRButtonClick == true)
         {
-            PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_RBUTTONCLICK, wParam, lParam);
+            myUI->RecControlEvent(this, MFXCONTROLEVENT_RBUTTONCLICK, wParam, lParam);
         }
         myRButtonClick = false;
         myRButtonPress = false;
@@ -282,5 +280,5 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRButtonUp(WPARAM wParam,
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRDoubleClick(WPARAM wParam, LPARAM lParam)
 {
-    return PostMessage(myUI->GetWnd(), MFXCONTROLEVENT_RDOUBLECLICK, wParam, lParam);
+    return myUI->RecControlEvent(this, MFXCONTROLEVENT_RDOUBLECLICK, wParam, lParam);
 }

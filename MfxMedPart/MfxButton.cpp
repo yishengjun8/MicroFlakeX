@@ -5,15 +5,15 @@ MicroFlakeX::MfxButton::MfxButton(MfxUI* father, Gdiplus::Rect value)
 	: MfxControl(father, value)
 {	
 	/**/
-	RegMessage(WM_PAINT, (MFXCONTROL_MESSAGE_FUNC)&MfxButton::OnPaint);
+	RegMessage(WM_PAINT, (MFXCONTROL_FUNC)&MfxButton::OnPaint);
 
-	RegMessage(WM_MOUSEMOVE, (MFXCONTROL_MESSAGE_FUNC)&MfxButton::OnMouseMove);
+	RegMessage(WM_MOUSEMOVE, (MFXCONTROL_FUNC)&MfxButton::OnMouseMove);
 
-	RegMessage(WM_LBUTTONDOWN, (MFXCONTROL_MESSAGE_FUNC)&MfxButton::OnLButtonDown);
-	RegMessage(WM_LBUTTONUP, (MFXCONTROL_MESSAGE_FUNC)&MfxButton::OnLButtonUp);
+	RegMessage(WM_LBUTTONDOWN, (MFXCONTROL_FUNC)&MfxButton::OnLButtonDown);
+	RegMessage(WM_LBUTTONUP, (MFXCONTROL_FUNC)&MfxButton::OnLButtonUp);
 
-	RegMessage(WM_RBUTTONDOWN, (MFXCONTROL_MESSAGE_FUNC)&MfxButton::OnRButtonDown);
-	RegMessage(WM_RBUTTONUP, (MFXCONTROL_MESSAGE_FUNC)&MfxButton::OnRButtonUp);
+	RegMessage(WM_RBUTTONDOWN, (MFXCONTROL_FUNC)&MfxButton::OnRButtonDown);
+	RegMessage(WM_RBUTTONUP, (MFXCONTROL_FUNC)&MfxButton::OnRButtonUp);
 	/**/
 
 	/**/
@@ -183,7 +183,6 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::GetRButtonPressImage()
 {
 	return myRButtonPressImage;
 }
-
 
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 /* ！！！！！！！！！！！！！！和中議旗鷹頁潮範�贄Α�！！！！！！！！！！！！！！！！！！！ */
