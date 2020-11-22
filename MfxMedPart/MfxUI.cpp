@@ -10,9 +10,12 @@ FILE* gFileOut;
 void MicroFlakeX::MfxUI::MfxUIRegDef()
 {
 	MfxRegDefMessage(MFXUIEVENT_DRAWBUFFERDC, (MFXUI_FUNC)&MfxUI::MfxDefOnDrawBufferDC);
-	MfxRegDefMessage(MFXUIEVENT_DRAWMAINDC, (MFXUI_FUNC)&MfxUI::MfxDefOnDrawMainDC);
+	MfxRegDefMessage(MFXUIEVENT_DRAWMAINDC, (MFXUI_FUNC)&MfxUI::MfxDefOnDrawMainDC);//MfxDefOnUITimer
 
 	MfxRegDefMessage(WM_PAINT, (MFXUI_FUNC)&MfxUI::MfxDefOnUIPaint);
+
+	MfxRegDefMessage(WM_TIMER, (MFXUI_FUNC)&MfxUI::MfxDefOnUITimer);
+
 	MfxRegDefMessage(WM_DESTROY, (MFXUI_FUNC)&MfxUI::MfxDefOnUIDestroy);
 
 	MfxRegDefMessage(WM_SYSCOMMAND, (MFXUI_FUNC)&MfxUI::MfxDefOnUISysCommand);
