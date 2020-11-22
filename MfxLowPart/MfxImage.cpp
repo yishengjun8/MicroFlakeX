@@ -292,6 +292,7 @@ Gdiplus::Size MicroFlakeX::MfxImage::OffsetImageSize(Gdiplus::Size set)
 Gdiplus::Status MicroFlakeX::MfxImage::SetGraphics(Gdiplus::Graphics* set)
 {
 	myGraphics = set;
+	delete myBitmapQuick;
 	myBitmapQuick = new Gdiplus::CachedBitmap(myBitmap, myGraphics);
 
 	return Gdiplus::Status();
