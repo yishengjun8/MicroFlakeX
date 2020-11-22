@@ -4,7 +4,7 @@
 * `MFX`的目标是让桌面开发远离复杂的框架，专注于开发和逻辑本身
 
 ## 未来的控件计划：
-  MfxButton.h、MfxMenu.h、MfxForm、MfxEdit.h、MfxRadioButton、MfxCheckButton.h
+  MfxButton.h、MfxPage.h、MfxMenu.h、MfxForm、MfxEdit.h、MfxRadioButton、MfxCheckButton.h
   说实话，我想专注于开发框架，虽然控件也是框架的一部分吧。希望各位能加入控件开发，为mfx提交贡献！
 
 ## 注意事项：
