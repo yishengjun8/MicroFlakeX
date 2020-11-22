@@ -5,7 +5,7 @@ MicroFlakeX::MfxButton::MfxButton(MfxUI* father, Gdiplus::Rect value)
 	: MfxControl(father, value)
 {	
 	/**/
-	RegMessage(WM_PAINT, (MFXCONTROL_FUNC)&MfxButton::OnPaint);
+	RegMessage(MFXUIEVENT_DRAWBUFFERDC, (MFXCONTROL_FUNC)&MfxButton::OnDrawBufferDC);
 
 	RegMessage(WM_MOUSEMOVE, (MFXCONTROL_FUNC)&MfxButton::OnMouseMove);
 
@@ -21,7 +21,8 @@ MicroFlakeX::MfxButton::MfxButton(MfxUI* father, Gdiplus::Rect value)
 	myMidWordsFlag = false;
 	myMaskImageFlag = false;
 
-	myFloatImageFlag = false;
+	myFloatUnderImageFlag = false;
+	myFloatCoverImageFlag = false;
 
 	myLButtonPressImageFlag = false;
 	myRButtonPressImageFlag = false;
@@ -30,7 +31,8 @@ MicroFlakeX::MfxButton::MfxButton(MfxUI* father, Gdiplus::Rect value)
 	myMidWords = nullptr;
 	myMaskImage = nullptr;
 
-	myFloatImage = nullptr;
+	myFloatUnderImage = nullptr;
+	myFloatCoverImage = nullptr;
 
 	myLButtonPressImage = nullptr;
 	myRButtonPressImage = nullptr;
@@ -44,8 +46,8 @@ MicroFlakeX::MfxButton::MfxButton(MfxUI* father, Gdiplus::Rect value)
 	myMidWords->SetFormat(MFXWORDS_FORMATX_CENTER);
 	myMidWords->SetRect(myRect);
 
-	myFloatImage = new MfxImage(myGraphics, Gdiplus::Color(60, 100, 255, 100));
-	myFloatImage->SetImageRect(myRect);
+	myFloatCoverImage = new MfxImage(myGraphics, Gdiplus::Color(60, 100, 255, 100));
+	myFloatCoverImage->SetImageRect(myRect);
 
 	myLButtonPressImage = new MfxImage(myGraphics, Gdiplus::Color(60, 255, 100, 100));
 	myLButtonPressImage->SetImageRect(myRect);
@@ -64,8 +66,10 @@ MicroFlakeX::MfxButton::~MfxButton()
 	if (!myMaskImageFlag)
 		delete myMaskImage;
 
-	if (!myFloatImageFlag)
-		delete myFloatImage;
+	if (!myFloatUnderImageFlag)
+		delete myFloatUnderImage;
+	if (!myFloatCoverImageFlag)
+		delete myFloatCoverImage;
 
 	if (!myLButtonPressImageFlag)
 		delete myLButtonPressImage;
@@ -76,28 +80,54 @@ MicroFlakeX::MfxButton::~MfxButton()
 
 void MicroFlakeX::MfxButton::SetRect(Gdiplus::Rect set)
 {
-	if (myBackImage)
-		myBackImage->SetImageRect(set);
-	if (myMidWords)
-		myMidWords->SetRect(set);
-	if (myMaskImage)
-		myMaskImage->SetImageRect(set);
-
-	if (myFloatImage)
-		myFloatImage->SetImageRect(set);
-
-	if (myLButtonPressImage)
-		myLButtonPressImage->SetImageRect(set);
-	if (myRButtonPressImage)
-		myRButtonPressImage-> SetImageRect(set);
+	SetSize(Gdiplus::Size(set.Width, set.Height));
+	SetPoint(Gdiplus::Point(set.X, set.Y));
 }
 
 void MicroFlakeX::MfxButton::SetSize(Gdiplus::Size set)
 {
+	myRect.Width = set.Width;
+	myRect.Height = set.Height;
+
+	if (myBackImage)
+		myBackImage->SetImageSize(set);
+	if (myMidWords)
+		myMidWords->SetSize(set);
+	if (myMaskImage)
+		myMaskImage->SetImageSize(set);
+
+	if (myFloatUnderImage)
+		myFloatUnderImage->SetImageSize(set);
+	if (myFloatCoverImage)
+		myFloatCoverImage->SetImageSize(set);
+
+	if (myLButtonPressImage)
+		myLButtonPressImage->SetImageSize(set);
+	if (myRButtonPressImage)
+		myRButtonPressImage->SetImageSize(set);
 }
 
 void MicroFlakeX::MfxButton::SetPoint(Gdiplus::Point set)
 {
+	myRect.X = set.X;
+	myRect.Y = set.Y;
+
+	if (myBackImage)
+		myBackImage->SetImagePoint(set);
+	if (myMidWords)
+		myMidWords->SetPoint(set);
+	if (myMaskImage)
+		myMaskImage->SetImagePoint(set);
+
+	if (myFloatUnderImage)
+		myFloatUnderImage->SetImagePoint(set);
+	if (myFloatCoverImage)
+		myFloatCoverImage->SetImagePoint(set);
+
+	if (myLButtonPressImage)
+		myLButtonPressImage->SetImagePoint(set);
+	if (myRButtonPressImage)
+		myRButtonPressImage->SetImagePoint(set);
 }
 
 MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetBackImage(MfxImage* set)
@@ -142,18 +172,32 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::GetMaskImage()
 	return myMaskImage;
 }
 
-MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetFloatImage(MfxImage* set)
+MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetFloatUnderImage(MfxImage* set)
 {
-	MfxImage* retImage = myFloatImage;
-	myFloatImageFlag = true;
-	myFloatImage = set;
-	myFloatImage->SetImageRect(myRect);
+	MfxImage* retImage = myFloatUnderImage;
+	myFloatUnderImageFlag = true;
+	myFloatUnderImage = set;
+	myFloatUnderImage->SetImageRect(myRect);
 	return retImage;
 }
 
-MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::GetFloatImage()
+MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::GetFloatUnderImage()
 {
-	return myFloatImage;
+	return myFloatUnderImage;
+}
+
+MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetFloatCoverImage(MfxImage* set)
+{
+	MfxImage* retImage = myFloatCoverImage;
+	myFloatCoverImageFlag = true;
+	myFloatCoverImage = set;
+	myFloatCoverImage->SetImageRect(myRect);
+	return retImage;
+}
+
+MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::GetFloatCoverImage()
+{
+	return myFloatCoverImage;
 }
 
 MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetLButtonPressImage(MfxImage* set)
@@ -189,8 +233,11 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::GetRButtonPressImage()
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnPaint(WPARAM wParam, LPARAM lParam)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnDrawBufferDC(WPARAM wParam, LPARAM lParam)
 {
+	if (myMouseFloat && myFloatUnderImage)
+		myFloatUnderImage->Draw();
+
 	if (myBackImage)
 		myBackImage->Draw();
 	if (myMidWords)
@@ -198,8 +245,8 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnPaint(WPARAM wParam, LPARAM lPa
 	if (myMaskImage)
 		myMaskImage->Draw();
 
-	if (myFloat && myFloatImage)
-		myFloatImage->Draw();
+	if (myMouseFloat && myFloatCoverImage)
+		myFloatCoverImage->Draw();
 
 	if (myLButtonPress && myLButtonPressImage)
 		myLButtonPressImage->Draw();
@@ -212,7 +259,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnPaint(WPARAM wParam, LPARAM lPa
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnMouseMove(WPARAM wParam, LPARAM lParam)
 {
 	
-	MfxRecDefMessage(WM_MOUSEMOVE, wParam, lParam);
+	MfxRecvDefMessage(WM_MOUSEMOVE, wParam, lParam);
 	if (myRButtonPress)
 	{
 		Gdiplus::Point nowPos = Gdiplus::Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -225,25 +272,25 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnMouseMove(WPARAM wParam, LPARAM
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnLButtonDown(WPARAM wParam, LPARAM lParam)
 {
-	MfxRecDefMessage(WM_LBUTTONDOWN, wParam, lParam);
+	MfxRecvDefMessage(WM_LBUTTONDOWN, wParam, lParam);
 	return PostMessage(myUI->GetWnd(), WM_PAINT, 0, 0);
 }
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnLButtonUp(WPARAM wParam, LPARAM lParam)
 {
-	MfxRecDefMessage(WM_LBUTTONUP, wParam, lParam);
+	MfxRecvDefMessage(WM_LBUTTONUP, wParam, lParam);
 	return PostMessage(myUI->GetWnd(), WM_PAINT, 0, 0);
 }
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnRButtonDown(WPARAM wParam, LPARAM lParam)
 {
-	MfxRecDefMessage(WM_RBUTTONDOWN, wParam, lParam);
+	MfxRecvDefMessage(WM_RBUTTONDOWN, wParam, lParam);
 	myMoveBegin = Gdiplus::Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 	return PostMessage(myUI->GetWnd(), WM_PAINT, 0, 0);
 }
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnRButtonUp(WPARAM wParam, LPARAM lParam)
 {
-	MfxRecDefMessage(WM_RBUTTONUP, wParam, lParam);
+	MfxRecvDefMessage(WM_RBUTTONUP, wParam, lParam);
 	return PostMessage(myUI->GetWnd(), WM_PAINT, 0, 0);
 }

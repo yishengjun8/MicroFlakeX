@@ -3,7 +3,9 @@
 
 void MicroFlakeX::MfxControl::MfxRegDef()
 {
-    MfxRegDefMessage(WM_PAINT, (MFXCONTROL_FUNC)&MfxControl::MfxDefOnPaint);
+    //MfxRegDefMessage(MFXUIEVENT_DRAWBUFFERDC, (MFXCONTROL_FUNC)&MfxControl::MfxDefOnDrawBufferDC);
+    //MfxRegDefMessage(MFXUIEVENT_DRAWMAINDC, (MFXCONTROL_FUNC)&MfxControl::MfxDefOnDrawMainDC);
+
     MfxRegDefMessage(WM_MOUSEMOVE, (MFXCONTROL_FUNC)&MfxControl::MfxDefOnMouseMove);
 
     MfxRegDefMessage(WM_LBUTTONDOWN, (MFXCONTROL_FUNC)&MfxControl::MfxDefOnLButtonDown);
@@ -26,7 +28,7 @@ void MicroFlakeX::MfxControl::MfxInitData(MfxUI* father, Gdiplus::Rect value)
     myRButtonClick = false; //泣似
     myRButtonPress = false; //梓儿
 
-    myFloat = false; //傅検
+    myMouseFloat = false; //傅検
 
     myUI->RegControl(this); //廣過欺UI
     myUI->GetMessageServer()->RegControl(this); //廣過欺捲暦匂
@@ -48,11 +50,6 @@ MicroFlakeX::MfxControl::~MfxControl()
     myUI->GetMessageServer()->DelControl(this); //盾茅捲暦匂廣過
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::ThreadPaint()
-{
-    return RecMessage(WM_PAINT, 0, 0);
-}
-
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::RegMessage(UINT message, MFXCONTROL_FUNC valFunc)
 {
     /**/
@@ -62,7 +59,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::RegMessage(UINT message, MFXCONT
     return 0;
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::RecMessage(UINT message, WPARAM wParam, LPARAM lParam)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::RecvMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
     /**/
     MFXCONTROL_MESSAGE_MAPITERA handleIter = myMessageMap.find(message);
@@ -70,7 +67,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::RecMessage(UINT message, WPARAM 
     {
         return (this->*handleIter->second)(wParam, lParam);
     }
-    return MfxRecDefMessage(message, wParam, lParam);
+    return MfxRecvDefMessage(message, wParam, lParam);
     /**/
     return 0;
 }
@@ -98,7 +95,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxRegDefMessage(UINT message, M
     return 0;
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxRecDefMessage(UINT message, WPARAM wParam, LPARAM lParam)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxRecvDefMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
     /**/
     MFXCONTROL_MESSAGE_MAPITERA handleIter = myMfxDefMessageMap.find(message);
@@ -171,9 +168,14 @@ void MicroFlakeX::MfxControl::SetPoint(Gdiplus::Point set)
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnPaint(WPARAM wParam, LPARAM lParam)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnDrawBufferDC(WPARAM wParam, LPARAM lParam)
 {
-    return MFXRETURE();
+    return 0;
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnDrawMainDC(WPARAM wParam, LPARAM lParam)
+{
+    return 0;
 }
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnMouseMove(WPARAM wParam, LPARAM lParam)
@@ -181,14 +183,14 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnMouseMove(WPARAM wParam,
     Gdiplus::Point mousePos = Gdiplus::Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
     if (myRect.Contains(mousePos))
     {
-        myUI->RecControlEvent(this, MFXCONTROLEVENT_MOUSEFLOAT, wParam, lParam);
-        myFloat = true;
+        myUI->RecvControlEvent(this, MFXCONTROLEVENT_MOUSEFLOAT, wParam, lParam);
+        myMouseFloat = true;
     }
     else
     {
         myLButtonClick = false;
         myRButtonClick = false;
-        myFloat = false;
+        myMouseFloat = false;
     }
     return 0;
 }
@@ -200,13 +202,13 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnLButtonDown(WPARAM wPara
     {
         myLButtonClick = true;
         myLButtonPress = true;
-        myFloat = true;
+        myMouseFloat = true;
     }
     else
     {
         myLButtonClick = false;
         myLButtonPress = false;
-        myFloat = false;
+        myMouseFloat = false;
     }
     return 0;
 }
@@ -218,24 +220,25 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnLButtonUp(WPARAM wParam,
     {
         if (myLButtonClick == true)
         {
-            myUI->RecControlEvent(this, MFXCONTROLEVENT_LBUTTONCLICK, wParam, lParam);
+            myUI->SetUserFocus(this);
+            myUI->RecvControlEvent(this, MFXCONTROLEVENT_LBUTTONCLICK, wParam, lParam);
         }
         myLButtonClick = false;
         myLButtonPress = false;
-        myFloat = true;
+        myMouseFloat = true;
     }
     else
     {
         myLButtonClick = false;
         myLButtonPress = false;
-        myFloat = false;
+        myMouseFloat = false;
     }
     return 0;
 }
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnLDoubleClick(WPARAM wParam, LPARAM lParam)
 {
-    return myUI->RecControlEvent(this, MFXCONTROLEVENT_LDOUBLECLICK, wParam, lParam);
+    return myUI->RecvControlEvent(this, MFXCONTROLEVENT_LDOUBLECLICK, wParam, lParam);
 }
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRButtonDown(WPARAM wParam, LPARAM lParam)
@@ -245,13 +248,13 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRButtonDown(WPARAM wPara
     {
         myRButtonClick = true;
         myRButtonPress = true;
-        myFloat = true;
+        myMouseFloat = true;
     }
     else
     {
         myRButtonClick = false;
         myRButtonPress = false;
-        myFloat = false;
+        myMouseFloat = false;
     }
     return 0;
 }
@@ -263,22 +266,22 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRButtonUp(WPARAM wParam,
     {
         if (myRButtonClick == true)
         {
-            myUI->RecControlEvent(this, MFXCONTROLEVENT_RBUTTONCLICK, wParam, lParam);
+            myUI->RecvControlEvent(this, MFXCONTROLEVENT_RBUTTONCLICK, wParam, lParam);
         }
         myRButtonClick = false;
         myRButtonPress = false;
-        myFloat = true;
+        myMouseFloat = true;
     }
     else
     {
         myRButtonClick = false;
         myRButtonPress = false;
-        myFloat = false;
+        myMouseFloat = false;
     }
     return 0;
 }
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxControl::MfxDefOnRDoubleClick(WPARAM wParam, LPARAM lParam)
 {
-    return myUI->RecControlEvent(this, MFXCONTROLEVENT_RDOUBLECLICK, wParam, lParam);
+    return myUI->RecvControlEvent(this, MFXCONTROLEVENT_RDOUBLECLICK, wParam, lParam);
 }

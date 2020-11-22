@@ -20,7 +20,7 @@ LRESULT CALLBACK MicroFlakeX::MfxWndProc(HWND hWnd, UINT message, WPARAM wParam,
 {
     //return DefWindowProc(hWnd, message, wParam, lParam);
     //fprintf(gFileOut, "hWnd:%d, message:%d, wParam:%d, lParam:%d \n", (long)hWnd, (long)message, (long)wParam, (long)lParam);
-    return GlobleApp->ForwardMessageInWnd(hWnd, message, wParam, lParam);
+    return GlobleApp->ForwardMessageByWnd(hWnd, message, wParam, lParam);
 }
 
 bool MicroFlakeX::MfxGlobleApplication(MfxApplication* gApp)
@@ -43,7 +43,7 @@ BOOL CALLBACK MicroFlakeX::MfxEnumRedrawWindow(HWND hWnd, LPARAM lParam)
 
 BOOL CALLBACK MicroFlakeX::MfxEnumFatherSize(HWND hWnd, LPARAM lParam)
 {
-    return PostMessage(hWnd, MFXUIEVENT_SIZE, 0, lParam);
+    return PostMessage(hWnd, MFXUIEVENT_FATHERSIZE, 0, lParam);
 }
 
 MicroFlakeX::MfxApplication* MicroFlakeX::MfxFunc_GetApp()

@@ -42,7 +42,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxControlMessageServer::ForwardMessageToCon
     /**/
     for (int i = 0; i < myRegisterControlList.size(); i++)
     {
-        (myRegisterControlList[i])->RecMessage(message, wParam, lParam);
+        (myRegisterControlList[i])->RecvMessage(message, wParam, lParam);
     }
     return MFXRETURE_OK;
     /**/

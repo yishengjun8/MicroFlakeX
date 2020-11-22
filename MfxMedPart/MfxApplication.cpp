@@ -40,7 +40,7 @@ MicroFlakeX::MfxApplication::MfxApplication()
 	//appWndClass.insert(WNDCLASSEXW_MAP_ELEM(L"MfxNormal", L"MfxNormal"));
 	/**/
 
-	myUICreatNow = nullptr;
+	myBindingUI = nullptr;
 }
 
 MicroFlakeX::MfxApplication::~MfxApplication()
@@ -73,19 +73,17 @@ HINSTANCE MicroFlakeX::MfxApplication::GetInstance()
 	return appInstance;
 }
 
-void MicroFlakeX::MfxApplication::SetCreatUI(MfxUI* add)
+void MicroFlakeX::MfxApplication::LoadBindingUI(MfxUI* bind)
 {
-	//if (!myUICreatNow)
-		//throw L"Only one UI can be created at the same time";
-	myUICreatNow = add;
+	myBindingUI = bind;
 }
 
-void MicroFlakeX::MfxApplication::GetCreatUI(HWND uiWnd)
+void MicroFlakeX::MfxApplication::BindUIWithWnd(HWND uiWnd)
 {
-	if (myUICreatNow)
+	if (myBindingUI)
 	{
-		myUICreatNow->SetWnd(uiWnd);
-		myUICreatNow = nullptr;
+		myBindingUI->SetWnd(uiWnd);
+		myBindingUI = nullptr;
 	}
 }
 
@@ -125,14 +123,14 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::DelUI(MfxUI* regUI)
 	return 0;
 }
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::ForwardMessageInWnd(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::ForwardMessageByWnd(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	//return DefWindowProc(hWnd, message, wParam, lParam);
 	/**/
 	MFXCONTROL_SERVER_MAP_ITERA handleIter = myServerMap.find(hWnd);
 	if (handleIter == myServerMap.end())
 	{
-		this->GetCreatUI(hWnd);/* 注册当前 */
+		this->BindUIWithWnd(hWnd);/* 注册当前 */
 		//fprintf(gFileOut, "hWnd:%d, message:%d, wParam:%d, lParam:%d \n", (long)hWnd, (long)message, (long)wParam, (long)lParam);
 		handleIter = myServerMap.find(hWnd);/* 注册完毕后重新寻址 */
 		if (handleIter != myServerMap.end())
@@ -140,7 +138,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::ForwardMessageInWnd(HWND hWn
 			/* 优先给控件发消息 */
 			(handleIter->second)->ForwardMessageToControl(message, wParam, lParam);
 			/* 然后是UI接收消息 */
-			return (handleIter->second)->GetMyUI()->RecUIMessage(message, wParam, lParam);
+			return (handleIter->second)->GetMyUI()->RecvUIMessage(message, wParam, lParam);
 		}
 	}
 	else
@@ -148,7 +146,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::ForwardMessageInWnd(HWND hWn
 		/* 优先给控件发消息 */
 		(handleIter->second)->ForwardMessageToControl(message, wParam, lParam);
 		/* 然后是UI接收消息 */
-		return (handleIter->second)->GetMyUI()->RecUIMessage(message, wParam, lParam);
+		return (handleIter->second)->GetMyUI()->RecvUIMessage(message, wParam, lParam);
 	}
 	/**/
 	return DefWindowProc(hWnd, message, wParam, lParam);
