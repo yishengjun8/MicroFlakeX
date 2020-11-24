@@ -106,16 +106,19 @@ namespace MicroFlakeX
 	class MfxImage/* 图片类-可存储单张图片，可以配合图集使用，成为图集的子集 */
 	{
 	protected:
-		//void MfxImageInitData();
+		void MfxImageInitData(Gdiplus::Graphics* gra, Gdiplus::Rect rect);
 	public:
-		MfxImage(Gdiplus::Graphics* set, 
-			Gdiplus::Rect value = Gdiplus::Rect(0, 0, 80, 80));
+		MfxImage(Gdiplus::Graphics* gra);
+		MfxImage(Gdiplus::Graphics* gra, WCHAR* path);
+		MfxImage(Gdiplus::Graphics* gra, Gdiplus::Color color);
+		
+		MfxImage(Gdiplus::Graphics* gra, WCHAR* path, Gdiplus::Rect rect);
+		MfxImage(Gdiplus::Graphics* gra, WCHAR* path, Gdiplus::Size size);
+		MfxImage(Gdiplus::Graphics* gra, WCHAR* path, Gdiplus::Point point);
 
-		MfxImage(Gdiplus::Graphics* set, WCHAR* value);
-
-		MfxImage(Gdiplus::Graphics* set, 
-			Gdiplus::Color valC = Gdiplus::Color::DarkBlue,
-			Gdiplus::Rect valR = Gdiplus::Rect(0, 0, 80, 80));
+		MfxImage(Gdiplus::Graphics* gra, Gdiplus::Color color, Gdiplus::Rect rect);
+		MfxImage(Gdiplus::Graphics* gra, Gdiplus::Color color, Gdiplus::Size size);
+		MfxImage(Gdiplus::Graphics* gra, Gdiplus::Color color, Gdiplus::Point point);
 
 		~MfxImage();
 		MfxImage* Clone();
@@ -136,43 +139,45 @@ namespace MicroFlakeX
 		MFXIMAGE_QUALITY myQuality;
 	public:
 		/* 从文件加载图片-图片大小会重置为这张图片大小 */
-		Gdiplus::Status LoadFromFile(WCHAR* set);
+		Gdiplus::Status LoadFromFile(WCHAR* path);
 		/* 从Bitmap加载图片-图片大小会重置为这张图片的大小 */
 		Gdiplus::Status LoadFromBitmap(Gdiplus::Bitmap* set);
 		/* 加载纯色图片-不重置图片大小 */
 		Gdiplus::Status LoadPureColor(Gdiplus::Color set = Gdiplus::Color(0, 0, 0, 0));
 
 		/* 修改图片缩放质量-返回修改前的质量 */
-		MFXIMAGE_QUALITY SetImageQuality(MFXIMAGE_QUALITY set = MFXIMAGE_QUALITY_NORMAL);
-		MFXIMAGE_QUALITY GetImageQuality();
+		MFXIMAGE_QUALITY SetQuality(MFXIMAGE_QUALITY set = MFXIMAGE_QUALITY_NORMAL);
+		MFXIMAGE_QUALITY GetQuality();
 
 		/* 修改图片大小-返回修改前的图片大小 */
-		Gdiplus::Size SetImageSize(Gdiplus::Size set);
-		Gdiplus::Size GetImageSize();
+		Gdiplus::Size SetSize(Gdiplus::Size set);
+		Gdiplus::Size GetSize();
 
 		/* 修改图片位置-返回修改前位置 */
-		Gdiplus::Point SetImagePoint(Gdiplus::Point set);
-		Gdiplus::Point GetImagePoint();
+		Gdiplus::Point SetPoint(Gdiplus::Point set);
+		Gdiplus::Point GetPoint();
 
 		/* 修改图片Rect，返回图片修改前的Rect */
-		Gdiplus::Rect SetImageRect(Gdiplus::Rect set);
-		Gdiplus::Rect GetImageRect();
+		Gdiplus::Rect SetRect(Gdiplus::Rect set);
+		Gdiplus::Rect GetRect();
 
 		/* 判断一个点是否在图片内，是则返回true，否则返回false */
 		BOOL Contains(Gdiplus::Point set);
 
 		/* 偏移图片坐标-返回偏移后的坐标 */
-		Gdiplus::Point OffsetImagePoint(Gdiplus::Point set);
+		Gdiplus::Point OffsetPoint(Gdiplus::Point set);
 		/* 偏移图片大小-返回偏移后的大小(iSize+mySize) */
-		Gdiplus::Size OffsetImageSize(Gdiplus::Size set);
+		Gdiplus::Size OffsetSize(Gdiplus::Size set);
 	};
 
 	class MfxImageList/* 图集类-可存储多张MfxImage，并对它们进行统一操作 */
 	{
 	public:
 		/* 选择本图集的绘画类 - 删除图集类的时候，会自动调用ClearImage()做收尾工作 */
-		MfxImageList(Gdiplus::Graphics* set);
+		MfxImageList(Gdiplus::Graphics* gra);
 		~MfxImageList();
+		/* 重新设置Graphics */
+		Gdiplus::Status SetGraphics(Gdiplus::Graphics* gra);
 	protected:
 		Gdiplus::Graphics* myGraphics;
 
@@ -182,12 +187,12 @@ namespace MicroFlakeX
 		MFXIMAGE_QUALITY myQuality;/* 图片缩放质量-默认为“MFXIMAGE_QUALITY_NORMAL” */
 
 	public:
-		/* 通过图片类-添加一张照片，第一张的序号为1，以此类推 */
+		/* 通过图片类 - 添加一张照片，第一张的序号为1，以此类推 */
 		BOOL ListAddImage(MfxImage* set);
 
-		/* 清空图集-但是不删除图集内容 */
+		/* 清空图集 - 但是不删除图集内容 */
 		BOOL ListClearImage();
-		/* 清空图集-并且删除图集内容 */
+		/* 清空图集 - 并且删除图集内容 */
 		BOOL ListDeleteImage();
 
 		/* 设定当前图集中被选中的图片 - 返回上一张图片 */
@@ -201,27 +206,29 @@ namespace MicroFlakeX
 		int ListNextImage();
 
 		/* 修改图集缩放质量-返回修改前的质量 */
-		MFXIMAGE_QUALITY SetImageQuality(MFXIMAGE_QUALITY set = MFXIMAGE_QUALITY_NORMAL);
-		MFXIMAGE_QUALITY GetImageQuality();
+		MFXIMAGE_QUALITY SetQuality(MFXIMAGE_QUALITY set = MFXIMAGE_QUALITY_NORMAL);
+		MFXIMAGE_QUALITY GetQuality();
 
 		/* 修改图集大小-返回修改前的图集大小 */
-		Gdiplus::Size SetImageSize(Gdiplus::Size set);
-		Gdiplus::Size GetImageSize();
+		Gdiplus::Size SetSize(Gdiplus::Size set);
+		Gdiplus::Size GetSize();
 
 		/* 修改图集位置-返回修改前位置 */
-		Gdiplus::Point SetImagePoint(Gdiplus::Point set);
-		Gdiplus::Point GetImagePoint();
+		Gdiplus::Point SetPoint(Gdiplus::Point set);
+		Gdiplus::Point GetPoint();
 
+		/* 修改图片Rect，返回图片修改前的Rect */
+		Gdiplus::Rect SetRect(Gdiplus::Rect set);
 		/* 获取当前图集的Rect */
-		Gdiplus::Rect GetImageRect();
+		Gdiplus::Rect GetRect();
 
 		/* 判断一个点是否在图集范围内，是则返回true，否则返回false */
 		BOOL Contains(Gdiplus::Point set);
 
 		/* 偏移图集坐标-返回偏移后的坐标 */
-		Gdiplus::Point OffsetImagePoint(Gdiplus::Point set);
+		Gdiplus::Point OffsetPoint(Gdiplus::Point set);
 		/* 偏移图集大小-返回偏移后的大小(iSize+mySize) */
-		Gdiplus::Size OffsetImageSize(Gdiplus::Size set);
+		Gdiplus::Size OffsetSize(Gdiplus::Size set);
 
 		/* 高速绘制图集中被选中的图片 */
 		Gdiplus::Status Draw();
@@ -233,9 +240,19 @@ namespace MicroFlakeX
 
 	class MfxWords/* 文字类 - 在一个方框内显示文字 */
 	{
+	protected:
+		void MfxWordsInitData(Gdiplus::Graphics* gra, Gdiplus::Rect rect);
 	public:
-		MfxWords(Gdiplus::Graphics* myGraphics);
+		MfxWords(Gdiplus::Graphics* gra);
+
+		MfxWords(Gdiplus::Graphics* gra, std::wstring words);
+		MfxWords(Gdiplus::Graphics* gra, std::wstring words, Gdiplus::Rect rect);
+		MfxWords(Gdiplus::Graphics* gra, std::wstring words, Gdiplus::Size size);
+		MfxWords(Gdiplus::Graphics* gra, std::wstring words, Gdiplus::Point point);
+
 		~MfxWords();
+
+		/* 重新设置Graphics */
 		Gdiplus::Status SetGraphics(Gdiplus::Graphics* set);
 
 	protected:

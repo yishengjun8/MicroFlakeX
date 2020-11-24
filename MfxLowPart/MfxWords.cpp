@@ -5,17 +5,17 @@ std::wstring MicroFlakeX::MfxWords::Global_FontName = L"Consolas";
 int MicroFlakeX::MfxWords::Global_FontSize = 14;
 int MicroFlakeX::MfxWords::Global_LineSize = 6;
 
-MicroFlakeX::MfxWords::MfxWords(Gdiplus::Graphics* myGraphics)
+void MicroFlakeX::MfxWords::MfxWordsInitData(Gdiplus::Graphics* gra, Gdiplus::Rect rect)
 {
+	myGraphics = gra;
+
 	myWords = L"<Sample Words>\n<__Ê¾ÀýÎÄ×Ö__>\n<Sample Words>";
 	myFontName = Global_FontName;
 	myFontSize = Global_FontSize;
-	myRect = Gdiplus::Rect(0, 0, 160, 90);
+	myRect = rect;
 	myFontOffset = Gdiplus::Point(Global_LineSize / 4, Global_LineSize / 2);
 	myFormatXY = MFXWORDS_FORMATX_NEAR | MFXWORDS_FORMATY_NEAR;
 	myLineSize = Global_LineSize;
-
-	this->myGraphics = myGraphics;
 
 	wordsFont = new Gdiplus::Font(myFontName.c_str(), myFontSize);
 	wordsFormat.SetAlignment(Gdiplus::StringAlignmentNear);
@@ -27,6 +27,35 @@ MicroFlakeX::MfxWords::MfxWords(Gdiplus::Graphics* myGraphics)
 	worldsBrush = new Gdiplus::SolidBrush(wordsColor);//ÎÄ×Ö»­Ë¢
 	linePen = new Gdiplus::Pen(lineColor, myLineSize);//±ß¿ò»­±Ê
 	backBrush = new Gdiplus::SolidBrush(backColor);//±³¾°»­Ë¢
+}
+
+MicroFlakeX::MfxWords::MfxWords(Gdiplus::Graphics* gra)
+{
+	MfxWordsInitData(gra, Gdiplus::Rect(0, 0, 160, 90));
+}
+
+MicroFlakeX::MfxWords::MfxWords(Gdiplus::Graphics* gra, std::wstring words)
+{
+	MfxWordsInitData(gra, Gdiplus::Rect(0, 0, 160, 90));
+	myWords = words;
+}
+
+MicroFlakeX::MfxWords::MfxWords(Gdiplus::Graphics* gra, std::wstring words, Gdiplus::Rect rect)
+{
+	MfxWordsInitData(gra, rect);
+	myWords = words;
+}
+
+MicroFlakeX::MfxWords::MfxWords(Gdiplus::Graphics* gra, std::wstring words, Gdiplus::Size size)
+{
+	MfxWordsInitData(gra, Gdiplus::Rect(0, 0, size.Width, size.Height));
+	myWords = words;
+}
+
+MicroFlakeX::MfxWords::MfxWords(Gdiplus::Graphics* gra, std::wstring words, Gdiplus::Point point)
+{
+	MfxWordsInitData(gra, Gdiplus::Rect(point.X, point.Y, 160, 90));
+	myWords = words;
 }
 
 MicroFlakeX::MfxWords::~MfxWords()

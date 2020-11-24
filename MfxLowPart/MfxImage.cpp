@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "MfxLowPart.h"
 
+/*
 MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* set, Gdiplus::Rect value)
 {
 	myGraphics = set;
@@ -19,7 +20,6 @@ MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* set, WCHAR* value)
 {
 	myGraphics = set;
 
-	//myRect = Gdiplus::Rect(0, 0, 120, 120);
 	myMainBitmap = nullptr;
 	myBitmap = nullptr;
 	myBitmapQuick = nullptr;
@@ -43,6 +43,98 @@ MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* set, Gdiplus::Color valC, Gdi
 	LoadPureColor(valC);
 }
 
+MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* set, Gdiplus::Color valC, Gdiplus::Size valR)
+{
+	myGraphics = set;
+
+	myRect = Gdiplus::Rect(0, 0, valR.Width, valR.Height);
+	myMainBitmap = nullptr;
+	myBitmap = nullptr;
+	myBitmapQuick = nullptr;
+
+	myQuality = MFXIMAGE_QUALITY_NORMAL;
+
+	LoadPureColor(valC);
+}
+/**/
+
+void MicroFlakeX::MfxImage::MfxImageInitData(Gdiplus::Graphics* gra, Gdiplus::Rect rect)
+{
+	myGraphics = gra;
+	myRect = rect;
+
+	myMainBitmap = nullptr;
+	myBitmap = nullptr;
+	myBitmapQuick = nullptr;
+
+	myQuality = MFXIMAGE_QUALITY_NORMAL;
+}
+
+MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* gra)
+{
+	MfxImageInitData(gra, Gdiplus::Rect(0, 0, 160, 160));
+
+	LoadPureColor();
+}
+
+MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* gra, WCHAR* path)
+{
+	MfxImageInitData(gra, Gdiplus::Rect(0, 0, 160, 160));
+
+	LoadFromFile(path);
+}
+
+MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* gra, Gdiplus::Color color)
+{
+	MfxImageInitData(gra, Gdiplus::Rect(0, 0, 160, 160));
+
+	LoadPureColor(color);
+}
+
+MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* gra, WCHAR* path, Gdiplus::Rect rect)
+{
+	MfxImageInitData(gra, Gdiplus::Rect(0, 0, 160, 160));
+
+	LoadFromFile(path);
+	this->SetRect(rect);
+}
+
+MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* gra, WCHAR* path, Gdiplus::Size size)
+{
+	MfxImageInitData(gra, Gdiplus::Rect(0, 0, 160, 160));
+
+	LoadFromFile(path);
+	this->SetSize(size);
+}
+
+MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* gra, WCHAR* path, Gdiplus::Point point)
+{
+	MfxImageInitData(gra, Gdiplus::Rect(point.X, point.Y, 160, 160));
+
+	LoadFromFile(path);
+}
+
+MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* gra, Gdiplus::Color color, Gdiplus::Rect rect)
+{
+	MfxImageInitData(gra, rect);
+
+	LoadPureColor(color);
+}
+
+MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* gra, Gdiplus::Color color, Gdiplus::Size size)
+{
+	MfxImageInitData(gra, Gdiplus::Rect(0, 0, size.Width, size.Height));
+
+	LoadPureColor(color);
+}
+
+MicroFlakeX::MfxImage::MfxImage(Gdiplus::Graphics* gra, Gdiplus::Color color, Gdiplus::Point point)
+{
+	MfxImageInitData(gra, Gdiplus::Rect(point.X, point.Y, 160, 160));
+
+	LoadPureColor(color);
+}
+
 
 MicroFlakeX::MfxImage::~MfxImage()
 {
@@ -61,12 +153,12 @@ Gdiplus::Bitmap* MicroFlakeX::MfxImage::GetBitmap()
 	return myBitmap;
 }
 
-Gdiplus::Status MicroFlakeX::MfxImage::LoadFromFile(WCHAR* set)
+Gdiplus::Status MicroFlakeX::MfxImage::LoadFromFile(WCHAR* path)
 {
 	Gdiplus::Bitmap* t_Bitmap = nullptr;
 	Gdiplus::CachedBitmap* t_BitmapQuick = nullptr;
 
-	t_Bitmap = Gdiplus::Bitmap::FromFile(set);
+	t_Bitmap = Gdiplus::Bitmap::FromFile(path);
 	if (t_Bitmap == nullptr)
 	{
 		return Gdiplus::InvalidParameter;//²ÎÊý´íÎó
@@ -161,20 +253,20 @@ Gdiplus::Status MicroFlakeX::MfxImage::LoadPureColor(Gdiplus::Color set)
 	return Gdiplus::Ok;
 }
 
-MicroFlakeX::MFXIMAGE_QUALITY MicroFlakeX::MfxImage::SetImageQuality(MFXIMAGE_QUALITY set)
+MicroFlakeX::MFXIMAGE_QUALITY MicroFlakeX::MfxImage::SetQuality(MFXIMAGE_QUALITY set)
 {
 	MFXIMAGE_QUALITY retQuality = myQuality;
 	myQuality = set;
 	return retQuality;
 }
 
-MicroFlakeX::MFXIMAGE_QUALITY MicroFlakeX::MfxImage::GetImageQuality()
+MicroFlakeX::MFXIMAGE_QUALITY MicroFlakeX::MfxImage::GetQuality()
 {
 	return myQuality;
 }
 
 
-Gdiplus::Size MicroFlakeX::MfxImage::SetImageSize(Gdiplus::Size set)
+Gdiplus::Size MicroFlakeX::MfxImage::SetSize(Gdiplus::Size set)
 {
 	Gdiplus::Size retSize(myRect.Width, myRect.Height);
 	if (set.Width == myRect.Width && set.Height == myRect.Height)
@@ -238,12 +330,12 @@ Gdiplus::Size MicroFlakeX::MfxImage::SetImageSize(Gdiplus::Size set)
 	return retSize;
 }
 
-Gdiplus::Size MicroFlakeX::MfxImage::GetImageSize()
+Gdiplus::Size MicroFlakeX::MfxImage::GetSize()
 {
 	return Gdiplus::Size(myRect.Width, myRect.Height);
 }
 
-Gdiplus::Point MicroFlakeX::MfxImage::SetImagePoint(Gdiplus::Point set)
+Gdiplus::Point MicroFlakeX::MfxImage::SetPoint(Gdiplus::Point set)
 {
 	Gdiplus::Point retPoint(myRect.X, myRect.Y);
 	myRect.X = set.X;
@@ -251,22 +343,22 @@ Gdiplus::Point MicroFlakeX::MfxImage::SetImagePoint(Gdiplus::Point set)
 	return retPoint;
 }
 
-Gdiplus::Point MicroFlakeX::MfxImage::GetImagePoint()
+Gdiplus::Point MicroFlakeX::MfxImage::GetPoint()
 {
 	return Gdiplus::Point(myRect.X, myRect.Y);
 }
 
 
-Gdiplus::Rect MicroFlakeX::MfxImage::SetImageRect(Gdiplus::Rect set)
+Gdiplus::Rect MicroFlakeX::MfxImage::SetRect(Gdiplus::Rect set)
 {
 	Gdiplus::Rect retRect = myRect;
-	SetImagePoint(Gdiplus::Point(set.X, set.Y));
-	SetImageSize(Gdiplus::Size(set.Width, set.Height));
+	SetPoint(Gdiplus::Point(set.X, set.Y));
+	SetSize(Gdiplus::Size(set.Width, set.Height));
 	myRect = set;
 	return retRect;
 }
 
-Gdiplus::Rect MicroFlakeX::MfxImage::GetImageRect()
+Gdiplus::Rect MicroFlakeX::MfxImage::GetRect()
 {
 	return myRect;
 }
@@ -276,16 +368,16 @@ BOOL MicroFlakeX::MfxImage::Contains(Gdiplus::Point set)
 	return myRect.Contains(set);
 }
 
-Gdiplus::Point MicroFlakeX::MfxImage::OffsetImagePoint(Gdiplus::Point set)
+Gdiplus::Point MicroFlakeX::MfxImage::OffsetPoint(Gdiplus::Point set)
 {
 	myRect.Offset(set);
 	return Gdiplus::Point(myRect.X, myRect.Y);
 }
 
-Gdiplus::Size MicroFlakeX::MfxImage::OffsetImageSize(Gdiplus::Size set)
+Gdiplus::Size MicroFlakeX::MfxImage::OffsetSize(Gdiplus::Size set)
 {
 	Gdiplus::Size retSize(myRect.Width + set.Width, myRect.Height + set.Height);
-	SetImageSize(retSize);
+	SetSize(retSize);
 	return retSize;
 }
 
