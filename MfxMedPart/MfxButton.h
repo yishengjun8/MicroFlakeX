@@ -8,8 +8,14 @@ namespace MicroFlakeX
     class MFX_MEDPART_IMPORT MfxButton :
 		public MfxControl
     {
+	protected:
+		void Reg();
+		void InitData();
 	public:
-		MfxButton(MfxUI* father, Gdiplus::Rect value = Gdiplus::Rect(20, 20, 160, 50));
+		MfxButton(MfxUI* father);
+		MfxButton(MfxUI* father, Gdiplus::Rect rect);
+		MfxButton(MfxUI* father, std::wstring title);
+		MfxButton(MfxUI* father, Gdiplus::Rect rect, std::wstring title);
 		virtual ~MfxButton();
 
 	protected:
@@ -20,19 +26,11 @@ namespace MicroFlakeX
 		void SetPoint(Gdiplus::Point set);
 
 	protected:
-		bool myBackImageFlag;
-		bool myMidWordsFlag;
-		bool myMaskImageFlag;
-
 		bool myFloatUnderImageFlag;
 		bool myFloatCoverImageFlag;
 
 		bool myLButtonPressImageFlag;
 		bool myRButtonPressImageFlag;
-
-		MfxImage* myBackImage;
-		MfxWords* myMidWords;
-		MfxImage* myMaskImage;
 
 		MfxImage* myFloatUnderImage;
 		MfxImage* myFloatCoverImage;
@@ -40,13 +38,6 @@ namespace MicroFlakeX
 		MfxImage* myLButtonPressImage;
 		MfxImage* myRButtonPressImage;
 	public:
-		MfxImage* SetBackImage(MfxImage* set);
-		MfxImage* GetBackImage();
-		MfxWords* SetMidWords(MfxWords* set);
-		MfxWords* GetMidWords();
-		MfxImage* SetMaskImage(MfxImage* set);
-		MfxImage* GetMaskImage();
-
 		MfxImage* SetFloatUnderImage(MfxImage* set);
 		MfxImage* GetFloatUnderImage();
 		MfxImage* SetFloatCoverImage(MfxImage* set);

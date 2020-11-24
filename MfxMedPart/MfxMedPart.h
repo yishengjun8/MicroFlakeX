@@ -19,8 +19,7 @@ namespace MicroFlakeX
 	class MFX_MEDPART_IMPORT MfxApplication;
 	class MFX_MEDPART_IMPORT MfxUI;
 	class MFX_MEDPART_IMPORT MfxControl;
-	class MFX_MEDPART_IMPORT MfxControlMessageServer;
-	
+
 	/* ———————————————————————————————————————————— */
 	/* ———————————————————————————————————————————— */
 
@@ -37,10 +36,8 @@ namespace MicroFlakeX
 	enum MFXUIEVENT_ENUM// UI发送的事件 - 最大为120种 
 	{
 		MFXUIEVENT_FATHERSIZE = MFXRETURE_ENUM_MAX - 1, //MFXUI_CHANGESIZE* getSize = (MFXUI_CHANGESIZE*)lParam;
-		MFXUIEVENT_DRAWBUFFERDC = MFXRETURE_ENUM_MAX - 2,
+		MFXUIEVENT_DRAWBUFFDC = MFXRETURE_ENUM_MAX - 2,
 		MFXUIEVENT_DRAWMAINDC = MFXRETURE_ENUM_MAX - 3,
-		//MFXUIEVENT_PAINTBUFFERDC = MFXRETURE_ENUM_MAX - 4,
-		MFXUIEVENT_PAINTMAINDC  = MFXRETURE_ENUM_MAX - 5,
 		MFXUIEVENT_ENUM_MAX = MFXRETURE_ENUM_MAX - 120
 	};
 
@@ -52,6 +49,9 @@ namespace MicroFlakeX
 		MFXCONTROLEVENT_RDOUBLECLICK = MFXUIEVENT_ENUM_MAX - 4, //双击
 		MFXCONTROLEVENT_MOUSEFLOAT = MFXUIEVENT_ENUM_MAX - 5, //悬浮
 		MFXCONTROLEVENT_MOUSEPRESS = MFXUIEVENT_ENUM_MAX - 6, //长按
+		MFXCONTROLEVENT_FLOORCHANGE = MFXUIEVENT_ENUM_MAX - 7, //重排序
+		MFXCONTROLEVENT_CONTROLCREATE = MFXUIEVENT_ENUM_MAX - 8, //控件创建
+		MFXCONTROLEVENT_CONTROLDELETE = MFXUIEVENT_ENUM_MAX - 9, //控件销毁
 		MFXCONTROLEVENT_ENUM_MAX = MFXUIEVENT_ENUM_MAX - 120
 	};
 
@@ -62,6 +62,15 @@ namespace MicroFlakeX
 		MFXWINDTYPE_NORMAL = WS_OVERLAPPEDWINDOW | WS_VISIBLE | MFXWINDTYPE_ANTIFLICKER, //带边框窗口
 		MFXWINDTYPE_POPWND = WS_POPUP | WS_VISIBLE | MFXWINDTYPE_ANTIFLICKER, //无边框窗口
 		MFXWINDTYPE_CHILD = WS_CHILD, //子窗口
+	};
+
+	enum MFXUIPAINTTYPE_ENUM// UI绘制枚举 - 作为WM_PAINT消息的wParam传递具体需要怎么绘制
+	{
+		MFXUIPAINTTYPE_PAINTALL = 0x0000, //为了兼容Windows本身的消息
+		MFXUIPAINTTYPE_DRAWBUFFDC = 0x0001, //绘制缓冲区
+		MFXUIPAINTTYPE_DRAWMAINDC = 0x0002, //绘制主画板
+		MFXUIPAINTTYPE_COPYBUFFDCTOMAINDC = 0x0004, //拷贝缓冲区到主画板
+		MFXUIPAINTTYPE_COPYMAINDCTOSHOWDC = 0x0008, //拷贝主画板到用户界面
 	};
 
 	typedef struct MFXUI_CHANGESIZE//如果UI改变了大小，将会将这个结构体指针发送到MFXUIMSG_SIZE的lParam中
@@ -80,16 +89,6 @@ namespace MicroFlakeX
 	typedef WNDCLASSEXW_MAP::iterator WNDCLASSEXW_MAP_ITERA;
 	typedef std::pair<WNDCLASSEXW_MAP::iterator, bool> WNDCLASSEXW_MAP_PAIR;
 
-	// 服务器列表
-	typedef std::vector<MfxControlMessageServer*> SERVER_LIST;
-	typedef SERVER_LIST::iterator SERVER_LIST_ITERA;
-
-	// 服务器映射
-	typedef std::map<HWND, MfxControlMessageServer*> MFXCONTROL_SERVER_MAP;
-	typedef MFXCONTROL_SERVER_MAP::value_type MFXCONTROL_SERVER_MAP_ELEM;
-	typedef MFXCONTROL_SERVER_MAP::iterator MFXCONTROL_SERVER_MAP_ITERA;
-	typedef std::pair<MFXCONTROL_SERVER_MAP::iterator, bool> MFXCONTROL_SERVER_MAP_PAIR;
-
 	/* ———————————————————————————————————————————— */
 	/* ———————————————————————————————————————————— */
 
@@ -99,6 +98,12 @@ namespace MicroFlakeX
 
 	typedef std::queue<MfxUI*> MFXUI_QUEUE;
 
+	typedef std::map<HWND, MfxUI*> MFXUI_MAP;
+	typedef MFXUI_MAP::value_type MFXUI_MAPELEM;
+	typedef MFXUI_MAP::iterator MFXUI_MAPITERA;
+	typedef std::pair<MFXUI_MAP::iterator, bool> MFXUI_MAPPAIR;
+
+
 	// UI方法映射  //MfxControl* con, UINT message, 
 	typedef struct MFXUI_CONTROLEVENT
 	{
@@ -106,7 +111,14 @@ namespace MicroFlakeX
 		UINT message;
 		bool operator < (const MFXUI_CONTROLEVENT& get) const
 		{
-			return ((control < get.control) || (message < get.message));
+			if (control != get.control)
+			{
+				return (control < get.control);
+			}
+			else
+			{
+				return (control < get.control) || (message < get.message);
+			}
 		}
 	}MFXUI_CONTROLEVENT;
 	typedef MFXRETURE(MfxUI::* MFXUI_FUNC)(WPARAM, LPARAM);
@@ -121,7 +133,7 @@ namespace MicroFlakeX
 	typedef MFXUI_MESSAGE_MAP::iterator MFXUI_MESSAGE_MAPITERA;
 	typedef std::pair<MFXUI_MESSAGE_MAP::iterator, bool> MFXUI_MESSAGE_MAPPAIR;
 
-	typedef struct MFXUI_CLOCK
+	typedef struct MFXUI_CLOCK //clock可以定时发送一个消息
 	{
 		MFXUI_CLOCK(UINT message = WM_APP, clock_t delay = INTMAX_MAX, WPARAM wParam = NULL, LPARAM lParam = NULL)
 		{
@@ -215,8 +227,7 @@ namespace MicroFlakeX
 		void BindUIWithWnd(HWND uiWnd);
 
 	protected:
-		MFXUI_LIST myUIList;
-		MFXCONTROL_SERVER_MAP myServerMap;
+		MFXUI_MAP myUIMap;
 	public:
 		/* 注册UI */
 		virtual MFXRETURE RegUI(MfxUI* regUI);
@@ -224,25 +235,6 @@ namespace MicroFlakeX
 		virtual MFXRETURE DelUI(MfxUI* regUI);
 		/* 根据Wnd派送消息到UI */
 		virtual MFXRETURE ForwardMessageByWnd(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-	};
-
-	class MfxControlMessageServer/* >>窗口唯一<< 窗口消息服务器 - 可以重写，但没必要 */
-	{
-	public:
-		MfxControlMessageServer(MfxUI* myUI);
-		virtual ~MfxControlMessageServer();
-
-	protected:
-		MfxUI* myUI;
-		MFXCONTROL_LIST myRegisterControlList;/* 注册到本服务器的控件 */
-	public:
-		virtual MfxUI* GetMyUI();
-		/* 注册控件 */
-		MFXRETURE RegControl(MfxControl* regControl);
-		/* 解除控件注册 */
-		MFXRETURE DelControl(MfxControl* delControl);
-		/* 转发消息到每一个控件 */
-		MFXRETURE ForwardMessageToControl(UINT message, WPARAM wParam, LPARAM lParam);
 	};
 }
 
@@ -301,13 +293,19 @@ namespace MicroFlakeX
 		void UIModifyClock(MFXUI_CLOCK set);
 
 	protected:
+		bool myUserFocusFlag;
+		MfxControl* myUserFocusLock;
 		MfxControl* myUserFocus; //用户焦点
 		MFXCONTROL_LIST myControlList; //UI所持有的全部控件
 	public:
 		/* 设定用户焦点控件 */
-		virtual MfxControl* SetUserFocus(MfxControl* con);
+		MfxControl* SetUserFocus(MfxControl* con);
+		/* 锁定用户焦点控件 - 请确定锁定的时候，焦点在自己身上！ */
+		void LockUserFocus(MfxControl* con);
+		/* 释放用户焦点控件 */
+		void FreeUserFocus(MfxControl* con);
 		/* 获取用户焦点控件 */
-		virtual MfxControl* GetUserFocus();
+		MfxControl* GetUserFocus();
 		bool RegControl(MfxControl* con);
 		bool DelControl(MfxControl* con);
 
@@ -339,7 +337,6 @@ namespace MicroFlakeX
 		HDC myBuffDc; //双缓冲 - 需要释放
 		Gdiplus::Graphics* myMainGraphics; //主绘图 - 需要释放
 		Gdiplus::Graphics* myBuffGraphics; //双缓冲 - 需要释放
-		MfxControlMessageServer* myMessageServer; //消息服务器 - 需要释放
 	public:
 		/* 获取UI窗口句柄 */
 		HWND GetWnd();
@@ -349,8 +346,6 @@ namespace MicroFlakeX
 		Gdiplus::Graphics* GetMainGraphics();
 		/* 获取缓冲区画板 */
 		Gdiplus::Graphics* GetBuffGraphics();
-		/* 获取UI消息服务器 */
-		MfxControlMessageServer* GetMessageServer();
 
 	protected:
 		Gdiplus::Rect myRect; //窗口显示区域
@@ -365,9 +360,13 @@ namespace MicroFlakeX
 
 		//默认消息响应
 	protected:
-		MFXRETURE MfxDefOnDrawBufferDC(WPARAM wParam, LPARAM lParam);	//重绘 - wParam = &ps
+		MFXRETURE MfxDefOnDrawBuffDC(WPARAM wParam, LPARAM lParam);	//重绘 - wParam = &ps
 		MFXRETURE MfxDefOnDrawMainDC(WPARAM wParam, LPARAM lParam);		//重绘 - wParam = &ps
 
+		MFXRETURE MfxDefOnControlCreate(WPARAM wParam, LPARAM lParam);	//控件创建
+		MFXRETURE MfxDefOnControlDelete(WPARAM wParam, LPARAM lParam);	//控件删除
+
+		MFXRETURE MfxDefOnUIFloorChange(WPARAM wParam, LPARAM lParam);	//改变叠放层次
 		MFXRETURE MfxDefOnUIPaint(WPARAM wParam, LPARAM lParam);		//绘制
 
 		MFXRETURE MfxDefOnUITimer(WPARAM wParam, LPARAM lParam);		//定时器
@@ -391,7 +390,7 @@ namespace MicroFlakeX
 		MFXRETURE MfxDefOnUIRButtonUp(WPARAM wParam, LPARAM lParam);	//右键释放
 		MFXRETURE MfxDefOnUIRDoubleClick(WPARAM wParam, LPARAM lParam);	//右键双击
 
-		MFXRETURE MfxDefOnUIEventSize(WPARAM wParam, LPARAM lParam);	//窗口大小改变事件
+		MFXRETURE MfxDefOnUIFatherSize(WPARAM wParam, LPARAM lParam);	//窗口大小改变事件
 		MFXRETURE MfxDefOnUIEventSizing(WPARAM wParam, LPARAM lParam);	//窗口大小改变事件
 	};
 }
@@ -404,13 +403,16 @@ namespace MicroFlakeX
 	{
 	protected:
 		void MfxRegDef();
-		void MfxInitData(MfxUI* father, Gdiplus::Rect value);
+		void MfxInitData(MfxUI* father, Gdiplus::Rect rect, std::wstring type, std::wstring title, LPARAM lParam = NULL);
 	public:
-		MfxControl(MfxUI* father, Gdiplus::Rect value = Gdiplus::Rect(20, 12, 80, 49));
+		MfxControl(MfxUI* father);
+		MfxControl(MfxUI* father, Gdiplus::Rect rect);
+		MfxControl(MfxUI* father, std::wstring title);
+		MfxControl(MfxUI* father, Gdiplus::Rect rect, std::wstring title);
 		virtual ~MfxControl();
 
 	protected:
-		MFXCONTROL_MESSAGE_MAP myMessageMap;// 函数映射表
+		MFXCONTROL_MESSAGE_MAP myMessageMap; // 函数映射表
 	public:
 		MFXRETURE RegMessage(UINT message, MFXCONTROL_FUNC valFunc);
 		MFXRETURE RecvMessage(UINT message, WPARAM wParam, LPARAM lParam);
@@ -425,15 +427,23 @@ namespace MicroFlakeX
 
 	protected:
 		MfxUI* myUI;// 控件所属UI
+		UINT myFloor; //我的层次
 		std::wstring myType;// 控件类型
+		std::wstring myTitle;// 控件标题
 		Gdiplus::Rect myRect;
-		Gdiplus::Graphics* myGraphics; //比较常用
+		Gdiplus::Graphics* myBuffGraphics; //比较常用
+		Gdiplus::Graphics* myMainGraphics; //比较常用
 	public:
 		MfxUI* GetMyUI();
-		virtual std::wstring GetMyType();
-		virtual Gdiplus::Rect GetRect();
-		virtual Gdiplus::Size GetSize();
-		virtual Gdiplus::Point GetPoint();
+		UINT GetFloor();
+		/* floor数字越大，越上层; lParam如果不为NULL的话，则UI不响应 */
+		UINT SetFloor(UINT floor, LPARAM lParam = NULL);
+		std::wstring GetType();
+		std::wstring GetTitle();
+		std::wstring SetTitle(std::wstring set);
+		Gdiplus::Rect GetRect();
+		Gdiplus::Size GetSize();
+		Gdiplus::Point GetPoint();
 	protected:
 		void SetRect(Gdiplus::Rect set);
 		void SetSize(Gdiplus::Size set);
@@ -445,11 +455,25 @@ namespace MicroFlakeX
 		bool myRButtonClick; //点击
 		bool myRButtonPress; //按压
 		bool myMouseFloat; //悬浮
+		/**/
+		bool myBackImageFlag;
+		bool myMaskImageFlag;
+
+		MfxImage* myBackImage;
+		MfxWords* myTitleWords;
+		MfxImage* myMaskImage;
+
+	public:
+		MfxImage* SetBackImage(MfxImage* set);
+		MfxImage* GetBackImage();
+		MfxImage* SetMaskImage(MfxImage* set);
+		MfxImage* GetMaskImage();
+		/**/
 		/* 基础事件：鼠标滑轮、鼠标持续按压 用户焦点是否在这里 */
 	protected:
-		MFXRETURE MfxDefOnDrawBufferDC(WPARAM wParam, LPARAM lParam);//重绘 - wParam = &ps
-		MFXRETURE MfxDefOnDrawMainDC(WPARAM wParam, LPARAM lParam);	//重绘 - wParam = &ps
-
+		MFXRETURE MfxDefOnDrawBuffDC(WPARAM wParam, LPARAM lParam);//重绘 - PAINTSTRUCT *ps = wParam;
+		MFXRETURE MfxDefOnDrawMainDC(WPARAM wParam, LPARAM lParam);	//重绘
+		 
 		MFXRETURE MfxDefOnMouseMove(WPARAM wParam, LPARAM lParam);	//移动
 
 		MFXRETURE MfxDefOnLButtonDown(WPARAM wParam, LPARAM lParam);	//左键按下

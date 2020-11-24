@@ -167,7 +167,6 @@
     </ClCompile>
     <ClCompile Include="MfxControl.cpp" />
     <ClCompile Include="MfxUI.cpp" />
-    <ClCompile Include="MfxMessageServer.cpp" />
     <ClCompile Include="MfxApplication.cpp" />
     <ClCompile Include="MfxButton.cpp" />
   </ItemGroup>

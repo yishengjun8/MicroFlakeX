@@ -38,9 +38,6 @@
     <ClCompile Include="MfxUI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MfxMessageServer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MfxApplication.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

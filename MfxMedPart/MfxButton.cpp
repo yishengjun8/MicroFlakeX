@@ -1,11 +1,10 @@
 #include "pch.h"
 #include "MfxButton.h"
 
-MicroFlakeX::MfxButton::MfxButton(MfxUI* father, Gdiplus::Rect value)
-	: MfxControl(father, value)
-{	
+void MicroFlakeX::MfxButton::Reg()
+{
 	/**/
-	RegMessage(MFXUIEVENT_DRAWBUFFERDC, (MFXCONTROL_FUNC)&MfxButton::OnDrawBufferDC);
+	RegMessage(MFXUIEVENT_DRAWBUFFDC, (MFXCONTROL_FUNC)&MfxButton::OnDrawBufferDC);
 
 	RegMessage(WM_MOUSEMOVE, (MFXCONTROL_FUNC)&MfxButton::OnMouseMove);
 
@@ -15,21 +14,16 @@ MicroFlakeX::MfxButton::MfxButton(MfxUI* father, Gdiplus::Rect value)
 	RegMessage(WM_RBUTTONDOWN, (MFXCONTROL_FUNC)&MfxButton::OnRButtonDown);
 	RegMessage(WM_RBUTTONUP, (MFXCONTROL_FUNC)&MfxButton::OnRButtonUp);
 	/**/
+}
 
+void MicroFlakeX::MfxButton::InitData()
+{
 	/**/
-	myBackImageFlag = false;
-	myMidWordsFlag = false;
-	myMaskImageFlag = false;
-
 	myFloatUnderImageFlag = false;
 	myFloatCoverImageFlag = false;
 
 	myLButtonPressImageFlag = false;
 	myRButtonPressImageFlag = false;
-
-	myBackImage = nullptr;
-	myMidWords = nullptr;
-	myMaskImage = nullptr;
 
 	myFloatUnderImage = nullptr;
 	myFloatCoverImage = nullptr;
@@ -39,33 +33,43 @@ MicroFlakeX::MfxButton::MfxButton(MfxUI* father, Gdiplus::Rect value)
 	/**/
 
 	/**/
-	myBackImage = new MfxImage(myGraphics, Gdiplus::Color::DarkGray);
-	myBackImage->SetImageRect(myRect);
-	myMidWords = new MfxWords(myGraphics);
-	myMidWords->SetWords(L"MfxButton");
-	myMidWords->SetFormat(MFXWORDS_FORMATX_CENTER);
-	myMidWords->SetRect(myRect);
-
-	myFloatCoverImage = new MfxImage(myGraphics, Gdiplus::Color(60, 100, 255, 100));
-	myFloatCoverImage->SetImageRect(myRect);
-
-	myLButtonPressImage = new MfxImage(myGraphics, Gdiplus::Color(60, 255, 100, 100));
-	myLButtonPressImage->SetImageRect(myRect);
-	myRButtonPressImage = new MfxImage(myGraphics, Gdiplus::Color(60, 100, 100, 255));
-	myRButtonPressImage->SetImageRect(myRect);
+	myFloatCoverImage = new MfxImage(myBuffGraphics, Gdiplus::Color(60, 100, 255, 100), myRect);
+	myLButtonPressImage = new MfxImage(myBuffGraphics, Gdiplus::Color(60, 255, 100, 100), myRect);
+	myRButtonPressImage = new MfxImage(myBuffGraphics, Gdiplus::Color(60, 100, 100, 255), myRect);
 	/**/
+}
+
+MicroFlakeX::MfxButton::MfxButton(MfxUI* father)
+	: MfxControl(father)
+{
+	Reg();
+	InitData();
+}
+
+MicroFlakeX::MfxButton::MfxButton(MfxUI* father, Gdiplus::Rect rect)
+	: MfxControl(father, rect)
+{	
+	Reg();
+	InitData();
+}
+
+MicroFlakeX::MfxButton::MfxButton(MfxUI* father, std::wstring title)
+	: MfxControl(father, title)
+{
+	Reg();
+	InitData();
+}
+
+MicroFlakeX::MfxButton::MfxButton(MfxUI* father, Gdiplus::Rect rect, std::wstring title)
+	: MfxControl(father, rect, title)
+{
+	Reg();
+	InitData();
 }
 
 MicroFlakeX::MfxButton::~MfxButton()
 {
 	/**/
-	if(!myBackImageFlag)
-		delete myBackImage;
-	if (!myMidWordsFlag)
-		delete myMidWords;
-	if (!myMaskImageFlag)
-		delete myMaskImage;
-
 	if (!myFloatUnderImageFlag)
 		delete myFloatUnderImage;
 	if (!myFloatCoverImageFlag)
@@ -86,90 +90,30 @@ void MicroFlakeX::MfxButton::SetRect(Gdiplus::Rect set)
 
 void MicroFlakeX::MfxButton::SetSize(Gdiplus::Size set)
 {
-	myRect.Width = set.Width;
-	myRect.Height = set.Height;
-
-	if (myBackImage)
-		myBackImage->SetImageSize(set);
-	if (myMidWords)
-		myMidWords->SetSize(set);
-	if (myMaskImage)
-		myMaskImage->SetImageSize(set);
-
+	MfxControl::SetSize(set);
 	if (myFloatUnderImage)
-		myFloatUnderImage->SetImageSize(set);
+		myFloatUnderImage->SetSize(set);
 	if (myFloatCoverImage)
-		myFloatCoverImage->SetImageSize(set);
+		myFloatCoverImage->SetSize(set);
 
 	if (myLButtonPressImage)
-		myLButtonPressImage->SetImageSize(set);
+		myLButtonPressImage->SetSize(set);
 	if (myRButtonPressImage)
-		myRButtonPressImage->SetImageSize(set);
+		myRButtonPressImage->SetSize(set);
 }
 
 void MicroFlakeX::MfxButton::SetPoint(Gdiplus::Point set)
 {
-	myRect.X = set.X;
-	myRect.Y = set.Y;
-
-	if (myBackImage)
-		myBackImage->SetImagePoint(set);
-	if (myMidWords)
-		myMidWords->SetPoint(set);
-	if (myMaskImage)
-		myMaskImage->SetImagePoint(set);
-
+	MfxControl::SetPoint(set);
 	if (myFloatUnderImage)
-		myFloatUnderImage->SetImagePoint(set);
+		myFloatUnderImage->SetPoint(set);
 	if (myFloatCoverImage)
-		myFloatCoverImage->SetImagePoint(set);
+		myFloatCoverImage->SetPoint(set);
 
 	if (myLButtonPressImage)
-		myLButtonPressImage->SetImagePoint(set);
+		myLButtonPressImage->SetPoint(set);
 	if (myRButtonPressImage)
-		myRButtonPressImage->SetImagePoint(set);
-}
-
-MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetBackImage(MfxImage* set)
-{
-	MfxImage* retImage = myBackImage;
-	myBackImageFlag = true;
-	myBackImage = set;
-	myBackImage->SetImageRect(myRect);
-	return retImage;
-}
-
-MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::GetBackImage()
-{
-	return myBackImage;
-}
-
-MicroFlakeX::MfxWords* MicroFlakeX::MfxButton::SetMidWords(MfxWords* set)
-{
-	MfxWords* retWords = myMidWords;
-	myMidWordsFlag = true;
-	myMidWords = set;
-	myMidWords->SetRect(myRect);
-	return retWords;
-}
-
-MicroFlakeX::MfxWords* MicroFlakeX::MfxButton::GetMidWords()
-{
-	return myMidWords;
-}
-
-MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetMaskImage(MfxImage* set)
-{
-	MfxImage* retImage = myMaskImage;
-	myMaskImageFlag = true;
-	myMaskImage = set;
-	myMaskImage->SetImageRect(myRect);
-	return retImage;
-}
-
-MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::GetMaskImage()
-{
-	return myMaskImage;
+		myRButtonPressImage->SetPoint(set);
 }
 
 MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetFloatUnderImage(MfxImage* set)
@@ -177,7 +121,7 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetFloatUnderImage(MfxImage* set)
 	MfxImage* retImage = myFloatUnderImage;
 	myFloatUnderImageFlag = true;
 	myFloatUnderImage = set;
-	myFloatUnderImage->SetImageRect(myRect);
+	myFloatUnderImage->SetRect(myRect);
 	return retImage;
 }
 
@@ -191,7 +135,7 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetFloatCoverImage(MfxImage* set)
 	MfxImage* retImage = myFloatCoverImage;
 	myFloatCoverImageFlag = true;
 	myFloatCoverImage = set;
-	myFloatCoverImage->SetImageRect(myRect);
+	myFloatCoverImage->SetRect(myRect);
 	return retImage;
 }
 
@@ -205,7 +149,7 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetLButtonPressImage(MfxImage* se
 	MfxImage* retImage = myLButtonPressImage;
 	myLButtonPressImageFlag = true;
 	myLButtonPressImage = set;
-	myLButtonPressImage->SetImageRect(myRect);
+	myLButtonPressImage->SetRect(myRect);
 	return retImage;
 }
 
@@ -219,7 +163,7 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxButton::SetRButtonPressImage(MfxImage* se
 	MfxImage* retImage = myRButtonPressImage;
 	myRButtonPressImageFlag = true;
 	myRButtonPressImage = set;
-	myRButtonPressImage->SetImageRect(myRect);
+	myRButtonPressImage->SetRect(myRect);
 	return retImage;
 }
 
@@ -238,12 +182,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxButton::OnDrawBufferDC(WPARAM wParam, LPA
 	if (myMouseFloat && myFloatUnderImage)
 		myFloatUnderImage->Draw();
 
-	if (myBackImage)
-		myBackImage->Draw();
-	if (myMidWords)
-		myMidWords->Draw();
-	if (myMaskImage)
-		myMaskImage->Draw();
+	MfxControl::MfxDefOnDrawBuffDC(wParam, lParam); //装饰的方法调用
 
 	if (myMouseFloat && myFloatCoverImage)
 		myFloatCoverImage->Draw();

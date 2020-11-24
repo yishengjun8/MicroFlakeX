@@ -46,11 +46,11 @@ MicroFlakeX::MfxApplication::MfxApplication()
 MicroFlakeX::MfxApplication::~MfxApplication()
 {
 	/**/
-	for (int i = 0; i < myUIList.size(); i++)
+	for (MFXUI_MAPITERA itUI = myUIMap.begin(); itUI != myUIMap.end(); itUI++)
 	{
-		delete myUIList[i];
+		delete (itUI->second);
 	}
-	myUIList.clear();
+	myUIMap.clear();
 	/**/
 }
 
@@ -90,13 +90,8 @@ void MicroFlakeX::MfxApplication::BindUIWithWnd(HWND uiWnd)
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::RegUI(MfxUI* regUI)
 {
 	/**/
-	if (regUI != nullptr)
-	{
-		myUIList.push_back(regUI);
-		myServerMap.insert(MFXCONTROL_SERVER_MAP_ELEM(regUI->GetWnd(), regUI->GetMessageServer()));
-		return MFXRETURE_OK;
-	}
-	return MFXRETURE_ERROR;
+	MFXUI_MAPPAIR retPair = myUIMap.insert(MFXUI_MAPELEM(regUI->GetWnd(), regUI));
+	return retPair.second;
 	/**/
 	return 0;
 }
@@ -104,19 +99,11 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::RegUI(MfxUI* regUI)
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::DelUI(MfxUI* regUI)
 {
 	/**/
-	MFXUI_LISTITERA tUIIt = myUIList.begin();
-	for (; tUIIt != myUIList.end(); tUIIt++)
+	MFXUI_MAPITERA tUIIt = myUIMap.find(regUI->GetWnd());
+	if (tUIIt != myUIMap.end())
 	{
-		if (*tUIIt == regUI)
-		{
-			MFXCONTROL_SERVER_MAP_ITERA delIter = myServerMap.find(regUI->GetWnd());
-			if (delIter != myServerMap.end())
-			{
-				myServerMap.erase(delIter);
-			}
-			myUIList.erase(tUIIt);
-			return MFXRETURE_OK;
-		}
+		myUIMap.erase(tUIIt);
+		return MFXRETURE_OK;
 	}
 	return MFXRETURE_NOFIND;
 	/**/
@@ -127,26 +114,22 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxApplication::ForwardMessageByWnd(HWND hWn
 {
 	//return DefWindowProc(hWnd, message, wParam, lParam);
 	/**/
-	MFXCONTROL_SERVER_MAP_ITERA handleIter = myServerMap.find(hWnd);
-	if (handleIter == myServerMap.end())
+	MFXUI_MAPITERA handleIter = myUIMap.find(hWnd);
+	if (handleIter == myUIMap.end())
 	{
-		this->BindUIWithWnd(hWnd);/* 注册当前 */
-		//fprintf(gFileOut, "hWnd:%d, message:%d, wParam:%d, lParam:%d \n", (long)hWnd, (long)message, (long)wParam, (long)lParam);
-		handleIter = myServerMap.find(hWnd);/* 注册完毕后重新寻址 */
-		if (handleIter != myServerMap.end())
+		this->BindUIWithWnd(hWnd);/* 绑定UI到Wnd */
+
+		handleIter = myUIMap.find(hWnd);/* 注册完毕后重新寻址 */
+		if (handleIter != myUIMap.end())
 		{
-			/* 优先给控件发消息 */
-			(handleIter->second)->ForwardMessageToControl(message, wParam, lParam);
-			/* 然后是UI接收消息 */
-			return (handleIter->second)->GetMyUI()->RecvUIMessage(message, wParam, lParam);
+			/* UI接收消息 */
+			return (handleIter->second)->RecvUIMessage(message, wParam, lParam);
 		}
 	}
 	else
 	{
-		/* 优先给控件发消息 */
-		(handleIter->second)->ForwardMessageToControl(message, wParam, lParam);
-		/* 然后是UI接收消息 */
-		return (handleIter->second)->GetMyUI()->RecvUIMessage(message, wParam, lParam);
+		/* UI接收消息 */
+		return (handleIter->second)->RecvUIMessage(message, wParam, lParam);
 	}
 	/**/
 	return DefWindowProc(hWnd, message, wParam, lParam);

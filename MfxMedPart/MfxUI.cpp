@@ -9,9 +9,13 @@ FILE* gFileOut;
 
 void MicroFlakeX::MfxUI::MfxUIRegDef()
 {
-	MfxRegDefMessage(MFXUIEVENT_DRAWBUFFERDC, (MFXUI_FUNC)&MfxUI::MfxDefOnDrawBufferDC);
-	MfxRegDefMessage(MFXUIEVENT_DRAWMAINDC, (MFXUI_FUNC)&MfxUI::MfxDefOnDrawMainDC);//MfxDefOnUITimer
+	MfxRegDefMessage(MFXUIEVENT_DRAWBUFFDC, (MFXUI_FUNC)&MfxUI::MfxDefOnDrawBuffDC);
+	MfxRegDefMessage(MFXUIEVENT_DRAWMAINDC, (MFXUI_FUNC)&MfxUI::MfxDefOnDrawMainDC);
 
+	MfxRegDefMessage(MFXCONTROLEVENT_CONTROLCREATE, (MFXUI_FUNC)&MfxUI::MfxDefOnControlCreate);
+	MfxRegDefMessage(MFXCONTROLEVENT_CONTROLDELETE, (MFXUI_FUNC)&MfxUI::MfxDefOnControlDelete);
+
+	MfxRegDefMessage(MFXCONTROLEVENT_FLOORCHANGE, (MFXUI_FUNC)&MfxUI::MfxDefOnUIFloorChange);
 	MfxRegDefMessage(WM_PAINT, (MFXUI_FUNC)&MfxUI::MfxDefOnUIPaint);
 
 	MfxRegDefMessage(WM_TIMER, (MFXUI_FUNC)&MfxUI::MfxDefOnUITimer);
@@ -35,13 +39,15 @@ void MicroFlakeX::MfxUI::MfxUIRegDef()
 	MfxRegDefMessage(WM_RBUTTONUP, (MFXUI_FUNC)&MfxUI::MfxDefOnUIRButtonUp);
 	MfxRegDefMessage(WM_RBUTTONDBLCLK, (MFXUI_FUNC)&MfxUI::MfxDefOnUIRDoubleClick);
 
-	MfxRegDefMessage(MFXUIEVENT_FATHERSIZE, (MFXUI_FUNC)&MfxUI::MfxDefOnUIEventSize);
+	MfxRegDefMessage(MFXUIEVENT_FATHERSIZE, (MFXUI_FUNC)&MfxUI::MfxDefOnUIFatherSize);
 }
 
 void MicroFlakeX::MfxUI::MfxUIInitData(Gdiplus::Rect value)
 {
 	myWndCreateSuccess = true; //窗口是否创建成功
 
+	myUserFocusFlag = false; //表示可以更改焦点
+	myUserFocusLock = nullptr; //表示锁定焦点，不允许更改
 	myUserFocus = nullptr;
 
 	myWnd = nullptr;
@@ -51,7 +57,6 @@ void MicroFlakeX::MfxUI::MfxUIInitData(Gdiplus::Rect value)
 	myBuffDc = nullptr; //双缓冲 - 需要释放
 	myMainGraphics = nullptr; //主绘图 - 需要释放
 	myBuffGraphics = nullptr; //双缓冲 - 需要释放
-	myMessageServer = nullptr;//消息服务器 - 需要释放
 
 	myBackImage = nullptr;	//背景
 	myMaskImage = nullptr;	//蒙版
@@ -90,8 +95,7 @@ void MicroFlakeX::MfxUI::SetWnd(HWND get)
 	myMainGraphics = MfxFunc_GetGraphics(myMainDc); //主绘图 - 需要释放
 	myBuffGraphics = MfxFunc_GetGraphics(myBuffDc); //双缓冲 - 需要释放
 
-	myBackImage = new MfxImage(myBuffGraphics, Gdiplus::Color::DarkBlue, myRect);
-	myMessageServer = new MfxControlMessageServer(this); //创建消息服务器
+	myBackImage = new MfxImage(myBuffGraphics, Gdiplus::Color::DarkBlue, Gdiplus::Rect(0, 0, myRect.Width, myRect.Height));
 	MfxFunc_GetApp()->RegUI(this); //注册UI
 }
 
@@ -139,10 +143,11 @@ MicroFlakeX::MfxUI::~MfxUI()
 		PostMessage(myWnd, WM_CLOSE, 0, 0); //发送窗口关闭消息 <-等待优化
 
 		for (int i = 0; i < myControlList.size(); i++)
+		{
 			delete myControlList[i];
+		}
 
 		MfxFunc_GetApp()->DelUI(this);  //断开消息接收
-		delete myMessageServer; //删除消息服务器
 
 		ReleaseDC(myWnd, myShowDc);
 		ReleaseDC(myWnd, myBuffDc);
@@ -198,7 +203,7 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxUI::UISetBack(MfxImage* uiBack)
 	/**/
 	MfxImage* retImage = myBackImage;
 	myBackImage = uiBack;
-	myBackImage->SetImageSize(Gdiplus::Size(myRect.Width, myRect.Height));
+	myBackImage->SetRect(Gdiplus::Rect(0, 0, myRect.Width, myRect.Height));
 	/**/
 	return retImage;
 }
@@ -209,7 +214,7 @@ MicroFlakeX::MfxImage* MicroFlakeX::MfxUI::UISetMask(MfxImage* uiMask)
 	MfxImage* retImage = myMaskImage;
 	myMaskImage = uiMask;
 	myMaskImage->SetGraphics(myMainGraphics);
-	myMaskImage->SetImageSize(Gdiplus::Size(myRect.Width, myRect.Height));
+	myMaskImage->SetRect(Gdiplus::Rect(0, 0, myRect.Width, myRect.Height));
 	/**/
 	return retImage;
 }
@@ -239,9 +244,31 @@ void MicroFlakeX::MfxUI::UIModifyClock(MFXUI_CLOCK set)
 
 MicroFlakeX::MfxControl* MicroFlakeX::MfxUI::SetUserFocus(MfxControl* con)
 {
+	if (myUserFocusFlag || myUserFocusLock)
+	{
+		return nullptr;
+	}
+
+	myUserFocusFlag = true;
 	MfxControl* retControl = myUserFocus;
 	myUserFocus = con;
-	return retControl;
+	return retControl ? retControl : myUserFocus;
+}
+
+void MicroFlakeX::MfxUI::LockUserFocus(MfxControl* con)
+{
+	if (!myUserFocusLock)
+	{
+		myUserFocusLock = con;
+	}
+}
+
+void MicroFlakeX::MfxUI::FreeUserFocus(MfxControl* con)
+{
+	if (myUserFocusLock == con)
+	{
+		myUserFocusLock = nullptr;
+	}
 }
 
 MicroFlakeX::MfxControl* MicroFlakeX::MfxUI::GetUserFocus()
@@ -251,7 +278,6 @@ MicroFlakeX::MfxControl* MicroFlakeX::MfxUI::GetUserFocus()
 
 bool MicroFlakeX::MfxUI::RegControl(MfxControl* con)
 {
-	if (!myWndCreateSuccess) return 0;
 	/**/
 	myControlList.push_back(con);
 	/**/
@@ -260,7 +286,6 @@ bool MicroFlakeX::MfxUI::RegControl(MfxControl* con)
 
 bool MicroFlakeX::MfxUI::DelControl(MfxControl* con)
 {
-	if (!myWndCreateSuccess) return 0;
 	/**/
 	for (MFXCONTROL_LISTITERA delIt = myControlList.begin(); delIt != myControlList.end(); delIt++)
 	{
@@ -276,7 +301,6 @@ bool MicroFlakeX::MfxUI::DelControl(MfxControl* con)
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RegControlEvent(MfxControl* con, UINT eventID, MFXUI_FUNC valFunc)
 {
-	if (!myWndCreateSuccess) return 0;
 	/**/
 	MFXUI_CONTROLEVENT temp{ con, eventID };
 	MFXUI_CONTROLEVENT_MAPPAIR retPair = myControlEventMap.insert(MFXUI_CONTROLEVENT_MAPELEM(temp, valFunc));
@@ -287,7 +311,6 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RegControlEvent(MfxControl* con, UINT
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RecvControlEvent(MfxControl* con, UINT eventID, WPARAM wParam, LPARAM lParam)
 {
-	if (!myWndCreateSuccess) return 0;
 	/**/
 	MFXUI_CONTROLEVENT temp{ con, eventID };
 	MFXUI_CONTROLEVENT_MAPITERA callIter = myControlEventMap.find(temp);
@@ -302,7 +325,6 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RecvControlEvent(MfxControl* con, UIN
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::DelControlEvent(MfxControl* con, UINT eventID)
 {
-	if (!myWndCreateSuccess) return 0;
 	/**/
 	MFXUI_CONTROLEVENT temp{ con, eventID };
 	MFXUI_CONTROLEVENT_MAPITERA delIter = myControlEventMap.find(temp);
@@ -318,7 +340,6 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::DelControlEvent(MfxControl* con, UINT
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RegUIMessage(UINT message, MFXUI_FUNC valFunc)
 {
-	if (!myWndCreateSuccess) return 0;
 	/**/
 	MFXUI_MESSAGE_MAPPAIR retPair = myUIMessageMap.insert(MFXUI_MESSAGE_MAPELEM(message, valFunc));
 	return retPair.second;
@@ -328,7 +349,20 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RegUIMessage(UINT message, MFXUI_FUNC
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RecvUIMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (!myWndCreateSuccess) return 0;
+	/**/
+	//将焦点设为可更改的
+	myUserFocusFlag = false;
+
+	//先给控件发消息，同时如果控件获取了焦点，那么其余控件无法重新获取焦点
+	for (int i = myControlList.size() - 1; i > -1; i--)
+	{
+		myControlList[i]->RecvMessage(message, wParam, lParam);
+	}
+
+	//将焦点设为可更改的
+	myUserFocusFlag = false;
+
+	//自我消息映射
 	MFXUI_MESSAGE_MAPITERA callIter = myUIMessageMap.find(message);
 	if (callIter != myUIMessageMap.end())
 	{
@@ -341,7 +375,6 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::RecvUIMessage(UINT message, WPARAM wP
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::DelUIMessage(UINT message)
 {
-	if (!myWndCreateSuccess) return 0;
 	/**/
 	MFXUI_MESSAGE_MAPITERA delIter = myUIMessageMap.find(message);
 	if (delIter != myUIMessageMap.end())
@@ -356,7 +389,6 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::DelUIMessage(UINT message)
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxRegDefMessage(UINT message, MFXUI_FUNC valFunc)
 {
-	if (!myWndCreateSuccess) return 0;
 	/**/
 	MFXUI_MESSAGE_MAPPAIR retPair = myMfxDefUIMessageMap.insert(MFXUI_MESSAGE_MAPELEM(message, valFunc));
 	return retPair.second;
@@ -366,7 +398,6 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxRegDefMessage(UINT message, MFXUI_
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxRecvDefMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (!myWndCreateSuccess) return 0;
 	MFXUI_MESSAGE_MAPITERA callIter = myMfxDefUIMessageMap.find(message);
 	if (callIter != myMfxDefUIMessageMap.end())
 	{
@@ -379,7 +410,6 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxRecvDefMessage(UINT message, WPARA
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDelDefMessage(UINT message)
 {
-	if (!myWndCreateSuccess) return 0;
 	/**/
 	MFXUI_MESSAGE_MAPITERA delIter = myMfxDefUIMessageMap.find(message);
 	if (delIter != myMfxDefUIMessageMap.end())
@@ -410,11 +440,6 @@ Gdiplus::Graphics* MicroFlakeX::MfxUI::GetMainGraphics()
 Gdiplus::Graphics* MicroFlakeX::MfxUI::GetBuffGraphics()
 {
 	return myBuffGraphics;
-}
-
-MicroFlakeX::MfxControlMessageServer* MicroFlakeX::MfxUI::GetMessageServer()
-{
-	return myMessageServer;
 }
 
 Gdiplus::Rect MicroFlakeX::MfxUI::GetRect()
@@ -452,22 +477,53 @@ void MicroFlakeX::MfxUI::SetPoint(Gdiplus::Point set)
 /* ———————————————————————————————————————————— */
 /* ———————————————————————————————————————————— */
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnDrawBufferDC(WPARAM wParam, LPARAM lParam)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnDrawBuffDC(WPARAM wParam, LPARAM lParam)
 {
 
 	UIDrawBufferDCBack(); //重置缓冲区背景
 
-	this->myMessageServer->ForwardMessageToControl(MFXUIEVENT_DRAWBUFFERDC, wParam, lParam); //通知控件BUFFERDC
+	for (int i = 0; i < myControlList.size(); i++) //通知控件BUFFDC
+	{
+		myControlList[i]->RecvMessage(MFXUIEVENT_DRAWBUFFDC, wParam, lParam);
+	}
 
 	return 0;
 }
 
 MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnDrawMainDC(WPARAM wParam, LPARAM lParam)
 {
-	this->myMessageServer->ForwardMessageToControl(MFXUIEVENT_DRAWMAINDC, wParam, lParam); //通知控件MAINDC
+	for (int i = 0; i < myControlList.size(); i++) //通知控件MAINDC
+	{
+		myControlList[i]->RecvMessage(MFXUIEVENT_DRAWMAINDC, wParam, lParam);
+	}
 
 	UIDrawMainDCMask(); //添加主画板蒙版
 
+	return 0;
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnControlCreate(WPARAM wParam, LPARAM lParam)
+{
+	if(!lParam)
+		this-RegControl((MicroFlakeX::MfxControl*)wParam);
+	return 0;
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnControlDelete(WPARAM wParam, LPARAM lParam)
+{
+	this->DelControl((MicroFlakeX::MfxControl*)wParam);
+	return 0;
+}
+
+bool comp(MicroFlakeX::MfxControl* a, MicroFlakeX::MfxControl* b)
+{
+	return a->GetFloor() < b->GetFloor();
+}
+
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUIFloorChange(WPARAM wParam, LPARAM lParam)
+{
+	if(!lParam)
+		std::sort(myControlList.begin(), myControlList.end(), comp);
 	return 0;
 }
 
@@ -478,17 +534,30 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUIPaint(WPARAM wParam, LPARAM
 
 		HDC hDc = BeginPaint(myWnd, &ps); //开始绘画
 
-		if (wParam != MFXUIEVENT_PAINTMAINDC)
+		//需不需要重绘缓冲界面 - 也就是重绘底层图片
+		if (wParam == MFXUIPAINTTYPE_PAINTALL || wParam & MFXUIPAINTTYPE_DRAWBUFFDC) 
 		{
-			MfxDefOnDrawBufferDC((WPARAM)&ps, (LPARAM)hDc); //绘制缓冲区
+			MfxDefOnDrawBuffDC((WPARAM)&ps, (LPARAM)hDc); //绘制缓冲区
+		}
+
+		//需不需要把缓冲界面拷贝到主界面中
+		if (wParam == MFXUIPAINTTYPE_PAINTALL || wParam & MFXUIPAINTTYPE_COPYBUFFDCTOMAINDC)
+		{
+			UICopyBufferDCToMainDC(); //拷贝缓冲区到主界面
 		}
 		
-		UICopyBufferDCToMainDC(); //拷贝缓冲区到主界面
-
 	EndDrawBufferDC:
-		MfxDefOnDrawMainDC((WPARAM)&ps, (LPARAM)hDc); //绘制主界面
-
-		UICopyMainDCToShowDC(); //拷贝主画板到显示界面
+		//需不需要绘制主界面 - 也就是需不需要添加蒙版
+		if (wParam == MFXUIPAINTTYPE_PAINTALL || wParam & MFXUIPAINTTYPE_DRAWMAINDC) 
+		{
+			MfxDefOnDrawMainDC((WPARAM)&ps, (LPARAM)hDc); //绘制主界面
+		}
+		
+		//需不需要将主界面显示到用户界面
+		if (wParam == MFXUIPAINTTYPE_PAINTALL || wParam & MFXUIPAINTTYPE_COPYMAINDCTOSHOWDC)
+		{
+			UICopyMainDCToShowDC(); //拷贝主画板到显示界面
+		}
 
 		EndPaint(myWnd, &ps); //结束绘画
 
@@ -535,7 +604,10 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUISize(WPARAM wParam, LPARAM 
 	tSize.aRect = Gdiplus::Rect(myRect.X, myRect.Y, LOWORD(lParam), HIWORD(lParam));
 
 	// 通知控件们，大小发生改变 
-	this->myMessageServer->ForwardMessageToControl(MFXUIEVENT_FATHERSIZE, 0, (LPARAM)&tSize);
+	for (int i = 0; i < myControlList.size(); i++)
+	{
+		myControlList[i]->RecvMessage(MFXUIEVENT_FATHERSIZE, 0, (LPARAM)&tSize);
+	}
 
 	// 通知子窗口们，大小发生改变
 	EnumChildWindows(myWnd, MfxEnumFatherSize, (LPARAM)&tSize); 
@@ -552,12 +624,12 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUISize(WPARAM wParam, LPARAM 
 
 	if (myBackImage)
 	{
-		myBackImage->SetImageSize(Gdiplus::Size(myRect.Width, myRect.Height));
+		myBackImage->SetSize(Gdiplus::Size(myRect.Width, myRect.Height));
 	}
 
 	if (myMaskImage)
 	{
-		myMaskImage->SetImageSize(Gdiplus::Size(myRect.Width, myRect.Height));
+		myMaskImage->SetSize(Gdiplus::Size(myRect.Width, myRect.Height));
 	}
 	return 0;
 }
@@ -622,7 +694,7 @@ MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUIRDoubleClick(WPARAM wParam,
 /* ———————————————————————————————————————————— */
 /* ———————————————————————————————————————————— */
 
-MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUIEventSize(WPARAM wParam, LPARAM lParam)
+MicroFlakeX::MFXRETURE MicroFlakeX::MfxUI::MfxDefOnUIFatherSize(WPARAM wParam, LPARAM lParam)
 {
 	MFXUI_CHANGESIZE* getSize = (MFXUI_CHANGESIZE*)lParam;
 	/* 算吧，这里给出了前后坐标，怎么搞就是你的事情了 */
