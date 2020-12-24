@@ -1,4 +1,7 @@
 # MicroFlakeX - 一个`Windows`上的精巧`DirectUI`库
+* MicroFlakeX2是MicroFlakeX的升级版：[MicroFlakeX2](https://github.com/yishengjun8/MicroFlakeX2/)  
+* 这也就代表着MicroFlakeX将不会再更新！
+
 * `mfx`的目标是让Win桌面开发远离复杂的框架，`专注于开发和逻辑`，并且可以快速自定义背景、图片和蒙版，让你的程序充满自己的美术风格。  
 * 当你需要快速开发一款软件，而不想使用`复杂的框架`和学习`复杂的控件调用方法`，mfx就是你最好的选择。  
 
@@ -11,7 +14,7 @@
 
 ## 未来的控件计划：
   * MfxButton、MfxPage、MfxPageList、MfxForm、MfxMenu、MfxEdit、MfxRadioButton、MfxCheckButton  
-  * 说实话，我很想专注于开发主框架，虽然控件也是框架的一部分吧。所以希望各位有能力的开发者能加入mfx的控件开发，为mfx提交贡献！
+  * 希望各位有能力的开发者能加入mfx的控件开发，为mfx提交贡献！
 
 ## 注意事项：
   * 当你注册消息或事件的时候，请注意添加`MfxRecvDefMessage`或者`DefWindowProc`来确保缺省的消息也正常响应！  
