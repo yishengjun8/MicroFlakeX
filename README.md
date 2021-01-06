@@ -1,6 +1,6 @@
-# MicroFlakeX - 一个`Windows`上的精巧`DirectUI`库
+# MicroFlakeX
 * MicroFlakeX2是MicroFlakeX的升级版：[MicroFlakeX2](https://github.com/yishengjun8/MicroFlakeX2/)  
-* `mfx`的目标是让Win桌面开发远离复杂的框架，`专注于开发和逻辑`，并且可以快速自定义背景、图片和蒙版。  
+* `mfx`的目标是让Win桌面开发远离复杂的框架，`专注于开发和逻辑`，并且可以快速自定义背景、图片。  
 
 ## MicroFlakeX简介
 * Mfx尽量的使用简单的逻辑和命令来降低难度。  
