@@ -1,7 +1,9 @@
 # MicroFlakeX  
 * `MicroFlakeX`的目标是让WinApp开发更加的快速和可扩展。  
-[MicroFlakeX1](README.md#MicroFlakeX1简介)
-[MicroFlakeX2](README.md#MicroFlakeX2简介)
+[MicroFlakeX1](README.md#MicroFlakeX1简介)  
+[MicroFlakeX2](README.md#MicroFlakeX2简介)  
+
+____
 ## MicroFlakeX1简介
 * `MicroFlakeX1`是一个简陋而空旷的框架。它仅仅实现了一个最简单的消息转发和UI创建。  
 ## MicroFlakeX1适合哪些人  
@@ -9,7 +11,7 @@
 * 2、设计模式初学者  
 * 3、框架设计初学者  
 
-
+___
 ## MicroFlakeX2简介  
 * MicroFlakeX2包含两部分：MfxBasicModules和MfxAppFramework。前者负责提供WinApp基础，后者则负责构造WinApp框架。  
 * 目前的MicroFlakeX2，开始支持Direct2D绘制，所以这需要一点时间来统一。  
