@@ -658,6 +658,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnPaintMaskDC(WPARAM wParam, LPARAM
         myMaskImage->Draw();
     }
 
+
     BitBlt(myWndDc, 0, 0, myRect.Width, myRect.Height, myMaskDC, 0, 0, SRCCOPY);
     //BitBlt(myWndDc, 0, 0, myRect.Width, myRect.Height, myBackDC, 0, 0, SRCCOPY);
     return MfxFine;

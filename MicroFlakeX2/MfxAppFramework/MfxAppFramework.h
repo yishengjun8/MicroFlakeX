@@ -441,7 +441,7 @@ namespace MicroFlakeX
 		MfxReturn __OnTimer(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnAddTimer(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnRemoveTimer(WPARAM wParam, LPARAM lParam);
-
+		
 		MfxReturn __OnControlMessage(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnAddControlMessage(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnRemoveControlMessage(WPARAM wParam, LPARAM lParam);
