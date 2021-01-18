@@ -189,7 +189,7 @@ MfxReturn MicroFlakeX::MfxRect::SetSize(MfxSize* set)
 	MfxCodeLock(this);
 	set->GetWidth(&myWidth);
 	set->GetHeight(&myHeight);
-	return MfxReturn();
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetPoint(MfxPoint* set)
@@ -197,7 +197,7 @@ MfxReturn MicroFlakeX::MfxRect::SetPoint(MfxPoint* set)
 	MfxCodeLock(this);
 	set->GetX(&myX);
 	set->GetY(&myY);
-	return MfxReturn();
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetX(FLOAT set)

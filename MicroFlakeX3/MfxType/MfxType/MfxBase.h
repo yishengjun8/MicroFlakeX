@@ -70,6 +70,8 @@ namespace MicroFlakeX
 	class MFX_PORT MfxLock;
 
 	//Mfx模板
+	template<class DataType>
+	class MfxDataFlag;
 }
 
 //公开 函数
@@ -88,7 +90,7 @@ namespace MicroFlakeX
 
 	//可选 检查Mfx函数是否成功
 #define Failed(mr) __Failed(mr)
-#define Seccess(mf) __Seccess(mr)
+#define Seccess(mr) __Seccess(mr)
 
 	//强制 所有子类都需要声明
 #define MfxObject __MfxObject
@@ -196,6 +198,55 @@ namespace MicroFlakeX
 	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class... Args>
 	A8 MfxArg8(R(O::*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...)) { return A8(); };
 
+	template<class DataType>
+	class MfxDataFlag
+		: public MfxBase
+	{
+	public:
+		MfxDataFlag()
+		{
+			MfxLock tLock(this);
+			myBeforData = myData = DataType();
+			myChangeFlag = myUseFlag = 0;
+		}
+		~MfxDataFlag() { MfxLock tLock(this); };
+		DataType& GetData() { MfxLock tLock(this); return myData; };
+		DataType& GetBeforData() { MfxLock tLock(this); return myBeforData; };
+		void CleanUseFlag() { MfxLock tLock(this); myUseFlag = 0; }
+		void CleanChangeFlag() { MfxLock tLock(this); myChangeFlag = 0; }
+		UINT CheckUseFlag() { MfxLock tLock(this); return myUseFlag; };
+		UINT CheckChangeFlag() { MfxLock tLock(this); return myChangeFlag; };
+	protected:
+		DataType myData;
+		DataType myBeforData;
+		UINT myUseFlag;
+		UINT myChangeFlag;
+	public:
+		DataType operator-> () { MfxLock tLock(this); myUseFlag++; return myData; };
+
+		DataType& operator* () { MfxLock tLock(this); myUseFlag++; return myData; };
+
+		DataType operator= (DataType rhs)
+		{
+			MfxLock tLock(this);
+			myChangeFlag++;
+			myBeforData = myData;
+			myData = rhs;
+			return myData;
+		};
+
+		bool operator< (DataType rhs) { MfxLock tLock(this); return myData < rhs; };
+
+		bool operator> (DataType rhs) { MfxLock tLock(this); return myData > rhs; };
+
+		bool operator== (DataType rhs) { MfxLock tLock(this); return myData == rhs; };
+
+		bool operator!= (DataType rhs) { MfxLock tLock(this); return myData != rhs; };
+	};
+
+		//Mfx智能指针
+
+		//Mfx智能线程
 }
 
 #define __RFine	0
