@@ -32,5 +32,17 @@
     <ClCompile Include="MfxTypes.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MfxSize.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MfxRect.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MfxPoint.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MfxColor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

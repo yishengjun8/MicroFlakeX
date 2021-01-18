@@ -13,21 +13,26 @@
 /* STLÄ£°å¿â */
 /**/
 
+/* GDIPLUS */
+#include <gdiplus.h>
+#pragma comment(lib,"gdiplus.lib")
+/**/
+
 /* Direct2D1 */
 #include <d2d1.h>
-#include <d2d1helper.h>
+#include <dwmapi.h>
 #include <dwrite.h>
 #include <wincodec.h>
-#include <dwmapi.h>
-
+#include <d2d1helper.h>
 #pragma comment(lib, "D2D1.lib")
 #pragma comment(lib, "DWrite.lib")
-
 /**/
 #endif
 
 namespace MicroFlakeX
 {
+    class Mfx_PORT MfxType;
+
     class Mfx_PORT MfxRect;
     class Mfx_PORT MfxSize;
     class Mfx_PORT MfxPoint;
@@ -37,8 +42,17 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-    class MfxRect :
+    class MfxType :
         public MfxBase
+    {
+
+    };
+}
+
+namespace MicroFlakeX
+{
+    class MfxRect :
+        public MfxType
     {
         MfxOBJECT;
     public:
@@ -101,7 +115,7 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
     class MfxSize
-        : public MfxBase
+        : public MfxType
     {
         MfxOBJECT;
     public:
@@ -135,7 +149,7 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
     class MfxPoint
-        : public MfxBase
+        : public MfxType
     {
         MfxOBJECT;
     public:
@@ -167,7 +181,7 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
     class MfxColor
-        : public MfxBase
+        : public MfxType
     {
         MfxOBJECT;
     public:
