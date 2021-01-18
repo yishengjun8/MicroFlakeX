@@ -2,6 +2,8 @@
 * `MicroFlakeX`的目标是让WinApp开发更加的快速和可扩展。  
 [MicroFlakeX1](README.md#MicroFlakeX1简介)  
 [MicroFlakeX2](README.md#MicroFlakeX2简介)  
+[MicroFlakeX3](README.md#MicroFlakeX3简介)  
+
 
 ____
 ## MicroFlakeX1简介
@@ -10,7 +12,6 @@ ____
 * 1、GDI+、GDI、WinAPI的初学者  
 * 2、设计模式初学者  
 * 3、框架设计初学者  
-
 ___
 ## MicroFlakeX2简介  
 * MicroFlakeX2包含两部分：MfxBasicModules和MfxAppFramework。前者负责提供WinApp基础，后者则负责构造WinApp框架。  
@@ -18,7 +19,6 @@ ___
 ## MicroFlakeX2介绍  
 * Mfx2提供了支持线程安全的基类。  
 * Mfx2采用`事件-方法队列`的模式处理消息，也就是说你可以自定义你的消息处于响应队列的前或后。  
-
 ## MicroFlakeX2未来的计划  
 - [x] MfxButton.h  
 - [ ] MfxPaper.h  
@@ -29,6 +29,12 @@ ___
 - [ ] MfxSock.h  
 ## MicroFlakeX2参考  
 请下载并阅读Examples内的示例代码，里面详尽的展示了MicroFlakeX2的全部功能示范。
+
+___
+## MicroFlakeX3简介  
+* MFX3计划彻底分离绘制接口和AppFrame，这样就可以更加快速的在GPU绘制和CPU绘制之间转换。  
+* MFX3的AppFrame并没有改变架构。但是会增加更加详细的文档说明和示例。  
+* MFX3优化了反射框架，新的反射框架支持工厂模式。  
 
 
 
