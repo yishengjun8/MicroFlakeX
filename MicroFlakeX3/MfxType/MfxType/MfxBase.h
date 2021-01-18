@@ -9,7 +9,7 @@
 * 1、所有的类必须继承于 MfxBase
 * 2、所有的类必须实现 'operator=' 和 'Clone' 
 * 3、所有的类的构造函数不允许出现参数
-* 4、所有的 MfxBase 子类，都必须使用 MfxOBJECT(obj) 声明
+* 4、所有的 MfxBase 子类，都必须使用 MfxObject(obj) 声明
 * 5、所有的方法、函数返回值必须为 MfxReturn，
 * 6、形参如果是输入值，必须以 set 开头；如果是返回值，必须以 ret 开头
 * 7、任何添加到 AutoFunc 的方法，不允许重载、不允许使用右值引用、不允许使用引用传递。
@@ -24,14 +24,14 @@
 * 1、关于继承
 *		如果子类实现了一个和父类同名的方法，并且都注册了 AutoFunc，
 *	那么，通过 AutoFunc 调用该方法的顺序为：父类->子类，如果父类失
-*	败，那么将不会执行子类方法，直接返回 MfxFAIL 。
+*	败，那么将不会执行子类方法，直接返回 RFail 。
 *		如果继承方式为：基类->类0->类1->类2，并且类0 、类2都注册了
 *	'Hello()'，调用顺序为：类0::Hello()->类2::Hello()。
 */
-#ifdef MfxBUILDING
-#define MfxPORT __declspec(dllexport)
+#ifdef MFX_BUILDING
+#define MFX_PORT __declspec(dllexport)
 #else
-#define MfxPORT __declspec(dllimport)
+#define MFX_PORT __declspec(dllimport)
 #pragma comment(lib, "MfxBase.lib")
 
 /* Windows 头文件 */
@@ -56,18 +56,18 @@
 //公开 类型
 namespace MicroFlakeX
 {
-	MfxPORT typedef long MfxReturn;
-	MfxPORT typedef std::string MfxStrA;
-	MfxPORT typedef std::wstring MfxStrW;
+	MFX_PORT typedef long MfxReturn;
+	MFX_PORT typedef std::string MfxStrA;
+	MFX_PORT typedef std::wstring MfxStrW;
 
-	MfxPORT typedef MfxStrW MfxStr;
+#define MfxStr MfxStrW;
 }
 
 //公开 类 - 模板
 namespace MicroFlakeX
 {
-	class MfxPORT MfxBase;
-	class MfxPORT MfxLock;
+	class MFX_PORT MfxBase;
+	class MFX_PORT MfxLock;
 
 	//Mfx模板
 }
@@ -76,51 +76,51 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	//Mfx工厂
-	MfxPORT MfxReturn MfxBaseFactory(MfxStrW object, MfxBase** ret);
+	MFX_PORT MfxReturn MfxBaseFactory(MfxStrW object, MfxBase** ret);
 }
 
 //公开 宏
 namespace MicroFlakeX
 {
 	//强制 MfxReturn必须选择下列一项返回
-#define MfxFINE __MfxFINE
-#define MfxFAIL __MfxFAIL
+#define RFine __RFine
+#define RFail __RFail
 
 	//可选 检查Mfx函数是否成功
-#define Mfx_FAILED(DR) __Mfx_NO(DR)
-#define Mfx_SECCESS(DR) __Mfx_OK(DR)
+#define Failed(mr) __Failed(mr)
+#define Seccess(mf) __Seccess(mr)
 
 	//强制 所有子类都需要声明
-#define MfxOBJECT __MfxOBJECT
+#define MfxObject __MfxObject
 
 	//强制 所有的方法在使用前必须使用，以保证线程安全
-#define MfxCODELOCK(obj) __MfxCODELOCK(obj)
+#define MfxCodeLock(obj) __MfxCodeLock(obj)
 
 	//强制 所有的子类必须在其.cpp中优先顺序调用下列三个初始化
-#define MfxOBJECT_INIT_0(obj) __MfxOBJECT_INIT_0(obj)
-#define MfxOBJECT_INIT_1(obj) __MfxOBJECT_INIT_1(obj)
-#define MfxOBJECT_INIT_2(obj, father) __MfxOBJECT_INIT_2(obj, father)
+#define MfxObject_Init_0(obj) __MfxObject_Init_0(obj)
+#define MfxObject_Init_1(obj) __MfxObject_Init_1(obj)
+#define MfxObject_Init_2(obj, father) __MfxObject_Init_2(obj, father)
 
 	//可选 注册反射调用 -强制 只能在INIT_0-INIT_1之间使用
-#define MfxOBJECT_AUTOFUNC_REG(obj, func, id) __MfxOBJECT_AUTOFUNC_REG(obj, func, id) 
+#define MfxObject_Register(obj, func, id) __MfxObject_Register(obj, func, id) 
 
 	//可选 实现反射调用 -强制 只能在INIT_1-INIT_2之间使用
-#define MfxOBJECT_AUTOFUNC_CASE_0(obj, father, func, id) __MfxOBJECT_AUTOFUNC_CASE_0(obj, father, func, id) 
-#define MfxOBJECT_AUTOFUNC_CASE_1(obj, father, func, id) __MfxOBJECT_AUTOFUNC_CASE_1(obj, father, func, id) 
-#define MfxOBJECT_AUTOFUNC_CASE_2(obj, father, func, id) __MfxOBJECT_AUTOFUNC_CASE_2(obj, father, func, id) 
-#define MfxOBJECT_AUTOFUNC_CASE_3(obj, father, func, id) __MfxOBJECT_AUTOFUNC_CASE_3(obj, father, func, id) 
-#define MfxOBJECT_AUTOFUNC_CASE_4(obj, father, func, id) __MfxOBJECT_AUTOFUNC_CASE_4(obj, father, func, id) 
-#define MfxOBJECT_AUTOFUNC_CASE_5(obj, father, func, id) __MfxOBJECT_AUTOFUNC_CASE_5(obj, father, func, id) 
-#define MfxOBJECT_AUTOFUNC_CASE_6(obj, father, func, id) __MfxOBJECT_AUTOFUNC_CASE_6(obj, father, func, id) 
-#define MfxOBJECT_AUTOFUNC_CASE_7(obj, father, func, id) __MfxOBJECT_AUTOFUNC_CASE_7(obj, father, func, id) 
-#define MfxOBJECT_AUTOFUNC_CASE_8(obj, father, func, id) __MfxOBJECT_AUTOFUNC_CASE_8(obj, father, func, id) 
+#define MfxObject_Case_0(obj, father, func, id) __MfxObject_Case_0(obj, father, func, id) 
+#define MfxObject_Case_1(obj, father, func, id) __MfxObject_Case_1(obj, father, func, id) 
+#define MfxObject_Case_2(obj, father, func, id) __MfxObject_Case_2(obj, father, func, id) 
+#define MfxObject_Case_3(obj, father, func, id) __MfxObject_Case_3(obj, father, func, id) 
+#define MfxObject_Case_4(obj, father, func, id) __MfxObject_Case_4(obj, father, func, id) 
+#define MfxObject_Case_5(obj, father, func, id) __MfxObject_Case_5(obj, father, func, id) 
+#define MfxObject_Case_6(obj, father, func, id) __MfxObject_Case_6(obj, father, func, id) 
+#define MfxObject_Case_7(obj, father, func, id) __MfxObject_Case_7(obj, father, func, id) 
+#define MfxObject_Case_8(obj, father, func, id) __MfxObject_Case_8(obj, father, func, id) 
 }
 
 //内部 类型 - 类 - 函数 - 模板 - 宏
 namespace __DeepSpace
 {
-	class MfxPORT MfxFactoryHand;
-	MfxPORT MicroFlakeX::MfxReturn MfxRegisterObject(MicroFlakeX::MfxStrW object, MfxFactoryHand* hand);
+	class MFX_PORT MfxFactoryHand;
+	MFX_PORT MicroFlakeX::MfxReturn MfxRegisterObject(MicroFlakeX::MfxStrW object, MfxFactoryHand* hand);
 
 }
 
@@ -161,7 +161,7 @@ namespace MicroFlakeX
 //内部 类声明
 namespace __DeepSpace
 {
-	class MfxPORT MfxFactoryHand
+	class MFX_PORT MfxFactoryHand
 	{
 	public:
 		MfxFactoryHand(MicroFlakeX::MfxStrW object);
@@ -198,16 +198,16 @@ namespace MicroFlakeX
 
 }
 
-#define __MfxFINE	0
-#define __MfxFAIL	-1
+#define __RFine	0
+#define __RFail	-1
 
-#define __Mfx_OK(DR)	(((MfxReturn)(DR)) >= 0)
-#define __Mfx_NO(DR)	(((MfxReturn)(DR)) < 0)
+#define __Seccess(DR)	(((MfxReturn)(DR)) >= 0)
+#define __Failed(DR)	(((MfxReturn)(DR)) < 0)
 
-#define __MfxCODELOCK(obj) \
+#define __MfxCodeLock(obj) \
 	MfxLock tLock(obj);
 
-#define __MfxOBJECT \
+#define __MfxObject \
 public:\
 	MfxReturn AutoFunc(MfxStrW setFunc...);\
 	MfxReturn FuncName(MfxStrW* ret);\
@@ -215,7 +215,7 @@ public:\
 	MfxReturn ObjectName(MfxStrW* ret);
 	
 
-#define __MfxOBJECT_INIT_0(obj) \
+#define __MfxObject_Init_0(obj) \
 using namespace MicroFlakeX;\
 using namespace __DeepSpace;\
 using MicroFlakeX::obj;\
@@ -230,31 +230,31 @@ typedef std::map<MfxStrW,obj##MfxAutoFuncInfor*>::value_type obj##MfxAutoFuncVal
 typedef std::map<MfxStrW,obj##MfxAutoFuncInfor*>::iterator obj##MfxAutoFuncIterator;\
 MfxReturn obj::FuncName(MfxStrW* ret)\
 {\
-	MfxCODELOCK(this);\
+	MfxCodeLock(this);\
 	*ret = L"";\
 	for(auto i : obj##MfxAutoFuncMap)\
 	{\
 		*ret += i.second->myName;\
 		*ret += L"\n";\
 	}\
-	return MfxFINE;\
+	return RFine;\
 }\
 MfxReturn obj::FuncInfor(MfxStrW* ret)\
 {\
-	MfxCODELOCK(this);\
+	MfxCodeLock(this);\
 	*ret = L"";\
 	for(auto i : obj##MfxAutoFuncMap)\
 	{\
 		*ret += i.second->myAllName;\
 		*ret += L"\n";\
 	}\
-	return MfxFINE;\
+	return RFine;\
 }\
 MfxReturn obj::ObjectName(MfxStrW* ret)\
 {\
-	MfxCODELOCK(this);\
+	MfxCodeLock(this);\
 	*ret = L#obj;\
-	return MfxFINE;\
+	return RFine;\
 }\
 class obj##FactoryHand\
 	: public MfxFactoryHand\
@@ -265,21 +265,21 @@ public:\
 	{\
 		obj##MfxAutoFuncInfor* infor = nullptr;\
 		WCHAR typeName[1024]; size_t n = 0;\
-		MfxOBJECT_AUTOFUNC_REG(obj, AutoFunc, -1)
+		MfxObject_Register(obj, AutoFunc, -1)
 
-#define __MfxOBJECT_INIT_1(obj) \
+#define __MfxObject_Init_1(obj) \
 	};\
 	MfxReturn Creat(MfxBase** ret)\
 	{\
 		*ret = new obj;\
-		return MfxFINE;\
+		return RFine;\
 	}\
 };\
 auto obj##Hand = new obj##FactoryHand(L#obj);\
 MfxReturn obj::AutoFunc(MfxStrW setFunc...)\
 {\
-	MfxCODELOCK(this);\
-	MfxReturn ret = MfxFAIL;\
+	MfxCodeLock(this);\
+	MfxReturn ret = RFail;\
 	va_list argc;\
 	va_start(argc, setFunc);\
 	obj##MfxAutoFuncIterator iter = obj##MfxAutoFuncMap.end();\
@@ -291,7 +291,7 @@ MfxReturn obj::AutoFunc(MfxStrW setFunc...)\
 		switch (caID)\
 		{
 
-#define __MfxOBJECT_INIT_2(obj, father) \
+#define __MfxObject_Init_2(obj, father) \
 		case -1:\
 		{\
 			setFunc = va_arg(argc, MfxStrW);\
@@ -308,7 +308,7 @@ MfxReturn obj::AutoFunc(MfxStrW setFunc...)\
 	return ret;\
 }
 
-#define __MfxOBJECT_AUTOFUNC_REG(obj, func, id) \
+#define __MfxObject_Register(obj, func, id) \
 infor = new obj##MfxAutoFuncInfor;\
 infor->myID = id;\
 infor->myName = L#func;\
@@ -317,49 +317,49 @@ mbstowcs_s(&n, typeName, 1024,\
 infor->myAllName = typeName;\
 obj##MfxAutoFuncMap.insert(obj##MfxAutoFuncValue(L#func, infor));
 
-#define __MfxOBJECT_AUTOFUNC_CASE_0(obj, father, func, id) \
+#define __MfxObject_Case_0(obj, father, func, id) \
 case id:\
 {\
 	ret = father::AutoFunc(L#func);\
-	if (Mfx_FAILED(ret)) { return MfxFAIL; };\
+	if (Failed(ret)) { return RFail; };\
 	ret = func();\
 	break;\
 }
 
-#define __MfxOBJECT_AUTOFUNC_CASE_1(obj, father, func, id) \
+#define __MfxObject_Case_1(obj, father, func, id) \
 case id:\
 {\
 	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
 	ret = father::AutoFunc(L#func, A1);\
-	if (Mfx_FAILED(ret)) { return MfxFAIL; };\
+	if (Failed(ret)) { return RFail; };\
 	ret = func(A1);\
 	break;\
 }
 
-#define __MfxOBJECT_AUTOFUNC_CASE_2(obj, father, func, id) \
+#define __MfxObject_Case_2(obj, father, func, id) \
 case id:\
 {\
 	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
 	auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
 	ret = father::AutoFunc(L#func, A1, A2);\
-	if (Mfx_FAILED(ret)) { return MfxFAIL; };\
+	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2);\
 	break;\
 }
 
-#define __MfxOBJECT_AUTOFUNC_CASE_3(obj, father, func, id) \
+#define __MfxObject_Case_3(obj, father, func, id) \
 case id:\
 {\
 	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
 	auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
 	auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
 	ret = father::AutoFunc(L#func, A1, A2, A3);\
-	if (Mfx_FAILED(ret)) { return MfxFAIL; };\
+	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2, A3);\
 	break;\
 }
 
-#define __MfxOBJECT_AUTOFUNC_CASE_4(obj, father, func, id) \
+#define __MfxObject_Case_4(obj, father, func, id) \
 case id:\
 {\
 	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
@@ -367,12 +367,12 @@ case id:\
 	auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
 	auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
 	ret = father::AutoFunc(L#func, A1, A2, A3, A4);\
-	if (Mfx_FAILED(ret)) { return MfxFAIL; };\
+	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2, A3, A4);\
 	break;\
 }
 
-#define __MfxOBJECT_AUTOFUNC_CASE_5(obj, father, func, id) \
+#define __MfxObject_Case_5(obj, father, func, id) \
 case id:\
 {\
 	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
@@ -381,12 +381,12 @@ case id:\
 	auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
 	auto A5 = va_arg(argc, decltype(MfxArg5(&obj::func)));\
 	ret = father::AutoFunc(L#func, A1, A2, A3, A4, A5);\
-	if (Mfx_FAILED(ret)) { return MfxFAIL; };\
+	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2, A3, A4, A5);\
 	break;\
 }
 
-#define __MfxOBJECT_AUTOFUNC_CASE_6(obj, father, func, id) \
+#define __MfxObject_Case_6(obj, father, func, id) \
 case id:\
 {\
 	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
@@ -396,12 +396,12 @@ case id:\
 	auto A5 = va_arg(argc, decltype(MfxArg5(&obj::func)));\
 	auto A6 = va_arg(argc, decltype(MfxArg6(&obj::func)));\
 	ret = father::AutoFunc(L#func, A1, A2, A3, A4, A5, A6);\
-	if (Mfx_FAILED(ret)) { return MfxFAIL; };\
+	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2, A3, A4, A5, A6);\
 	break;\
 }
 
-#define __MfxOBJECT_AUTOFUNC_CASE_7(obj, father, func, id) \
+#define __MfxObject_Case_7(obj, father, func, id) \
 case id:\
 {\
 	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
@@ -412,12 +412,12 @@ case id:\
 	auto A6 = va_arg(argc, decltype(MfxArg6(&obj::func)));\
 	auto A7 = va_arg(argc, decltype(MfxArg7(&obj::func)));\
 	ret = father::AutoFunc(L#func, A1, A2, A3, A4, A5, A6, A7);\
-	if (Mfx_FAILED(ret)) { return MfxFAIL; };\
+	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2, A3, A4, A5, A6, A7);\
 	break;\
 }
 
-#define __MfxOBJECT_AUTOFUNC_CASE_8(obj, father, func, id) \
+#define __MfxObject_Case_8(obj, father, func, id) \
 case id:\
 {\
 	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
@@ -429,7 +429,7 @@ case id:\
 	auto A7 = va_arg(argc, decltype(MfxArg7(&obj::func)));\
 	auto A8 = va_arg(argc, decltype(MfxArg8(&obj::func)));\
 	ret = father::AutoFunc(L#func, A1, A2, A3, A4, A5, A6, A7, A8);\
-	if (Mfx_FAILED(ret)) { return MfxFAIL; };\
+	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2, A3, A4, A5, A6, A7, A8);\
 	break;\
 }

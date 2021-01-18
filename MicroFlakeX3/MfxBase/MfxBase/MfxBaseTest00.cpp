@@ -1,34 +1,34 @@
 #include "pch.h"
 #include "MfxBaseTest00.h"
 
-MfxOBJECT_INIT_0(MfxBaseTest00)
-MfxOBJECT_AUTOFUNC_REG(MfxBaseTest00, SayHello, 1)
-MfxOBJECT_AUTOFUNC_REG(MfxBaseTest00, SayGoodBy, 2)
-MfxOBJECT_INIT_1(MfxBaseTest00)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxBaseTest00, MfxBase, SayHello, 1)
-MfxOBJECT_AUTOFUNC_CASE_0(MfxBaseTest00, MfxBase, SayGoodBy, 2)
-MfxOBJECT_INIT_2(MfxBaseTest00, MfxBase);
+MfxObject_Init_0(MfxBaseTest00)
+MfxObject_Register(MfxBaseTest00, SayHello, 1)
+MfxObject_Register(MfxBaseTest00, SayGoodBy, 2)
+MfxObject_Init_1(MfxBaseTest00)
+MfxObject_Case_1(MfxBaseTest00, MfxBase, SayHello, 1)
+MfxObject_Case_0(MfxBaseTest00, MfxBase, SayGoodBy, 2)
+MfxObject_Init_2(MfxBaseTest00, MfxBase);
 
 MicroFlakeX::MfxBaseTest00::MfxBaseTest00()
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myData = 0;
 }
 
 MicroFlakeX::MfxBaseTest00::~MfxBaseTest00()
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 }
 
 MfxReturn MicroFlakeX::MfxBaseTest00::Clone(MfxBase** ret)
 {
-	MfxCODELOCK(this);
-	return MfxFINE;
+	MfxCodeLock(this);
+	return RFine;
 }
 
 MfxBase& MicroFlakeX::MfxBaseTest00::operator=(MfxBase& rhs)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	rhs.AutoFunc(L"SetData", myData);
 	return *this;
 }
@@ -40,21 +40,21 @@ BOOL MicroFlakeX::MfxBaseTest00::operator==(MfxBase& rhs)
 
 MfxReturn MicroFlakeX::MfxBaseTest00::SayHello(int set)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	std::cout << "Hello MfxBaseTest00 SayHello!" << myData << std::endl;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxBaseTest00::SayGoodBy()
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	std::cout << "Hello MfxBaseTest00 SayGoodBy!" << myData << std::endl;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxBaseTest00::SetData(int set)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myData = set;
-	return MfxFINE;
+	return RFine;
 }

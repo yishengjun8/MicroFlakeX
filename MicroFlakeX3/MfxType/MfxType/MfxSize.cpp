@@ -1,50 +1,50 @@
 #include "pch.h"
 #include "MfxTypes.h"
 
-MfxOBJECT_INIT_0(MfxSize)
-MfxOBJECT_AUTOFUNC_REG(MfxSize, Init, 0);
-MfxOBJECT_AUTOFUNC_REG(MfxSize, GetD2D1SizeF, 1);
-MfxOBJECT_AUTOFUNC_REG(MfxSize, GetD2D1SizeU, 2);
-MfxOBJECT_AUTOFUNC_REG(MfxSize, Empty, 3);
-MfxOBJECT_AUTOFUNC_REG(MfxSize, Inflate, 4);
-MfxOBJECT_AUTOFUNC_REG(MfxSize, SetWidth, 5);
-MfxOBJECT_AUTOFUNC_REG(MfxSize, SetHeight, 6);
-MfxOBJECT_AUTOFUNC_REG(MfxSize, GetWidth, 7);
-MfxOBJECT_AUTOFUNC_REG(MfxSize, GetHeight, 8);
-MfxOBJECT_INIT_1(MfxSize)
-MfxOBJECT_AUTOFUNC_CASE_2(MfxSize, MfxType, Init, 0)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxSize, MfxType, GetD2D1SizeF, 1)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxSize, MfxType, GetD2D1SizeU, 2)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxSize, MfxType, Empty, 3)
-MfxOBJECT_AUTOFUNC_CASE_2(MfxSize, MfxType, Inflate, 4)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxSize, MfxType, SetWidth, 5)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxSize, MfxType, SetHeight, 6)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxSize, MfxType, GetWidth, 7)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxSize, MfxType, GetHeight, 8)
-MfxOBJECT_INIT_2(MfxSize, MfxType);
+MfxObject_Init_0(MfxSize)
+MfxObject_Register(MfxSize, Init, 0);
+MfxObject_Register(MfxSize, GetD2D1SizeF, 1);
+MfxObject_Register(MfxSize, GetD2D1SizeU, 2);
+MfxObject_Register(MfxSize, Empty, 3);
+MfxObject_Register(MfxSize, Inflate, 4);
+MfxObject_Register(MfxSize, SetWidth, 5);
+MfxObject_Register(MfxSize, SetHeight, 6);
+MfxObject_Register(MfxSize, GetWidth, 7);
+MfxObject_Register(MfxSize, GetHeight, 8);
+MfxObject_Init_1(MfxSize)
+MfxObject_Case_2(MfxSize, MfxType, Init, 0)
+MfxObject_Case_1(MfxSize, MfxType, GetD2D1SizeF, 1)
+MfxObject_Case_1(MfxSize, MfxType, GetD2D1SizeU, 2)
+MfxObject_Case_1(MfxSize, MfxType, Empty, 3)
+MfxObject_Case_2(MfxSize, MfxType, Inflate, 4)
+MfxObject_Case_1(MfxSize, MfxType, SetWidth, 5)
+MfxObject_Case_1(MfxSize, MfxType, SetHeight, 6)
+MfxObject_Case_1(MfxSize, MfxType, GetWidth, 7)
+MfxObject_Case_1(MfxSize, MfxType, GetHeight, 8)
+MfxObject_Init_2(MfxSize, MfxType);
 
 MicroFlakeX::MfxSize::MfxSize()
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myWidth = myHeight = 0;
 }
 
 MicroFlakeX::MfxSize::~MfxSize()
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 }
 
 MfxReturn MicroFlakeX::MfxSize::Clone(MfxBase** ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	*ret = new MfxSize;
 	((MfxSize*)(*ret))->Init(myWidth, myHeight);
-	return MfxFINE;
+	return RFine;
 }
 
 MfxBase& MicroFlakeX::MfxSize::operator=(MfxBase& rhs)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	rhs.AutoFunc(L"GetWidth", &myWidth);
 	rhs.AutoFunc(L"GetHeight", &myHeight);
 	return *this;
@@ -52,80 +52,80 @@ MfxBase& MicroFlakeX::MfxSize::operator=(MfxBase& rhs)
 
 BOOL MicroFlakeX::MfxSize::operator==(MfxBase& rhs)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	FLOAT tW = 0, tH = 0;
 	rhs.AutoFunc(L"GetWidth", &tW);
 	rhs.AutoFunc(L"GetHeight", &tH);
 	return tW == myWidth && tH == myHeight;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::Init(FLOAT setWidth, FLOAT setHeight)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myWidth = setWidth;
 	myHeight = setHeight;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeF(D2D1_SIZE_F* ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	GetWidth(&(ret->width));
 	GetHeight(&(ret->height));
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeU(D2D1_SIZE_U* ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	FLOAT tW = 0, tH = 0;
 	GetWidth(&tW);
 	GetHeight(&tH);
 	ret->width = tW;
 	ret->height = tH;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::Empty(BOOL* ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	*ret = myWidth < 0 || myHeight < 0;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::Inflate(FLOAT setX, FLOAT setY)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myWidth += 2 * setX;
 	myHeight += 2 * setY;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::SetWidth(FLOAT set)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myWidth = set;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::SetHeight(FLOAT set)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myHeight = set;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetWidth(FLOAT* ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	*ret = myWidth;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetHeight(FLOAT* ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	*ret = myHeight;
-	return MfxFINE;
+	return RFine;
 }

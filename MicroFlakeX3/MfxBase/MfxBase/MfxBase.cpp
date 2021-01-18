@@ -14,13 +14,13 @@ MfxReturn MicroFlakeX::MfxBaseFactory(MfxStrW object, MfxBase** ret)
 	{
 		return iter->second->Creat(ret);
 	}
-	return MfxFAIL;
+	return RFail;
 }
 
 MfxReturn __DeepSpace::MfxRegisterObject(MfxStrW object, MfxFactoryHand* hand)
 {
 	auto ret = MfxFactoryMap.insert(MfxFactoryValue(object, hand));
-	return ret.second ? MfxFINE : MfxFAIL;
+	return ret.second ? RFine : RFail;
 }
 
 MicroFlakeX::MfxBase::MfxBase()
@@ -31,21 +31,21 @@ MicroFlakeX::MfxBase::MfxBase()
 
 MicroFlakeX::MfxBase::~MfxBase()
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	DeleteCriticalSection(&myCriticalSection);
 }
 
 MfxReturn MicroFlakeX::MfxBase::Clone(MfxBase** ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	*ret = new MfxBase;
 	(*ret)->myFloor = myFloor;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxBase& MicroFlakeX::MfxBase::operator=(MfxBase& rhs)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myFloor = rhs.myFloor;
 	return *this;
 }
@@ -57,35 +57,35 @@ BOOL MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 
 MfxReturn MicroFlakeX::MfxBase::AutoFunc(MfxStrW func ...)
 {
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxBase::FuncName(MfxStrW* ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	*ret = L"";
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxBase::FuncInfor(MfxStrW* ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	*ret = L"";
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxBase::ObjectName(MfxStrW* ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	*ret = L"MfxBase";
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxBase::ObjectFloor(UINT* ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	*ret = myFloor;
-	return MfxFINE;
+	return RFine;
 }
 
 __DeepSpace::MfxFactoryHand::MfxFactoryHand(MfxStrW object)

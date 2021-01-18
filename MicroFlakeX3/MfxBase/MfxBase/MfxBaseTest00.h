@@ -6,7 +6,7 @@ namespace MicroFlakeX
     class MfxBaseTest00 :
         public MfxBase
     {
-        MfxOBJECT;
+        MfxObject;
     public:
         MfxBaseTest00();
         ~MfxBaseTest00();

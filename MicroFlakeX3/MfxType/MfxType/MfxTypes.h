@@ -1,10 +1,11 @@
 #pragma once
 
-#ifdef MfxBUILDING
-#define Mfx_PORT __declspec(dllexport)
+#ifdef MFX_BUILDING
+#define MFX_PORT __declspec(dllexport)
 #else
-#define Mfx_PORT __declspec(dllimport)
+#define MFX_PORT __declspec(dllimport)
 #pragma comment(lib, "MfxTypes.lib")
+#include "MfxBase.h"
 
 /* ÊýÑ§¿â */
 #include <cmath>
@@ -31,13 +32,13 @@
 
 namespace MicroFlakeX
 {
-    class Mfx_PORT MfxType;
+    class MFX_PORT MfxType;
 
-    class Mfx_PORT MfxRect;
-    class Mfx_PORT MfxSize;
-    class Mfx_PORT MfxPoint;
+    class MFX_PORT MfxRect;
+    class MFX_PORT MfxSize;
+    class MFX_PORT MfxPoint;
 
-    class Mfx_PORT MfxColor;
+    class MFX_PORT MfxColor;
 }
 
 namespace MicroFlakeX
@@ -54,7 +55,7 @@ namespace MicroFlakeX
     class MfxRect :
         public MfxType
     {
-        MfxOBJECT;
+        MfxObject;
     public:
         MfxRect();
         ~MfxRect();
@@ -117,7 +118,7 @@ namespace MicroFlakeX
     class MfxSize
         : public MfxType
     {
-        MfxOBJECT;
+        MfxObject;
     public:
         MfxSize();
         ~MfxSize();
@@ -151,7 +152,7 @@ namespace MicroFlakeX
     class MfxPoint
         : public MfxType
     {
-        MfxOBJECT;
+        MfxObject;
     public:
         MfxPoint();
         ~MfxPoint();
@@ -183,7 +184,7 @@ namespace MicroFlakeX
     class MfxColor
         : public MfxType
     {
-        MfxOBJECT;
+        MfxObject;
     public:
         MfxColor();
         ~MfxColor();

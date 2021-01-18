@@ -1,48 +1,48 @@
 #include "pch.h"
 #include "MfxTypes.h"
 
-MfxOBJECT_INIT_0(MfxPoint)
-MfxOBJECT_AUTOFUNC_REG(MfxPoint, Init, 0);
-MfxOBJECT_AUTOFUNC_REG(MfxPoint, GetD2D1PointU, 1);
-MfxOBJECT_AUTOFUNC_REG(MfxPoint, GetD2D1PointF, 2);
-MfxOBJECT_AUTOFUNC_REG(MfxPoint, Offset, 3);
-MfxOBJECT_AUTOFUNC_REG(MfxPoint, SetX, 4);
-MfxOBJECT_AUTOFUNC_REG(MfxPoint, SetY, 5);
-MfxOBJECT_AUTOFUNC_REG(MfxPoint, GetX, 6);
-MfxOBJECT_AUTOFUNC_REG(MfxPoint, GetY, 7);
-MfxOBJECT_INIT_1(MfxPoint)
-MfxOBJECT_AUTOFUNC_CASE_2(MfxPoint, MfxType, Init, 0)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxPoint, MfxType, GetD2D1PointU, 1)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxPoint, MfxType, GetD2D1PointF, 2)
-MfxOBJECT_AUTOFUNC_CASE_2(MfxPoint, MfxType, Offset, 3)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxPoint, MfxType, SetX, 4)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxPoint, MfxType, SetY, 5)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxPoint, MfxType, GetX, 6)
-MfxOBJECT_AUTOFUNC_CASE_1(MfxPoint, MfxType, GetY, 7)
-MfxOBJECT_INIT_2(MfxPoint, MfxType);
+MfxObject_Init_0(MfxPoint)
+MfxObject_Register(MfxPoint, Init, 0);
+MfxObject_Register(MfxPoint, GetD2D1PointU, 1);
+MfxObject_Register(MfxPoint, GetD2D1PointF, 2);
+MfxObject_Register(MfxPoint, Offset, 3);
+MfxObject_Register(MfxPoint, SetX, 4);
+MfxObject_Register(MfxPoint, SetY, 5);
+MfxObject_Register(MfxPoint, GetX, 6);
+MfxObject_Register(MfxPoint, GetY, 7);
+MfxObject_Init_1(MfxPoint)
+MfxObject_Case_2(MfxPoint, MfxType, Init, 0)
+MfxObject_Case_1(MfxPoint, MfxType, GetD2D1PointU, 1)
+MfxObject_Case_1(MfxPoint, MfxType, GetD2D1PointF, 2)
+MfxObject_Case_2(MfxPoint, MfxType, Offset, 3)
+MfxObject_Case_1(MfxPoint, MfxType, SetX, 4)
+MfxObject_Case_1(MfxPoint, MfxType, SetY, 5)
+MfxObject_Case_1(MfxPoint, MfxType, GetX, 6)
+MfxObject_Case_1(MfxPoint, MfxType, GetY, 7)
+MfxObject_Init_2(MfxPoint, MfxType);
 
 MicroFlakeX::MfxPoint::MfxPoint()
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myX = myY = 0;
 }
 
 MicroFlakeX::MfxPoint::~MfxPoint()
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 }
 
 MfxReturn MicroFlakeX::MfxPoint::Clone(MfxBase** ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	*ret = new MfxPoint;
 	((MfxPoint*)(*ret))->Init(myX, myY);
-	return MfxFINE;
+	return RFine;
 }
 
 MfxBase& MicroFlakeX::MfxPoint::operator=(MfxBase& rhs)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	rhs.AutoFunc(L"GetX", &myX);
 	rhs.AutoFunc(L"GetY", &myY);
 	return *this;
@@ -51,73 +51,73 @@ MfxBase& MicroFlakeX::MfxPoint::operator=(MfxBase& rhs)
 BOOL MicroFlakeX::MfxPoint::operator==(MfxBase& rhs)
 {
 	// TODO: 在此处插入 return 语句
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	FLOAT tX = 0, tY = 0;
 	rhs.AutoFunc(L"GetX", &tX);
 	rhs.AutoFunc(L"GetY", &tY);
 	return tX == myX && tY == myY;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::Init(FLOAT setX, FLOAT setY)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myX = setX;
 	myY = setY;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointU(D2D1_POINT_2U* ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	FLOAT tX = 0, tY = 0;
 	GetX(&tX);
 	GetY(&tY);
 	ret->x = tX;
 	ret->y = tY;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointF(D2D1_POINT_2F* ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	GetX(&(ret->x));
 	GetY(&(ret->y));
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::Offset(FLOAT setX, FLOAT setY)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myX += setX;
 	myY += setY;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::SetX(FLOAT set)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myX = set;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::SetY(FLOAT set)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myY = set;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::GetX(FLOAT* ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	*ret = myX;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::GetY(FLOAT* ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	*ret = myY;
-	return MfxFINE;
+	return RFine;
 }

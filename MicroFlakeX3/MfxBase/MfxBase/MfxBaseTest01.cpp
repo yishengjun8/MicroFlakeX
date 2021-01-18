@@ -1,31 +1,31 @@
 #include "pch.h"
 #include "MfxBaseTest01.h"
 
-MfxOBJECT_INIT_0(MfxBaseTest01)
-MfxOBJECT_INIT_1(MfxBaseTest01)
-MfxOBJECT_INIT_2(MfxBaseTest01, MfxBaseTest00);
+MfxObject_Init_0(MfxBaseTest01)
+MfxObject_Init_1(MfxBaseTest01)
+MfxObject_Init_2(MfxBaseTest01, MfxBaseTest00);
 
 MicroFlakeX::MfxBaseTest01::MfxBaseTest01()
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myData = 100;
 }
 
 MicroFlakeX::MfxBaseTest01::~MfxBaseTest01()
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 }
 
 MfxReturn MicroFlakeX::MfxBaseTest01::Clone(MfxBase** ret)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	return MfxReturn();
 }
 
 MfxBase& MicroFlakeX::MfxBaseTest01::operator=(MfxBase& rhs)
 {
 	// TODO: 在此处插入 return 语句
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	rhs.AutoFunc(L"SetData", myData);
 	return *this;
 }
@@ -37,21 +37,21 @@ BOOL MicroFlakeX::MfxBaseTest01::operator==(MfxBase& rhs)
 
 MfxReturn MicroFlakeX::MfxBaseTest01::SayHello(int set)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	std::cout << "Hello MfxBaseTest01 SayHello!" << myData << std::endl;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxBaseTest01::SayGoodBy()
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	std::cout << "Hello MfxBaseTest01 SayGoodBy!" << myData << std::endl;
-	return MfxFINE;
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxBaseTest01::SetData(int set)
 {
-	MfxCODELOCK(this);
+	MfxCodeLock(this);
 	myData = set;
-	return MfxFINE;
+	return RFine;
 }
