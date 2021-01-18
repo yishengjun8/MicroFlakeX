@@ -22,7 +22,6 @@
 </a>
 
 # MicroFlakeX2  
-* MicroFlakeX2的前置版本：[MicroFlakeX](https://github.com/yishengjun8/MicroFlakeX/)  
 * MicroFlakeX2包含两部分：MfxBasicModules和MfxAppFramework。前者负责提供WinApp基础，后者则负责构造WinApp框架。  
 * 目前的MicroFlakeX2，开始支持Direct2D绘制，所以这需要一点时间来统一。
 # MicroFlakeX2简介  
@@ -33,14 +32,5 @@
 # MicroFlakeX2介绍  
 * Mfx2提供了支持线程安全、反射调用的基类`MfxBasicObject`。  
 * Mfx2采用`事件-方法队列`的模式处理消息，也就是说你可以自定义你的消息处于响应队列的前或后。  
-* Mfx2的MfxBasicGraph.h内提供的图形类，均实现了三种绘制方法：BitBlt绘制(最快)、DrawCachedBitmap绘制(较快)、DrawImage绘制(中)。  
-## MicroFlakeX2未来的计划  
-- [x] MfxButton.h  
-- [ ] MfxPaper.h  
-- [ ] MfxEdit.h 
-- [ ] MfxListCtrl.h 
-- [ ] MfxSound.h  
-- [ ] MfxIni.h  
-- [ ] MfxSock.h  
 ## MicroFlakeX2参考  
 请下载并阅读Examples内的示例代码，里面详尽的展示了MicroFlakeX2的全部功能示范。
