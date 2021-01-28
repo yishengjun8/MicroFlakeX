@@ -2,7 +2,7 @@
 #include "MfxBase.h"
 
 using namespace MicroFlakeX;
-using namespace __DeepSpace;
+using namespace __MicroFlakeX;
 
 std::map<MfxStrW, MfxFactoryHand*> MfxFactoryMap;
 typedef std::map<MfxStrW, MfxFactoryHand*>::value_type MfxFactoryValue;
@@ -17,7 +17,7 @@ MfxReturn MicroFlakeX::MfxBaseFactory(MfxStrW object, MfxBase** ret)
 	return RFail;
 }
 
-MfxReturn __DeepSpace::MfxRegisterObject(MfxStrW object, MfxFactoryHand* hand)
+MfxReturn __MicroFlakeX::MfxRegisterObject(MfxStrW object, MfxFactoryHand* hand)
 {
 	auto ret = MfxFactoryMap.insert(MfxFactoryValue(object, hand));
 	return ret.second ? RFine : RFail;
@@ -88,7 +88,7 @@ MfxReturn MicroFlakeX::MfxBase::ObjectFloor(UINT* ret)
 	return RFine;
 }
 
-__DeepSpace::MfxFactoryHand::MfxFactoryHand(MfxStrW object)
+__MicroFlakeX::MfxFactoryHand::MfxFactoryHand(MfxStrW object)
 {
 	MfxRegisterObject(object, this);
 }

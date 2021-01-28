@@ -119,7 +119,7 @@ namespace MicroFlakeX
 }
 
 //内部 类型 - 类 - 函数 - 模板 - 宏
-namespace __DeepSpace
+namespace __MicroFlakeX
 {
 	class MFX_PORT MfxFactoryHand;
 	MFX_PORT MicroFlakeX::MfxReturn MfxRegisterObject(MicroFlakeX::MfxStrW object, MfxFactoryHand* hand);
@@ -161,7 +161,7 @@ namespace MicroFlakeX
 }
 
 //内部 类声明
-namespace __DeepSpace
+namespace __MicroFlakeX
 {
 	class MFX_PORT MfxFactoryHand
 	{
@@ -268,7 +268,7 @@ public:\
 
 #define __MfxObject_Init_0(obj) \
 using namespace MicroFlakeX;\
-using namespace __DeepSpace;\
+using namespace __MicroFlakeX;\
 using MicroFlakeX::obj;\
 struct obj##MfxAutoFuncInfor\
 {\
@@ -371,8 +371,6 @@ obj##MfxAutoFuncMap.insert(obj##MfxAutoFuncValue(L#func, infor));
 #define __MfxObject_Case_0(obj, father, func, id) \
 case id:\
 {\
-	ret = father::AutoFunc(L#func);\
-	if (Failed(ret)) { return RFail; };\
 	ret = func();\
 	break;\
 }
@@ -381,8 +379,6 @@ case id:\
 case id:\
 {\
 	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
-	ret = father::AutoFunc(L#func, A1);\
-	if (Failed(ret)) { return RFail; };\
 	ret = func(A1);\
 	break;\
 }
@@ -392,8 +388,6 @@ case id:\
 {\
 	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
 	auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
-	ret = father::AutoFunc(L#func, A1, A2);\
-	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2);\
 	break;\
 }
@@ -404,8 +398,6 @@ case id:\
 	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
 	auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
 	auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
-	ret = father::AutoFunc(L#func, A1, A2, A3);\
-	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2, A3);\
 	break;\
 }
@@ -417,8 +409,6 @@ case id:\
 	auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
 	auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
 	auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
-	ret = father::AutoFunc(L#func, A1, A2, A3, A4);\
-	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2, A3, A4);\
 	break;\
 }
@@ -431,8 +421,6 @@ case id:\
 	auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
 	auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
 	auto A5 = va_arg(argc, decltype(MfxArg5(&obj::func)));\
-	ret = father::AutoFunc(L#func, A1, A2, A3, A4, A5);\
-	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2, A3, A4, A5);\
 	break;\
 }
@@ -446,8 +434,6 @@ case id:\
 	auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
 	auto A5 = va_arg(argc, decltype(MfxArg5(&obj::func)));\
 	auto A6 = va_arg(argc, decltype(MfxArg6(&obj::func)));\
-	ret = father::AutoFunc(L#func, A1, A2, A3, A4, A5, A6);\
-	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2, A3, A4, A5, A6);\
 	break;\
 }
@@ -462,8 +448,6 @@ case id:\
 	auto A5 = va_arg(argc, decltype(MfxArg5(&obj::func)));\
 	auto A6 = va_arg(argc, decltype(MfxArg6(&obj::func)));\
 	auto A7 = va_arg(argc, decltype(MfxArg7(&obj::func)));\
-	ret = father::AutoFunc(L#func, A1, A2, A3, A4, A5, A6, A7);\
-	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2, A3, A4, A5, A6, A7);\
 	break;\
 }
@@ -479,8 +463,6 @@ case id:\
 	auto A6 = va_arg(argc, decltype(MfxArg6(&obj::func)));\
 	auto A7 = va_arg(argc, decltype(MfxArg7(&obj::func)));\
 	auto A8 = va_arg(argc, decltype(MfxArg8(&obj::func)));\
-	ret = father::AutoFunc(L#func, A1, A2, A3, A4, A5, A6, A7, A8);\
-	if (Failed(ret)) { return RFail; };\
 	ret = func(A1, A2, A3, A4, A5, A6, A7, A8);\
 	break;\
 }

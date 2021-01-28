@@ -5,7 +5,6 @@
 
 #include "MfxTypes.h"
 
-
 #define MFX_BUILDING
 
 

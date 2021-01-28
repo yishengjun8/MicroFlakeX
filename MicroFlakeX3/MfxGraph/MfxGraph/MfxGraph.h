@@ -35,93 +35,16 @@ namespace MicroFlakeX
 	typedef int MfxFontStyle;
 	typedef int MfxWords_TextXY;
 
-
-	struct MfxGraphList_Value
-	{
-		MfxGraphList_Value(MfxGraph* graph, int floor)
-		{
-			myGraph = graph;
-			myFloor = floor;
+}
+namespace __MicroFlakeX
+{
+	template<class Interface>
+	inline void SafeRelease(Interface*& pInterfaceToRelease) {
+		if (pInterfaceToRelease != nullptr) {
+			pInterfaceToRelease->Release();
+			pInterfaceToRelease = nullptr;
 		}
-		MfxGraph* myGraph;
-		int myFloor;
-
-		MfxGraphList_Value* Clone()
-		{
-			return new MfxGraphList_Value(myGraph, myFloor);
-		}
-	};
-}
-
-//MfxBasicGraph容器
-namespace MicroFlakeX
-{
-	typedef std::vector<MfxGraphList_Value*> MfxBasicGraph_Vector;
-
-	typedef MfxDataFlag<MfxRect*> MfxFlagRect;
-	typedef MfxDataFlag<MfxSize*> MfxFlagSize;
-	typedef MfxDataFlag<MfxPoint*> MfxFlagPoint;
-}
-
-//MfxBasicGraph枚举
-namespace MicroFlakeX
-{
-	//文字样式
-	enum MfxFontStyle_EN
-	{
-		MfxFontStyle_Regu = Gdiplus::FontStyleRegular, //指定字体的正常重量或粗细。
-		MfxFontStyle_Bold = Gdiplus::FontStyleBold, //指定粗体字。粗体是较重的重量或厚度。
-		MfxFontStyle_Ital = Gdiplus::FontStyleItalic, //指定斜体字体，该字体使字符的垂直词干明显倾斜。
-		MfxFontStyle_UnderLine = Gdiplus::FontStyleUnderline, //指定下划线，该下划线在字符的基线下方显示一行。
-		MfxFontStyle_StrikeOut = Gdiplus::FontStyleStrikeout, //指定删除线，删除线显示在字符中间绘制的水平线。
-	};
-
-	//文字显示方式(将你希望的枚举用|连接起来)
-	enum MfxWords_ShowStyle_EN
-	{
-
-		MfxWords_ShowStyle_null = 0x0000,	//仅显示文字
-		MfxWords_ShowStyle_fill = 0x0001,	//填充背景
-		MfxWords_ShowStyle_fram = 0x0002,	//填充边框
-		MfxWords_ShowStyle_def = MfxWords_ShowStyle_null,	//默认的显示方式 - 等同于MfxWords_ShowType_null
-	};
-
-	//文字排版格式
-	enum  MfxWords_TextXY_EN
-	{
-		MfxWords_TextX_near = 0x0001,		//X轴靠左排版
-		MfxWords_TextX_center = 0x0002,		//X轴居中排版
-		MfxWords_TextX_far = 0x0004,		//X轴靠右排版
-		MfxWords_TextX_def = MfxWords_TextX_center, //默认的格式 - 等同于MfxWords_FormatX_near
-		MfxWords_TextY_near = 0x0010,		//Y轴靠上排版
-		MfxWords_TextY_center = 0x0020,		//Y轴居中排版
-		MfxWords_TextY_far = 0x0040,		//Y轴靠下排版
-		MfxWords_TextY_def = MfxWords_TextY_center, //默认的格式 - 等同于MfxWords_FormatY_near
-	};
-}
-
-//MfxBasicGraph结构体
-namespace MicroFlakeX
-{
-	/**
-	struct MfxWorlds_Type
-	{
-		MfxStrW myFontName; //字体名字
-
-		MfxWords_TextXY myTextXY; //MfxWords排版格式 - 居中、靠右、靠左
-		MfxWords_ShowStyle myShowStyle; //MfxWords显示模式 - 文字、背景、边框
-		MfxFontStyle myFontStyle; //Font样式 - 加粗、斜体、删除、下划线
-		MfxSmoothingMode_EN mySmoothingMode; //文字绘制质量
-
-		Gdiplus::Color myTextColor; //文字颜色
-		MfxPenWidth myTextSize_em; //文字粗细 - em大小
-
-		Gdiplus::Color myFrameColor; //边框颜色
-		MfxPenWidth myFramePenWidth; //边框粗细
-
-		Gdiplus::Color myBackColor; //背景颜色
-	};
-	/**/
+	}
 }
 
 //MfxBasicGraph基类
@@ -131,20 +54,41 @@ namespace MicroFlakeX
 	class MfxGraph
 		: public MfxBase
 	{
+	public:
+		static MfxReturn GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC set, MfxRect* rect);
+		static MfxReturn GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND set, MfxSize* size);
+
+		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, MfxStrW path, MfxSize* size);
+		static MfxReturn ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, 
+			MfxStrW filePath, MfxSize* size);
+		static MfxReturn ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar,
+			IWICBitmap* bitmap, MfxSize* size);
+	public:
+		static const ID2D1Factory* myID2DFactory;
+		static const IDWriteFactory* myIDWriteFactory;
+		static const IWICImagingFactory* myIWICImagingFactory;
+
+
 		MfxObject;
-		static MfxReturn GetID2D1Factory(ID2D1Factory* ret);
-		static MfxReturn GetIDWriteFactory(IDWriteFactory* ret);
-		static MfxReturn GetIWICImagingFactory(IWICImagingFactory* ret);
+	public:
+		MfxGraph();
+		virtual ~MfxGraph();
+		MfxReturn Clone(MfxBase** ret);
+		MfxBase& operator=(MfxBase& rhs);
+		BOOL operator==(MfxBase& rhs);
+	public:
+		virtual MfxReturn SetRect(MfxRect* set);
+		virtual MfxReturn SetSize(MfxSize* set);
+		virtual MfxReturn SetPoint(MfxPoint* set);
 
-		static MfxReturn GetID2D1DCRenderTarget(ID2D1DCRenderTarget* ret, HDC setDC, MfxRect rect);
-		static MfxReturn GetID2D1HwndRenderTarget(ID2D1HwndRenderTarget* ret, HWND setWnd, MfxSize size);
+		virtual MfxReturn GetRect(MfxRect** ret);
+		virtual MfxReturn GetSize(MfxSize** ret);
+		virtual MfxReturn GetPoint(MfxPoint** ret);
 
-		static MfxReturn IWICBitmapFromFile(IWICBitmap* ret, MfxStrW path, MfxSize size);
-		static MfxReturn ID2D1BitmapFromFile(ID2D1Bitmap* ret, ID2D1RenderTarget* pRendTar, 
-			MfxStrW filePath, MfxSize size);
-		static MfxReturn ID2D1BitmapFromIWICBitmap(ID2D1Bitmap* ret, ID2D1RenderTarget* pRendTar,
-			IWICBitmap* bitmap, MfxSize size);
+		virtual MfxReturn CollisionWith(MfxGraph* set, bool* ret);
 
+	protected:
+		MfxRect myRect;
 	};
 }
 
@@ -155,13 +99,13 @@ namespace MicroFlakeX
 //公开 DS画板
 namespace MicroFlakeX
 {
-	class DSCanvas
+	class MfxCanvas
 		: public MfxGraph
 	{
 		MfxObject;
 	public:
-		DSCanvas();
-		~DSCanvas();
+		MfxCanvas();
+		virtual ~MfxCanvas();
 		MfxReturn Clone(MfxBase** ret);
 		MfxBase& operator=(MfxBase& rhs);
 		BOOL operator==(MfxBase& rhs);
@@ -169,22 +113,26 @@ namespace MicroFlakeX
 	public:
 		MfxReturn SetDC(HDC set);
 		MfxReturn GetDC(HDC* ret);
+
+		MfxReturn SetWnd(HWND set);
+		MfxReturn GetWnd(HWND* ret);
+
 	public:
-		MfxReturn ResetRenderTarget();
+		MfxReturn PaintBegin();
+		MfxReturn PaintFinish();
 	public:
-		MfxReturn DrawEnd();
-		MfxReturn DrawBegin();
 		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret);
+
 	public:
-		MfxReturn SetRect(MfxRect* set);
 		MfxReturn SetSize(MfxSize* set);
+		MfxReturn SetPoint(MfxPoint* set);
 
 	protected:
+		HDC myDC;
 		HWND myWnd;
-		BOOL myDrawLock;
+		BOOL myPaintFlag;
 		MfxColor myColor;
-		MfxGraphVector myGraphVector;
-		ID2D1HwndRenderTarget* myHwndRenderTarget;
+		ID2D1RenderTarget* myRenderTarget;
 	};
 }
 
@@ -192,44 +140,35 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	//支持两种绘制模式
-	class MfxTexture
+	class MfxImage
 		: public MfxGraph
 	{
 		MfxObject;
 	public:
-		MfxTexture();
-		~MfxTexture();
+		MfxImage();
+		virtual ~MfxImage();
 		MfxReturn Clone(MfxBase** ret);
 		MfxBase& operator=(MfxBase& rhs);
 		BOOL operator==(MfxBase& rhs);
 
 	protected:
-		MfxFlagRect myRect;
+		MfxRect myRect;
+		MfxCanvas* myCanvas;
 		ID2D1RenderTarget* myRenderTarget;
 
-		IWICBitmap* myBasicIWICBitmap;
+		IWICBitmap* myBaseIWICBitmap;
 		ID2D1Bitmap* myShowID2D1Bitmap;
 	public:
+		MfxReturn ResetBaseBitmap();
 		MfxReturn ResetShowBitmap();
 	public:
-		MfxReturn FromFile(MfxStrW path);
-		MfxReturn FromColor(MfxStrW path);
+		MfxReturn FromFile(MfxStrW path, MfxSize *set);
+		MfxReturn FromColor(MfxStrW path, MfxSize *set);
 
-		MfxReturn SetRenderTarget(ID2D1RenderTarget* set);
-		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret);
+		MfxReturn SetCanvas(MfxCanvas* set);
+		MfxReturn GetCanvas(MfxCanvas** ret);
 
-		MfxReturn Draw();
-
-		MfxReturn SetRect(MfxRect set);
-		MfxReturn SetSize(MfxSize set);
-		MfxReturn SetPoint(MfxPoint set);
-
-		MfxReturn GetRect(MfxRect* ret);
-		MfxReturn GetSize(MfxSize* ret);
-		MfxReturn GetPoint(MfxPoint* ret);
-
-		MfxReturn CollisionWith(MfxGraph* set, bool* ret);
-		MfxReturn SetCollisionBlock(MfxSize set);
+		MfxReturn Paint();
 	};
 }
 
@@ -386,3 +325,5 @@ namespace MicroFlakeX
 		MfxReturn GetTextBrush(Gdiplus::Brush** ret);
 	};
 }/**/
+
+

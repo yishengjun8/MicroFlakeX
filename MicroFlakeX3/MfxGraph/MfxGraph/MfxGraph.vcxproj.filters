@@ -35,10 +35,10 @@
     <ClCompile Include="MfxWords.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="源1.cpp">
+    <ClCompile Include="MfxGraph.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MfxGraph.cpp">
+    <ClCompile Include="MfxCanvas.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
