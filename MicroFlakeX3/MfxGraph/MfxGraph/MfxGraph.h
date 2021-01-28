@@ -146,19 +146,6 @@ namespace MicroFlakeX
 			IWICBitmap* bitmap, MfxSize size);
 
 	};
-
-
-	class MfxGraphList
-		: public MfxGraph
-	{
-		MfxObject;
-	protected:
-		void MfxGraphListInitData();
-	public:
-		MfxGraphList();
-		virtual ~MfxGraphList();
-	};
-
 }
 
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
@@ -201,24 +188,6 @@ namespace MicroFlakeX
 	};
 }
 
-
-namespace MicroFlakeX
-{
-	class MfxGraphList
-		: public MfxGraph
-		void MfxGraphListInitData();
-	public:
-	ctor
-		MfxRetuus::Point set);
-
-		MfxReturn GetRect(Gdiplus::Rect* ret);
-		MfxReturn GetSize(Gdiplus::Size* ret);
-		MfxReturn GetPoint(Gdiplus::Point* ret);
-
-		MfxReturn SetCollisionBlock(Gdiplus::Size set);
-		MfxReturn CollisionWith(MfxGraph* set, bool* ret);
-	};
-}
 //MfxImage
 namespace MicroFlakeX
 {
@@ -235,7 +204,7 @@ namespace MicroFlakeX
 		BOOL operator==(MfxBase& rhs);
 
 	protected:
-		MfxDataFlag_Rect myRect;
+		MfxFlagRect myRect;
 		ID2D1RenderTarget* myRenderTarget;
 
 		IWICBitmap* myBasicIWICBitmap;
@@ -251,20 +220,21 @@ namespace MicroFlakeX
 
 		MfxReturn Draw();
 
-		MfxReturn SetRect(GdipRect set);
-		MfxReturn SetSize(GdipSize set);
-		MfxReturn SetPoint(GdipPoint set);
+		MfxReturn SetRect(MfxRect set);
+		MfxReturn SetSize(MfxSize set);
+		MfxReturn SetPoint(MfxPoint set);
 
-		MfxReturn GetRect(GdipRect* ret);
-		MfxReturn GetSize(GdipSize* ret);
-		MfxReturn GetPoint(GdipPoint* ret);
+		MfxReturn GetRect(MfxRect* ret);
+		MfxReturn GetSize(MfxSize* ret);
+		MfxReturn GetPoint(MfxPoint* ret);
 
-		MfxReturn CollisionWith(MfxBasicGraph* set, bool* ret);
-		MfxReturn SetCollisionBlock(GdipSize set);
+		MfxReturn CollisionWith(MfxGraph* set, bool* ret);
+		MfxReturn SetCollisionBlock(MfxSize set);
 	};
 }
 
 //MfxWorld
+/**
 namespace MicroFlakeX
 {
 	//屶隔曾嶽紙崙庁塀
@@ -288,7 +258,6 @@ namespace MicroFlakeX
 		static void SetDefType(MfxWorlds_Type& setType);
 		static void GetDefType(MfxWorlds_Type& getType);
 
-		/**/
 	protected:
 		int myCachedMode; //産喝庁塀
 		HDC myDC;
@@ -322,7 +291,7 @@ namespace MicroFlakeX
 	protected:
 		void Mode_ClearDC();
 		void Mode_ResetDC(HDC set);
-		/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
+
 	public:
 		MfxReturn LockResetRegion();
 		MfxReturn UnLockResetRegion();
@@ -355,7 +324,7 @@ namespace MicroFlakeX
 
 		MfxReturn SetStringFormat(Gdiplus::StringFormat* set); //譜崔猟忖鯉塀
 		MfxReturn GetStringFormat(Gdiplus::StringFormat** ret);
-		/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
+		
 	public:
 		MfxReturn SetType(MfxWorlds_Type set);
 
@@ -391,7 +360,7 @@ namespace MicroFlakeX
 		MfxReturn GetFramePenWidth(MfxPenWidth* ret); //譜崔円崇錐業
 
 		MfxReturn GetBackColor(Gdiplus::Color* ret);
-		/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
+	
 	public:
 		MfxReturn SetRect(Gdiplus::Rect set);
 		MfxReturn SetSize(Gdiplus::Size set);
@@ -415,51 +384,5 @@ namespace MicroFlakeX
 		MfxReturn GetFramePen(Gdiplus::Pen** ret);
 		MfxReturn GetBackBrush(Gdiplus::Brush** ret);
 		MfxReturn GetTextBrush(Gdiplus::Brush** ret);
-		/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 	};
-}
-
-namespace MicroFlakeX
-{
-	class MfxTexture
-		: public MfxGraph
-	{
-		MfxObject;
-	protected:
-		void MfxTextureInitData();
-	public:
-		MfxTexture();
-		virtual ~MfxTexture();
-		void operator=(MfxTexture& rhs);
-
-		MfxReturn Clone(MfxTexture** ret);
-		MfxReturn Similar(MfxTexture* set);
-	protected:
-		MfxDataFlag_Rect myRect;
-		ID2D1RenderTarget* myRenderTarget;
-
-		IWICBitmap* myBasicIWICBitmap;
-		ID2D1Bitmap* myShowID2D1Bitmap;
-	public:
-		MfxReturn ResetShowBitmap();
-	public:
-		MfxReturn FromFile(MfxStrW path);
-		MfxReturn FromColor(MfxStrW path);
-
-		MfxReturn SetRenderTarget(ID2D1RenderTarget* set);
-		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret);
-
-		MfxReturn Draw();
-
-		MfxReturn SetRect(Gdiplus::Rect set);
-		MfxReturn SetSize(Gdiplus::Size set);
-		MfxReturn SetPoint(Gdiplus::Point set);
-
-		MfxReturn GetRect(Gdiplus::Rect* ret);
-		MfxReturn GetSize(Gdiplus::Size* ret);
-		MfxReturn GetPoint(Gdiplus::Point* ret);
-
-		MfxReturn CollisionWith(MfxGraph* set, bool* ret);
-		MfxReturn SetCollisionBlock(Gdiplus::Size set);
-	};
-}
+}/**/
