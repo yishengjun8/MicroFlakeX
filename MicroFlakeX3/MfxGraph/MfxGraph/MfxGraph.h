@@ -25,7 +25,7 @@ namespace MicroFlakeX
 //公开 容器
 namespace MicroFlakeX
 {
-	typedef std::vector<MfxGraph*> MfxGraphVector;;
+	typedef std::vector<MfxGraph*> MfxGraphVector;
 }
 
 //MfxBasicGraph基础
@@ -34,7 +34,6 @@ namespace MicroFlakeX
 	typedef int MfxPenWidth; //笔的粗细
 	typedef int MfxFontStyle;
 	typedef int MfxWords_TextXY;
-	typedef int MfxWords_ShowStyle;
 
 
 	struct MfxGraphList_Value
@@ -59,32 +58,14 @@ namespace MicroFlakeX
 {
 	typedef std::vector<MfxGraphList_Value*> MfxBasicGraph_Vector;
 
-	typedef MfxDataFlag<Gdiplus::Bitmap*> MfxDataFlag_pGdipBitmap;
-	typedef MfxDataFlag<Gdiplus::Size> MfxDataFlag_Size;
-	typedef MfxDataFlag<Gdiplus::Rect> MfxDataFlag_Rect;
-	typedef MfxDataFlag<Gdiplus::Region*> MfxDataFlag_Region;
+	typedef MfxDataFlag<MfxRect*> MfxFlagRect;
+	typedef MfxDataFlag<MfxSize*> MfxFlagSize;
+	typedef MfxDataFlag<MfxPoint*> MfxFlagPoint;
 }
 
 //MfxBasicGraph枚举
 namespace MicroFlakeX
 {
-	//线条抗锯齿
-	enum MfxSmoothingMode_EN
-	{
-		MfxSmoothingMode_Low = Gdiplus::SmoothingModeHighSpeed, //低质量抗锯齿
-		MfxSmoothingMode_Hig = Gdiplus::SmoothingModeHighQuality, //高质量抗锯齿
-		MfxSmoothingMode_Def = MfxSmoothingMode_Low, //默认的线条抗锯齿 - 等同于MfxGraph_SmoothingMode_low
-	};
-
-	//图片插值质量
-	enum MfxInterpolationMode_EN
-	{
-		MfxInterpolationMode_Low = Gdiplus::InterpolationModeNearestNeighbor, //低质量 - 最邻近插值法
-		MfxInterpolationMode_Med = Gdiplus::InterpolationModeHighQualityBilinear, //中质量 - 双线性插值法
-		MfxInterpolationMode_Hig = Gdiplus::InterpolationModeHighQualityBicubic, //高质量 - 双三插值
-		MfxInterpolationMode_Def = Gdiplus::InterpolationModeDefault, //默认的插值质量
-	};
-
 	//文字样式
 	enum MfxFontStyle_EN
 	{
@@ -122,6 +103,7 @@ namespace MicroFlakeX
 //MfxBasicGraph结构体
 namespace MicroFlakeX
 {
+	/**
 	struct MfxWorlds_Type
 	{
 		MfxStrW myFontName; //字体名字
@@ -139,6 +121,7 @@ namespace MicroFlakeX
 
 		Gdiplus::Color myBackColor; //背景颜色
 	};
+	/**/
 }
 
 //MfxBasicGraph基类
@@ -148,7 +131,34 @@ namespace MicroFlakeX
 	class MfxGraph
 		: public MfxBase
 	{
+		MfxObject;
+		static MfxReturn GetID2D1Factory(ID2D1Factory* ret);
+		static MfxReturn GetIDWriteFactory(IDWriteFactory* ret);
+		static MfxReturn GetIWICImagingFactory(IWICImagingFactory* ret);
+
+		static MfxReturn GetID2D1DCRenderTarget(ID2D1DCRenderTarget* ret, HDC setDC, MfxRect rect);
+		static MfxReturn GetID2D1HwndRenderTarget(ID2D1HwndRenderTarget* ret, HWND setWnd, MfxSize size);
+
+		static MfxReturn IWICBitmapFromFile(IWICBitmap* ret, MfxStrW path, MfxSize size);
+		static MfxReturn ID2D1BitmapFromFile(ID2D1Bitmap* ret, ID2D1RenderTarget* pRendTar, 
+			MfxStrW filePath, MfxSize size);
+		static MfxReturn ID2D1BitmapFromIWICBitmap(ID2D1Bitmap* ret, ID2D1RenderTarget* pRendTar,
+			IWICBitmap* bitmap, MfxSize size);
+
 	};
+
+
+	class MfxGraphList
+		: public MfxGraph
+	{
+		MfxObject;
+	protected:
+		void MfxGraphListInitData();
+	public:
+		MfxGraphList();
+		virtual ~MfxGraphList();
+	};
+
 }
 
 /* ———————————————————————————————————————————— */
@@ -170,8 +180,8 @@ namespace MicroFlakeX
 		BOOL operator==(MfxBase& rhs);
 
 	public:
-		MfxReturn SetWnd(HWND set);
-		MfxReturn GetWnd(HWND* ret);
+		MfxReturn SetDC(HDC set);
+		MfxReturn GetDC(HDC* ret);
 	public:
 		MfxReturn ResetRenderTarget();
 	public:
@@ -196,42 +206,10 @@ namespace MicroFlakeX
 {
 	class MfxGraphList
 		: public MfxGraph
-	{
-		MfxObject;
-	protected:
 		void MfxGraphListInitData();
 	public:
-		MfxGraphList();
-		virtual ~MfxGraphList();
-		MfxReturn Clone(MfxGraphList** ret);
-		MfxReturn Similar(MfxGraphList* set);
-
-	protected:
-		HDC myDC;
-		Gdiplus::Rect myRect;
-		Gdiplus::Size myCollisionBlock;
-		ID2D1RenderTarget* myRenderTarget;
-		MfxBasicGraph_Vector myGraphVector;
-		MfxBasicGraph_Vector::iterator myItem;
-	public:
-		MfxReturn AddItem(MfxGraph* set, int floor);
-		MfxReturn RemoveItem(MfxGraph* set);
-
-		MfxReturn NextItem();
-		MfxReturn GetItemObject(MfxGraph** ret);
-
-	public:
-		MfxReturn Draw();
-
-		MfxReturn SetDC(HDC set);
-		MfxReturn GetDC(HDC* ret);
-
-		MfxReturn SetRenderTarget(ID2D1RenderTarget* set);
-		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret);
-
-		MfxReturn SetRect(Gdiplus::Rect set);
-		MfxReturn SetSize(Gdiplus::Size set);
-		MfxReturn SetPoint(Gdiplus::Point set);
+	ctor
+		MfxRetuus::Point set);
 
 		MfxReturn GetRect(Gdiplus::Rect* ret);
 		MfxReturn GetSize(Gdiplus::Size* ret);
@@ -245,89 +223,44 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	//支持两种绘制模式
-	class MfxImage
+	class MfxTexture
 		: public MfxGraph
 	{
 		MfxObject;
-	protected:
-		void MfxImageInitData();
 	public:
-		MfxImage();
-		virtual ~MfxImage();
-		void operator=(MfxImage& rhs);
+		MfxTexture();
+		~MfxTexture();
+		MfxReturn Clone(MfxBase** ret);
+		MfxBase& operator=(MfxBase& rhs);
+		BOOL operator==(MfxBase& rhs);
 
-		MfxReturn Clone(MfxImage** ret);
-		MfxReturn Similar(MfxImage* set);
 	protected:
-		MfxDataFlag_Rect myRect; //图片区域
-		MfxDataFlag_pGdipBitmap myBasicBitmap; //图片基准 - 缩放的时候均以这幅图片为基准
-		MfxInterpolationMode_EN myImageQuality; //图片质量
+		MfxDataFlag_Rect myRect;
+		ID2D1RenderTarget* myRenderTarget;
 
-		HDC myDC;
-		Gdiplus::Graphics* myGraphics;
-		Gdiplus::Bitmap* myShowBitmap;
-		Gdiplus::CachedBitmap* myCachedShowBitmap;
-
-		Gdiplus::Region* myBasicRegion, * myShowRegion;
-		MfxDataFlag_Size myCollisionBlock;
-
-		BOOL myResetRegionLock;
-		BOOL myResetShowBitmapLock;
-		BOOL myResetShowCachedBitmapLock;
-	protected:
-		void Mode_ClearDC();
-		void Mode_ResetDC(HDC set);
-
+		IWICBitmap* myBasicIWICBitmap;
+		ID2D1Bitmap* myShowID2D1Bitmap;
 	public:
-		MfxReturn LockResetRegion();
-		MfxReturn UnLockResetRegion();
-
-		MfxReturn LockResetShowBitmap();
-		MfxReturn UnLockResetShowBitmap();
-
-		MfxReturn LockResetCachedShowBitmap();
-		MfxReturn UnLockResetCachedShowBitmap();
-
-		MfxReturn ResetRegion();
 		MfxReturn ResetShowBitmap();
-		MfxReturn ResetCachedShowBitmap();
-	public:
-		MfxReturn SetDC(HDC set);
-		MfxReturn GetDC(HDC* get);
 	public:
 		MfxReturn FromFile(MfxStrW path);
-		MfxReturn FromColor(Gdiplus::Color set);
-		MfxReturn FromBitmap(Gdiplus::Bitmap* set);
+		MfxReturn FromColor(MfxStrW path);
 
-		MfxReturn GetShowBitmap(Gdiplus::Bitmap** ret); //获取当前显示图片
-		MfxReturn GetBasicBitmap(Gdiplus::Bitmap** ret); //获取基础图片
-		MfxReturn SetBasicBitmap(Gdiplus::Bitmap* set);
+		MfxReturn SetRenderTarget(ID2D1RenderTarget* set);
+		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret);
 
 		MfxReturn Draw();
-		MfxReturn DrawBitmap(Gdiplus::Graphics* set); //绘制图片，参数为: Gdiplus::Graphics*
 
-	public:
-		MfxReturn SetQuality(MfxInterpolationMode_EN set); //设置图片插值质量
+		MfxReturn SetRect(GdipRect set);
+		MfxReturn SetSize(GdipSize set);
+		MfxReturn SetPoint(GdipPoint set);
 
-		MfxReturn SetRect(Gdiplus::Rect set);
-		MfxReturn SetSize(Gdiplus::Size set);
-		MfxReturn SetPoint(Gdiplus::Point set);
+		MfxReturn GetRect(GdipRect* ret);
+		MfxReturn GetSize(GdipSize* ret);
+		MfxReturn GetPoint(GdipPoint* ret);
 
-		MfxReturn CollisionWith(MfxGraph* set, bool* ret);
-		MfxReturn SetCollisionBlock(Gdiplus::Size set);
-
-		MfxReturn CropSize(Gdiplus::Color set); //根据颜色裁剪图片，选中的颜色将会被裁剪
-		MfxReturn ChangeColor(Gdiplus::Color oldColor, Gdiplus::Color newColor); //更换颜色，第一个参数是oldcolor，第二个参数是newcolor
-
-	public:
-		MfxReturn GetQuality(MfxInterpolationMode_EN* ret);
-
-		MfxReturn GetRegion(Gdiplus::Region** ret);
-		MfxReturn GetRegionBlock(Gdiplus::Size* ret);
-
-		MfxReturn GetRect(Gdiplus::Rect* ret);
-		MfxReturn GetSize(Gdiplus::Size* ret);
-		MfxReturn GetPoint(Gdiplus::Point* ret);
+		MfxReturn CollisionWith(MfxBasicGraph* set, bool* ret);
+		MfxReturn SetCollisionBlock(GdipSize set);
 	};
 }
 
