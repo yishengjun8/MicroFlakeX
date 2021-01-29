@@ -87,6 +87,17 @@ MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeU(D2D1_SIZE_U* ret)
 	return RFine;
 }
 
+MfxReturn MicroFlakeX::MfxSize::GetSIZE(SIZE* ret)
+{
+	MfxCodeLock(this);
+	FLOAT tW = 0, tH = 0;
+	GetWidth(&tW);
+	GetHeight(&tH);
+	ret->cx = tW;
+	ret->cy = tH;
+	return RFine;
+}
+
 MfxReturn MicroFlakeX::MfxSize::Empty(BOOL* ret)
 {
 	MfxCodeLock(this);

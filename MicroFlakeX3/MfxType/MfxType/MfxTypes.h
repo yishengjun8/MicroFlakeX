@@ -74,6 +74,10 @@ namespace MicroFlakeX
         MfxReturn GetD2D1SizeF(D2D1_SIZE_F* ret);
         MfxReturn GetD2D1PointF(D2D1_POINT_2F* ret);
 
+        MfxReturn GetRECT(RECT* ret);
+        MfxReturn GetSIZE(SIZE* ret);
+        MfxReturn GetPOINT(POINT* ret);
+
         MfxReturn SetSize(MfxSize* set);
         MfxReturn SetPoint(MfxPoint* set);
 
@@ -131,6 +135,8 @@ namespace MicroFlakeX
     public:
         MfxReturn GetD2D1SizeF(D2D1_SIZE_F* ret);
         MfxReturn GetD2D1SizeU(D2D1_SIZE_U* ret);
+
+        MfxReturn GetSIZE(SIZE* ret);
 
         MfxReturn Empty(BOOL* ret);
         MfxReturn Inflate(FLOAT setX, FLOAT setY);

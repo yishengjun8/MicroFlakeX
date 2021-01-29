@@ -7,6 +7,10 @@ MfxObject_Init_2(MfxImage, MfxGraph);
 
 MicroFlakeX::MfxImage::MfxImage()
 {
+	myCanvas = nullptr;
+	myRenderTarget = nullptr;
+	myBaseIWICBitmap = nullptr;
+	myShowID2D1Bitmap = nullptr;
 }
 
 MicroFlakeX::MfxImage::~MfxImage()

@@ -6,53 +6,255 @@ IDWriteFactory* gIDWriteFactory = nullptr;
 IWICImagingFactory* gIWICImagingFactory = nullptr;
 
 MfxObject_Init_0(MfxGraph)
+{
+	HRESULT hr = ::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &gID2DFactory);
+	if (FAILED(hr))
+		throw L"D2D1CreateFactory Failed";
 
-HRESULT hr;
+	hr = ::DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(gID2DFactory),
+		reinterpret_cast<IUnknown**>(&gIDWriteFactory));
+	if (FAILED(hr))
+		throw L"IDWriteFactory Failed";
 
-hr = ::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &gID2DFactory);
-if(FAILED(hr))
-	throw L"D2D1CreateFactory Failed";
-
-hr = ::DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(gID2DFactory),
-	reinterpret_cast<IUnknown**>(&gIDWriteFactory));
-if (FAILED(hr))
-	throw L"IDWriteFactory Failed";
-
-hr = ::CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, 
-	IID_PPV_ARGS(&gIWICImagingFactory));
-if (FAILED(hr))
-	throw L"IWICImagingFactory Failed";
-
+	hr = ::CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER,
+		IID_PPV_ARGS(&gIWICImagingFactory));
+	if (FAILED(hr))
+		throw L"IWICImagingFactory Failed";
+}
+MfxObject_Register(MfxGraph, SetRect, 0);
 MfxObject_Init_1(MfxGraph)
+
+
+MfxObject_Case_1(MfxGraph, MfxBase, SetRect, 0)
 MfxObject_Init_2(MfxGraph, MfxBase);
 
-const ID2D1Factory* MfxGraph::myID2DFactory = gID2DFactory;
-const IDWriteFactory* MfxGraph::myIDWriteFactory = gIDWriteFactory;
-const IWICImagingFactory* MfxGraph::myIWICImagingFactory = gIWICImagingFactory;
-
+ID2D1Factory*& MfxGraph::myID2DFactory = gID2DFactory;
+IDWriteFactory*& MfxGraph::myIDWriteFactory = gIDWriteFactory;
+IWICImagingFactory*& MfxGraph::myIWICImagingFactory = gIWICImagingFactory;
 
 MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC set, MfxRect* rect)
 {
-	return RFine;
+	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
+		D2D1_RENDER_TARGET_TYPE_DEFAULT,
+		D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE),
+		0, 0,
+		D2D1_RENDER_TARGET_USAGE_NONE,
+		D2D1_FEATURE_LEVEL_DEFAULT
+	);
+
+	ID2D1DCRenderTarget* tDCRenderTarget = nullptr;
+	if (SUCCEEDED(myID2DFactory->CreateDCRenderTarget(&props, &tDCRenderTarget)))
+	{
+		RECT rc;
+		rect->GetRECT(&rc);
+		tDCRenderTarget->BindDC(set, &rc);
+		*ret = tDCRenderTarget;
+		return RFine;
+	}
+	else
+	{
+		return RFail;
+	}
 }
 
 MfxReturn MicroFlakeX::MfxGraph::GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND set, MfxSize* size)
 {
-	return RFine;
+	ID2D1HwndRenderTarget* tHwndRenderTarget = nullptr;
+	D2D1_SIZE_U tSize; size->GetD2D1SizeU(&tSize);
+	if (SUCCEEDED(myID2DFactory->CreateHwndRenderTarget(
+		D2D1::RenderTargetProperties(),
+		D2D1::HwndRenderTargetProperties(set, tSize), &tHwndRenderTarget)))
+	{
+		*ret = tHwndRenderTarget;
+		return RFine;
+	}
+	else
+	{
+		return RFail;
+	}
 }
 
 MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW path, MfxSize* size)
 {
+	IWICBitmapDecoder* pDecoder = nullptr;
+	IWICBitmapFrameDecode* pSource = nullptr;
+	IWICBitmapScaler* pScaler = nullptr;
+	IWICFormatConverter* pConverter = nullptr;
+
+	// 加载位图
+	if (FAILED(myIWICImagingFactory->CreateDecoderFromFilename(
+		path.c_str(), NULL, GENERIC_READ,
+		WICDecodeMetadataCacheOnLoad, &pDecoder)))
+	{
+		return RFail;
+	};
+
+	pDecoder->GetFrame(0, &pSource);
+	myIWICImagingFactory->CreateFormatConverter(&pConverter);
+
+	FLOAT tWidth = 0, tHeight = 0;
+	size->GetWidth(&tWidth), size->GetHeight(&tHeight);
+	if (tWidth != 0 || tHeight != 0)
+	{
+		UINT originalWidth, originalHeight;
+		pSource->GetSize(&originalWidth, &originalHeight);
+
+		if (tWidth == 0)
+		{
+			FLOAT scalar = static_cast<FLOAT>(tHeight) / static_cast<FLOAT>(originalHeight);
+			tWidth = static_cast<UINT>(scalar * static_cast<FLOAT>(originalWidth));
+		}
+		else if (tHeight == 0)
+		{
+			FLOAT scalar = static_cast<FLOAT>(tWidth) / static_cast<FLOAT>(originalWidth);
+			tHeight = static_cast<UINT>(scalar * static_cast<FLOAT>(originalHeight));
+		}
+
+		myIWICImagingFactory->CreateBitmapScaler(&pScaler);
+		pScaler->Initialize(pSource, tWidth, tHeight, WICBitmapInterpolationModeCubic);
+
+		pConverter->Initialize(
+			pScaler,
+			GUID_WICPixelFormat32bppPBGRA,
+			WICBitmapDitherTypeNone,
+			NULL, 0.f,
+			WICBitmapPaletteTypeMedianCut
+		);
+	}
+	else
+	{
+		pConverter->Initialize(
+			pSource,
+			GUID_WICPixelFormat32bppPBGRA,
+			WICBitmapDitherTypeNone,
+			NULL, 0.f,
+			WICBitmapPaletteTypeMedianCut
+		);
+	}
+	myIWICImagingFactory->CreateBitmapFromSource(pConverter,
+		WICBitmapCacheOnLoad, ret);
+
+	__MicroFlakeX::SafeRelease(pSource);
+	__MicroFlakeX::SafeRelease(pDecoder);
+	__MicroFlakeX::SafeRelease(pScaler);
+	__MicroFlakeX::SafeRelease(pConverter);
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxStrW filePath, MfxSize* size)
+MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxStrW path, MfxSize* size)
 {
+	IWICBitmapDecoder* pDecoder = NULL;
+	IWICBitmapFrameDecode* pSource = NULL;
+	IWICBitmapScaler* pScaler = NULL;
+	IWICFormatConverter* pConverter = NULL;
+
+	if (FAILED(myIWICImagingFactory->CreateDecoderFromFilename(
+		path.c_str(), NULL, GENERIC_READ,
+		WICDecodeMetadataCacheOnLoad, &pDecoder)))
+	{
+		return RFail;
+	};
+
+	pDecoder->GetFrame(0, &pSource);
+	myIWICImagingFactory->CreateFormatConverter(&pConverter);
+
+	FLOAT tWidth = 0, tHeight = 0;
+	size->GetWidth(&tWidth), size->GetHeight(&tHeight);
+	if (tWidth != 0 || tHeight != 0)
+	{
+		UINT originalWidth, originalHeight;
+		pSource->GetSize(&originalWidth, &originalHeight);
+		if (tWidth == 0)
+		{
+			FLOAT scalar = static_cast<FLOAT>(tHeight) / static_cast<FLOAT>(originalHeight);
+			tWidth = static_cast<UINT>(scalar * static_cast<FLOAT>(originalWidth));
+		}
+		else if (tHeight == 0)
+		{
+			FLOAT scalar = static_cast<FLOAT>(tWidth) / static_cast<FLOAT>(originalWidth);
+			tHeight = static_cast<UINT>(scalar * static_cast<FLOAT>(originalHeight));
+		}
+		myIWICImagingFactory->CreateBitmapScaler(&pScaler);
+		pScaler->Initialize(pSource, tWidth, tHeight, WICBitmapInterpolationModeCubic);
+
+		pConverter->Initialize(
+			pScaler,
+			GUID_WICPixelFormat32bppPBGRA,
+			WICBitmapDitherTypeNone,
+			NULL, 0.f,
+			WICBitmapPaletteTypeMedianCut
+		);
+	}
+	else
+	{
+		pConverter->Initialize(
+			pSource,
+			GUID_WICPixelFormat32bppPBGRA,
+			WICBitmapDitherTypeNone,
+			NULL, 0.f,
+			WICBitmapPaletteTypeMedianCut
+		);
+	}
+
+	pRendTar->CreateBitmapFromWicBitmap(pConverter, NULL, ret);
+
+	__MicroFlakeX::SafeRelease(pSource);
+	__MicroFlakeX::SafeRelease(pDecoder);
+	__MicroFlakeX::SafeRelease(pScaler);
+	__MicroFlakeX::SafeRelease(pConverter);
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, IWICBitmap* bitmap, MfxSize* size)
 {
+	IWICBitmapScaler* pScaler = nullptr;
+	IWICFormatConverter* pConverter = nullptr;
+
+	myIWICImagingFactory->CreateFormatConverter(&pConverter);
+
+	FLOAT tWidth = 0, tHeight = 0;
+	size->GetWidth(&tWidth), size->GetHeight(&tHeight);
+	if (tWidth != 0 || tHeight != 0)
+	{
+		UINT originalWidth, originalHeight;
+		bitmap->GetSize(&originalWidth, &originalHeight);
+		if (tWidth == 0)
+		{
+			FLOAT scalar = static_cast<FLOAT>(tHeight) / static_cast<FLOAT>(originalHeight);
+			tWidth = static_cast<UINT>(scalar * static_cast<FLOAT>(originalWidth));
+		}
+		else if (tHeight == 0)
+		{
+			FLOAT scalar = static_cast<FLOAT>(tWidth) / static_cast<FLOAT>(originalWidth);
+			tHeight = static_cast<UINT>(scalar * static_cast<FLOAT>(originalHeight));
+		}
+
+		myIWICImagingFactory->CreateBitmapScaler(&pScaler);
+		pScaler->Initialize(bitmap, tWidth, tHeight, WICBitmapInterpolationModeCubic);
+
+		pConverter->Initialize(
+			pScaler,
+			GUID_WICPixelFormat32bppPBGRA,
+			WICBitmapDitherTypeNone,
+			NULL, 0.f,
+			WICBitmapPaletteTypeMedianCut
+		);
+	}
+	else
+	{
+		pConverter->Initialize(
+			bitmap,
+			GUID_WICPixelFormat32bppPBGRA,
+			WICBitmapDitherTypeNone,
+			NULL, 0.f,
+			WICBitmapPaletteTypeMedianCut
+		);
+	}
+
+	pRendTar->CreateBitmapFromWicBitmap(pConverter, NULL, ret);
+
+	__MicroFlakeX::SafeRelease(pScaler);
+	__MicroFlakeX::SafeRelease(pConverter);
 	return RFine;
 }
 
@@ -73,6 +275,7 @@ MfxReturn MicroFlakeX::MfxGraph::Clone(MfxBase** ret)
 MfxBase& MicroFlakeX::MfxGraph::operator=(MfxBase& rhs)
 {
 	// TODO: 在此处插入 return 语句
+	//rhs.AutoFunc()
 	return *this;
 }
 

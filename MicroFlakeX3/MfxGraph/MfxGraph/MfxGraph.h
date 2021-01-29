@@ -28,14 +28,6 @@ namespace MicroFlakeX
 	typedef std::vector<MfxGraph*> MfxGraphVector;
 }
 
-//MfxBasicGraph»ù´¡
-namespace MicroFlakeX
-{
-	typedef int MfxPenWidth; //±ÊµÄ´ÖÏ¸
-	typedef int MfxFontStyle;
-	typedef int MfxWords_TextXY;
-
-}
 namespace __MicroFlakeX
 {
 	template<class Interface>
@@ -60,14 +52,13 @@ namespace MicroFlakeX
 
 		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, MfxStrW path, MfxSize* size);
 		static MfxReturn ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, 
-			MfxStrW filePath, MfxSize* size);
+			MfxStrW path, MfxSize* size);
 		static MfxReturn ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar,
 			IWICBitmap* bitmap, MfxSize* size);
 	public:
-		static const ID2D1Factory* myID2DFactory;
-		static const IDWriteFactory* myIDWriteFactory;
-		static const IWICImagingFactory* myIWICImagingFactory;
-
+		static ID2D1Factory*& myID2DFactory;
+		static IDWriteFactory*& myIDWriteFactory;
+		static IWICImagingFactory*& myIWICImagingFactory;
 
 		MfxObject;
 	public:
@@ -86,7 +77,6 @@ namespace MicroFlakeX
 		virtual MfxReturn GetPoint(MfxPoint** ret);
 
 		virtual MfxReturn CollisionWith(MfxGraph* set, bool* ret);
-
 	protected:
 		MfxRect myRect;
 	};

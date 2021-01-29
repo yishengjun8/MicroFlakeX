@@ -7,10 +7,15 @@ MfxObject_Init_2(MfxCanvas, MfxGraph);
 
 MicroFlakeX::MfxCanvas::MfxCanvas()
 {
+	myDC = nullptr;
+	myWnd = nullptr;
+	myPaintFlag = false;
+	myRenderTarget = nullptr;
 }
 
 MicroFlakeX::MfxCanvas::~MfxCanvas()
 {
+	SafeRelease(myRenderTarget);
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::Clone(MfxBase** ret)
@@ -32,6 +37,12 @@ BOOL MicroFlakeX::MfxCanvas::operator==(MfxBase& rhs)
 
 MfxReturn MicroFlakeX::MfxCanvas::SetDC(HDC set)
 {
+	if (myDC || myWnd)
+	{
+		return RFail;
+	}
+	myDC = set;
+	GetID2D1DCRenderTarget(&myRenderTarget, set, &myRect);
 	return RFine;
 }
 
@@ -43,6 +54,10 @@ MfxReturn MicroFlakeX::MfxCanvas::GetDC(HDC* ret)
 
 MfxReturn MicroFlakeX::MfxCanvas::SetWnd(HWND set)
 {
+	if (myDC || myWnd)
+	{
+		return RFail;
+	}
 	myWnd = set;
 	MfxSize tSize; tSize = myRect;
 	GetID2D1HwndRenderTarget(&myRenderTarget, set, &tSize);
@@ -67,6 +82,11 @@ MfxReturn MicroFlakeX::MfxCanvas::PaintFinish()
 
 MfxReturn MicroFlakeX::MfxCanvas::GetRenderTarget(ID2D1RenderTarget** ret)
 {
+	if (!*ret)
+	{
+		throw L"myRenderTarget is nullptr";
+	}
+	*ret = myRenderTarget;
 	return RFine;
 }
 

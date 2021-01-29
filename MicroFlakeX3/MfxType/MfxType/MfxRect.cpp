@@ -120,19 +120,16 @@ MfxReturn MicroFlakeX::MfxRect::Init(FLOAT setX, FLOAT setY, FLOAT setWidth, FLO
 MfxReturn MicroFlakeX::MfxRect::GetD2D1RectU(D2D1_RECT_U* ret)
 {
 	MfxCodeLock(this);
-
 	FLOAT tT = 0, tL = 0, tR = 0, tB = 0;
 	GetTop(&tT);
 	GetLeft(&tL);
 	GetRight(&tR);
 	GetBottom(&tB);
 
-
 	ret->top = tT;
 	ret->left = tL;
 	ret->right = tR;
 	ret->bottom = tB;
-
 	return RFine;
 }
 
@@ -181,6 +178,44 @@ MfxReturn MicroFlakeX::MfxRect::GetD2D1PointF(D2D1_POINT_2F* ret)
 	MfxCodeLock(this);
 	GetX(&(ret->x));
 	GetY(&(ret->y));
+	return RFine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::GetRECT(RECT* ret)
+{
+	MfxCodeLock(this);
+	FLOAT tT = 0, tL = 0, tR = 0, tB = 0;
+	GetTop(&tT);
+	GetLeft(&tL);
+	GetRight(&tR);
+	GetBottom(&tB);
+
+	ret->top = tT;
+	ret->left = tL;
+	ret->right = tR;
+	ret->bottom = tB;
+	return RFine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::GetSIZE(SIZE* ret)
+{
+	MfxCodeLock(this);
+	FLOAT tW = 0, tH = 0;
+	GetWidth(&tW);
+	GetHeight(&tH);
+	ret->cx = tW;
+	ret->cy = tH;
+	return RFine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::GetPOINT(POINT* ret)
+{
+	MfxCodeLock(this);
+	FLOAT tX = 0, tY = 0;
+	GetX(&tX);
+	GetY(&tY);
+	ret->x = tX;
+	ret->y = tY;
 	return RFine;
 }
 
