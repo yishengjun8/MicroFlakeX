@@ -1,14 +1,14 @@
 #include "pch.h"
-#include "MfxAppFramework.h"
+#include "MfxAppFrame.h"
 
-MicroFlakeX::MfxApplication* theApp = nullptr;
+MicroFlakeX::MfxApp* theApp = nullptr;
 
 LRESULT CALLBACK __MicroFlakeX::MfxAppProc(HWND hWnd, MfxMsg msg, WPARAM wParam, LPARAM lParam)
 {
     return theApp->ForwardMessage(hWnd, msg, wParam, lParam);
 }
 
-void __MicroFlakeX::MfxRegApp(MfxApplication* reg)
+void __MicroFlakeX::MfxRegApp(MfxApp* reg)
 {
     if (theApp)
     {
@@ -40,7 +40,7 @@ bool __MicroFlakeX::MfxControlFloorCompare(MfxControl* lhs, MfxControl* rhs)
     return t_lhs < t_rhs;
 }
 
-MicroFlakeX::MfxApplication* MicroFlakeX::MfxGetApp()
+MicroFlakeX::MfxApp* MicroFlakeX::MfxGetApp()
 {
     return theApp;
 }

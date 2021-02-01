@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "MfxAppFramework.h"
+#include "MfxAppFrame.h"
 
 void MicroFlakeX::MfxUI::MfxRegMessages()
 {
@@ -86,7 +86,7 @@ void MicroFlakeX::MfxUI::MfxUIInitData()
     myWndGraphics = nullptr;
 }
 
-MicroFlakeX::MfxUI::MfxUI(GdipRect gdiRect, MfxStrW title)
+MicroFlakeX::MfxUI::MfxUI(MfxRect gdiRect, MfxStrW title)
 {
     MfxCodeLock t_CodeLock(this);
     MfxUIInitData();
@@ -99,7 +99,7 @@ MicroFlakeX::MfxUI::MfxUI(GdipRect gdiRect, MfxStrW title)
         L"MfxNormalUI", title);
 }
 
-MicroFlakeX::MfxUI::MfxUI(GdipRect gdiRect, DWORD myStyle_EN, MfxStrW title)
+MicroFlakeX::MfxUI::MfxUI(MfxRect gdiRect, DWORD myStyle_EN, MfxStrW title)
 {
     MfxCodeLock t_CodeLock(this);
     MfxUIInitData();
@@ -112,7 +112,7 @@ MicroFlakeX::MfxUI::MfxUI(GdipRect gdiRect, DWORD myStyle_EN, MfxStrW title)
         L"MfxNormalUI", title);
 }
 
-MicroFlakeX::MfxUI::MfxUI(GdipRect gdiRect, DWORD myStyleEx_EN, DWORD myStyle_EN, MfxStrW myClass, MfxStrW title)
+MicroFlakeX::MfxUI::MfxUI(MfxRect gdiRect, DWORD myStyleEx_EN, DWORD myStyle_EN, MfxStrW myClass, MfxStrW title)
 {
     MfxCodeLock t_CodeLock(this);
     MfxUIInitData();
@@ -314,24 +314,24 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::GetMaskDC(HDC* ret)
     return MfxFine;
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::GetRect(GdipRect* ret)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::GetRect(MfxRect* ret)
 {
     MfxCodeLock t_CodeLock(this);
     *ret = myRect;
     return MfxFine;
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::GetSize(GdipSize* ret)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::GetSize(MfxSize* ret)
 {
     MfxCodeLock t_CodeLock(this);
-    *ret = GdipSize(myRect.Width, myRect.Height);
+    *ret = MfxSize(myRect.Width, myRect.Height);
     return MfxFine;
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::GetPoint(GdipPoint* ret)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::GetPoint(MfxPoint* ret)
 {
     MfxCodeLock t_CodeLock(this);
-    *ret = GdipPoint(myRect.X, myRect.Y);
+    *ret = MfxPoint(myRect.X, myRect.Y);
     return MfxFine;
 }
 
@@ -352,31 +352,31 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::GetMaskImage(MfxImage** ret)
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetRect(GdipRect set)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetRect(MfxRect set)
 {
     MfxCodeLock t_CodeLock(this);
     return SetWindowPos(myWnd, NULL, set.X, set.Y, set.Width, set.Height, SWP_NOZORDER) ? MfxFine : MfxFail;;
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetSize(GdipSize set)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetSize(MfxSize set)
 {
     MfxCodeLock t_CodeLock(this);
     return SetWindowPos(myWnd, NULL, 0, 0, set.Width, set.Height, SWP_NOMOVE | SWP_NOZORDER) ? MfxFine : MfxFail;;
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetPoint(GdipPoint set)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetPoint(MfxPoint set)
 {
     MfxCodeLock t_CodeLock(this);
     return SetWindowPos(myWnd, NULL, set.X, set.Y, 0, 0, SWP_NOSIZE | SWP_NOZORDER) ? MfxFine : MfxFail;;
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetBackColor(GdipColor set)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetBackColor(MfxColor set)
 {
     MfxCodeLock t_CodeLock(this);
     return ProcMessage(MfxUI_Message_SetBackColor, NULL, (LPARAM)&set);
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetMaskColor(GdipColor set)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetMaskColor(MfxColor set)
 {
     MfxCodeLock t_CodeLock(this);
     return ProcMessage(MfxUI_Message_SetMaskColor, NULL, (LPARAM)&set);
@@ -396,7 +396,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetMaskImage(MfxImage* set)
 
 MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetBigIcon(MfxImage* set)
 {
-    GdipBitmap* t_Bitmap;
+    MfxBitmap* t_Bitmap;
     set->GetShowBitmap(&t_Bitmap);
 
     HICON t_Icon;
@@ -407,7 +407,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetBigIcon(MfxImage* set)
 
 MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::SetSmallIcon(MfxImage* set)
 {
-    GdipBitmap* t_Bitmap;
+    MfxBitmap* t_Bitmap;
     set->GetShowBitmap(&t_Bitmap);
 
     HICON t_Icon;
@@ -556,18 +556,18 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnCreate(WPARAM wParam, LPARAM lPar
     myBackDC = CreateCompatibleDC(myWndDc);
     myMaskDC = CreateCompatibleDC(myWndDc);
 
-    GdipSize t_Size(GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN));
+    MfxSize t_Size(GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN));
     DeleteObject(SelectObject(myBackDC, CreateCompatibleBitmap(myWndDc, t_Size.Width, t_Size.Height)));
     DeleteObject(SelectObject(myMaskDC, CreateCompatibleBitmap(myWndDc, t_Size.Width, t_Size.Height)));
 
-    myTestImage = new GdipBitmap(t_Size.Width, t_Size.Height, PixelFormat32bppARGB);
+    myTestImage = new MfxBitmap(t_Size.Width, t_Size.Height, PixelFormat32bppARGB);
 
-    myWndGraphics = new GdipGraphics(myWnd);
+    myWndGraphics = new MfxGraphics(myWnd);
 
     myBackImage = new MfxImage;
 
-    myBackImage->SetRect(GdipRect(0, 0, t_Size.Width, t_Size.Height));
-    myBackImage->FromColor(GdipColor::DimGray);
+    myBackImage->SetRect(MfxRect(0, 0, t_Size.Width, t_Size.Height));
+    myBackImage->FromColor(MfxColor::DimGray);
     //myBackImage->SetGraphics(myBackDC);
     myBackImage->SetDC(myBackDC);
 
@@ -584,7 +584,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnDestroy(WPARAM wParam, LPARAM lPa
 MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnSize(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock t_CodeLock(this);
-    GdipSize t_Size(LOWORD(lParam), HIWORD(lParam));
+    MfxSize t_Size(LOWORD(lParam), HIWORD(lParam));
 
     myRect.Width = t_Size.Width;
     myRect.Height = t_Size.Height;
@@ -605,7 +605,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnSize(WPARAM wParam, LPARAM lParam
 MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnMove(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock t_CodeLock(this);
-    GdipPoint t_Point(LOWORD(lParam), HIWORD(lParam));
+    MfxPoint t_Point(LOWORD(lParam), HIWORD(lParam));
 
     myRect.X = t_Point.X;
     myRect.Y = t_Point.Y;
@@ -795,7 +795,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnClosePercentRect(WPARAM wParam, L
 MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnSetBackColor(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock t_CodeLock(this);
-    GdipColor* t_Set = (GdipColor*)lParam;
+    MfxColor* t_Set = (MfxColor*)lParam;
     if (myBackImage)
     {
         myBackImage->FromColor(*t_Set);
@@ -803,7 +803,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnSetBackColor(WPARAM wParam, LPARA
     else
     {
         myBackImage = new MfxImage;
-        myBackImage->SetRect(GdipRect(0, 0, myRect.Width, myRect.Height));
+        myBackImage->SetRect(MfxRect(0, 0, myRect.Width, myRect.Height));
         myBackImage->FromColor(*t_Set);
         myBackImage->SetDC(myBackDC);
     }
@@ -813,7 +813,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnSetBackColor(WPARAM wParam, LPARA
 MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnSetMaskColor(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock t_CodeLock(this);
-    GdipColor* t_Set = (GdipColor*)lParam;
+    MfxColor* t_Set = (MfxColor*)lParam;
     if (myMaskImage)
     {
         myMaskImage->FromColor(*t_Set);
@@ -821,7 +821,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnSetMaskColor(WPARAM wParam, LPARA
     else
     {
         myMaskImage = new MfxImage;
-        myMaskImage->SetRect(GdipRect(0, 0, myRect.Width, myRect.Height));
+        myMaskImage->SetRect(MfxRect(0, 0, myRect.Width, myRect.Height));
         myMaskImage->FromColor(*t_Set);
         myMaskImage->SetDC(myBackDC);
     }
@@ -837,7 +837,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnSetBackImage(WPARAM wParam, LPARA
     if (t_Set)
     {
         (t_Set)->Clone(&myBackImage);
-        myBackImage->SetRect(GdipRect(0, 0, myRect.Width, myRect.Height));
+        myBackImage->SetRect(MfxRect(0, 0, myRect.Width, myRect.Height));
         myBackImage->SetDC(myBackDC);
     }
     return MfxFine;
@@ -853,7 +853,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxUI::__OnSetMaskImage(WPARAM wParam, LPARA
     if (t_Set)
     {
         (t_Set)->Clone(&myMaskImage);
-        myMaskImage->SetRect(GdipRect(0, 0, myRect.Width, myRect.Height));
+        myMaskImage->SetRect(MfxRect(0, 0, myRect.Width, myRect.Height));
         myMaskImage->SetDC(myMaskDC);
     }
     return MfxFine;

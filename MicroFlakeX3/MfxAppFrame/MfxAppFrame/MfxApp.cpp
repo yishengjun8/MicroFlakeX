@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "MfxAppFramework.h"
+#include "MfxAppFrame.h"
 
-MicroFlakeX::MfxApplication::MfxApplication()
+MicroFlakeX::MfxApp::MfxApp()
 {
 	MfxCodeLock t_CodeLock(this);
 	__MicroFlakeX::MfxRegApp(this);
@@ -33,12 +33,12 @@ MicroFlakeX::MfxApplication::MfxApplication()
 	}
 }
 
-MicroFlakeX::MfxApplication::~MfxApplication()
+MicroFlakeX::MfxApp::~MfxApp()
 {
 	MfxCodeLock t_CodeLock(this);
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxApplication::Run()
+MicroFlakeX::MfxReturn MicroFlakeX::MfxApp::Run()
 {
 	MSG appMsg;
 	while (GetMessageW(&appMsg, NULL, 0, 0) > 0) {
@@ -48,8 +48,8 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxApplication::Run()
 	return appMsg.wParam;
 }
 
-HWND MicroFlakeX::MfxApplication::MfxCreateWindowExW(
-	MfxUI* value, GdipRect gdiRect,
+HWND MicroFlakeX::MfxApp::MfxCreateWindowExW(
+	MfxUI* value, MfxRect gdiRect,
 	DWORD dwExStyle, DWORD dwStyle,
 	MfxStrW lpClassName, MfxStrW lpWindowName)
 {
@@ -64,7 +64,7 @@ HWND MicroFlakeX::MfxApplication::MfxCreateWindowExW(
 }
 
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxApplication::ForwardMessage(HWND hWnd, MfxMsg message, WPARAM wParam, LPARAM lParam)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxApp::ForwardMessage(HWND hWnd, MfxMsg message, WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock t_CodeLock(this);
 
@@ -100,7 +100,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxApplication::ForwardMessage(HWND hWnd, Mf
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxApplication::GetInstance(HINSTANCE* ret)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxApp::GetInstance(HINSTANCE* ret)
 {
 	*ret = myInstance;
 	return MfxFine;

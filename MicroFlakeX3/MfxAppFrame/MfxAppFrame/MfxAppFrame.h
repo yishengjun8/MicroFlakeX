@@ -1,35 +1,20 @@
 #pragma once
 
-#ifdef MFX_APPFRAMEWORKDLL_BUILDING
-#define MFX_APPFRAMEWORKDLL_IMPORT __declspec(dllexport)
+#ifdef MFX_BUILDING
+#define MFX_PORT __declspec(dllexport)
 #else
+#define MFX_PORT __declspec(dllimport)
+#pragma comment(lib, "MfxAppFrame.lib")
+#include "MfxGraph.h"
 
-/* Windows 头文件 */
-#include <time.h>
-#include <windowsx.h>
-/**/
-
-/* STL模板库 */
-#include <set>
-#include <stack>
-#include <queue>
-#include <thread>
-#include <iostream>
-#include <functional>
-/**/
-
-#include "MfxBasicGraph.h"
-#pragma comment(lib,"MfxBasicModules.lib")
-
-#define MFX_APPFRAMEWORKDLL_IMPORT __declspec(dllimport)
 #endif
 
 namespace MicroFlakeX
 {
-	class MFX_APPFRAMEWORKDLL_IMPORT MfxApplication;
+	class MFX_PORT MfxApp;
 
-	class MFX_APPFRAMEWORKDLL_IMPORT MfxUI;
-	class MFX_APPFRAMEWORKDLL_IMPORT MfxControl;
+	class MFX_PORT MfxUI;
+	class MFX_PORT MfxControl;
 }
 
 //Mfx类型
@@ -269,36 +254,36 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	// 获取程序Application
-	MFX_APPFRAMEWORKDLL_IMPORT MfxApplication* MfxGetApp();
+	MFX_PORT MfxApp* MfxGetApp();
 }
 
 //内部函数
 namespace __MicroFlakeX
 {
 	using namespace MicroFlakeX;
-	MFX_APPFRAMEWORKDLL_IMPORT LRESULT CALLBACK MfxAppProc(HWND hWnd, MfxMsg msg, WPARAM wParam, LPARAM lParam);
-	MFX_APPFRAMEWORKDLL_IMPORT void MfxRegApp(MfxApplication* reg);
-	MFX_APPFRAMEWORKDLL_IMPORT bool MfxUIMessageFloorCompare(MfxUI_MessageMap_Value* lhs, MfxUI_MessageMap_Value* rhs);
-	MFX_APPFRAMEWORKDLL_IMPORT bool MfxControlMessageFloorCompare(MfxControl_MessageMap_Value* lhs, MfxControl_MessageMap_Value* rhs);
-	MFX_APPFRAMEWORKDLL_IMPORT bool MfxControlFloorCompare(MfxControl* lhs, MfxControl* rhs);
+	MFX_PORT LRESULT CALLBACK MfxAppProc(HWND hWnd, MfxMsg msg, WPARAM wParam, LPARAM lParam);
+	MFX_PORT void MfxRegApp(MfxApp* reg);
+	MFX_PORT bool MfxUIMessageFloorCompare(MfxUI_MessageMap_Value* lhs, MfxUI_MessageMap_Value* rhs);
+	MFX_PORT bool MfxControlMessageFloorCompare(MfxControl_MessageMap_Value* lhs, MfxControl_MessageMap_Value* rhs);
+	MFX_PORT bool MfxControlFloorCompare(MfxControl* lhs, MfxControl* rhs);
 }
 
-//MfxApplication
+//MfxApp
 namespace MicroFlakeX
 {
-	class MfxApplication
-		: public MfxBasicObject
+	class MfxApp
+		: public MfxBase
 	{
 	public:
-		MfxApplication();
-		virtual ~MfxApplication();
+		MfxApp();
+		virtual ~MfxApp();
 		MfxReturn Run();
 
 	protected:
 		MfxUI* myUIMap_Value;
 	public:
 		HWND MfxCreateWindowExW(
-			MfxUI* value, GdipRect gdiRect, 
+			MfxUI* value, MfxRect gdiRect, 
 			DWORD dwExStyle, DWORD dwStyle,
 			MfxStrW lpClassName, MfxStrW lpWindowName);
 
@@ -319,17 +304,17 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	class MfxUI
-		: public MfxBasicObject 
+		: public MfxBase 
 	{
-		friend class MfxApplication
+		friend class MfxApp
 			;
 	protected:
 		void MfxUIInitData();
 		void MfxRegMessages();
 	public:
-		MfxUI(GdipRect gdiRect, MfxStrW title);
-		MfxUI(GdipRect gdiRect, DWORD myStyle_EN, MfxStrW title);
-		MfxUI(GdipRect gdiRect, DWORD myStyleEx_EN, DWORD myStyle_EN, MfxStrW myClass, MfxStrW title);
+		MfxUI(MfxRect gdiRect, MfxStrW title);
+		MfxUI(MfxRect gdiRect, DWORD myStyle_EN, MfxStrW title);
+		MfxUI(MfxRect gdiRect, DWORD myStyleEx_EN, DWORD myStyle_EN, MfxStrW myClass, MfxStrW title);
 		virtual ~MfxUI();
 		MfxReturn CreateSuccess();
 
@@ -361,30 +346,30 @@ namespace MicroFlakeX
 		MfxReturn RemoveTimer(WPARAM cid);
 
 	protected:
-		GdipBitmap* myTestImage;
+		MfxBitmap* myTestImage;
 		HWND myWnd;
-		GdipRect myRect;
+		MfxRect myRect;
 		HDC myWndDc, myBackDC, myMaskDC;
 		MfxImage* myBackImage, * myMaskImage;
-		GdipGraphics* myWndGraphics;
+		MfxGraphics* myWndGraphics;
 	public:
 		MfxReturn GetWnd(HWND* ret);
 		MfxReturn GetWndDC(HDC* ret);
 		MfxReturn GetBackDC(HDC* ret);
 		MfxReturn GetMaskDC(HDC* ret);
 
-		MfxReturn GetRect(GdipRect* ret);
-		MfxReturn GetSize(GdipSize* ret);
-		MfxReturn GetPoint(GdipPoint* ret);
+		MfxReturn GetRect(MfxRect* ret);
+		MfxReturn GetSize(MfxSize* ret);
+		MfxReturn GetPoint(MfxPoint* ret);
 		MfxReturn GetBackImage(MfxImage** ret);
 		MfxReturn GetMaskImage(MfxImage** ret);
 	public:
-		MfxReturn SetRect(GdipRect set);
-		MfxReturn SetSize(GdipSize set);
-		MfxReturn SetPoint(GdipPoint set);
+		MfxReturn SetRect(MfxRect set);
+		MfxReturn SetSize(MfxSize set);
+		MfxReturn SetPoint(MfxPoint set);
 
-		MfxReturn SetBackColor(GdipColor set);
-		MfxReturn SetMaskColor(GdipColor set);
+		MfxReturn SetBackColor(MfxColor set);
+		MfxReturn SetMaskColor(MfxColor set);
 
 		MfxReturn SetBackImage(MfxImage* set);
 		MfxReturn SetMaskImage(MfxImage* set);
@@ -460,7 +445,7 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	class MfxControl
-		: public MfxBasicObject
+		: public MfxBase
 	{
 	protected:
 		void MfxRegMessages();
@@ -477,7 +462,7 @@ namespace MicroFlakeX
 		MfxFloor myFloor; //我的层次
 		MfxStrW myType, myTitle;// 控件类型 - 控件标题
 		bool myPercentRect_Check;
-		GdipRect myRect, myPercentRect;
+		MfxRect myRect, myPercentRect;
 		HDC myBackDC, myMaskDC;
 	public:
 		MfxReturn GetMyUI(MfxUI** ret);
@@ -486,24 +471,24 @@ namespace MicroFlakeX
 		MfxReturn GetTitle(MfxStrW* ret);
 		MfxReturn GetFloor(MfxFloor* ret);
 
-		MfxReturn GetRect(GdipRect* ret);
-		MfxReturn GetSize(GdipSize* ret);
-		MfxReturn GetPoint(GdipPoint* ret);
+		MfxReturn GetRect(MfxRect* ret);
+		MfxReturn GetSize(MfxSize* ret);
+		MfxReturn GetPoint(MfxPoint* ret);
 
-		MfxReturn GetPercentRect(GdipRect* ret);
-		MfxReturn GetPercentSize(GdipSize* ret);
-		MfxReturn GetPercentPoint(GdipPoint* ret);
+		MfxReturn GetPercentRect(MfxRect* ret);
+		MfxReturn GetPercentSize(MfxSize* ret);
+		MfxReturn GetPercentPoint(MfxPoint* ret);
 	public:
 		MfxReturn SetTitle(MfxStrW set);
 		MfxReturn SetFloor(MfxFloor floor);
 
-		MfxReturn SetRect(GdipRect set);
-		MfxReturn SetSize(GdipSize set);
-		MfxReturn SetPoint(GdipPoint set);
+		MfxReturn SetRect(MfxRect set);
+		MfxReturn SetSize(MfxSize set);
+		MfxReturn SetPoint(MfxPoint set);
 
-		MfxReturn SetPercentRect(GdipRect set);
-		MfxReturn SetPercentSize(GdipSize set);
-		MfxReturn SetPercentPoint(GdipPoint set);
+		MfxReturn SetPercentRect(MfxRect set);
+		MfxReturn SetPercentSize(MfxSize set);
+		MfxReturn SetPercentPoint(MfxPoint set);
 
 	protected:
 		MfxDataFlag_bool myMouseFloat;
@@ -512,7 +497,7 @@ namespace MicroFlakeX
 		MfxDataFlag_bool myRButtonPress;
 		MfxDataFlag_bool myRButtonClickFlag;
 		MfxDataFlag_bool myLButtonMoveFlag, myRButtonMoveFlag;
-		GdipPoint myButtonMoveBegin;
+		MfxPoint myButtonMoveBegin;
 
 		MfxImage* myBackImage;
 		MfxImage* myMaskImage;
@@ -527,8 +512,8 @@ namespace MicroFlakeX
 		MfxReturn GetMaskImage(MfxImage** ret);
 		MfxReturn GetTitleWords(MfxWords** ret);
 
-		MfxReturn SetBackColor(GdipColor set);
-		MfxReturn SetMaskColor(GdipColor set);
+		MfxReturn SetBackColor(MfxColor set);
+		MfxReturn SetMaskColor(MfxColor set);
 
 		MfxReturn SetBackImage(MfxImage* set);
 		MfxReturn SetMaskImage(MfxImage* set);
