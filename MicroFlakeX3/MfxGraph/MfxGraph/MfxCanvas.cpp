@@ -72,17 +72,21 @@ MfxReturn MicroFlakeX::MfxCanvas::GetWnd(HWND* ret)
 
 MfxReturn MicroFlakeX::MfxCanvas::PaintBegin()
 {
+	myRenderTarget->BeginDraw();
+	//Çå¿ÕÆÁÄ»
+	myRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Red));
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::PaintFinish()
 {
+	myRenderTarget->EndDraw();
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetRenderTarget(ID2D1RenderTarget** ret)
 {
-	if (!*ret)
+	if (!myRenderTarget)
 	{
 		throw L"myRenderTarget is nullptr";
 	}

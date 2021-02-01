@@ -7,11 +7,15 @@ IWICImagingFactory* gIWICImagingFactory = nullptr;
 
 MfxObject_Init_0(MfxGraph)
 {
-	HRESULT hr = ::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &gID2DFactory);
+	HRESULT hr = CoInitialize(NULL);
+	if (FAILED(hr))
+		throw L"CoInitialize Failed";
+
+	hr = ::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &gID2DFactory);
 	if (FAILED(hr))
 		throw L"D2D1CreateFactory Failed";
 
-	hr = ::DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(gID2DFactory),
+	hr = ::DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(gIDWriteFactory),
 		reinterpret_cast<IUnknown**>(&gIDWriteFactory));
 	if (FAILED(hr))
 		throw L"IDWriteFactory Failed";
@@ -21,11 +25,9 @@ MfxObject_Init_0(MfxGraph)
 	if (FAILED(hr))
 		throw L"IWICImagingFactory Failed";
 }
-MfxObject_Register(MfxGraph, SetRect, 0);
-MfxObject_Init_1(MfxGraph)
 
+MfxObject_Init_1(MfxGraph);
 
-MfxObject_Case_1(MfxGraph, MfxBase, SetRect, 0)
 MfxObject_Init_2(MfxGraph, MfxBase);
 
 ID2D1Factory*& MfxGraph::myID2DFactory = gID2DFactory;
@@ -131,8 +133,11 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW pa
 			WICBitmapPaletteTypeMedianCut
 		);
 	}
-	myIWICImagingFactory->CreateBitmapFromSource(pConverter,
+	HRESULT hr = myIWICImagingFactory->CreateBitmapFromSource(pConverter,
 		WICBitmapCacheOnLoad, ret);
+
+	if (FAILED(hr))
+		throw L"CreateBitmapFromSource Failed";
 
 	__MicroFlakeX::SafeRelease(pSource);
 	__MicroFlakeX::SafeRelease(pDecoder);
@@ -251,7 +256,10 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID
 		);
 	}
 
-	pRendTar->CreateBitmapFromWicBitmap(pConverter, NULL, ret);
+	HRESULT hr = pRendTar->CreateBitmapFromWicBitmap(pConverter, NULL, ret);
+
+	if (FAILED(hr))
+		throw L"CreateBitmapFromWicBitmap Failed";
 
 	__MicroFlakeX::SafeRelease(pScaler);
 	__MicroFlakeX::SafeRelease(pConverter);

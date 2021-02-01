@@ -15,6 +15,8 @@ MicroFlakeX::MfxImage::MfxImage()
 
 MicroFlakeX::MfxImage::~MfxImage()
 {
+	SafeRelease(myBaseIWICBitmap);
+	SafeRelease(myShowID2D1Bitmap);
 }
 
 MfxReturn MicroFlakeX::MfxImage::Clone(MfxBase** ret)
