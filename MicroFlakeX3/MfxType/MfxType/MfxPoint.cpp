@@ -23,18 +23,15 @@ MfxObject_Init_2(MfxPoint, MfxType);
 
 MicroFlakeX::MfxPoint::MfxPoint()
 {
-	MfxCodeLock(this);
 	myX = myY = 0;
 }
 
 MicroFlakeX::MfxPoint::~MfxPoint()
 {
-	MfxCodeLock(this);
 }
 
 MfxReturn MicroFlakeX::MfxPoint::Clone(MfxBase** ret)
 {
-	MfxCodeLock(this);
 	*ret = new MfxPoint;
 	((MfxPoint*)(*ret))->Init(myX, myY);
 	return RFine;
@@ -50,8 +47,6 @@ MfxBase& MicroFlakeX::MfxPoint::operator=(MfxBase& rhs)
 
 BOOL MicroFlakeX::MfxPoint::operator==(MfxBase& rhs)
 {
-	// TODO: 在此处插入 return 语句
-	MfxCodeLock(this);
 	FLOAT tX = 0, tY = 0;
 	rhs.AutoFunc(L"GetX", &tX);
 	rhs.AutoFunc(L"GetY", &tY);
@@ -69,7 +64,6 @@ MfxReturn MicroFlakeX::MfxPoint::Init(FLOAT setX, FLOAT setY)
 
 MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointU(D2D1_POINT_2U* ret)
 {
-	MfxCodeLock(this);
 	FLOAT tX = 0, tY = 0;
 	GetX(&tX);
 	GetY(&tY);
@@ -80,7 +74,6 @@ MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointU(D2D1_POINT_2U* ret)
 
 MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointF(D2D1_POINT_2F* ret)
 {
-	MfxCodeLock(this);
 	GetX(&(ret->x));
 	GetY(&(ret->y));
 	return RFine;
@@ -110,14 +103,12 @@ MfxReturn MicroFlakeX::MfxPoint::SetY(FLOAT set)
 
 MfxReturn MicroFlakeX::MfxPoint::GetX(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myX;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::GetY(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myY;
 	return RFine;
 }

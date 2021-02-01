@@ -15,18 +15,16 @@ static const UINT32 sc_blueMask = 0xff << sc_blueShift;
 
 MicroFlakeX::MfxColor::MfxColor()
 {
-	MfxCodeLock(this);
+
 	myA = myR = myG = myB = 0;
 }
 
 MicroFlakeX::MfxColor::~MfxColor()
 {
-	MfxCodeLock(this);
 }
 
 MfxReturn MicroFlakeX::MfxColor::Clone(MfxBase** ret)
 {
-	MfxCodeLock(this);
 	*ret = new MfxColor;
 	((MfxColor*)(*ret))->Init(myA, myR, myG, myB);
 	return RFine;
@@ -44,7 +42,6 @@ MfxBase& MicroFlakeX::MfxColor::operator=(MfxBase& rhs)
 
 BOOL MicroFlakeX::MfxColor::operator==(MfxBase& rhs)
 {
-	MfxCodeLock(this);
 	FLOAT tA = 0, tR = 0, tG = 0, tB = 0;
 	rhs.AutoFunc(L"GetA", &tA);
 	rhs.AutoFunc(L"GetR", &tR);
@@ -75,7 +72,6 @@ MfxReturn MicroFlakeX::MfxColor::SetColor(FLOAT setA, UINT32 set)
 
 MfxReturn MicroFlakeX::MfxColor::GetD2D1ColorF(D2D1_COLOR_F* ret)
 {
-	MfxCodeLock(this);
 	GetA(&(ret->a));
 	GetR(&(ret->r));
 	GetG(&(ret->g));
@@ -85,35 +81,30 @@ MfxReturn MicroFlakeX::MfxColor::GetD2D1ColorF(D2D1_COLOR_F* ret)
 
 MfxReturn MicroFlakeX::MfxColor::GetA(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myA;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::GetR(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myR;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::GetG(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myG;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::GetB(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myB;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::GetRGB(UINT32* ret)
 {
-	MfxCodeLock(this);
 	*ret = RGB(myR, myG, myB);
 	return RFine;
 }

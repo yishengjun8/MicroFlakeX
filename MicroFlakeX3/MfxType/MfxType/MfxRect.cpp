@@ -69,18 +69,15 @@ MfxObject_Init_2(MfxRect, MfxType);
 
 MicroFlakeX::MfxRect::MfxRect()
 {
-	MfxCodeLock(this);
 	myX = myY = myWidth = myHeight = 0;
 }
 
 MicroFlakeX::MfxRect::~MfxRect()
 {
-	MfxCodeLock(this);
 }
 
 MfxReturn MicroFlakeX::MfxRect::Clone(MfxBase** ret)
 {
-	MfxCodeLock(this);
 	*ret = new MfxRect;
 	((MfxRect*)(*ret))->Init(myX, myY, myWidth, myHeight);
 	return RFine;
@@ -98,7 +95,6 @@ MfxBase& MicroFlakeX::MfxRect::operator=(MfxBase& rhs)
 
 BOOL MicroFlakeX::MfxRect::operator==(MfxBase& rhs)
 {
-	MfxCodeLock(this);
 	FLOAT tX = 0, tY = 0, tW = 0, tH = 0;
 	rhs.AutoFunc(L"GetX", &tX);
 	rhs.AutoFunc(L"GetY", &tY);
@@ -119,7 +115,6 @@ MfxReturn MicroFlakeX::MfxRect::Init(FLOAT setX, FLOAT setY, FLOAT setWidth, FLO
 
 MfxReturn MicroFlakeX::MfxRect::GetD2D1RectU(D2D1_RECT_U* ret)
 {
-	MfxCodeLock(this);
 	FLOAT tT = 0, tL = 0, tR = 0, tB = 0;
 	GetTop(&tT);
 	GetLeft(&tL);
@@ -135,7 +130,6 @@ MfxReturn MicroFlakeX::MfxRect::GetD2D1RectU(D2D1_RECT_U* ret)
 
 MfxReturn MicroFlakeX::MfxRect::GetD2D1SizeU(D2D1_SIZE_U* ret)
 {
-	MfxCodeLock(this);
 	FLOAT tW = 0, tH = 0;
 	GetWidth(&tW);
 	GetHeight(&tH);
@@ -146,7 +140,6 @@ MfxReturn MicroFlakeX::MfxRect::GetD2D1SizeU(D2D1_SIZE_U* ret)
 
 MfxReturn MicroFlakeX::MfxRect::GetD2D1PointU(D2D1_POINT_2U* ret)
 {
-	MfxCodeLock(this);
 	FLOAT tX = 0, tY = 0;
 	GetX(&tX);
 	GetY(&tY);
@@ -157,7 +150,6 @@ MfxReturn MicroFlakeX::MfxRect::GetD2D1PointU(D2D1_POINT_2U* ret)
 
 MfxReturn MicroFlakeX::MfxRect::GetD2D1RectF(D2D1_RECT_F* ret)
 {
-	MfxCodeLock(this);
 	GetTop(&(ret->top));
 	GetLeft(&(ret->left));
 	GetRight(&(ret->right));
@@ -167,7 +159,6 @@ MfxReturn MicroFlakeX::MfxRect::GetD2D1RectF(D2D1_RECT_F* ret)
 
 MfxReturn MicroFlakeX::MfxRect::GetD2D1SizeF(D2D1_SIZE_F* ret)
 {
-	MfxCodeLock(this);
 	GetWidth(&(ret->width));
 	GetHeight(&(ret->height));
 	return RFine;
@@ -175,7 +166,6 @@ MfxReturn MicroFlakeX::MfxRect::GetD2D1SizeF(D2D1_SIZE_F* ret)
 
 MfxReturn MicroFlakeX::MfxRect::GetD2D1PointF(D2D1_POINT_2F* ret)
 {
-	MfxCodeLock(this);
 	GetX(&(ret->x));
 	GetY(&(ret->y));
 	return RFine;
@@ -183,7 +173,6 @@ MfxReturn MicroFlakeX::MfxRect::GetD2D1PointF(D2D1_POINT_2F* ret)
 
 MfxReturn MicroFlakeX::MfxRect::GetRECT(RECT* ret)
 {
-	MfxCodeLock(this);
 	FLOAT tT = 0, tL = 0, tR = 0, tB = 0;
 	GetTop(&tT);
 	GetLeft(&tL);
@@ -199,7 +188,6 @@ MfxReturn MicroFlakeX::MfxRect::GetRECT(RECT* ret)
 
 MfxReturn MicroFlakeX::MfxRect::GetSIZE(SIZE* ret)
 {
-	MfxCodeLock(this);
 	FLOAT tW = 0, tH = 0;
 	GetWidth(&tW);
 	GetHeight(&tH);
@@ -210,7 +198,6 @@ MfxReturn MicroFlakeX::MfxRect::GetSIZE(SIZE* ret)
 
 MfxReturn MicroFlakeX::MfxRect::GetPOINT(POINT* ret)
 {
-	MfxCodeLock(this);
 	FLOAT tX = 0, tY = 0;
 	GetX(&tX);
 	GetY(&tY);
@@ -305,63 +292,54 @@ MfxReturn MicroFlakeX::MfxRect::GetPoint(MfxPoint* ret)
 
 MfxReturn MicroFlakeX::MfxRect::GetX(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myX;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::GetY(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myY;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::GetWidth(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myWidth;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::GetHeight(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myHeight;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::GetTop(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myY;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::GetLeft(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myX;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::GetRight(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myX + myWidth;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::GetBottom(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myY + myHeight;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::Empty(BOOL* ret)
 {
-	MfxCodeLock(this);
 	*ret = myWidth < 0 || myHeight < 0;
 	return RFine;
 }
@@ -386,7 +364,6 @@ MfxReturn MicroFlakeX::MfxRect::Inflate(FLOAT setX, FLOAT setY)
 
 MfxReturn MicroFlakeX::MfxRect::Collision(MfxBase* set, BOOL* ret)
 {
-	MfxCodeLock(this);
 	FLOAT myTop = 0, myLeft = 0, myRight = 0, myBottom = 0;
 	FLOAT setTop = 0, setLeft = 0, setRight = 0, setBottom = 0;
 

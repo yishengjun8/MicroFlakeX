@@ -25,18 +25,15 @@ MfxObject_Init_2(MfxSize, MfxType);
 
 MicroFlakeX::MfxSize::MfxSize()
 {
-	MfxCodeLock(this);
 	myWidth = myHeight = 0;
 }
 
 MicroFlakeX::MfxSize::~MfxSize()
 {
-	MfxCodeLock(this);
 }
 
 MfxReturn MicroFlakeX::MfxSize::Clone(MfxBase** ret)
 {
-	MfxCodeLock(this);
 	*ret = new MfxSize;
 	((MfxSize*)(*ret))->Init(myWidth, myHeight);
 	return RFine;
@@ -52,7 +49,6 @@ MfxBase& MicroFlakeX::MfxSize::operator=(MfxBase& rhs)
 
 BOOL MicroFlakeX::MfxSize::operator==(MfxBase& rhs)
 {
-	MfxCodeLock(this);
 	FLOAT tW = 0, tH = 0;
 	rhs.AutoFunc(L"GetWidth", &tW);
 	rhs.AutoFunc(L"GetHeight", &tH);
@@ -70,7 +66,6 @@ MfxReturn MicroFlakeX::MfxSize::Init(FLOAT setWidth, FLOAT setHeight)
 
 MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeF(D2D1_SIZE_F* ret)
 {
-	MfxCodeLock(this);
 	GetWidth(&(ret->width));
 	GetHeight(&(ret->height));
 	return RFine;
@@ -78,7 +73,6 @@ MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeF(D2D1_SIZE_F* ret)
 
 MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeU(D2D1_SIZE_U* ret)
 {
-	MfxCodeLock(this);
 	FLOAT tW = 0, tH = 0;
 	GetWidth(&tW);
 	GetHeight(&tH);
@@ -89,7 +83,6 @@ MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeU(D2D1_SIZE_U* ret)
 
 MfxReturn MicroFlakeX::MfxSize::GetSIZE(SIZE* ret)
 {
-	MfxCodeLock(this);
 	FLOAT tW = 0, tH = 0;
 	GetWidth(&tW);
 	GetHeight(&tH);
@@ -100,7 +93,6 @@ MfxReturn MicroFlakeX::MfxSize::GetSIZE(SIZE* ret)
 
 MfxReturn MicroFlakeX::MfxSize::Empty(BOOL* ret)
 {
-	MfxCodeLock(this);
 	*ret = myWidth < 0 || myHeight < 0;
 	return RFine;
 }
@@ -129,14 +121,12 @@ MfxReturn MicroFlakeX::MfxSize::SetHeight(FLOAT set)
 
 MfxReturn MicroFlakeX::MfxSize::GetWidth(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myWidth;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetHeight(FLOAT* ret)
 {
-	MfxCodeLock(this);
 	*ret = myHeight;
 	return RFine;
 }

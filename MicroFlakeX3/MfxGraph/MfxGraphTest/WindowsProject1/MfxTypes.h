@@ -136,6 +136,8 @@ namespace MicroFlakeX
         MfxReturn GetD2D1SizeF(D2D1_SIZE_F* ret);
         MfxReturn GetD2D1SizeU(D2D1_SIZE_U* ret);
 
+        MfxReturn GetSIZE(SIZE* ret);
+
         MfxReturn Empty(BOOL* ret);
         MfxReturn Inflate(FLOAT setX, FLOAT setY);
 
