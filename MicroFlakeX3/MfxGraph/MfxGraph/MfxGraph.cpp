@@ -7,7 +7,7 @@ IWICImagingFactory* gIWICImagingFactory = nullptr;
 
 MfxObject_Init_0(MfxGraph)
 {
-	HRESULT hr = CoInitialize(NULL);
+	HRESULT hr = ::CoInitialize(NULL);
 	if (FAILED(hr))
 		throw L"CoInitialize Failed";
 
@@ -34,7 +34,7 @@ ID2D1Factory*& MfxGraph::myID2DFactory = gID2DFactory;
 IDWriteFactory*& MfxGraph::myIDWriteFactory = gIDWriteFactory;
 IWICImagingFactory*& MfxGraph::myIWICImagingFactory = gIWICImagingFactory;
 
-MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC set, MfxRect* rect)
+MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC &set, MfxRect* rect)
 {
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT,
@@ -59,7 +59,7 @@ MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret,
 	}
 }
 
-MfxReturn MicroFlakeX::MfxGraph::GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND set, MfxSize* size)
+MfxReturn MicroFlakeX::MfxGraph::GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND &set, MfxSize* size)
 {
 	ID2D1HwndRenderTarget* tHwndRenderTarget = nullptr;
 	D2D1_SIZE_U tSize; size->GetD2D1SizeU(&tSize);
@@ -76,7 +76,7 @@ MfxReturn MicroFlakeX::MfxGraph::GetID2D1HwndRenderTarget(ID2D1RenderTarget** re
 	}
 }
 
-MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW path, MfxSize* size)
+MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &path, MfxSize* size)
 {
 	IWICBitmapDecoder* pDecoder = nullptr;
 	IWICBitmapFrameDecode* pSource = nullptr;
@@ -146,7 +146,7 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW pa
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxStrW path, MfxSize* size)
+MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxStrW &path, MfxSize* size)
 {
 	IWICBitmapDecoder* pDecoder = NULL;
 	IWICBitmapFrameDecode* pSource = NULL;

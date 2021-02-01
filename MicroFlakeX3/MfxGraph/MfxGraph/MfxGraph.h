@@ -47,12 +47,12 @@ namespace MicroFlakeX
 		: public MfxBase
 	{
 	public:
-		static MfxReturn GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC set, MfxRect* rect);
-		static MfxReturn GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND set, MfxSize* size);
+		static MfxReturn GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC &set, MfxRect* rect);
+		static MfxReturn GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND &set, MfxSize* size);
 
-		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, MfxStrW path, MfxSize* size);
+		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &path, MfxSize* size);
 		static MfxReturn ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, 
-			MfxStrW path, MfxSize* size);
+			MfxStrW &path, MfxSize* size);
 		static MfxReturn ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar,
 			IWICBitmap* bitmap, MfxSize* size);
 	public:
@@ -142,23 +142,28 @@ namespace MicroFlakeX
 		BOOL operator==(MfxBase& rhs);
 
 	protected:
-		MfxRect myRect;
 		MfxCanvas* myCanvas;
 		ID2D1RenderTarget* myRenderTarget;
 
-		IWICBitmap* myBaseIWICBitmap;
-		ID2D1Bitmap* myShowID2D1Bitmap;
+		IWICBitmap* myIWICBitmap;
+		ID2D1Bitmap* myID2D1Bitmap;
 	public:
-		MfxReturn ResetBaseBitmap();
-		MfxReturn ResetShowBitmap();
+		MfxReturn ResetIWICBitmap(MfxStrW* path, MfxSize* set);
+		MfxReturn ResetID2D1Bitmap(MfxSize* set);
 	public:
-		MfxReturn FromFile(MfxStrW path, MfxSize *set);
-		MfxReturn FromColor(MfxStrW path, MfxSize *set);
+		MfxReturn FromFile(MfxStrW* path, MfxSize* set);
+		MfxReturn FromColor(MfxStrW* path, MfxSize* set);
 
 		MfxReturn SetCanvas(MfxCanvas* set);
 		MfxReturn GetCanvas(MfxCanvas** ret);
 
 		MfxReturn Paint();
+	public:
+		MfxReturn GetIWICBitmap(IWICBitmap** ret);
+		MfxReturn GetID2D1Bitmap(ID2D1Bitmap** ret);
+
+		MfxReturn SetIWICBitmap(IWICBitmap* set);
+		MfxReturn SetID2D1Bitmap(ID2D1Bitmap* set);
 	};
 }
 
@@ -236,13 +241,13 @@ namespace MicroFlakeX
 
 		MfxReturn ResetRegion();
 		MfxReturn ResetTextPath(); //重设文字路径
-		MfxReturn ResetShowBitmap(); //重设显示图片
+		MfxReturn ResetID2D1Bitmap(); //重设显示图片
 		MfxReturn ResetCachedShowBitmap();
 	public:
 		MfxReturn SetDC(HDC set);
 		MfxReturn GetDC(HDC* ret);
 
-		MfxReturn GetShowBitmap(Gdiplus::Bitmap** ret); //获取当前显示图片
+		MfxReturn GetID2D1Bitmap(Gdiplus::Bitmap** ret); //获取当前显示图片
 
 		MfxReturn Draw();
 		MfxReturn DrawBitmap(Gdiplus::Graphics* set);

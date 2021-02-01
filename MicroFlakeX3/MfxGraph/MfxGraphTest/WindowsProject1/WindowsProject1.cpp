@@ -99,7 +99,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 将实例句柄存储在全局变量中
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, 600, 600, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -129,6 +129,7 @@ MfxCanvas myCanvas;
 MfxImage myImage[10];
 MfxRect myRect[10];
 MfxSize mySize[10];
+MfxPoint myPoint[10];
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -136,16 +137,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
     {
-        myRect[0].Init(10, 10, 300, 300);
-        mySize[0].Init(600, 600);
+       
+        mySize[0].Init(1024, 1024);
 
         myCanvas.SetSize(&mySize[0]);
-        myCanvas.SetDC(GetDC(hWnd));
+        myCanvas.SetWnd(hWnd);
 
         myImage[0].SetCanvas(&myCanvas);
-        myImage[0].SetRect(&myRect[0]);
-        myImage[0].FromFile(L"D:\\image\\rect.jpg", &mySize[0]);
 
+        myRect[0].Init(156, 100, 600, 400);
+        myImage[0].SetRect(&myRect[0]);
+        MfxStrW path = L"D:\\image\\rect.jpg";
+        myImage[0].FromFile(&path, &mySize[9]);
     }
     case WM_COMMAND:
         {
