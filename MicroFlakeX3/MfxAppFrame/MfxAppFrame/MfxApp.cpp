@@ -1,23 +1,44 @@
 #include "pch.h"
 #include "MfxAppFrame.h"
 
+MicroFlakeX::MfxApp* __theApp = nullptr;
+HINSTANCE __theInstance = nullptr;
+
+MfxObject_Init_0(MfxApp)
+{
+	__theApp = new MfxApp;
+	__theInstance = GetModuleHandleW(NULL);
+}
+MfxObject_Init_1(MfxApp)
+MfxObject_Init_2(MfxApp, MfxBase);
+
+MfxApp*& MfxApp::theApp = __theApp;
+const HINSTANCE& MfxApp::theInstance = __theInstance;
+
+LRESULT MicroFlakeX::MfxApp::AppProc(HWND hWnd, MfxMsg msg, WPARAM wParam, LPARAM lParam)
+{
+	return __theApp->ForwardMessage(hWnd, msg, wParam, lParam);
+}
+
 MicroFlakeX::MfxApp::MfxApp()
 {
-	MfxCodeLock t_CodeLock(this);
-	__MicroFlakeX::MfxRegApp(this);
+	if (__theApp)
+	{
+		throw L"MfxApp Object Exceeds One";
+	}
 
-	myUIMap_Value = nullptr;
-	myInstance = GetModuleHandleW(NULL);
+	overParam = 0;
+	myBindingUI = nullptr;
 
 	WNDCLASSEX tempWC{ 0 };
 
 	tempWC.cbSize = sizeof(WNDCLASSEX);
 	tempWC.style = CS_HREDRAW | CS_VREDRAW;
 
-	tempWC.lpfnWndProc = __MicroFlakeX::MfxAppProc;
+	tempWC.lpfnWndProc = AppProc;
 	tempWC.cbClsExtra = 0;               // no extra class memory 
 	tempWC.cbWndExtra = 0;                // no extra window memory
-	tempWC.hInstance = myInstance;		//获取程序实例句柄
+	tempWC.hInstance = __theInstance;		//获取程序实例句柄
 
 	tempWC.hIcon = LoadIcon(NULL, IDI_APPLICATION);             // predefined app. icon 
 	tempWC.hCursor = LoadCursor(NULL, IDC_ARROW);                // predefined arrow 
@@ -27,55 +48,57 @@ MicroFlakeX::MfxApp::MfxApp()
 	tempWC.lpszClassName = L"MfxNormalUI";  // name of window class
 	tempWC.hIconSm = LoadIconW(NULL, IDI_APPLICATION);  // small class icon 
 
-	if (!RegisterClassEx(&tempWC))
+	if (!RegisterClassExW(&tempWC))
 	{
-		MessageBox(NULL, L"MfxBasicsWindowClass Registration Failed!", L"Error!", MB_ICONEXCLAMATION | MB_OK);
+		MessageBoxW(NULL, L"MfxNormalUI Registration Failed!", L"Error!", MB_ICONEXCLAMATION | MB_OK);
 	}
 }
 
 MicroFlakeX::MfxApp::~MfxApp()
 {
-	MfxCodeLock t_CodeLock(this);
+	//删除全部UI
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxApp::Run()
+void MicroFlakeX::MfxApp::Run()
 {
-	MSG appMsg;
-	while (GetMessageW(&appMsg, NULL, 0, 0) > 0) {
-		TranslateMessage(&appMsg);
-		DispatchMessageW(&appMsg);
+	MSG tMsg;
+	while (GetMessageW(&tMsg, NULL, 0, 0) > 0) {
+		TranslateMessage(&tMsg);
+		DispatchMessageW(&tMsg);
 	}
-	return appMsg.wParam;
+	overParam = tMsg.wParam;
 }
 
-HWND MicroFlakeX::MfxApp::MfxCreateWindowExW(
-	MfxUI* value, MfxRect gdiRect,
+HWND MicroFlakeX::MfxApp::MfxCreateUIExW(
+	MfxUI* ui, MfxRect& rect,
 	DWORD dwExStyle, DWORD dwStyle,
-	MfxStrW lpClassName, MfxStrW lpWindowName)
+	MfxStrW className, MfxStrW windowsName)
 {
-	MfxCodeLock t_CodeLock(this);
+	FLOAT tX = 0, tY = 0, tWidth = 0, tHeight = 0;
+	rect.GetX(&tX);
+	rect.GetY(&tY);
+	rect.GetWidth(&tWidth);
+	rect.GetHeight(&tHeight);
 
-	myUIMap_Value = value;
+	while (myBindingUI);
+	myBindingUI = ui; 
 	return CreateWindowExW(
-		dwExStyle, lpClassName.c_str(), lpWindowName.c_str(), dwStyle,
-		gdiRect.X, gdiRect.Y, gdiRect.Width, gdiRect.Height,
-		NULL, NULL, myInstance, NULL
+		dwExStyle, className.c_str(), windowsName.c_str(), dwStyle,
+		tX, tY, tWidth, tHeight, NULL, NULL, __theInstance, NULL
 	);
 }
 
 
 MicroFlakeX::MfxReturn MicroFlakeX::MfxApp::ForwardMessage(HWND hWnd, MfxMsg message, WPARAM wParam, LPARAM lParam)
 {
-	MfxCodeLock t_CodeLock(this);
-
 	MfxUI_Map_iterator t_Itera = myUIMap.find(hWnd);
 	if (t_Itera == myUIMap.end())
 	{
-		if (myUIMap_Value)
+		if (myBindingUI)
 		{
-			myUIMap.insert(MfxUI_Map_elem(hWnd, myUIMap_Value));
-			myUIMap_Value->myWnd = hWnd;
-			myUIMap_Value = nullptr;
+			myUIMap.insert(MfxUI_Map_elem(hWnd, myBindingUI));
+			myBindingUI->myWnd = hWnd;
+			myBindingUI = nullptr;
 
 			t_Itera = myUIMap.find(hWnd);
 			if (t_Itera != myUIMap.end())
@@ -86,22 +109,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxApp::ForwardMessage(HWND hWnd, MfxMsg mes
 	}
 	else
 	{
-		if (message == WM_DESTROY)
-		{
-			MfxReturn ret = (t_Itera->second)->ProcMessage(message, wParam, lParam);
-			myUIMap.erase(t_Itera);
-			return ret;
-		}
-		else
-		{
-			return (t_Itera->second)->ProcMessage(message, wParam, lParam);
-		}
+		return (t_Itera->second)->ProcMessage(message, wParam, lParam);
 	}
-	return DefWindowProc(hWnd, message, wParam, lParam);
-}
-
-MicroFlakeX::MfxReturn MicroFlakeX::MfxApp::GetInstance(HINSTANCE* ret)
-{
-	*ret = myInstance;
-	return MfxFine;
+	return DefWindowProcW(hWnd, message, wParam, lParam);
 }

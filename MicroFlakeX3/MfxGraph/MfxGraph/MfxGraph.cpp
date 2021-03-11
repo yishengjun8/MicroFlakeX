@@ -25,9 +25,7 @@ MfxObject_Init_0(MfxGraph)
 	if (FAILED(hr))
 		throw L"IWICImagingFactory Failed";
 }
-
 MfxObject_Init_1(MfxGraph);
-
 MfxObject_Init_2(MfxGraph, MfxBase);
 
 ID2D1Factory*& MfxGraph::myID2DFactory = gID2DFactory;
@@ -95,7 +93,10 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &p
 	myIWICImagingFactory->CreateFormatConverter(&pConverter);
 
 	FLOAT tWidth = 0, tHeight = 0;
-	size->GetWidth(&tWidth), size->GetHeight(&tHeight);
+	if (size)
+	{
+		size->GetWidth(&tWidth), size->GetHeight(&tHeight);
+	}
 	if (tWidth != 0 || tHeight != 0)
 	{
 		UINT originalWidth, originalHeight;
@@ -164,7 +165,10 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1Ren
 	myIWICImagingFactory->CreateFormatConverter(&pConverter);
 
 	FLOAT tWidth = 0, tHeight = 0;
-	size->GetWidth(&tWidth), size->GetHeight(&tHeight);
+	if (size)
+	{
+		size->GetWidth(&tWidth), size->GetHeight(&tHeight);
+	}
 	if (tWidth != 0 || tHeight != 0)
 	{
 		UINT originalWidth, originalHeight;
@@ -218,7 +222,10 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID
 	myIWICImagingFactory->CreateFormatConverter(&pConverter);
 
 	FLOAT tWidth = 0, tHeight = 0;
-	size->GetWidth(&tWidth), size->GetHeight(&tHeight);
+	if (size)
+	{
+		size->GetWidth(&tWidth), size->GetHeight(&tHeight);
+	}
 	if (tWidth != 0 || tHeight != 0)
 	{
 		UINT originalWidth, originalHeight;
@@ -295,7 +302,8 @@ BOOL MicroFlakeX::MfxGraph::operator==(MfxBase& rhs)
 
 MfxReturn MicroFlakeX::MfxGraph::SetRect(MfxRect* set)
 {
-	myRect = *set;
+	SetSize(reinterpret_cast<MfxSize*> (set));
+	SetPoint(reinterpret_cast<MfxPoint*> (set));
 	return RFine;
 }
 

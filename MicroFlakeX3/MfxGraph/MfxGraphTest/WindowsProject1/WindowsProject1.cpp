@@ -137,18 +137,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
     {
-       
+        //myImage[0].SetCanvas(&myCanvas);
+
         mySize[0].Init(1024, 1024);
 
         myCanvas.SetSize(&mySize[0]);
         myCanvas.SetWnd(hWnd);
 
-        myImage[0].SetCanvas(&myCanvas);
+       
 
         myRect[0].Init(156, 100, 600, 400);
         myImage[0].SetRect(&myRect[0]);
         MfxStrW path = L"D:\\image\\rect.jpg";
         myImage[0].FromFile(&path, &mySize[9]);
+
+        myImage[0].SetCanvas(&myCanvas);
     }
     case WM_COMMAND:
         {

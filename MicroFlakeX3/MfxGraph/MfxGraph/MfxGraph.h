@@ -50,11 +50,11 @@ namespace MicroFlakeX
 		static MfxReturn GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC &set, MfxRect* rect);
 		static MfxReturn GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND &set, MfxSize* size);
 
-		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &path, MfxSize* size);
+		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &path, MfxSize* size = nullptr);
 		static MfxReturn ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, 
-			MfxStrW &path, MfxSize* size);
+			MfxStrW &path, MfxSize* size = nullptr);
 		static MfxReturn ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar,
-			IWICBitmap* bitmap, MfxSize* size);
+			IWICBitmap* bitmap, MfxSize* size = nullptr);
 	public:
 		static ID2D1Factory*& myID2DFactory;
 		static IDWriteFactory*& myIDWriteFactory;
@@ -149,7 +149,7 @@ namespace MicroFlakeX
 		ID2D1Bitmap* myID2D1Bitmap;
 	public:
 		MfxReturn ResetIWICBitmap(MfxStrW* path, MfxSize* set);
-		MfxReturn ResetID2D1Bitmap(MfxSize* set);
+		MfxReturn ResetID2D1Bitmap();
 	public:
 		MfxReturn FromFile(MfxStrW* path, MfxSize* set);
 		MfxReturn FromColor(MfxStrW* path, MfxSize* set);
