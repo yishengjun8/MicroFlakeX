@@ -72,24 +72,77 @@ MicroFlakeX::MfxRect::MfxRect()
 	myX = myY = myWidth = myHeight = 0;
 }
 
+MicroFlakeX::MfxRect::MfxRect(MfxRect* set)
+{
+	myX = set->myX;
+	myY = set->myY;
+	myWidth = set->myWidth;
+	myHeight = set->myHeight;
+}
+
+MicroFlakeX::MfxRect::MfxRect(MfxSize* set)
+{
+	myX = 0;
+	myY = 0;
+	myWidth = set->myWidth;
+	myHeight = set->myHeight;
+}
+
+MicroFlakeX::MfxRect::MfxRect(MfxPoint* set)
+{
+	myX = set->myX;
+	myY = set->myY;
+	myWidth = 0;
+	myHeight = 0;
+}
+
+MicroFlakeX::MfxRect::MfxRect(FLOAT setX, FLOAT setY, FLOAT setWidth, FLOAT setHeight)
+{
+	myX = setX;
+	myY = setY;
+	myWidth = setWidth;
+	myHeight = setHeight;
+}
+
 MicroFlakeX::MfxRect::~MfxRect()
 {
 }
 
 MfxReturn MicroFlakeX::MfxRect::Clone(MfxBase** ret)
 {
-	*ret = new MfxRect;
-	((MfxRect*)(*ret))->Init(myX, myY, myWidth, myHeight);
+	*ret = new MfxRect(this);
 	return RFine;
 }
 
 MfxBase& MicroFlakeX::MfxRect::operator=(MfxBase& rhs)
 {
-	MfxCodeLock(this);
 	rhs.AutoFunc(L"GetX", &myX);
 	rhs.AutoFunc(L"GetY", &myY);
 	rhs.AutoFunc(L"GetWidth", &myWidth);
 	rhs.AutoFunc(L"GetHeight", &myHeight);
+	return *this;
+}
+
+MfxRect& MicroFlakeX::MfxRect::operator=(MfxRect& rhs)
+{
+	myX = rhs.myX;
+	myY = rhs.myY;
+	myWidth = rhs.myWidth;
+	myHeight = rhs.myHeight;
+	return *this;
+}
+
+MfxRect& MicroFlakeX::MfxRect::operator=(MfxSize& rhs)
+{
+	myWidth = rhs.myWidth;
+	myHeight = rhs.myHeight;
+	return *this;
+}
+
+MfxRect& MicroFlakeX::MfxRect::operator=(MfxPoint& rhs)
+{
+	myX = rhs.myX;
+	myY = rhs.myY;
 	return *this;
 }
 
@@ -105,7 +158,6 @@ BOOL MicroFlakeX::MfxRect::operator==(MfxBase& rhs)
 
 MfxReturn MicroFlakeX::MfxRect::Init(FLOAT setX, FLOAT setY, FLOAT setWidth, FLOAT setHeight)
 {
-	MfxCodeLock(this);
 	myX = setX;
 	myY = setY;
 	myWidth = setWidth;
@@ -208,7 +260,6 @@ MfxReturn MicroFlakeX::MfxRect::GetPOINT(POINT* ret)
 
 MfxReturn MicroFlakeX::MfxRect::SetSize(MfxSize* set)
 {
-	MfxCodeLock(this);
 	set->GetWidth(&myWidth);
 	set->GetHeight(&myHeight);
 	return RFine;
@@ -216,7 +267,6 @@ MfxReturn MicroFlakeX::MfxRect::SetSize(MfxSize* set)
 
 MfxReturn MicroFlakeX::MfxRect::SetPoint(MfxPoint* set)
 {
-	MfxCodeLock(this);
 	set->GetX(&myX);
 	set->GetY(&myY);
 	return RFine;
@@ -224,56 +274,48 @@ MfxReturn MicroFlakeX::MfxRect::SetPoint(MfxPoint* set)
 
 MfxReturn MicroFlakeX::MfxRect::SetX(FLOAT set)
 {
-	MfxCodeLock(this);
 	myX = set;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetY(FLOAT set)
 {
-	MfxCodeLock(this);
 	myY = set;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetWidth(FLOAT set)
 {
-	MfxCodeLock(this);
 	myWidth = set;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetHeight(FLOAT set)
 {
-	MfxCodeLock(this);
 	myHeight = set;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetTop(FLOAT set)
 {
-	MfxCodeLock(this);
 	myY = set;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetLeft(FLOAT set)
 {
-	MfxCodeLock(this);
 	myX = set;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetRight(FLOAT set)
 {
-	MfxCodeLock(this);
 	myWidth = set - myX;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetBottom(FLOAT set)
 {
-	MfxCodeLock(this);
 	myHeight = set - myY;
 	return RFine;
 }
@@ -346,7 +388,6 @@ MfxReturn MicroFlakeX::MfxRect::Empty(BOOL* ret)
 
 MfxReturn MicroFlakeX::MfxRect::Offset(FLOAT setX, FLOAT setY)
 {
-	MfxCodeLock(this);
 	myX += setX;
 	myY += setY;
 	return RFine;
@@ -354,7 +395,6 @@ MfxReturn MicroFlakeX::MfxRect::Offset(FLOAT setX, FLOAT setY)
 
 MfxReturn MicroFlakeX::MfxRect::Inflate(FLOAT setX, FLOAT setY)
 {
-	MfxCodeLock(this);
 	myX -= setX;
 	myX -= setY;
 	myWidth += 2 * setX;

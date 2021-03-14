@@ -58,9 +58,16 @@ namespace MicroFlakeX
         MfxObject;
     public:
         MfxRect();
+        MfxRect(MfxRect* set);
+        MfxRect(MfxSize* set);
+        MfxRect(MfxPoint* set);
+        MfxRect(FLOAT setX, FLOAT setY, FLOAT setWidth, FLOAT setHeight);
         ~MfxRect();
         MfxReturn Clone(MfxBase** ret);
         MfxBase& operator=(MfxBase& rhs);
+        MfxRect& operator=(MfxRect& rhs);
+        MfxRect& operator=(MfxSize& rhs);
+        MfxRect& operator=(MfxPoint& rhs);
         BOOL operator==(MfxBase& rhs);
 
     public:
@@ -109,7 +116,7 @@ namespace MicroFlakeX
         MfxReturn Inflate(FLOAT setX, FLOAT setY);
 
         MfxReturn Collision(MfxBase* set, BOOL* ret);
-    protected:
+    public:
         FLOAT myX;
         FLOAT myY;
         FLOAT myWidth;
@@ -125,9 +132,14 @@ namespace MicroFlakeX
         MfxObject;
     public:
         MfxSize();
+        MfxSize(MfxRect* set);
+        MfxSize(MfxSize* set);
+        MfxSize(FLOAT setWidth, FLOAT setHeight);
         ~MfxSize();
         MfxReturn Clone(MfxBase** ret);
         MfxBase& operator=(MfxBase& rhs);
+        MfxSize& operator=(MfxRect& rhs);
+        MfxSize& operator=(MfxSize& rhs);
         BOOL operator==(MfxBase& rhs);
 
     public:
@@ -146,7 +158,7 @@ namespace MicroFlakeX
 
         MfxReturn GetWidth(FLOAT* ret);
         MfxReturn GetHeight(FLOAT* ret);
-    protected:
+    public:
         FLOAT myWidth;
         FLOAT myHeight;
     };
@@ -161,6 +173,9 @@ namespace MicroFlakeX
         MfxObject;
     public:
         MfxPoint();
+        MfxPoint(MfxRect* set);
+        MfxPoint(MfxPoint* set);
+        MfxPoint(FLOAT setX, FLOAT setY);
         ~MfxPoint();
         MfxReturn Clone(MfxBase** ret);
         MfxBase& operator=(MfxBase& rhs);
@@ -179,7 +194,7 @@ namespace MicroFlakeX
 
         MfxReturn GetX(FLOAT* ret);
         MfxReturn GetY(FLOAT* ret);
-    protected:
+    public:
         FLOAT myX;
         FLOAT myY;
     };
@@ -193,6 +208,7 @@ namespace MicroFlakeX
         MfxObject;
     public:
         MfxColor();
+        MfxColor(FLOAT setA, FLOAT setR, FLOAT setG, FLOAT setB);
         ~MfxColor();
         MfxReturn Clone(MfxBase** ret);
         MfxBase& operator=(MfxBase& rhs);
@@ -204,12 +220,18 @@ namespace MicroFlakeX
         MfxReturn SetColor(FLOAT setA, UINT32 set);
         MfxReturn GetD2D1ColorF(D2D1_COLOR_F* ret);
 
+        MfxReturn SetA(FLOAT ret);
+        MfxReturn SetR(FLOAT ret);
+        MfxReturn SetG(FLOAT ret);
+        MfxReturn SetB(FLOAT ret);
+
         MfxReturn GetA(FLOAT* ret);
         MfxReturn GetR(FLOAT* ret);
         MfxReturn GetG(FLOAT* ret);
         MfxReturn GetB(FLOAT* ret);
+
         MfxReturn GetRGB(UINT32* ret);
-    protected:
+    public:
         FLOAT myA;
         FLOAT myR;
         FLOAT myG;

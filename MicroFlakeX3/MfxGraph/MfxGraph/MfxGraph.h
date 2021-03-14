@@ -47,14 +47,16 @@ namespace MicroFlakeX
 		: public MfxBase
 	{
 	public:
-		static MfxReturn GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC &set, MfxRect* rect);
-		static MfxReturn GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND &set, MfxSize* size);
+		static MfxReturn GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC &set, MfxRect rect);
+		static MfxReturn GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND &set, MfxSize size);
 
-		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &path, MfxSize* size = nullptr);
+		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &path, MfxSize size);
+		static MfxReturn IWICBitmapFromColor(IWICBitmap** ret, MfxColor color, MfxSize size);
+
 		static MfxReturn ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, 
-			MfxStrW &path, MfxSize* size = nullptr);
+			MfxStrW &path, MfxSize size);
 		static MfxReturn ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar,
-			IWICBitmap* bitmap, MfxSize* size = nullptr);
+			IWICBitmap* bitmap, MfxSize size);
 	public:
 		static ID2D1Factory*& myID2DFactory;
 		static IDWriteFactory*& myIDWriteFactory;
@@ -68,13 +70,13 @@ namespace MicroFlakeX
 		MfxBase& operator=(MfxBase& rhs);
 		BOOL operator==(MfxBase& rhs);
 	public:
-		virtual MfxReturn SetRect(MfxRect* set);
-		virtual MfxReturn SetSize(MfxSize* set);
-		virtual MfxReturn SetPoint(MfxPoint* set);
+		virtual MfxReturn SetRect(MfxRect set);
+		virtual MfxReturn SetSize(MfxSize set);
+		virtual MfxReturn SetPoint(MfxPoint set);
 
-		virtual MfxReturn GetRect(MfxRect** ret);
-		virtual MfxReturn GetSize(MfxSize** ret);
-		virtual MfxReturn GetPoint(MfxPoint** ret);
+		virtual MfxReturn GetRect(MfxRect* ret);
+		virtual MfxReturn GetSize(MfxSize* ret);
+		virtual MfxReturn GetPoint(MfxPoint* ret);
 
 		virtual MfxReturn CollisionWith(MfxGraph* set, bool* ret);
 	protected:
@@ -114,8 +116,8 @@ namespace MicroFlakeX
 		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret);
 
 	public:
-		MfxReturn SetSize(MfxSize* set);
-		MfxReturn SetPoint(MfxPoint* set);
+		MfxReturn SetSize(MfxSize set);
+		MfxReturn SetPoint(MfxPoint set);
 
 	protected:
 		HDC myDC;

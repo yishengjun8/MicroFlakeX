@@ -52,7 +52,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxImage::ResetID2D1Bitmap()
 	{
 		SafeRelease(myID2D1Bitmap);
 		ID2D1BitmapFromIWICBitmap(&myID2D1Bitmap, myRenderTarget,
-			myIWICBitmap);
+			myIWICBitmap, MfxSize());
 	}
 	else
 	{

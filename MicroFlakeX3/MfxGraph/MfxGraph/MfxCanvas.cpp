@@ -59,7 +59,7 @@ MfxReturn MicroFlakeX::MfxCanvas::SetWnd(HWND set)
 		return RFail;
 	}
 	myWnd = set;
-	MfxSize tSize; tSize = myRect;
+	MfxSize tSize(&myRect);
 	GetID2D1HwndRenderTarget(&myRenderTarget, set, &tSize);
 	return RFine;
 }
@@ -88,20 +88,36 @@ MfxReturn MicroFlakeX::MfxCanvas::GetRenderTarget(ID2D1RenderTarget** ret)
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize* set)
+MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize set)
 {
 	MfxGraph::SetSize(set);
 	{
-
+		if (myWnd)
+		{
+			SafeRelease(myRenderTarget);
+			MfxSize tSize(&myRect);
+			GetID2D1HwndRenderTarget(&myRenderTarget, myWnd, &tSize);
+		}
+		else if (myDC)
+		{
+			RECT rc;
+			myRect.GetRECT(&rc);
+			((ID2D1DCRenderTarget*)myRenderTarget)->BindDC(myDC, &rc);
+		}
 	}
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::SetPoint(MfxPoint* set)
+MfxReturn MicroFlakeX::MfxCanvas::SetPoint(MfxPoint set)
 {
 	MfxGraph::SetPoint(set);
 	{
-
+		if (myDC)
+		{
+			RECT rc;
+			myRect.GetRECT(&rc);
+			((ID2D1DCRenderTarget*)myRenderTarget)->BindDC(myDC, &rc);
+		}
 	}
 	return RFine;
 }

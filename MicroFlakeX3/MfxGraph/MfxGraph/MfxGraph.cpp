@@ -32,7 +32,7 @@ ID2D1Factory*& MfxGraph::myID2DFactory = gID2DFactory;
 IDWriteFactory*& MfxGraph::myIDWriteFactory = gIDWriteFactory;
 IWICImagingFactory*& MfxGraph::myIWICImagingFactory = gIWICImagingFactory;
 
-MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC &set, MfxRect* rect)
+MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC &set, MfxRect rect)
 {
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT,
@@ -46,7 +46,7 @@ MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret,
 	if (SUCCEEDED(myID2DFactory->CreateDCRenderTarget(&props, &tDCRenderTarget)))
 	{
 		RECT rc;
-		rect->GetRECT(&rc);
+		rect.GetRECT(&rc);
 		tDCRenderTarget->BindDC(set, &rc);
 		*ret = tDCRenderTarget;
 		return RFine;
@@ -57,10 +57,10 @@ MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret,
 	}
 }
 
-MfxReturn MicroFlakeX::MfxGraph::GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND &set, MfxSize* size)
+MfxReturn MicroFlakeX::MfxGraph::GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND &set, MfxSize size)
 {
 	ID2D1HwndRenderTarget* tHwndRenderTarget = nullptr;
-	D2D1_SIZE_U tSize; size->GetD2D1SizeU(&tSize);
+	D2D1_SIZE_U tSize; size.GetD2D1SizeU(&tSize);
 	if (SUCCEEDED(myID2DFactory->CreateHwndRenderTarget(
 		D2D1::RenderTargetProperties(),
 		D2D1::HwndRenderTargetProperties(set, tSize), &tHwndRenderTarget)))
@@ -74,7 +74,7 @@ MfxReturn MicroFlakeX::MfxGraph::GetID2D1HwndRenderTarget(ID2D1RenderTarget** re
 	}
 }
 
-MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &path, MfxSize* size)
+MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &path, MfxSize size)
 {
 	IWICBitmapDecoder* pDecoder = nullptr;
 	IWICBitmapFrameDecode* pSource = nullptr;
@@ -92,11 +92,7 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &p
 	pDecoder->GetFrame(0, &pSource);
 	myIWICImagingFactory->CreateFormatConverter(&pConverter);
 
-	FLOAT tWidth = 0, tHeight = 0;
-	if (size)
-	{
-		size->GetWidth(&tWidth), size->GetHeight(&tHeight);
-	}
+	FLOAT tWidth = size.myWidth, tHeight = size.myHeight;
 	if (tWidth != 0 || tHeight != 0)
 	{
 		UINT originalWidth, originalHeight;
@@ -147,7 +143,13 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &p
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxStrW &path, MfxSize* size)
+MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromColor(IWICBitmap** ret, MfxColor
+	color, MfxSize size)
+{
+	return MfxReturn();
+}
+
+MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxStrW &path, MfxSize size)
 {
 	IWICBitmapDecoder* pDecoder = NULL;
 	IWICBitmapFrameDecode* pSource = NULL;
@@ -164,11 +166,7 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1Ren
 	pDecoder->GetFrame(0, &pSource);
 	myIWICImagingFactory->CreateFormatConverter(&pConverter);
 
-	FLOAT tWidth = 0, tHeight = 0;
-	if (size)
-	{
-		size->GetWidth(&tWidth), size->GetHeight(&tHeight);
-	}
+	FLOAT tWidth = size.myWidth, tHeight = size.myHeight;
 	if (tWidth != 0 || tHeight != 0)
 	{
 		UINT originalWidth, originalHeight;
@@ -214,18 +212,14 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1Ren
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, IWICBitmap* bitmap, MfxSize* size)
+MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, IWICBitmap* bitmap, MfxSize size)
 {
 	IWICBitmapScaler* pScaler = nullptr;
 	IWICFormatConverter* pConverter = nullptr;
 
 	myIWICImagingFactory->CreateFormatConverter(&pConverter);
 
-	FLOAT tWidth = 0, tHeight = 0;
-	if (size)
-	{
-		size->GetWidth(&tWidth), size->GetHeight(&tHeight);
-	}
+	FLOAT tWidth = size.myWidth, tHeight = size.myHeight;
 	if (tWidth != 0 || tHeight != 0)
 	{
 		UINT originalWidth, originalHeight;
@@ -300,40 +294,40 @@ BOOL MicroFlakeX::MfxGraph::operator==(MfxBase& rhs)
 	return false;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::SetRect(MfxRect* set)
+MfxReturn MicroFlakeX::MfxGraph::SetRect(MfxRect set)
 {
-	SetSize(reinterpret_cast<MfxSize*> (set));
-	SetPoint(reinterpret_cast<MfxPoint*> (set));
+	SetSize(MfxSize(&set));
+	SetPoint(MfxPoint(&set));
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::SetSize(MfxSize* set)
+MfxReturn MicroFlakeX::MfxGraph::SetSize(MfxSize set)
 {
-	myRect = *set;
+	myRect = set;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::SetPoint(MfxPoint* set)
+MfxReturn MicroFlakeX::MfxGraph::SetPoint(MfxPoint set)
 {
-	myRect = *set;
+	myRect = set;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::GetRect(MfxRect** set)
+MfxReturn MicroFlakeX::MfxGraph::GetRect(MfxRect* set)
 {
-	**set = myRect;
+	*set = myRect;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::GetSize(MfxSize** set)
+MfxReturn MicroFlakeX::MfxGraph::GetSize(MfxSize* set)
 {
-	**set = myRect;
+	*set = myRect;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::GetPoint(MfxPoint** set)
+MfxReturn MicroFlakeX::MfxGraph::GetPoint(MfxPoint* set)
 {
-	**set = myRect;
+	*set = myRect;
 	return RFine;
 }
 

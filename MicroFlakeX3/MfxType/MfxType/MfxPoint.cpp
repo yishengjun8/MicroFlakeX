@@ -26,20 +26,36 @@ MicroFlakeX::MfxPoint::MfxPoint()
 	myX = myY = 0;
 }
 
+MicroFlakeX::MfxPoint::MfxPoint(MfxRect* set)
+{
+	myX = set->myX;
+	myY = set->myY;
+}
+
+MicroFlakeX::MfxPoint::MfxPoint(MfxPoint* set)
+{
+	myX = set->myX;
+	myY = set->myY;
+}
+
+MicroFlakeX::MfxPoint::MfxPoint(FLOAT setX, FLOAT setY)
+{
+	myX = setX;
+	myY = setY;
+}
+
 MicroFlakeX::MfxPoint::~MfxPoint()
 {
 }
 
 MfxReturn MicroFlakeX::MfxPoint::Clone(MfxBase** ret)
 {
-	*ret = new MfxPoint;
-	((MfxPoint*)(*ret))->Init(myX, myY);
+	*ret = new MfxPoint(this);
 	return RFine;
 }
 
 MfxBase& MicroFlakeX::MfxPoint::operator=(MfxBase& rhs)
 {
-	MfxCodeLock(this);
 	rhs.AutoFunc(L"GetX", &myX);
 	rhs.AutoFunc(L"GetY", &myY);
 	return *this;
@@ -56,7 +72,6 @@ BOOL MicroFlakeX::MfxPoint::operator==(MfxBase& rhs)
 
 MfxReturn MicroFlakeX::MfxPoint::Init(FLOAT setX, FLOAT setY)
 {
-	MfxCodeLock(this);
 	myX = setX;
 	myY = setY;
 	return RFine;
@@ -81,7 +96,6 @@ MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointF(D2D1_POINT_2F* ret)
 
 MfxReturn MicroFlakeX::MfxPoint::Offset(FLOAT setX, FLOAT setY)
 {
-	MfxCodeLock(this);
 	myX += setX;
 	myY += setY;
 	return RFine;
@@ -89,14 +103,12 @@ MfxReturn MicroFlakeX::MfxPoint::Offset(FLOAT setX, FLOAT setY)
 
 MfxReturn MicroFlakeX::MfxPoint::SetX(FLOAT set)
 {
-	MfxCodeLock(this);
 	myX = set;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::SetY(FLOAT set)
 {
-	MfxCodeLock(this);
 	myY = set;
 	return RFine;
 }
