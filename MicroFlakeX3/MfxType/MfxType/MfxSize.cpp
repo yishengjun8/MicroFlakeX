@@ -86,6 +86,11 @@ BOOL MicroFlakeX::MfxSize::operator==(MfxBase& rhs)
 	return RFine;
 }
 
+BOOL MicroFlakeX::MfxSize::operator==(MfxSize& rhs)
+{
+	return rhs.myWidth == myWidth && rhs.myHeight == myHeight;
+}
+
 MfxReturn MicroFlakeX::MfxSize::Init(FLOAT setWidth, FLOAT setHeight)
 {
 	myWidth = setWidth;

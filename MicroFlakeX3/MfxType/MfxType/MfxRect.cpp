@@ -156,6 +156,11 @@ BOOL MicroFlakeX::MfxRect::operator==(MfxBase& rhs)
 	return tX == myX && tY == myY && tW == myWidth && tH == myHeight;
 }
 
+BOOL MicroFlakeX::MfxRect::operator==(MfxRect& rhs)
+{
+	return rhs.myX == myX && rhs.myY == myY && rhs.myWidth == myWidth && rhs.myHeight == myHeight;
+}
+
 MfxReturn MicroFlakeX::MfxRect::Init(FLOAT setX, FLOAT setY, FLOAT setWidth, FLOAT setHeight)
 {
 	myX = setX;

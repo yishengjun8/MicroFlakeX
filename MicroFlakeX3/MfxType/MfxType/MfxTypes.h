@@ -69,6 +69,7 @@ namespace MicroFlakeX
         MfxRect& operator=(MfxSize& rhs);
         MfxRect& operator=(MfxPoint& rhs);
         BOOL operator==(MfxBase& rhs);
+        BOOL operator==(MfxRect& rhs);
 
     public:
         MfxReturn Init(FLOAT setX, FLOAT setY, FLOAT setWidth, FLOAT setHeight);
@@ -141,6 +142,7 @@ namespace MicroFlakeX
         MfxSize& operator=(MfxRect& rhs);
         MfxSize& operator=(MfxSize& rhs);
         BOOL operator==(MfxBase& rhs);
+        BOOL operator==(MfxSize& rhs);
 
     public:
         MfxReturn Init(FLOAT setWidth, FLOAT setHeight);
@@ -179,7 +181,10 @@ namespace MicroFlakeX
         ~MfxPoint();
         MfxReturn Clone(MfxBase** ret);
         MfxBase& operator=(MfxBase& rhs);
+        MfxPoint& operator=(MfxRect& rhs);
+        MfxPoint& operator=(MfxPoint& rhs);
         BOOL operator==(MfxBase& rhs);
+        BOOL operator==(MfxPoint& rhs);
 
     public:
         MfxReturn Init(FLOAT setX, FLOAT setY);
@@ -212,7 +217,9 @@ namespace MicroFlakeX
         ~MfxColor();
         MfxReturn Clone(MfxBase** ret);
         MfxBase& operator=(MfxBase& rhs);
+        MfxColor& operator=(MfxColor& rhs);
         BOOL operator==(MfxBase& rhs);
+        BOOL operator==(MfxColor& rhs);
 
     public:
         MfxReturn Init(FLOAT setA, FLOAT setR, FLOAT setG, FLOAT setB);

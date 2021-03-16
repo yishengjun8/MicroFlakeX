@@ -89,14 +89,14 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &p
 		return RFail;
 	};
 
-	pDecoder->GetFrame(0, &pSource);
-	myIWICImagingFactory->CreateFormatConverter(&pConverter);
+	HRESULT hr = pDecoder->GetFrame(0, &pSource);
+	hr = myIWICImagingFactory->CreateFormatConverter(&pConverter);
 
 	FLOAT tWidth = size.myWidth, tHeight = size.myHeight;
 	if (tWidth != 0 || tHeight != 0)
 	{
 		UINT originalWidth, originalHeight;
-		pSource->GetSize(&originalWidth, &originalHeight);
+		hr = pSource->GetSize(&originalWidth, &originalHeight);
 
 		if (tWidth == 0)
 		{
@@ -109,10 +109,10 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &p
 			tHeight = static_cast<UINT>(scalar * static_cast<FLOAT>(originalHeight));
 		}
 
-		myIWICImagingFactory->CreateBitmapScaler(&pScaler);
-		pScaler->Initialize(pSource, tWidth, tHeight, WICBitmapInterpolationModeCubic);
+		hr = myIWICImagingFactory->CreateBitmapScaler(&pScaler);
+		hr = pScaler->Initialize(pSource, tWidth, tHeight, WICBitmapInterpolationModeCubic);
 
-		pConverter->Initialize(
+		hr = pConverter->Initialize(
 			pScaler,
 			GUID_WICPixelFormat32bppPBGRA,
 			WICBitmapDitherTypeNone,
@@ -122,7 +122,7 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &p
 	}
 	else
 	{
-		pConverter->Initialize(
+		hr = pConverter->Initialize(
 			pSource,
 			GUID_WICPixelFormat32bppPBGRA,
 			WICBitmapDitherTypeNone,
@@ -130,7 +130,7 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &p
 			WICBitmapPaletteTypeMedianCut
 		);
 	}
-	HRESULT hr = myIWICImagingFactory->CreateBitmapFromSource(pConverter,
+	hr = myIWICImagingFactory->CreateBitmapFromSource(pConverter,
 		WICBitmapCacheOnLoad, ret);
 
 	if (FAILED(hr))
@@ -146,7 +146,40 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &p
 MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromColor(IWICBitmap** ret, MfxColor
 	color, MfxSize size)
 {
-	return MfxReturn();
+	WICPixelFormatGUID formatGUID = GUID_WICPixelFormat32bppPBGRA;
+	if (FAILED(myIWICImagingFactory->CreateBitmap(size.myWidth, size.myHeight,
+		formatGUID, WICBitmapCacheOnDemand, ret)))
+	{
+		return RFail;
+	}
+
+	WICRect tLockRect = { 0, 0, size.myWidth, size.myHeight };
+	IWICBitmapLock* tBitmapLock = nullptr;
+
+	HRESULT hr = (*ret)->Lock(&tLockRect, WICBitmapLockWrite, &tBitmapLock);
+	if (SUCCEEDED(hr))
+	{
+		UINT tLockSize = 0, tStride = 0;
+		BYTE* tData = nullptr;
+
+		hr = tBitmapLock->GetStride(&tStride);
+		if (SUCCEEDED(hr))
+		{
+			hr = tBitmapLock->GetDataPointer(&tLockSize, &tData);
+		}
+		if (SUCCEEDED(hr) && tData)
+		{
+			for (int tP = 0; tP * 4 < tLockSize; tP++)
+			{
+				tData[tP * 4] = (BYTE)color.myB;
+				tData[tP * 4 + 1] = (BYTE)color.myG;
+				tData[tP * 4 + 2] = (BYTE)color.myR;
+				tData[tP * 4 + 3] = (BYTE)color.myA;
+			}
+		}
+	}
+	SafeRelease(tBitmapLock);
+	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxStrW &path, MfxSize size)
@@ -163,14 +196,14 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1Ren
 		return RFail;
 	};
 
-	pDecoder->GetFrame(0, &pSource);
-	myIWICImagingFactory->CreateFormatConverter(&pConverter);
+	HRESULT hr = pDecoder->GetFrame(0, &pSource);
+	hr = myIWICImagingFactory->CreateFormatConverter(&pConverter);
 
 	FLOAT tWidth = size.myWidth, tHeight = size.myHeight;
 	if (tWidth != 0 || tHeight != 0)
 	{
 		UINT originalWidth, originalHeight;
-		pSource->GetSize(&originalWidth, &originalHeight);
+		hr = pSource->GetSize(&originalWidth, &originalHeight);
 		if (tWidth == 0)
 		{
 			FLOAT scalar = static_cast<FLOAT>(tHeight) / static_cast<FLOAT>(originalHeight);
@@ -181,10 +214,10 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1Ren
 			FLOAT scalar = static_cast<FLOAT>(tWidth) / static_cast<FLOAT>(originalWidth);
 			tHeight = static_cast<UINT>(scalar * static_cast<FLOAT>(originalHeight));
 		}
-		myIWICImagingFactory->CreateBitmapScaler(&pScaler);
-		pScaler->Initialize(pSource, tWidth, tHeight, WICBitmapInterpolationModeCubic);
+		hr = myIWICImagingFactory->CreateBitmapScaler(&pScaler);
+		hr = pScaler->Initialize(pSource, tWidth, tHeight, WICBitmapInterpolationModeCubic);
 
-		pConverter->Initialize(
+		hr = pConverter->Initialize(
 			pScaler,
 			GUID_WICPixelFormat32bppPBGRA,
 			WICBitmapDitherTypeNone,
@@ -194,7 +227,7 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1Ren
 	}
 	else
 	{
-		pConverter->Initialize(
+		hr = pConverter->Initialize(
 			pSource,
 			GUID_WICPixelFormat32bppPBGRA,
 			WICBitmapDitherTypeNone,
@@ -203,7 +236,7 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1Ren
 		);
 	}
 
-	pRendTar->CreateBitmapFromWicBitmap(pConverter, NULL, ret);
+	hr = pRendTar->CreateBitmapFromWicBitmap(pConverter, ret);
 
 	__MicroFlakeX::SafeRelease(pSource);
 	__MicroFlakeX::SafeRelease(pDecoder);
@@ -217,7 +250,7 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID
 	IWICBitmapScaler* pScaler = nullptr;
 	IWICFormatConverter* pConverter = nullptr;
 
-	myIWICImagingFactory->CreateFormatConverter(&pConverter);
+	HRESULT hr = myIWICImagingFactory->CreateFormatConverter(&pConverter);
 
 	FLOAT tWidth = size.myWidth, tHeight = size.myHeight;
 	if (tWidth != 0 || tHeight != 0)
@@ -235,10 +268,10 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID
 			tHeight = static_cast<UINT>(scalar * static_cast<FLOAT>(originalHeight));
 		}
 
-		myIWICImagingFactory->CreateBitmapScaler(&pScaler);
-		pScaler->Initialize(bitmap, tWidth, tHeight, WICBitmapInterpolationModeCubic);
+		hr = myIWICImagingFactory->CreateBitmapScaler(&pScaler);
+		hr = pScaler->Initialize(bitmap, tWidth, tHeight, WICBitmapInterpolationModeCubic);
 
-		pConverter->Initialize(
+		hr = pConverter->Initialize(
 			pScaler,
 			GUID_WICPixelFormat32bppPBGRA,
 			WICBitmapDitherTypeNone,
@@ -248,7 +281,7 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID
 	}
 	else
 	{
-		pConverter->Initialize(
+		hr = pConverter->Initialize(
 			bitmap,
 			GUID_WICPixelFormat32bppPBGRA,
 			WICBitmapDitherTypeNone,
@@ -257,13 +290,57 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID
 		);
 	}
 
-	HRESULT hr = pRendTar->CreateBitmapFromWicBitmap(pConverter, NULL, ret);
+	hr = pRendTar->CreateBitmapFromWicBitmap(pConverter, ret);
 
 	if (FAILED(hr))
 		throw L"CreateBitmapFromWicBitmap Failed";
 
 	__MicroFlakeX::SafeRelease(pScaler);
 	__MicroFlakeX::SafeRelease(pConverter);
+	return RFine;
+}
+
+MfxReturn MicroFlakeX::MfxGraph::CopyIWICBitmap(IWICBitmap** ret, IWICBitmap* set)
+{
+	WICPixelFormatGUID formatGUID = GUID_WICPixelFormat32bppPBGRA;
+	UINT tWidth = 0, tHeight = 0;
+	set->GetSize(&tWidth, &tHeight);
+
+	if (FAILED(myIWICImagingFactory->CreateBitmap(tWidth, tHeight,
+		formatGUID, WICBitmapCacheOnDemand, ret)))
+	{
+		return RFail;
+	}
+
+	WICRect tLockRect = { 0, 0, tWidth, tWidth };
+	IWICBitmapLock* tReadLock = nullptr;
+	IWICBitmapLock* tWriteLock = nullptr;
+
+	HRESULT hr = (*ret)->Lock(&tLockRect, WICBitmapLockWrite, &tWriteLock);
+	if (SUCCEEDED(hr))
+	{
+		hr = set->Lock(&tLockRect, WICBitmapLockRead, &tReadLock);
+
+		UINT tReadSize = 0, tWriteSize = 0;
+		BYTE* tReadData = nullptr;
+		BYTE* tWriteData = nullptr;
+
+		if (SUCCEEDED(hr))
+		{
+			if (SUCCEEDED(tReadLock->GetDataPointer(&tReadSize, &tReadData))
+				&& SUCCEEDED(tWriteLock->GetDataPointer(&tWriteSize, &tWriteData)))
+			{
+				for (int i = 0; i < tReadSize && i < tWriteSize; i++)
+				{
+					tWriteData[i] = tReadData[i];
+				}
+			}
+		}
+		hr = tReadLock->Release();
+		hr = tWriteLock->Release();
+	}
+	SafeRelease(tReadLock);
+	SafeRelease(tWriteLock);
 	return RFine;
 }
 

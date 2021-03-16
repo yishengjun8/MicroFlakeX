@@ -70,6 +70,15 @@ MfxBase& MicroFlakeX::MfxColor::operator=(MfxBase& rhs)
 	return *this;
 }
 
+MfxColor& MicroFlakeX::MfxColor::operator=(MfxColor& rhs)
+{
+	myA = rhs.myA;
+	myR = rhs.myR;
+	myG = rhs.myG;
+	myB = rhs.myB;
+	return *this;
+}
+
 BOOL MicroFlakeX::MfxColor::operator==(MfxBase& rhs)
 {
 	FLOAT tA = 0, tR = 0, tG = 0, tB = 0;
@@ -78,6 +87,11 @@ BOOL MicroFlakeX::MfxColor::operator==(MfxBase& rhs)
 	rhs.AutoFunc(L"GetG", &tG);
 	rhs.AutoFunc(L"GetB", &tB);
 	return tA == myA && tR == myR && tG == myG && tB == myB;
+}
+
+BOOL MicroFlakeX::MfxColor::operator==(MfxColor& rhs)
+{
+	return myA == rhs.myA && myR == rhs.myR && myG == rhs.myG && myB == rhs.myB;
 }
 
 MfxReturn MicroFlakeX::MfxColor::Init(FLOAT setA, FLOAT setR, FLOAT setG, FLOAT setB)

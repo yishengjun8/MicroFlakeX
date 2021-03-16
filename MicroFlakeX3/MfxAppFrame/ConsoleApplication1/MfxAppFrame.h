@@ -278,9 +278,6 @@ namespace MicroFlakeX
 	public:
 		MfxApp();
 		virtual ~MfxApp();
-		//MfxReturn Clone(MfxBase** ret);
-		//MfxBase& operator=(MfxBase& rhs);
-		//BOOL operator==(MfxBase& rhs);
 
 	public:
 		void Run();
@@ -290,7 +287,7 @@ namespace MicroFlakeX
 		MfxUI* myBindingUI;
 	public:
 		HWND MfxCreateUIExW(
-			MfxUI* ui, MfxRect& rect,
+			MfxUI* ui, MfxRect rect,
 			DWORD dwExStyle, DWORD dwStyle,
 			MfxStrW className, MfxStrW windowsName);
 
@@ -315,9 +312,9 @@ namespace MicroFlakeX
 		void MfxRegMessages();
 	public:
 		MfxUI();
-		MfxUI(MfxRect& set, MfxStrW title);
-		MfxUI(MfxRect& set, DWORD myStyle_EN, MfxStrW title);
-		MfxUI(MfxRect& set, DWORD myStyleEx_EN, DWORD myStyle_EN, MfxStrW myClass, MfxStrW title);
+		MfxUI(MfxRect set, MfxStrW title);
+		MfxUI(MfxRect set, DWORD myStyle_EN, MfxStrW title);
+		MfxUI(MfxRect set, DWORD myStyleEx_EN, DWORD myStyle_EN, MfxStrW myClass, MfxStrW title);
 		virtual ~MfxUI();
 		MfxReturn CreateSuccess();
 
@@ -423,9 +420,6 @@ namespace MicroFlakeX
 		MfxReturn __OnControlMessage(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnAddControlMessage(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnRemoveControlMessage(WPARAM wParam, LPARAM lParam);
-
-		MfxReturn __OnResetPercentRect(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnClosePercentRect(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnSetBackColor(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnSetMaskColor(WPARAM wParam, LPARAM lParam);

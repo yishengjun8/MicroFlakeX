@@ -61,6 +61,20 @@ MfxBase& MicroFlakeX::MfxPoint::operator=(MfxBase& rhs)
 	return *this;
 }
 
+MfxPoint& MicroFlakeX::MfxPoint::operator=(MfxRect& rhs)
+{
+	myX = rhs.myX;
+	myY = rhs.myY;
+	return *this;
+}
+
+MfxPoint& MicroFlakeX::MfxPoint::operator=(MfxPoint& rhs)
+{
+	myX = rhs.myX;
+	myY = rhs.myY;
+	return *this;
+}
+
 BOOL MicroFlakeX::MfxPoint::operator==(MfxBase& rhs)
 {
 	FLOAT tX = 0, tY = 0;
@@ -68,6 +82,11 @@ BOOL MicroFlakeX::MfxPoint::operator==(MfxBase& rhs)
 	rhs.AutoFunc(L"GetY", &tY);
 	return tX == myX && tY == myY;
 	return RFine;
+}
+
+BOOL MicroFlakeX::MfxPoint::operator==(MfxPoint& rhs)
+{
+	return rhs.myX == myX && rhs.myY == myY;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::Init(FLOAT setX, FLOAT setY)

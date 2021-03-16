@@ -57,6 +57,8 @@ namespace MicroFlakeX
 			MfxStrW &path, MfxSize size);
 		static MfxReturn ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar,
 			IWICBitmap* bitmap, MfxSize size);
+
+		static MfxReturn CopyIWICBitmap(IWICBitmap** ret, IWICBitmap* set);
 	public:
 		static ID2D1Factory*& myID2DFactory;
 		static IDWriteFactory*& myIDWriteFactory;
@@ -97,10 +99,16 @@ namespace MicroFlakeX
 		MfxObject;
 	public:
 		MfxCanvas();
+		MfxCanvas(MfxRect sRect);
+		MfxCanvas(HDC sDC, MfxRect sRect);
+		MfxCanvas(HWND sWnd, MfxRect sRect);
+
 		virtual ~MfxCanvas();
 		MfxReturn Clone(MfxBase** ret);
 		MfxBase& operator=(MfxBase& rhs);
+		MfxCanvas& operator=(MfxCanvas& rhs);
 		BOOL operator==(MfxBase& rhs);
+		BOOL operator==(MfxCanvas& rhs);
 
 	public:
 		MfxReturn SetDC(HDC set);
@@ -112,10 +120,13 @@ namespace MicroFlakeX
 	public:
 		MfxReturn PaintBegin();
 		MfxReturn PaintFinish();
+
+		MfxReturn PaintCheck(bool* ret);
 	public:
 		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret);
 
 	public:
+		MfxReturn SetRect(MfxRect set);
 		MfxReturn SetSize(MfxSize set);
 		MfxReturn SetPoint(MfxPoint set);
 
@@ -138,8 +149,12 @@ namespace MicroFlakeX
 		MfxObject;
 	public:
 		MfxImage();
+		MfxImage(MfxStrW* path, MfxRect set);
+		MfxImage(MfxColor color, MfxRect set);
+		MfxImage(IWICBitmap* tIWICBitmap, MfxRect set);
 		virtual ~MfxImage();
 		MfxReturn Clone(MfxBase** ret);
+		MfxReturn Clone(MfxImage** ret);
 		MfxBase& operator=(MfxBase& rhs);
 		BOOL operator==(MfxBase& rhs);
 
@@ -150,11 +165,12 @@ namespace MicroFlakeX
 		IWICBitmap* myIWICBitmap;
 		ID2D1Bitmap* myID2D1Bitmap;
 	public:
-		MfxReturn ResetIWICBitmap(MfxStrW* path, MfxSize* set);
+		MfxReturn ResetIWICBitmapFromFile(MfxStrW* path, MfxSize set);
+		MfxReturn ResetIWICBitmapFromColor(MfxColor color, MfxSize set);
 		MfxReturn ResetID2D1Bitmap();
 	public:
-		MfxReturn FromFile(MfxStrW* path, MfxSize* set);
-		MfxReturn FromColor(MfxStrW* path, MfxSize* set);
+		MfxReturn FromFile(MfxStrW* path, MfxSize set);
+		MfxReturn FromColor(MfxColor color, MfxSize set);
 
 		MfxReturn SetCanvas(MfxCanvas* set);
 		MfxReturn GetCanvas(MfxCanvas** ret);

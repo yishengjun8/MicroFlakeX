@@ -70,21 +70,15 @@ void MicroFlakeX::MfxApp::Run()
 }
 
 HWND MicroFlakeX::MfxApp::MfxCreateUIExW(
-	MfxUI* ui, MfxRect& rect,
+	MfxUI* ui, MfxRect rect,
 	DWORD dwExStyle, DWORD dwStyle,
 	MfxStrW className, MfxStrW windowsName)
 {
-	FLOAT tX = 0, tY = 0, tWidth = 0, tHeight = 0;
-	rect.GetX(&tX);
-	rect.GetY(&tY);
-	rect.GetWidth(&tWidth);
-	rect.GetHeight(&tHeight);
-
 	while (myBindingUI);
 	myBindingUI = ui; 
 	return CreateWindowExW(
 		dwExStyle, className.c_str(), windowsName.c_str(), dwStyle,
-		tX, tY, tWidth, tHeight, NULL, NULL, __theInstance, NULL
+		rect.myX, rect.myY, rect.myWidth, rect.myHeight, NULL, NULL, __theInstance, NULL
 	);
 }
 
