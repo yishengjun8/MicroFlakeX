@@ -1,6 +1,5 @@
-## MicroFlakeX3简介  
-* MfxUI是多线程的，界面更新与业务代码分离，相互之间不会影响卡死。  
-* MfxControl支持线性插值动画，支持：变速滑动、曲线移动等。不支持旋转。
+## MicroFlakeX3简介   
+* MfxControl支持线性插值动画，支持：变速滑动、曲线移动等。
 * MfxBase反射框架，新增：全能工厂、反射继承、优先初始化。 
 # MicroFlakeX3  
 * MicroFlakeX3包含:  
