@@ -419,14 +419,25 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnPoint(WPARAM wParam, LPARAM 
 	return RFine;
 }
 
+MfxReturn MicroFlakeX::MfxControl::__OnSetFloor(WPARAM wParam, LPARAM lParam)
+{
+	myFloor = lParam;
+	if (myUI)
+	{
+		myUI->ProcMessage(MfxControl_Message_ControlFloorChange, NULL, NULL);
+		PostMessageW(myWnd, WM_PAINT, NULL, NULL);
+	}
+	return RFine;
+}
+
 
 MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	bool tCollision = false;
-	myRect.Collision(&mousePos, &tCollision)
-	if (myRect.Collision (mousePos))
+	BOOL tCollision = false;
+	myRect.Collision(&mousePos, &tCollision);
+	if (tCollision)
 	{
 		MfxControl* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
@@ -458,16 +469,11 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnMouseMove(WPARAM wParam, LPA
 		}
 		MfxPoint nowPos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		MfxRect t_Rect = myRect;
-		t_Rect.Offset(nowPos - myButtonMoveBegin);
+		t_Rect.Offset(nowPos.myX - myButtonMoveBegin.myX, nowPos.myY - myButtonMoveBegin.myY);
 
-		MfxPoint t_Point(t_Rect.X, t_Rect.Y);
+		MfxPoint t_Point(t_Rect.myX, t_Rect.myY);
 
 		ProcMessage(MfxControl_Message_Point, NULL, (LPARAM)&t_Point);
-
-		MfxSize t_UISize;
-		myUI->GetSize(&t_UISize);
-		ProcMessage(MfxControl_Message_ResetPercentRect, NULL, MAKELONG(t_UISize.Width, t_UISize.Height));
-
 		myButtonMoveBegin = nowPos;
 	}
 	else
@@ -484,7 +490,9 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnLButtonDown(WPARAM wParam, L
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	if (myRect.Contains(mousePos))
+	BOOL tCollision = false;
+	myRect.Collision(&mousePos, &tCollision);
+	if (tCollision)
 	{
 		MfxControl* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
@@ -518,7 +526,9 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnLButtonUp(WPARAM wParam, LPA
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	if (myRect.Contains(mousePos))
+	BOOL tCollision = false;
+	myRect.Collision(&mousePos, &tCollision);
+	if (tCollision)
 	{
 		MfxControl* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
@@ -558,7 +568,9 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnRButtonDown(WPARAM wParam, L
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	if (myRect.Contains(mousePos))
+	BOOL tCollision = false;
+	myRect.Collision(&mousePos, &tCollision);
+	if (tCollision)
 	{
 		MfxControl* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
@@ -591,7 +603,9 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnRButtonUp(WPARAM wParam, LPA
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	if (myRect.Contains(mousePos))
+	BOOL tCollision = false;
+	myRect.Collision(&mousePos, &tCollision);
+	if (tCollision)
 	{
 		MfxControl* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
@@ -634,7 +648,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnSetTitle(WPARAM wParam, LPAR
 	myTitle = *(MfxStrW*)lParam;
 	if (myTitleWords)
 	{
-		myTitleWords->SetText(myTitle);
+		//myTitleWords->SetText(myTitle);
 	}
 	return RFine;
 }
@@ -645,14 +659,12 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnSetBackColor(WPARAM wParam, 
 	MfxColor* t_Set = (MfxColor*)lParam;
 	if (myBackImage)
 	{
-		myBackImage->FromColor(*t_Set);
+		myBackImage->FromColor(*t_Set, MfxSize(&myRect));
 	}
 	else
 	{
-		myBackImage = new MfxImage;
-		myBackImage->SetRect(myRect);
-		myBackImage->FromColor(*t_Set);
-		myBackImage->SetDC(myBackDC);
+		myBackImage = new MfxImage(*t_Set, MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
+		myBackImage->SetCanvas(myCanvas);
 	}
 	return RFine;
 }
@@ -663,14 +675,12 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnSetMaskColor(WPARAM wParam, 
 	MfxColor* t_Set = (MfxColor*)lParam;
 	if (myMaskImage)
 	{
-		myMaskImage->FromColor(*t_Set);
+		myMaskImage->FromColor(*t_Set, MfxSize(&myRect));
 	}
 	else
 	{
-		myMaskImage = new MfxImage;
-		myMaskImage->SetRect(myRect);
-		myMaskImage->FromColor(*t_Set);
-		myMaskImage->SetDC(myBackDC);
+		myMaskImage = new MfxImage(*t_Set, MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
+		myMaskImage->SetCanvas(myCanvas);
 	}
 	return RFine;
 }
@@ -685,7 +695,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnSetBackImage(WPARAM wParam, 
 	{
 		(t_Set)->Clone(&myBackImage);
 		myBackImage->SetRect(myRect);
-		myBackImage->SetDC(myBackDC);
+		myBackImage->SetCanvas(myCanvas);
 	}
 	return RFine;
 }
@@ -700,7 +710,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnSetMaskImage(WPARAM wParam, 
 	{
 		(t_Set)->Clone(&myMaskImage);
 		myMaskImage->SetRect(myRect);
-		myMaskImage->SetDC(myBackDC);
+		myMaskImage->SetCanvas(myCanvas);
 	}
 	return RFine;
 }
@@ -713,10 +723,10 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnSetTitleWords(WPARAM wParam,
 	myTitleWords = nullptr;
 	if (t_Set)
 	{
-		(t_Set)->Clone(&myTitleWords);
-		myTitleWords->SetRect(myRect);
-		myTitleWords->GetText(&myTitle);
-		myTitleWords->SetDC(myBackDC);
+		//(t_Set)->Clone(&myTitleWords);
+		//myTitleWords->SetRect(myRect);
+		//myTitleWords->GetText(&myTitle);
+		//myTitleWords->SetDC(myBackDC);
 	}
 	return RFine;
 }
