@@ -7,6 +7,9 @@
 
 #include <set>
 #include <thread>
+
+#include <deque>
+#include <windowsx.h>
 #define MFX_BUILDING
 
 #endif

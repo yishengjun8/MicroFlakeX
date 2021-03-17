@@ -31,10 +31,22 @@ namespace MicroFlakeX
 namespace __MicroFlakeX
 {
 	template<class Interface>
-	inline void SafeRelease(Interface*& pInterfaceToRelease) {
-		if (pInterfaceToRelease != nullptr) {
+	inline void SafeRelease(Interface*& pInterfaceToRelease) 
+	{
+		if (pInterfaceToRelease != nullptr) 
+		{
 			pInterfaceToRelease->Release();
 			pInterfaceToRelease = nullptr;
+		}
+	}
+
+	template<class Pointer>
+	inline void SafeDelete(Pointer*& pPointerToDelete)
+	{
+		if (pPointerToDelete != nullptr)
+		{
+			delete pPointerToDelete;
+			pPointerToDelete = nullptr;
 		}
 	}
 }
@@ -120,6 +132,8 @@ namespace MicroFlakeX
 	public:
 		MfxReturn PaintBegin();
 		MfxReturn PaintFinish();
+
+		MfxReturn PaintCheck(bool* ret);
 	public:
 		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret);
 
@@ -192,16 +206,15 @@ namespace MicroFlakeX
 		: public MfxGraph
 	{
 		MfxObject;
-	protected:
-		void MfxWordsInitData(MfxWorlds_Type set);
 	public:
 		MfxWords();
-		MfxWords(MfxWorlds_Type set);
+		MfxWords(MfxStrW* path, MfxRect set);
 		virtual ~MfxWords();
-		void operator=(MfxWords& rhs);
-
+		MfxReturn Clone(MfxBase** ret);
 		MfxReturn Clone(MfxWords** ret);
-		MfxReturn Similar(MfxWords* set);
+		MfxBase& operator=(MfxBase& rhs);
+		BOOL operator==(MfxBase& rhs);
+
 	protected:
 		static MfxWorlds_Type g_DefType;
 	public:

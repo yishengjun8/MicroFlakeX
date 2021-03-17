@@ -173,10 +173,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             // TODO: 在此处添加使用 hdc 的任何绘图代码...
             EndPaint(hWnd, &ps);
+            
+            LPARAM test = (LPARAM)&myImage[0];
 
             myCanvas.PaintBegin();
 
-            myImage[0].Paint();
+            ((MfxImage*)test)->Paint();
+            //myImage[0].Paint();
 
             myCanvas.PaintFinish();
 

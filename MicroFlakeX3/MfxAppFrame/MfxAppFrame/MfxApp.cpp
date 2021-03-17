@@ -56,7 +56,7 @@ MicroFlakeX::MfxApp::MfxApp()
 
 MicroFlakeX::MfxApp::~MfxApp()
 {
-	//删除全部UI
+	//删除全部UI-并不需要
 }
 
 void MicroFlakeX::MfxApp::Run()

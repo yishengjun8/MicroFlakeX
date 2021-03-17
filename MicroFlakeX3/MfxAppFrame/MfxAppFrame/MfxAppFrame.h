@@ -143,8 +143,8 @@ namespace MicroFlakeX
 	/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 	/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
-	typedef std::vector<MfxControl*> MfxControl_Vector;
-	typedef MfxControl_Vector::iterator MfxControl_Vector_iterator;
+	typedef std::deque<MfxControl*> MfxControl_Deque;
+	typedef MfxControl_Deque::iterator MfxControl_Deque_iterator;
 
 	typedef MfxReturn(MfxControl::* MfxControl_Func)(WPARAM, LPARAM);
 
@@ -189,11 +189,8 @@ namespace MicroFlakeX
 
 	enum MfxUI_Message
 	{
-		MfxUI_Message_ResetPercentRect = MfxUI_MessageBegin - 1,
-		MfxUI_Message_ClosePercentRect = MfxUI_MessageBegin - 2,
-
-		MfxUI_Message_PaintBackDC = MfxUI_MessageBegin - 3,
-		MfxUI_Message_PaintMaskDC = MfxUI_MessageBegin - 4,
+		MfxUI_Message_PaintBack = MfxUI_MessageBegin - 3,
+		MfxUI_Message_PaintMask = MfxUI_MessageBegin - 4,
 
 		MfxUI_Message_ControlInsert = MfxUI_MessageBegin - 6,
 		MfxUI_Message_ControlRemove = MfxUI_MessageBegin - 7,
@@ -216,8 +213,6 @@ namespace MicroFlakeX
 	{
 		MfxControl_Message_Size = MfxControl_MessageBegin - 1,
 		MfxControl_Message_Point = MfxControl_MessageBegin - 2,
-		MfxControl_Message_PercentSize = MfxControl_MessageBegin - 3,
-		MfxControl_Message_PercentPoint = MfxControl_MessageBegin - 4,
 
 		MfxControl_Message_LButtonClick = MfxControl_MessageBegin - 5,
 		MfxControl_Message_RButtonClick = MfxControl_MessageBegin - 6,
@@ -227,10 +222,6 @@ namespace MicroFlakeX
 		MfxControl_Message_ControlMessage = MfxControl_MessageBegin - 8,
 
 		MfxControl_Message_SetFloor = MfxControl_MessageBegin - 9,
-
-		MfxControl_Message_ResetRect = MfxControl_MessageBegin - 10,
-		MfxControl_Message_ResetPercentRect = MfxControl_MessageBegin - 11,
-		MfxControl_Message_ClosePercentRect = MfxControl_MessageBegin - 12,
 
 		MfxControl_Message_SetTitle = MfxControl_MessageBegin - 13,
 		MfxControl_Message_SetBackColor = MfxControl_MessageBegin - 14,
@@ -324,7 +315,7 @@ namespace MicroFlakeX
 	protected:
 		MfxUI_Timer_Map __myTimerMap;
 		MfxUI_ControlMessage_Map __myControlMessageMap;
-		MfxControl_Vector myControlVector;
+		MfxControl_Deque myControlDeque;
 		MfxUI_MfxControl_Set myControlSet;
 	public:
 		MfxReturn AddControl(MfxControl* set);
@@ -435,24 +426,26 @@ namespace MicroFlakeX
 	class MfxControl
 		: public MfxBase
 	{
+		MfxObject;
+
 		friend class MfxApp;
 	protected:
 		void MfxRegMessages();
 		void MfxControlInitData();
 	public:
 		MfxControl();
+		MfxControl(MfxRect set);
 		virtual ~MfxControl();
 
 		MfxReturn ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam);
 
 	protected:
 		HWND myWnd;
+		MfxCanvas* myCanvas;
 		MfxUI* myUI;// 陣周侭奉UI
 		MfxFloor myFloor; //厘議蚊肝
 		MfxStrW myType, myTitle;// 陣周窃侏 - 陣周炎籾
-		bool myPercentRect_Check;
-		MfxRect myRect, myPercentRect;
-		HDC myBackDC, myMaskDC;
+		MfxRect myRect;
 	public:
 		MfxReturn GetMyUI(MfxUI** ret);
 
@@ -463,10 +456,6 @@ namespace MicroFlakeX
 		MfxReturn GetRect(MfxRect* ret);
 		MfxReturn GetSize(MfxSize* ret);
 		MfxReturn GetPoint(MfxPoint* ret);
-
-		MfxReturn GetPercentRect(MfxRect* ret);
-		MfxReturn GetPercentSize(MfxSize* ret);
-		MfxReturn GetPercentPoint(MfxPoint* ret);
 	public:
 		MfxReturn SetTitle(MfxStrW set);
 		MfxReturn SetFloor(MfxFloor floor);
@@ -474,10 +463,6 @@ namespace MicroFlakeX
 		MfxReturn SetRect(MfxRect set);
 		MfxReturn SetSize(MfxSize set);
 		MfxReturn SetPoint(MfxPoint set);
-
-		MfxReturn SetPercentRect(MfxRect set);
-		MfxReturn SetPercentSize(MfxSize set);
-		MfxReturn SetPercentPoint(MfxPoint set);
 
 	protected:
 		MfxDataFlag_bool myMouseFloat;
@@ -538,13 +523,7 @@ namespace MicroFlakeX
 		MfxReturn __OnSize(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnPoint(WPARAM wParam, LPARAM lParam);
 
-		MfxReturn __OnPercentSize(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnPercentPoint(WPARAM wParam, LPARAM lParam);
-
 		MfxReturn __OnSetFloor(WPARAM wParam, LPARAM lParam);
-
-		MfxReturn __OnResetRect(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnResetPercentRect(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnMouseMove(WPARAM wParam, LPARAM lParam);
 
