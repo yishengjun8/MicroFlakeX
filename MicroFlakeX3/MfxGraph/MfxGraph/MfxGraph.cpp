@@ -344,6 +344,54 @@ MfxReturn MicroFlakeX::MfxGraph::CopyIWICBitmap(IWICBitmap** ret, IWICBitmap* se
 	return RFine;
 }
 
+MfxReturn MicroFlakeX::MfxGraph::CopyTextFormat(IDWriteTextFormat** ret, IDWriteTextFormat* set)
+{
+	WCHAR* fontLocalName = new WCHAR[set->GetLocaleNameLength()]{ 0 };
+	WCHAR* fontFamilyName = new WCHAR[set->GetFontFamilyNameLength()]{ 0 };
+
+	set->GetLocaleName(fontLocalName, set->GetLocaleNameLength());
+	set->GetFontFamilyName(fontFamilyName, set->GetFontFamilyNameLength());
+
+	HRESULT hr = MfxGraph::myIDWriteFactory->CreateTextFormat(
+		fontFamilyName,
+		NULL,								// Font collection(NULL sets it to the system font collection)
+		set->GetFontWeight(),    // Weight
+		set->GetFontStyle(),     // Style
+		set->GetFontStretch(),   // Stretch
+		set->GetFontSize(),      // Size    
+		fontLocalName,						// Local  英国-美国 zh-CN 华 -中国
+		ret						// Pointer to recieve the created object
+	);
+
+	if (SUCCEEDED(hr))
+	{
+		(*ret)->SetFlowDirection(set->GetFlowDirection());
+		(*ret)->SetIncrementalTabStop(set->GetIncrementalTabStop());
+		(*ret)->SetParagraphAlignment(set->GetParagraphAlignment());
+		(*ret)->SetReadingDirection(set->GetReadingDirection());
+		(*ret)->SetTextAlignment(set->GetTextAlignment());
+		(*ret)->SetWordWrapping(set->GetWordWrapping());
+
+		DWRITE_LINE_SPACING_METHOD tLineSpacingMethod;
+		FLOAT tLineSpacing{ 0 };
+		FLOAT tBaseline{ 0 };
+		set->GetLineSpacing(&tLineSpacingMethod, &tLineSpacing, &tBaseline);
+		(*ret)->SetLineSpacing(tLineSpacingMethod, tLineSpacing, tBaseline);
+
+		DWRITE_TRIMMING trimmingOptions;
+		IDWriteInlineObject* trimmingSign;
+		set->GetTrimming(&trimmingOptions, &trimmingSign);
+		(*ret)->SetTrimming(&trimmingOptions, trimmingSign);
+
+		SafeRelease(trimmingSign);
+	}
+
+	SafeDeleteL(fontLocalName);
+	SafeDeleteL(fontFamilyName);
+
+	return hr;
+}
+
 
 MicroFlakeX::MfxGraph::MfxGraph()
 {
@@ -360,8 +408,6 @@ MfxReturn MicroFlakeX::MfxGraph::Clone(MfxBase** ret)
 
 MfxBase& MicroFlakeX::MfxGraph::operator=(MfxBase& rhs)
 {
-	// TODO: 在此处插入 return 语句
-	//rhs.AutoFunc()
 	return *this;
 }
 
@@ -408,8 +454,9 @@ MfxReturn MicroFlakeX::MfxGraph::GetPoint(MfxPoint* set)
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::CollisionWith(MfxGraph* set, bool* ret)
+MfxReturn MicroFlakeX::MfxGraph::CollisionWith(MfxGraph* set, BOOL* ret)
 {
+	myRect.Collision(set, ret);
 	return RFine;
 }
 

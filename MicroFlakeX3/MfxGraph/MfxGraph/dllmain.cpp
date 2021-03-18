@@ -18,8 +18,8 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     }break;
     case DLL_PROCESS_DETACH:
     {
-        CoUninitialize();
-        Gdiplus::GdiplusShutdown(GdiPlus_Token);
+        //CoUninitialize();
+        //Gdiplus::GdiplusShutdown(GdiPlus_Token);
     }break;
 
     case DLL_THREAD_ATTACH:

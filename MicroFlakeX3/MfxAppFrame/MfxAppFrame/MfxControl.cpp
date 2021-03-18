@@ -60,7 +60,10 @@ void MicroFlakeX::MfxControl::MfxControlInitData()
 
 	myBackImage = new MfxImage(MfxColor(255,255,0,0), myRect);
 	myMaskImage = nullptr;
-	myTitleWords = nullptr;
+
+	myTitleWords = new MfxWords(myTitle, myRect);
+	myTitleWords->SetTextAlignmentX(TextAlignmentX::DWRITE_TEXT_ALIGNMENT_CENTER);
+	myTitleWords->SetTextAlignmentY(TextAlignmentY::DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 }
 
 MicroFlakeX::MfxControl::MfxControl()
@@ -244,8 +247,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::GetMaskImage(MfxImage** ret)
 
 MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::GetTitleWords(MfxWords** ret)
 {
-	return RFail;
-	//return myTitleWords ? myTitleWords->Clone(ret) : RFail;
+	return myTitleWords ? myTitleWords->Clone(ret) : RFail;
 }
 
 MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::SetBackColor(MfxColor set)
@@ -331,7 +333,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnSetPaper(WPARAM wParam, LPAR
 	}
 	if (myTitleWords)
 	{
-		//myTitleWords->SetCanvas(myCanvas);
+		myTitleWords->SetCanvas(myCanvas);
 	}
 	if (myMaskImage)
 	{
@@ -349,7 +351,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnPaintBackDC(WPARAM wParam, L
 	}
 	if (myTitleWords)
 	{
-		//myTitleWords->Paint();
+		myTitleWords->Paint();
 	}
 	if (myMaskImage)
 	{
@@ -385,7 +387,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnSize(WPARAM wParam, LPARAM l
 	}
 	if (myTitleWords)
 	{
-		//myTitleWords->SetSize(*t_Size);
+		myTitleWords->SetSize(*t_Size);
 	}
 
 	myRect.myWidth = t_Size->myWidth;
@@ -410,7 +412,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnPoint(WPARAM wParam, LPARAM 
 	}
 	if (myTitleWords)
 	{
-		//myTitleWords->SetPoint(*t_Point);
+		myTitleWords->SetPoint(*t_Point);
 	}
 	myRect.myX = t_Point->myX;
 	myRect.myY = t_Point->myY;
@@ -648,7 +650,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnSetTitle(WPARAM wParam, LPAR
 	myTitle = *(MfxStrW*)lParam;
 	if (myTitleWords)
 	{
-		//myTitleWords->SetText(myTitle);
+		myTitleWords->SetText(myTitle);
 	}
 	return RFine;
 }
@@ -689,10 +691,9 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnSetBackImage(WPARAM wParam, 
 {
 	MfxCodeLock(this);
 	MfxImage* t_Set = (MfxImage*)lParam;
-	delete myBackImage;
-	myBackImage = nullptr;
 	if (t_Set)
 	{
+		SafeDelete(myBackImage);
 		(t_Set)->Clone(&myBackImage);
 		myBackImage->SetRect(myRect);
 		myBackImage->SetCanvas(myCanvas);
@@ -704,10 +705,9 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnSetMaskImage(WPARAM wParam, 
 {
 	MfxCodeLock(this);
 	MfxImage* t_Set = (MfxImage*)lParam;
-	delete myMaskImage;
-	myMaskImage = nullptr;
 	if (t_Set)
 	{
+		SafeDelete(myMaskImage);
 		(t_Set)->Clone(&myMaskImage);
 		myMaskImage->SetRect(myRect);
 		myMaskImage->SetCanvas(myCanvas);
@@ -719,15 +719,12 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnSetTitleWords(WPARAM wParam,
 {
 	MfxCodeLock(this);
 	MfxWords* t_Set = (MfxWords*)lParam;
-	delete myTitleWords;
-	myTitleWords = nullptr;
 	if (t_Set)
 	{
-		//(t_Set)->Clone(&myTitleWords);
-		//myTitleWords->SetRect(myRect);
-		//myTitleWords->GetText(&myTitle);
-		//myTitleWords->SetDC(myBackDC);
+		SafeDelete(myTitleWords);
+		(t_Set)->Clone(&myTitleWords);
+		myTitleWords->SetRect(myRect);
+		myTitleWords->SetCanvas(myCanvas);
 	}
 	return RFine;
 }
-

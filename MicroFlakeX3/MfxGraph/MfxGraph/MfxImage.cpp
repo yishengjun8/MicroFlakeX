@@ -76,6 +76,40 @@ BOOL MicroFlakeX::MfxImage::operator==(MfxBase& rhs)
 	return false;
 }
 
+MicroFlakeX::MfxReturn MicroFlakeX::MfxImage::Paint()
+{
+	if (myCanvas)
+	{
+		ID2D1RenderTarget* tRenderTarget = nullptr;
+		myCanvas->GetRenderTarget(&tRenderTarget);
+		if (myRenderTarget != tRenderTarget)
+		{
+			myRenderTarget = tRenderTarget;
+			ResetID2D1Bitmap();
+		}
+
+		if (myRenderTarget && myRenderTarget == tRenderTarget)
+		{
+			D2D1_RECT_F tRectF; myRect.GetD2D1RectF(&tRectF);
+			myRenderTarget->DrawBitmap(myID2D1Bitmap, &tRectF);
+		}
+	}
+	return RFine;
+}
+
+MfxReturn MicroFlakeX::MfxImage::SetCanvas(MfxCanvas* set)
+{
+	myCanvas = set;
+	ResetID2D1Bitmap();
+	return RFine;
+}
+
+MfxReturn MicroFlakeX::MfxImage::GetCanvas(MfxCanvas** ret)
+{
+	*ret = myCanvas;
+	return RFine;
+}
+
 MicroFlakeX::MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromFile(MfxStrW* path, MfxSize set)
 {
 	/**/
@@ -101,6 +135,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxImage::ResetID2D1Bitmap()
 	if (myIWICBitmap && myCanvas)
 	{
 		SafeRelease(myID2D1Bitmap);
+		myRenderTarget = nullptr;
 		myCanvas->GetRenderTarget(&myRenderTarget);
 		if (myRenderTarget)
 		{
@@ -124,41 +159,6 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxImage::FromFile(MfxStrW* path, MfxSize se
 MfxReturn MicroFlakeX::MfxImage::FromColor(MfxColor color, MfxSize set)
 {
 	ResetIWICBitmapFromColor(color, set);
-	return RFine;
-}
-
-MfxReturn MicroFlakeX::MfxImage::SetCanvas(MfxCanvas* set)
-{
-	myCanvas = set;
-	set->GetRenderTarget(&myRenderTarget);
-	ResetID2D1Bitmap();
-	return RFine;
-}
-
-MfxReturn MicroFlakeX::MfxImage::GetCanvas(MfxCanvas** ret)
-{
-	*ret = myCanvas;
-	return RFine;
-}
-
-MicroFlakeX::MfxReturn MicroFlakeX::MfxImage::Paint()
-{
-	if (myCanvas)
-	{
-		ID2D1RenderTarget* tRenderTarget = nullptr;
-		myCanvas->GetRenderTarget(&tRenderTarget);
-		if (myRenderTarget != tRenderTarget)
-		{
-			myRenderTarget = tRenderTarget;
-			ResetID2D1Bitmap();
-		}
-
-		if (myRenderTarget && myRenderTarget == tRenderTarget)
-		{
-			D2D1_RECT_F tRectF; myRect.GetD2D1RectF(&tRectF);
-			myRenderTarget->DrawBitmap(myID2D1Bitmap, &tRectF);
-		}
-	}
 	return RFine;
 }
 

@@ -49,6 +49,16 @@ namespace __MicroFlakeX
 			pPointerToDelete = nullptr;
 		}
 	}
+
+	template<class Pointer>
+	inline void SafeDeleteL(Pointer*& pPointerToDelete)
+	{
+		if (pPointerToDelete != nullptr)
+		{
+			delete[] pPointerToDelete;
+			pPointerToDelete = nullptr;
+		}
+	}
 }
 
 //MfxBasicGraph基类
@@ -71,6 +81,7 @@ namespace MicroFlakeX
 			IWICBitmap* bitmap, MfxSize size);
 
 		static MfxReturn CopyIWICBitmap(IWICBitmap** ret, IWICBitmap* set);
+		static MfxReturn CopyTextFormat(IDWriteTextFormat** ret, IDWriteTextFormat* set);
 	public:
 		static ID2D1Factory*& myID2DFactory;
 		static IDWriteFactory*& myIDWriteFactory;
@@ -92,7 +103,7 @@ namespace MicroFlakeX
 		virtual MfxReturn GetSize(MfxSize* ret);
 		virtual MfxReturn GetPoint(MfxPoint* ret);
 
-		virtual MfxReturn CollisionWith(MfxGraph* set, bool* ret);
+		virtual MfxReturn CollisionWith(MfxGraph* set, BOOL* ret);
 	protected:
 		MfxRect myRect;
 	};
@@ -176,18 +187,23 @@ namespace MicroFlakeX
 
 		IWICBitmap* myIWICBitmap;
 		ID2D1Bitmap* myID2D1Bitmap;
+
 	public:
-		MfxReturn ResetIWICBitmapFromFile(MfxStrW* path, MfxSize set);
-		MfxReturn ResetIWICBitmapFromColor(MfxColor color, MfxSize set);
-		MfxReturn ResetID2D1Bitmap();
-	public:
-		MfxReturn FromFile(MfxStrW* path, MfxSize set);
-		MfxReturn FromColor(MfxColor color, MfxSize set);
+		MfxReturn Paint();
 
 		MfxReturn SetCanvas(MfxCanvas* set);
 		MfxReturn GetCanvas(MfxCanvas** ret);
 
-		MfxReturn Paint();
+	public:
+		MfxReturn ResetIWICBitmapFromFile(MfxStrW* path, MfxSize set);
+		MfxReturn ResetIWICBitmapFromColor(MfxColor color, MfxSize set);
+
+		MfxReturn ResetID2D1Bitmap();
+
+	public:
+		MfxReturn FromFile(MfxStrW* path, MfxSize set);
+		MfxReturn FromColor(MfxColor color, MfxSize set);
+
 	public:
 		MfxReturn GetIWICBitmap(IWICBitmap** ret);
 		MfxReturn GetID2D1Bitmap(ID2D1Bitmap** ret);
@@ -198,156 +214,72 @@ namespace MicroFlakeX
 }
 
 //MfxWorld
-/**
+/**/
 namespace MicroFlakeX
 {
-	//支持两种绘制模式
+	//文字排版 - X轴
+	typedef enum DWRITE_TEXT_ALIGNMENT TextAlignmentX;
+	//文字排版 - Y轴
+	typedef enum DWRITE_PARAGRAPH_ALIGNMENT TextAlignmentY;
 	class MfxWords
 		: public MfxGraph
 	{
 		MfxObject;
 	public:
 		MfxWords();
-		MfxWords(MfxStrW* path, MfxRect set);
+		MfxWords(MfxStrW str, MfxRect set);
+		MfxWords(MfxStrW str, MfxRect set, FLOAT size);
+		MfxWords(MfxStrW str, MfxRect set, FLOAT size, IDWriteTextFormat* format);
 		virtual ~MfxWords();
 		MfxReturn Clone(MfxBase** ret);
 		MfxReturn Clone(MfxWords** ret);
 		MfxBase& operator=(MfxBase& rhs);
 		BOOL operator==(MfxBase& rhs);
 
+		static IDWriteTextFormat* gDefTextFormat;
 	protected:
-		static MfxWorlds_Type g_DefType;
-	public:
-		static void SetDefType(MfxWorlds_Type& setType);
-		static void GetDefType(MfxWorlds_Type& getType);
-
-	protected:
-		int myCachedMode; //缓冲模式
-		HDC myDC;
-		Gdiplus::Graphics* myGraphics;
-		Gdiplus::GraphicsPath* myGraphicsPath;
-
-		MfxDataFlag_Rect myRect; //文本框位置
+		MfxRect myRect;
 		MfxStrW myText;
-		MfxWorlds_Type myType; //文字类型 - 使用全局参数
-		Gdiplus::FontFamily* myFontFamily; //文字家族
-		Gdiplus::StringFormat* myStringFormat; //布局信息
+		MfxColor myColor;
+		ID2D1Brush* myTextBrush;
+		IDWriteTextFormat* myTextFormat;
+		IDWriteTextLayout* myTextLayout;
 
-		Gdiplus::Pen* myFramePen;
-		Gdiplus::Brush* myBackBrush;
-		Gdiplus::Brush* myTextBrush;
+		MfxCanvas* myCanvas;
+		ID2D1RenderTarget* myRenderTarget;
+	public:
+		MfxReturn Paint();
 
-		Gdiplus::Rect myTextRect; //最终文字的位置
-		Gdiplus::Pen* myTextRectPen; //用来包裹文字的边框笔
-
-		MfxDataFlag_pGdipBitmap myShowBitmap;
-		Gdiplus::Graphics* myShowGraphics;
-		Gdiplus::CachedBitmap* myCachedShowBitmap;
-
-		Gdiplus::Region* myBasicRegion, * myShowRegion;
-		MfxDataFlag_Size myCollisionBlock;
-
-		BOOL myResetRegionLock;
-		BOOL myResetTextPathLock;
-		BOOL myResetShowBitmapLock;
-		BOOL myResetShowCachedBitmapLock;
-	protected:
-		void Mode_ClearDC();
-		void Mode_ResetDC(HDC set);
+		MfxReturn SetCanvas(MfxCanvas* set);
+		MfxReturn GetCanvas(MfxCanvas** ret);
 
 	public:
-		MfxReturn LockResetRegion();
-		MfxReturn UnLockResetRegion();
-
-		MfxReturn LockResetTextPath();
-		MfxReturn UnLockResetTextPath();
-
-		MfxReturn LockResetShowBitmap();
-		MfxReturn UnLockResetShowBitmap();
-
-		MfxReturn LockResetCachedShowBitmap();
-		MfxReturn UnLockResetCachedShowBitmap();
-
-		MfxReturn ResetRegion();
-		MfxReturn ResetTextPath(); //重设文字路径
-		MfxReturn ResetID2D1Bitmap(); //重设显示图片
-		MfxReturn ResetCachedShowBitmap();
-	public:
-		MfxReturn SetDC(HDC set);
-		MfxReturn GetDC(HDC* ret);
-
-		MfxReturn GetID2D1Bitmap(Gdiplus::Bitmap** ret); //获取当前显示图片
-
-		MfxReturn Draw();
-		MfxReturn DrawBitmap(Gdiplus::Graphics* set);
-
+		MfxReturn ResetTextLayout();
 	public:
 		MfxReturn SetText(MfxStrW set);
 		MfxReturn GetText(MfxStrW* ret);
 
-		MfxReturn SetStringFormat(Gdiplus::StringFormat* set); //设置文字格式
-		MfxReturn GetStringFormat(Gdiplus::StringFormat** ret);
-		
+		MfxReturn SetTextSize(FLOAT set);
+		MfxReturn GetTextSize(FLOAT* ret);
+
+		MfxReturn SetFontName(MfxStrW set);
+		MfxReturn GetFontName(MfxStrW* ret);
+
+		MfxReturn SetTextFormat(IDWriteTextFormat* set);
+		MfxReturn GetTextFormat(IDWriteTextFormat** ret);
+
+		MfxReturn SetTextColor(MfxColor set);
+		MfxReturn GetTextColor(MfxColor* set);
 	public:
-		MfxReturn SetType(MfxWorlds_Type set);
+		MfxReturn SetRect(MfxRect set);
+		MfxReturn SetSize(MfxSize set);
 
-		MfxReturn SetFontName(MfxStrW set); //设置字体
+		MfxReturn SetTextAlignmentX(TextAlignmentX set);
+		MfxReturn GetTextAlignmentX(TextAlignmentX* ret);
 
-		MfxReturn SetTextXY(MfxWords_TextXY set); //设置文字对齐
-		MfxReturn SetShowStyle(MfxWords_ShowStyle set);
-		MfxReturn SetFontStyle(MfxFontStyle set);
-		MfxReturn SetSmoothingMode(MfxSmoothingMode_EN set);
-
-		MfxReturn SetTextColor(Gdiplus::Color set);
-		MfxReturn SetTextSize_em(MfxPenWidth set); //设置字体大小
-
-		MfxReturn SetFrameColor(Gdiplus::Color set);
-		MfxReturn SetFramePenWidth(MfxPenWidth set); //设置边框宽度
-
-		MfxReturn SetBackColor(Gdiplus::Color set);
-
-	public:
-		MfxReturn GetType(MfxWorlds_Type* ret);
-
-		MfxReturn GetFontName(MfxStrW* ret); //设置字体
-
-		MfxReturn GetTextXY(MfxWords_TextXY* ret); //设置文字对齐
-		MfxReturn GetShowStyle(MfxWords_ShowStyle* ret);
-		MfxReturn GetFontStyle(MfxFontStyle* ret);
-		MfxReturn GetSmoothingMode(MfxSmoothingMode_EN* ret);
-
-		MfxReturn GetTextColor(Gdiplus::Color* ret);
-		MfxReturn GetTextSize_em(MfxPenWidth* ret); //设置字体大小
-
-		MfxReturn GetFrameColor(Gdiplus::Color* ret);
-		MfxReturn GetFramePenWidth(MfxPenWidth* ret); //设置边框宽度
-
-		MfxReturn GetBackColor(Gdiplus::Color* ret);
-	
-	public:
-		MfxReturn SetRect(Gdiplus::Rect set);
-		MfxReturn SetSize(Gdiplus::Size set);
-		MfxReturn SetPoint(Gdiplus::Point set);
-
-		MfxReturn SetCollisionBlock(Gdiplus::Size set);
-		MfxReturn CollisionWith(MfxGraph* set, bool* ret);
-
-		MfxReturn SetFramePen(Gdiplus::Pen* set);
-		MfxReturn SetBackBrush(Gdiplus::Brush* set);
-		MfxReturn SetTextBrush(Gdiplus::Brush* set);
-
-	public:
-		MfxReturn GetRect(Gdiplus::Rect* ret);
-		MfxReturn GetSize(Gdiplus::Size* ret);
-		MfxReturn GetPoint(Gdiplus::Point* ret);
-
-		MfxReturn GetRegion(Gdiplus::Region** ret);
-		MfxReturn GetRegionBlock(Gdiplus::Size* ret);
-
-		MfxReturn GetFramePen(Gdiplus::Pen** ret);
-		MfxReturn GetBackBrush(Gdiplus::Brush** ret);
-		MfxReturn GetTextBrush(Gdiplus::Brush** ret);
+		MfxReturn SetTextAlignmentY(TextAlignmentY set);
+		MfxReturn GetTextAlignmentY(TextAlignmentY* ret);
 	};
-}/**/
+}
 
 
