@@ -1,28 +1,15 @@
 #include "pch.h"
 #include "MfxGraph.h"
 
-IDWriteTextFormat* gTextFormat = nullptr;
-
 MfxObject_Init_0(MfxWords)
-{
-	HRESULT hr = MfxGraph::myIDWriteFactory->CreateTextFormat(
-		L"Helvetica",                  // Font family name 微软雅黑 Arial Garamond Helvetica 等任意字体名
-		NULL,                          // Font collection(NULL sets it to the system font collection)
-		DWRITE_FONT_WEIGHT_REGULAR,    // Weight
-		DWRITE_FONT_STYLE_NORMAL,      // Style
-		DWRITE_FONT_STRETCH_NORMAL,    // Stretch
-		50.0f,                         // Size    
-		L"en-us",                      // Local  英国-美国 zh-CN 华 -中国
-		&gTextFormat                   // Pointer to recieve the created object
-	);
-}
 MfxObject_Init_1(MfxWords)
 MfxObject_Init_2(MfxWords, MfxGraph);
 
-IDWriteTextFormat* MfxWords::gDefTextFormat = gTextFormat;
+IDWriteTextFormat* MfxWords::gDefTextFormat = nullptr;
 
 MicroFlakeX::MfxWords::MfxWords()
 {
+
 	myRect.Init(60, 60, 120, 120);
 	myText = L"Welcome to MfxWords";
 	myColor.Init(255, 255, 100, 100);
@@ -50,8 +37,8 @@ MicroFlakeX::MfxWords::MfxWords()
 
 MicroFlakeX::MfxWords::MfxWords(MfxStrW str, MfxRect set)
 {
-	myRect.Init(60, 60, 120, 120);
-	myText = L"Welcome to MfxWords";
+	myRect = set;
+	myText = str;
 	myColor.Init(255, 255, 100, 100);
 	myTextBrush = nullptr;
 	myTextFormat = nullptr;
@@ -76,8 +63,8 @@ MicroFlakeX::MfxWords::MfxWords(MfxStrW str, MfxRect set)
 
 MicroFlakeX::MfxWords::MfxWords(MfxStrW str, MfxRect set, FLOAT size)
 {
-	myRect.Init(60, 60, 120, 120);
-	myText = L"Welcome to MfxWords";
+	myRect = set;
+	myText = str;
 	myColor.Init(255, 255, 100, 100);
 	myTextBrush = nullptr;
 	myTextFormat = nullptr;
@@ -191,6 +178,10 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxWords::Paint()
 MfxReturn MicroFlakeX::MfxWords::SetCanvas(MfxCanvas* set)
 {
 	myCanvas = set; 
+	if (!myCanvas)
+	{
+		return RFine;
+	}
 	ID2D1RenderTarget* tRenderTarget = nullptr;
 	myCanvas->GetRenderTarget(&tRenderTarget);
 	if (myRenderTarget != tRenderTarget)
@@ -212,7 +203,7 @@ MfxReturn MicroFlakeX::MfxWords::GetCanvas(MfxCanvas** ret)
 MfxReturn MicroFlakeX::MfxWords::ResetTextLayout()
 {
 	SafeRelease(myTextFormat);
-	CopyTextFormat(&myTextFormat, myTextFormat);
+	CopyTextFormat(&myTextFormat, myTextLayout);
 	SafeRelease(myTextLayout);
 	return MfxGraph::myIDWriteFactory->CreateTextLayout(
 		myText.c_str(),

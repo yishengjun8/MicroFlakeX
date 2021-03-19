@@ -1,18 +1,22 @@
-﻿// ConsoleApplication1.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
-//
-
-#include <iostream>
+﻿#include <iostream>
 #include "MfxAppFrame.h"
 using namespace std;
 using namespace MicroFlakeX;
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    std::cout << "Hello MicroFlakeX!\n";
     MfxUI myUI;
-
-
     myUI.SetBackColor(MfxColor(255, 0, 255, 0));
+
+    MfxControl myControl0(MfxRect(19, 18, 360, 120));
+    MfxControl myControl1(MfxRect(19, 18*2 + 120, 360, 120));
+
+    myUI.AddControl(&myControl0);
+    myUI.AddControl(&myControl1);
+
+    myControl0.SetTitle(L"Hello MicroFlakeX!");
+    myControl1.SetTitle(L"Welcome to MFX based on D2D");
 
     MfxApp::theApp->Run();
 

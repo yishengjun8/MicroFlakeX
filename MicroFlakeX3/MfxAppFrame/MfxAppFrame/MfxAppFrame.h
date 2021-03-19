@@ -8,6 +8,9 @@
 #include "MfxGraph.h"
 #include <set>
 #include <thread>
+
+#include <deque>
+#include <windowsx.h>
 #endif
 
 namespace MicroFlakeX
@@ -229,6 +232,9 @@ namespace MicroFlakeX
 		MfxControl_Message_SetBackImage = MfxControl_MessageBegin - 16,
 		MfxControl_Message_SetMaskImage = MfxControl_MessageBegin - 17,
 		MfxControl_Message_SetTitleWords = MfxControl_MessageBegin - 18,
+
+		MfxControl_Message_SetTitleSize = MfxControl_MessageBegin - 19,
+		MfxControl_Message_GetTitleSize = MfxControl_MessageBegin - 20,
 	};
 
 	enum MfxUI_Style_EN
@@ -436,6 +442,7 @@ namespace MicroFlakeX
 		MfxControl();
 		MfxControl(MfxRect set);
 		virtual ~MfxControl();
+		virtual MfxReturn GetType(MfxStrW* ret);
 
 		MfxReturn ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam);
 
@@ -448,17 +455,21 @@ namespace MicroFlakeX
 		MfxRect myRect;
 	public:
 		MfxReturn GetMyUI(MfxUI** ret);
-
-		MfxReturn GetType(MfxStrW* ret);
-		MfxReturn GetTitle(MfxStrW* ret);
 		MfxReturn GetFloor(MfxFloor* ret);
+
+		MfxReturn GetTitle(MfxStrW* ret);
+		MfxReturn GetTitleSize(FLOAT* ret);
+		MfxReturn GetTitleColor(MfxColor* ret);
 
 		MfxReturn GetRect(MfxRect* ret);
 		MfxReturn GetSize(MfxSize* ret);
 		MfxReturn GetPoint(MfxPoint* ret);
 	public:
-		MfxReturn SetTitle(MfxStrW set);
 		MfxReturn SetFloor(MfxFloor floor);
+
+		MfxReturn SetTitle(MfxStrW set);
+		MfxReturn SetTitleSize(FLOAT set);
+		MfxReturn SetTitleColor(MfxColor set);
 
 		MfxReturn SetRect(MfxRect set);
 		MfxReturn SetSize(MfxSize set);

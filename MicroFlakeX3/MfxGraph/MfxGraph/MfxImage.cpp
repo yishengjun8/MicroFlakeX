@@ -100,6 +100,10 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxImage::Paint()
 MfxReturn MicroFlakeX::MfxImage::SetCanvas(MfxCanvas* set)
 {
 	myCanvas = set;
+	if (!myCanvas)
+	{
+		return RFine;
+	}
 	ResetID2D1Bitmap();
 	return RFine;
 }

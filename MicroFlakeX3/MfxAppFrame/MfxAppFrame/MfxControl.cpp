@@ -73,6 +73,13 @@ MicroFlakeX::MfxControl::MfxControl()
 	MfxRegMessages();
 }
 
+MicroFlakeX::MfxControl::MfxControl(MfxRect set)
+{
+	myRect = set;
+	MfxControlInitData();
+	MfxRegMessages();
+}
+
 MicroFlakeX::MfxControl::~MfxControl()
 {
 	MfxCodeLock(this);
@@ -84,6 +91,12 @@ MicroFlakeX::MfxControl::~MfxControl()
 	SafeDelete(myBackImage);
 	SafeDelete(myMaskImage);
 	SafeDelete(myTitleWords);
+}
+
+MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::GetType(MfxStrW* ret)
+{
+	*ret = myType;
+	return RFine;
 }
 
 MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam)
@@ -129,9 +142,9 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::GetMyUI(MfxUI** ret)
 	return RFine;
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::GetType(MfxStrW* ret)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::GetFloor(MfxFloor* ret)
 {
-	*ret = myType;
+	*ret = myFloor;
 	return RFine;
 }
 
@@ -141,10 +154,14 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::GetTitle(MfxStrW* ret)
 	return RFine;
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::GetFloor(MfxFloor* ret)
+MfxReturn MicroFlakeX::MfxControl::GetTitleSize(FLOAT* ret)
 {
-	*ret = myFloor;
-	return RFine;
+	return MfxReturn();
+}
+
+MfxReturn MicroFlakeX::MfxControl::GetTitleColor(MfxColor* ret)
+{
+	return MfxReturn();
 }
 
 MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::GetRect(MfxRect* ret)
@@ -173,6 +190,16 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::GetPoint(MfxPoint* ret)
 MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::SetTitle(MfxStrW set)
 {
 	return ProcMessage(MfxControl_Message_SetTitle, NULL, (LPARAM)&set);
+}
+
+MfxReturn MicroFlakeX::MfxControl::SetTitleSize(FLOAT set)
+{
+	return MfxReturn();
+}
+
+MfxReturn MicroFlakeX::MfxControl::SetTitleColor(MfxColor set)
+{
+	return MfxReturn();
 }
 
 MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::SetFloor(MfxFloor floor)

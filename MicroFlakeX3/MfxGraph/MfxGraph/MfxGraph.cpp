@@ -1,36 +1,9 @@
 #include "pch.h"
 #include "MfxGraph.h"
 
-ID2D1Factory* gID2DFactory = nullptr;
-IDWriteFactory* gIDWriteFactory = nullptr;
-IWICImagingFactory* gIWICImagingFactory = nullptr;
-
 MfxObject_Init_0(MfxGraph)
-{
-	HRESULT hr = ::CoInitialize(NULL);
-	if (FAILED(hr))
-		throw L"CoInitialize Failed";
-
-	hr = ::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &gID2DFactory);
-	if (FAILED(hr))
-		throw L"D2D1CreateFactory Failed";
-
-	hr = ::DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(gIDWriteFactory),
-		reinterpret_cast<IUnknown**>(&gIDWriteFactory));
-	if (FAILED(hr))
-		throw L"IDWriteFactory Failed";
-
-	hr = ::CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER,
-		IID_PPV_ARGS(&gIWICImagingFactory));
-	if (FAILED(hr))
-		throw L"IWICImagingFactory Failed";
-}
 MfxObject_Init_1(MfxGraph);
 MfxObject_Init_2(MfxGraph, MfxBase);
-
-ID2D1Factory*& MfxGraph::myID2DFactory = gID2DFactory;
-IDWriteFactory*& MfxGraph::myIDWriteFactory = gIDWriteFactory;
-IWICImagingFactory*& MfxGraph::myIWICImagingFactory = gIWICImagingFactory;
 
 MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC &set, MfxRect rect)
 {
@@ -346,11 +319,11 @@ MfxReturn MicroFlakeX::MfxGraph::CopyIWICBitmap(IWICBitmap** ret, IWICBitmap* se
 
 MfxReturn MicroFlakeX::MfxGraph::CopyTextFormat(IDWriteTextFormat** ret, IDWriteTextFormat* set)
 {
-	WCHAR* fontLocalName = new WCHAR[set->GetLocaleNameLength()]{ 0 };
-	WCHAR* fontFamilyName = new WCHAR[set->GetFontFamilyNameLength()]{ 0 };
+	WCHAR* fontLocalName = new WCHAR[set->GetLocaleNameLength() + 1]{ 0 };
+	WCHAR* fontFamilyName = new WCHAR[set->GetFontFamilyNameLength() + 1]{ 0 };
 
-	set->GetLocaleName(fontLocalName, set->GetLocaleNameLength());
-	set->GetFontFamilyName(fontFamilyName, set->GetFontFamilyNameLength());
+	set->GetLocaleName(fontLocalName, set->GetLocaleNameLength() + 1);
+	set->GetFontFamilyName(fontFamilyName, set->GetFontFamilyNameLength() + 1);
 
 	HRESULT hr = MfxGraph::myIDWriteFactory->CreateTextFormat(
 		fontFamilyName,
