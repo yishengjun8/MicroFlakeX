@@ -245,3 +245,43 @@ namespace MicroFlakeX
         FLOAT myB;
     };
 }
+
+
+
+namespace MicroFlakeX
+{
+    class MfxMove
+        : public MfxType
+    {
+        MfxObject;
+    public:
+        MfxMove();
+        MfxMove(MfxPoint* set, ULONG time_ms);
+        MfxMove(FLOAT setX, FLOAT setY);
+        ~MfxMove();
+        MfxReturn Clone(MfxBase** ret);
+        MfxBase& operator=(MfxBase& rhs);
+        MfxMove& operator=(MfxMove& rhs);
+        BOOL operator==(MfxBase& rhs);
+        BOOL operator==(MfxMove& rhs);
+
+    public:
+        MfxReturn MoveTo(FLOAT setX, FLOAT setY);
+        MfxReturn NextFrame(FLOAT setX, FLOAT setY);
+    public:
+        MfxReturn GetD2D1PointU(D2D1_POINT_2U* ret);
+        MfxReturn GetD2D1PointF(D2D1_POINT_2F* ret);
+
+        MfxReturn Offset(FLOAT setX, FLOAT setY);
+
+        MfxReturn SetX(FLOAT set);
+        MfxReturn SetY(FLOAT set);
+
+        MfxReturn GetX(FLOAT* ret);
+        MfxReturn GetY(FLOAT* ret);
+    public:
+        ULONG myTime;
+        FLOAT myX;
+        FLOAT myY;
+    };
+}

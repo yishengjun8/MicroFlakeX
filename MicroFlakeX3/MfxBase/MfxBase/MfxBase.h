@@ -27,7 +27,15 @@
 *	败，那么将不会执行子类方法，直接返回 RFail 。
 *		如果继承方式为：基类->类0->类1->类2，并且类0 、类2都注册了
 *	'Hello()'，调用顺序为：类0::Hello()->类2::Hello()。
+* 
+* 
+* 
+* 更新：
+* 1、线程池
+* 2、debug内存泄漏检测
 */
+
+
 #ifdef MFX_BUILDING
 #define MFX_PORT __declspec(dllexport)
 #else

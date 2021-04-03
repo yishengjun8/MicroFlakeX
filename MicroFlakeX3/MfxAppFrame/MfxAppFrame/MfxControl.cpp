@@ -570,7 +570,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnLButtonUp(WPARAM wParam, LPA
 				myMouseFloat = true;
 				myLButtonPress = false;
 				myLButtonClickFlag = false;
-				CONTORL_SendMessageToUI(MfxControl_Message_LButtonClick, wParam, lParam);
+				MfxSendMessageToUI(MfxControl_Message_LButtonClick, wParam, lParam);
 			}
 			else
 			{
@@ -647,7 +647,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxControl::__OnRButtonUp(WPARAM wParam, LPA
 				myMouseFloat = true;
 				myRButtonPress = false;
 				myRButtonClickFlag = false;
-				CONTORL_SendMessageToUI(MfxControl_Message_RButtonClick, wParam, lParam);
+				MfxSendMessageToUI(MfxControl_Message_RButtonClick, wParam, lParam);
 			}
 			else
 			{

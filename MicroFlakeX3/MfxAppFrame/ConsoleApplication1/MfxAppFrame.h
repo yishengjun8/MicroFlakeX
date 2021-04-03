@@ -36,7 +36,6 @@ namespace MicroFlakeX
 {
 	typedef std::map<HWND, MfxUI*> MfxUI_Map;
 	typedef MfxUI_Map::value_type MfxUI_Map_elem;
-	typedef MfxUI_Map::iterator MfxUI_Map_iterator;
 
 	/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 	/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
@@ -60,7 +59,6 @@ namespace MicroFlakeX
 		MfxStrW myName;
 	};
 	typedef std::vector< MfxUI_MessageMap_Value*> MfxUI_MessageMap_Vector;
-	typedef MfxUI_MessageMap_Vector::iterator MfxUI_MessageMap_Vector_iterator;
 
 	typedef std::map<MfxMsg, MfxUI_MessageMap_Vector*> MfxUI_MessageMap;
 	typedef MfxUI_MessageMap::value_type MfxUI_MessageMap_elem;
@@ -103,7 +101,6 @@ namespace MicroFlakeX
 
 	typedef std::map<MfxUI_ControlMessage_Key, MfxUI_Func> MfxUI_ControlMessage_Map;
 	typedef MfxUI_ControlMessage_Map::value_type MfxUI_ControlMessage_Map_elem;
-	typedef MfxUI_ControlMessage_Map::iterator MfxUI_ControlMessage_Map_iterator;
 
 	struct MfxUI_Timer_Value
 	{
@@ -120,7 +117,6 @@ namespace MicroFlakeX
 
 	typedef std::map<MfxMsg, MfxUI_Timer_Value> MfxUI_Timer_Map;
 	typedef MfxUI_Timer_Map::value_type MfxUI_Timer_Map_elem;
-	typedef MfxUI_Timer_Map::iterator MfxUI_Timer_Map_iterator;
 
 	struct MfxUI_Paper_Value
 	{
@@ -147,7 +143,6 @@ namespace MicroFlakeX
 	/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
 	typedef std::deque<MfxControl*> MfxControl_Deque;
-	typedef MfxControl_Deque::iterator MfxControl_Deque_iterator;
 
 	typedef MfxReturn(MfxControl::* MfxControl_Func)(WPARAM, LPARAM);
 
@@ -164,7 +159,6 @@ namespace MicroFlakeX
 		MfxStrW myName;
 	};
 	typedef std::vector< MfxControl_MessageMap_Value*> MfxControl_MessageMap_Vector;
-	typedef MfxControl_MessageMap_Vector::iterator MfxControl_MessageMap_Vector_iterator;
 
 	typedef std::map<MfxMsg, MfxControl_MessageMap_Vector*> MfxControl_MessageMap;
 	typedef MfxControl_MessageMap::value_type MfxControl_MessageMap_elem;
@@ -245,15 +239,6 @@ namespace MicroFlakeX
 	};
 }
 
-//Mfx蝕慧痕方
-namespace MicroFlakeX
-{
-}
-
-namespace __MicroFlakeX
-{
-}
-
 //MfxApp
 namespace MicroFlakeX
 {
@@ -304,7 +289,7 @@ namespace MicroFlakeX
 		MfxObject;
 
 		friend class MfxApp;
-	protected:
+	private:
 		void MfxUIInitData();
 		void MfxRegMessages();
 	public:
@@ -394,8 +379,7 @@ namespace MicroFlakeX
 	public:
 		MfxReturn __OnTest00(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnTest01(WPARAM wParam, LPARAM lParam);
-	protected:
-
+	private:
 		MfxReturn __OnCreate(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnDestroy(WPARAM wParam, LPARAM lParam);
 
@@ -459,6 +443,7 @@ namespace MicroFlakeX
 
 		MfxReturn GetTitle(MfxStrW* ret);
 		MfxReturn GetTitleSize(FLOAT* ret);
+		MfxReturn GetTitleColor(MfxColor* ret);
 
 		MfxReturn GetRect(MfxRect* ret);
 		MfxReturn GetSize(MfxSize* ret);
@@ -468,6 +453,7 @@ namespace MicroFlakeX
 
 		MfxReturn SetTitle(MfxStrW set);
 		MfxReturn SetTitleSize(FLOAT set);
+		MfxReturn SetTitleColor(MfxColor set);
 
 		MfxReturn SetRect(MfxRect set);
 		MfxReturn SetSize(MfxSize set);

@@ -85,7 +85,7 @@ HWND MicroFlakeX::MfxApp::MfxCreateUIExW(
 
 MicroFlakeX::MfxReturn MicroFlakeX::MfxApp::ForwardMessage(HWND hWnd, MfxMsg message, WPARAM wParam, LPARAM lParam)
 {
-	MfxUI_Map_iterator t_Itera = myUIMap.find(hWnd);
+	auto t_Itera = myUIMap.find(hWnd);
 	if (t_Itera == myUIMap.end())
 	{
 		if (myBindingUI)

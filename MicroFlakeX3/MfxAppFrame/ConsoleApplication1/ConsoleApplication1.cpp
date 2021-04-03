@@ -3,10 +3,21 @@
 using namespace std;
 using namespace MicroFlakeX;
 
+
+class UI
+    : public MfxUI
+{
+public:
+    UI() :MfxUI::MfxUI()
+    {
+        //this->
+    }
+};
+
 int main()
 {
     std::cout << "Hello MicroFlakeX!\n";
-    MfxUI myUI;
+    UI myUI;
     myUI.SetBackColor(MfxColor(255, 0, 255, 0));
 
     MfxControl myControl0(MfxRect(19, 18, 360, 120));
