@@ -1,7 +1,6 @@
 #pragma once
 #include "MfxBaseTest00.h"
 
-
 namespace MicroFlakeX
 {
     class MfxBaseTest01 :

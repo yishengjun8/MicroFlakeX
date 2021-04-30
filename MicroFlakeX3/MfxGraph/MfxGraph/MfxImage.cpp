@@ -13,7 +13,7 @@ MicroFlakeX::MfxImage::MfxImage()
 	myID2D1Bitmap = nullptr;
 }
 
-MicroFlakeX::MfxImage::MfxImage(MfxStrW* path, MfxRect set)
+MicroFlakeX::MfxImage::MfxImage(MfxString* path, MfxRect set)
 {
 	myCanvas = nullptr;
 	myRenderTarget = nullptr;
@@ -76,7 +76,7 @@ BOOL MicroFlakeX::MfxImage::operator==(MfxBase& rhs)
 	return false;
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxImage::Paint()
+MfxReturn MicroFlakeX::MfxImage::Paint()
 {
 	if (myCanvas)
 	{
@@ -114,7 +114,7 @@ MfxReturn MicroFlakeX::MfxImage::GetCanvas(MfxCanvas** ret)
 	return RFine;
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromFile(MfxStrW* path, MfxSize set)
+MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromFile(MfxString* path, MfxSize set)
 {
 	/**/
 	SafeRelease(myIWICBitmap);
@@ -134,7 +134,7 @@ MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromColor(MfxColor color, MfxSiz
 	return RFine;
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxImage::ResetID2D1Bitmap()
+MfxReturn MicroFlakeX::MfxImage::ResetID2D1Bitmap()
 {
 	if (myIWICBitmap && myCanvas)
 	{
@@ -154,7 +154,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxImage::ResetID2D1Bitmap()
 	return RFine;
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxImage::FromFile(MfxStrW* path, MfxSize set)
+MfxReturn MicroFlakeX::MfxImage::FromFile(MfxString* path, MfxSize set)
 {
 	ResetIWICBitmapFromFile(path, set);
 	return RFine;

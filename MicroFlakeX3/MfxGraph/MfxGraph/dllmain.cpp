@@ -27,21 +27,21 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 
         hr = CoInitialize(NULL);
         if (FAILED(hr))
-            throw L"CoInitialize Failed";
+            throw MfxText("CoInitialize Failed");
 
         hr = ::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &gID2DFactory);
         if (FAILED(hr))
-            throw L"D2D1CreateFactory Failed";
+            throw MfxText("D2D1CreateFactory Failed");
 
         hr = ::DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(gIDWriteFactory),
             reinterpret_cast<IUnknown**>(&gIDWriteFactory));
         if (FAILED(hr))
-            throw L"IDWriteFactory Failed";
+            throw MfxText("IDWriteFactory Failed");
 
         hr = ::CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER,
             IID_PPV_ARGS(&gIWICImagingFactory));
         if (FAILED(hr))
-            throw L"IWICImagingFactory Failed";
+            throw MfxText("IWICImagingFactory Failed");
 
         hr = MfxGraph::myIDWriteFactory->CreateTextFormat(
             L"Helvetica",                  // Font family name 微软雅黑 Arial Garamond Helvetica 等任意字体名
@@ -54,7 +54,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
             &(MfxWords::gDefTextFormat)    // Pointer to recieve the created object
         );
         if (FAILED(hr))
-            throw L"gDefTextFormat Failed";
+            throw MfxText("gDefTextFormat Failed");
 
 
     }break;

@@ -11,7 +11,7 @@ MicroFlakeX::MfxWords::MfxWords()
 {
 
 	myRect.Init(60, 60, 120, 120);
-	myText = L"Welcome to MfxWords";
+	myText = MfxText("Welcome to MfxWords");
 	myColor.Init(255, 255, 100, 100);
 	myTextBrush = nullptr;
 	myTextFormat = nullptr;
@@ -35,7 +35,7 @@ MicroFlakeX::MfxWords::MfxWords()
 	}
 }
 
-MicroFlakeX::MfxWords::MfxWords(MfxStrW str, MfxRect set)
+MicroFlakeX::MfxWords::MfxWords(MfxString str, MfxRect set)
 {
 	myRect = set;
 	myText = str;
@@ -61,7 +61,7 @@ MicroFlakeX::MfxWords::MfxWords(MfxStrW str, MfxRect set)
 	}
 }
 
-MicroFlakeX::MfxWords::MfxWords(MfxStrW str, MfxRect set, FLOAT size)
+MicroFlakeX::MfxWords::MfxWords(MfxString str, MfxRect set, FLOAT size)
 {
 	myRect = set;
 	myText = str;
@@ -88,7 +88,7 @@ MicroFlakeX::MfxWords::MfxWords(MfxStrW str, MfxRect set, FLOAT size)
 	}
 }
 
-MicroFlakeX::MfxWords::MfxWords(MfxStrW str, MfxRect set, FLOAT size, IDWriteTextFormat* format)
+MicroFlakeX::MfxWords::MfxWords(MfxString str, MfxRect set, FLOAT size, IDWriteTextFormat* format)
 {
 	myRect = set;
 	myText = str;
@@ -146,7 +146,7 @@ BOOL MicroFlakeX::MfxWords::operator==(MfxBase& rhs)
 	return 0;
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxWords::Paint()
+MfxReturn MicroFlakeX::MfxWords::Paint()
 {
 	if (myCanvas)
 	{
@@ -215,14 +215,14 @@ MfxReturn MicroFlakeX::MfxWords::ResetTextLayout()
 	);
 }
 
-MfxReturn MicroFlakeX::MfxWords::SetText(MfxStrW set)
+MfxReturn MicroFlakeX::MfxWords::SetText(MfxString set)
 {
 	myText = set;
 	ResetTextLayout();
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::GetText(MfxStrW* ret)
+MfxReturn MicroFlakeX::MfxWords::GetText(MfxString* ret)
 {
 	*ret = myText;
 	return RFine;
@@ -240,13 +240,13 @@ MfxReturn MicroFlakeX::MfxWords::GetTextSize(FLOAT* ret)
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::SetFontName(MfxStrW set)
+MfxReturn MicroFlakeX::MfxWords::SetFontName(MfxString set)
 {
 	myTextLayout->SetFontFamilyName(set.c_str(), DWRITE_TEXT_RANGE{ 0,myText.length() });
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::GetFontName(MfxStrW* ret)
+MfxReturn MicroFlakeX::MfxWords::GetFontName(MfxString* ret)
 {
 	WCHAR* fontFamilyName = new WCHAR[myTextLayout->GetFontFamilyNameLength()]{ 0 };
 	myTextLayout->GetFontFamilyName(fontFamilyName, myTextLayout->GetFontFamilyNameLength());

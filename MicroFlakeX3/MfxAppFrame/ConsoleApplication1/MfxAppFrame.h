@@ -48,7 +48,7 @@ namespace MicroFlakeX
 
 	struct MfxUI_MessageMap_Value
 	{
-		MfxUI_MessageMap_Value(MfxUI_Func setFunc, MfxFloor setFloor, MfxStrW setName)
+		MfxUI_MessageMap_Value(MfxUI_Func setFunc, MfxFloor setFloor, MfxString setName)
 		{
 			myFunc = setFunc;
 			myFloor = setFloor;
@@ -56,7 +56,7 @@ namespace MicroFlakeX
 		}
 		MfxUI_Func myFunc;
 		MfxFloor myFloor;
-		MfxStrW myName;
+		MfxString myName;
 	};
 	typedef std::vector< MfxUI_MessageMap_Value*> MfxUI_MessageMap_Vector;
 
@@ -148,7 +148,7 @@ namespace MicroFlakeX
 
 	struct MfxControl_MessageMap_Value
 	{
-		MfxControl_MessageMap_Value(MfxControl_Func setFunc, MfxFloor setFloor, MfxStrW setName)
+		MfxControl_MessageMap_Value(MfxControl_Func setFunc, MfxFloor setFloor, MfxString setName)
 		{
 			myFunc = setFunc;
 			myFloor = setFloor;
@@ -156,7 +156,7 @@ namespace MicroFlakeX
 		}
 		MfxControl_Func myFunc;
 		MfxFloor myFloor;
-		MfxStrW myName;
+		MfxString myName;
 	};
 	typedef std::vector< MfxControl_MessageMap_Value*> MfxControl_MessageMap_Vector;
 
@@ -204,6 +204,8 @@ namespace MicroFlakeX
 		MfxUI_Message_SetMaskColor = MfxUI_MessageBegin - 15,
 		MfxUI_Message_SetBackImage = MfxUI_MessageBegin - 16,
 		MfxUI_Message_SetMaskImage = MfxUI_MessageBegin - 17,
+
+		MfxUI_Message_TimerFrame = MfxUI_MessageBegin - 18,
 	};
 
 	enum MfxControl_Message
@@ -265,15 +267,15 @@ namespace MicroFlakeX
 		void Run();
 		WPARAM overParam;
 
-	protected:
+	private:
 		MfxUI* myBindingUI;
 	public:
 		HWND MfxCreateUIExW(
 			MfxUI* ui, MfxRect rect,
 			DWORD dwExStyle, DWORD dwStyle,
-			MfxStrW className, MfxStrW windowsName);
+			MfxString className, MfxString windowsName);
 
-	protected:
+	private:
 		MfxUI_Map myUIMap;
 	public:
 		MfxReturn ForwardMessage(HWND hWnd, MfxMsg message, WPARAM wParam, LPARAM lParam);
@@ -294,16 +296,16 @@ namespace MicroFlakeX
 		void MfxRegMessages();
 	public:
 		MfxUI();
-		MfxUI(MfxRect set, MfxStrW title);
-		MfxUI(MfxRect set, DWORD myStyle_EN, MfxStrW title);
-		MfxUI(MfxRect set, DWORD myStyleEx_EN, DWORD myStyle_EN, MfxStrW myClass, MfxStrW title);
+		MfxUI(MfxRect set, MfxString title);
+		MfxUI(MfxRect set, DWORD myStyle_EN, MfxString title);
+		MfxUI(MfxRect set, DWORD myStyleEx_EN, DWORD myStyle_EN, MfxString myClass, MfxString title);
 		virtual ~MfxUI();
 		MfxReturn CreateSuccess();
 
 		MfxReturn ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam);
 		MfxReturn SendMessageToControls(MfxMsg message, WPARAM wParam, LPARAM lParam, bool sort);
 
-	protected:
+	private:
 		MfxUI_Timer_Map __myTimerMap;
 		MfxUI_ControlMessage_Map __myControlMessageMap;
 		MfxControl_Deque myControlDeque;
@@ -322,7 +324,7 @@ namespace MicroFlakeX
 	AddTimer(timerID, delay, (MfxUI_Func)&recvFunc)
 		MfxReturn RemoveTimer(WPARAM cid);
 
-	protected:
+	private:
 		HWND myWnd;
 		MfxRect myRect;
 		MfxCanvas myCanvas;
@@ -349,7 +351,7 @@ namespace MicroFlakeX
 		//MfxReturn SetBigIcon(MfxImage* set);
 		//MfxReturn SetSmallIcon(MfxImage* set);
 
-	protected:
+	private:
 		MfxControl* myMutexFocus, * myKeyboardFocus;
 		bool myMutexFocusLockFlag, myKeyboardFocusLockFag;
 	public:
@@ -361,21 +363,23 @@ namespace MicroFlakeX
 		MfxReturn GetKeyboardFocus(MfxControl** ret);
 
 
-	protected:
+	private:
 		MfxFloor myUnderFloor, myCoverFloor;
 		MfxUI_MessageMap myMessageMap;
 		MfxUI_Message_Set myControlMessageSet;
 #define UI_CON_RECV_MSG(Msg)\
 	(myControlMessageSet.insert((MfxMsg)Msg))
 
-	protected:
-		MfxReturn RemoveMessage(MfxMsg message, MfxStrW name);
+	public:
+		MfxReturn RemoveMessage(MfxMsg message, MfxString name);
 		MfxReturn InsertMessage(MfxMsg message, MfxUI_MessageMap_Value* msgValue);
 #define UI_REG_MSG(Msg, myClass, FuncName, Floor)\
 	InsertMessage(Msg, new MfxUI_MessageMap_Value(\
 		(MfxUI_Func)&myClass::FuncName, Floor, L#FuncName)\
 		);
 
+	private:
+		MfxBase_Vector myFrame;
 	public:
 		MfxReturn __OnTest00(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnTest01(WPARAM wParam, LPARAM lParam);
@@ -397,7 +401,10 @@ namespace MicroFlakeX
 		MfxReturn __OnTimer(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnAddTimer(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnRemoveTimer(WPARAM wParam, LPARAM lParam);
-		
+
+		MfxReturn __OnFrame(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnFrameMSGPost(WPARAM wParam, LPARAM lParam);
+
 		MfxReturn __OnControlMessage(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnAddControlMessage(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnRemoveControlMessage(WPARAM wParam, LPARAM lParam);
@@ -419,29 +426,29 @@ namespace MicroFlakeX
 		MfxObject;
 
 		friend class MfxApp;
-	protected:
+	private:
 		void MfxRegMessages();
 		void MfxControlInitData();
 	public:
 		MfxControl();
 		MfxControl(MfxRect set);
 		virtual ~MfxControl();
-		virtual MfxReturn GetType(MfxStrW* ret);
+		virtual MfxReturn GetType(MfxString* ret);
 
 		MfxReturn ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam);
 
-	protected:
+	private:
 		HWND myWnd;
 		MfxCanvas* myCanvas;
 		MfxUI* myUI;// 控件所属UI
 		MfxFloor myFloor; //我的层次
-		MfxStrW myType, myTitle;// 控件类型 - 控件标题
+		MfxString myType, myTitle;// 控件类型 - 控件标题
 		MfxRect myRect;
 	public:
 		MfxReturn GetMyUI(MfxUI** ret);
 		MfxReturn GetFloor(MfxFloor* ret);
 
-		MfxReturn GetTitle(MfxStrW* ret);
+		MfxReturn GetTitle(MfxString* ret);
 		MfxReturn GetTitleSize(FLOAT* ret);
 		MfxReturn GetTitleColor(MfxColor* ret);
 
@@ -451,7 +458,7 @@ namespace MicroFlakeX
 	public:
 		MfxReturn SetFloor(MfxFloor floor);
 
-		MfxReturn SetTitle(MfxStrW set);
+		MfxReturn SetTitle(MfxString set);
 		MfxReturn SetTitleSize(FLOAT set);
 		MfxReturn SetTitleColor(MfxColor set);
 
@@ -488,18 +495,18 @@ namespace MicroFlakeX
 		MfxReturn SetMaskImage(MfxImage* set);
 		MfxReturn SetTitleWords(MfxWords* set);
 
-	protected:
+	private:
 		MfxFloor myUnderFloor, myCoverFloor;
 		MfxControl_MessageMap myMessageMap;
 	public:
-		MfxReturn RemoveMessage(MfxMsg message, MfxStrW name);
+		MfxReturn RemoveMessage(MfxMsg message, MfxString name);
 		MfxReturn InsertMessage(MfxMsg message, MfxControl_MessageMap_Value* msgValue);
 #define CONTROL_REG_MSG(Msg, myClass, FuncName, Floor)\
 	InsertMessage(Msg, new MfxControl_MessageMap_Value(\
 		(MfxControl_Func)&myClass::FuncName, Floor, L#myClass#FuncName)\
 		);
 
-#define CONTORL_SendMessageToUI(Msg, wPara, lPara)\
+#define MfxSendMessageToUI(Msg, wPara, lPara)\
 	if(myUI)\
 	{\
 		MfxUI_ControlMessage_Key t_ControlMessageKey(this, Msg); \
@@ -507,7 +514,7 @@ namespace MicroFlakeX
 		myUI->ProcMessage(MfxControl_Message_ControlMessage, (WPARAM)&t_ControlMessageKey, (WPARAM)&t_ControlMessageValue);\
 	}
 	
-	protected:
+	private:
 		MfxReturn __OnSetPaper(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnPaintBackDC(WPARAM wParam, LPARAM lParam);

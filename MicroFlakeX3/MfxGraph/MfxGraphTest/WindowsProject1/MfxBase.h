@@ -26,8 +26,16 @@
 *	那么，通过 AutoFunc 调用该方法的顺序为：父类->子类，如果父类失
 *	败，那么将不会执行子类方法，直接返回 RFail 。
 *		如果继承方式为：基类->类0->类1->类2，并且类0 、类2都注册了
-*	'Hello()'，调用顺序为：类0::Hello()->类2::Hello()。
+*	'Hello()'，调用顺序为：类2::Hello()，即类0被覆盖。
+* 
+* 
+* 
+* 更新：
+* 1、线程池
+* 2、debug内存泄漏检测
 */
+
+
 #ifdef MFX_BUILDING
 #define MFX_PORT __declspec(dllexport)
 #else
@@ -60,7 +68,19 @@ namespace MicroFlakeX
 	MFX_PORT typedef std::string MfxStrA;
 	MFX_PORT typedef std::wstring MfxStrW;
 
-#define MfxStr MfxStrW;
+
+#ifdef UNICODE
+#define __MStr(str) L##str
+#define __MfxStr MfxStrW;
+
+#elif 
+#define __MStr(str) str
+#define __MfxStr MfxStrW;
+
+#endif
+
+#define MStr(str) __MStr(str)
+#define MfxStr __MfxStr;
 }
 
 //公开 类 - 模板
@@ -72,6 +92,12 @@ namespace MicroFlakeX
 	//Mfx模板
 	template<class DataType>
 	class MfxDataFlag;
+
+	template<class T>
+	class MfxSmartPointer;
+
+	template<class T>
+	class MfxThreadPool;
 }
 
 //公开 函数
@@ -139,20 +165,16 @@ namespace MicroFlakeX
 		virtual MfxBase& operator=(MfxBase& rhs);
 		virtual BOOL operator==(MfxBase& rhs);
 
-	public: 
+	public:
 		virtual MfxReturn AutoFunc(MfxStrW func...);
-		virtual MfxReturn FuncName(MfxStrW* ret);
-		virtual MfxReturn FuncInfor(MfxStrW* ret);
 		virtual MfxReturn ObjectName(MfxStrW* ret);
-		virtual MfxReturn ObjectFloor(UINT* ret);
-	protected:
-		UINT myFloor;
+	private:
 		CRITICAL_SECTION myCriticalSection;
 	};
 
 	class MfxLock
 	{
-	protected:
+	private:
 		CRITICAL_SECTION* myCriticalSection;
 	public:
 		MfxLock(MfxBase* object);
@@ -200,53 +222,50 @@ namespace MicroFlakeX
 
 	template<class DataType>
 	class MfxDataFlag
-		: public MfxBase
 	{
 	public:
 		MfxDataFlag()
 		{
-			MfxLock tLock(this);
 			myBeforData = myData = DataType();
 			myChangeFlag = myUseFlag = 0;
 		}
-		~MfxDataFlag() { MfxLock tLock(this); };
-		DataType& GetData() { MfxLock tLock(this); return myData; };
-		DataType& GetBeforData() { MfxLock tLock(this); return myBeforData; };
-		void CleanUseFlag() { MfxLock tLock(this); myUseFlag = 0; }
-		void CleanChangeFlag() { MfxLock tLock(this); myChangeFlag = 0; }
-		UINT CheckUseFlag() { MfxLock tLock(this); return myUseFlag; };
-		UINT CheckChangeFlag() { MfxLock tLock(this); return myChangeFlag; };
-	protected:
+		~MfxDataFlag() { };
+		DataType& GetData() { return myData; };
+		DataType& GetBeforData() { return myBeforData; };
+		void CleanUseFlag() { myUseFlag = 0; }
+		void CleanChangeFlag() { myChangeFlag = 0; }
+		UINT CheckUseFlag() { return myUseFlag; };
+		UINT CheckChangeFlag() { return myChangeFlag; };
+	private:
 		DataType myData;
 		DataType myBeforData;
 		UINT myUseFlag;
 		UINT myChangeFlag;
 	public:
-		DataType operator-> () { MfxLock tLock(this); myUseFlag++; return myData; };
+		DataType operator-> () { myUseFlag++; return myData; };
 
-		DataType& operator* () { MfxLock tLock(this); myUseFlag++; return myData; };
+		DataType& operator* () { myUseFlag++; return myData; };
 
 		DataType operator= (DataType rhs)
 		{
-			MfxLock tLock(this);
 			myChangeFlag++;
 			myBeforData = myData;
 			myData = rhs;
 			return myData;
 		};
 
-		bool operator< (DataType rhs) { MfxLock tLock(this); return myData < rhs; };
+		bool operator< (DataType rhs) { return myData < rhs; };
 
-		bool operator> (DataType rhs) { MfxLock tLock(this); return myData > rhs; };
+		bool operator> (DataType rhs) { return myData > rhs; };
 
-		bool operator== (DataType rhs) { MfxLock tLock(this); return myData == rhs; };
+		bool operator== (DataType rhs) { return myData == rhs; };
 
-		bool operator!= (DataType rhs) { MfxLock tLock(this); return myData != rhs; };
+		bool operator!= (DataType rhs) { return myData != rhs; };
 	};
 
 		//Mfx智能指针
 
-		//Mfx智能线程
+		//Mfx线程池
 }
 
 #define __RFine	0
@@ -282,29 +301,29 @@ typedef std::map<MfxStrW,obj##MfxAutoFuncInfor*>::iterator obj##MfxAutoFuncItera
 MfxReturn obj::FuncName(MfxStrW* ret)\
 {\
 	MfxCodeLock(this);\
-	*ret = L"";\
+	*ret = MStr("");\
 	for(auto i : obj##MfxAutoFuncMap)\
 	{\
 		*ret += i.second->myName;\
-		*ret += L"\n";\
+		*ret += MStr("\n");\
 	}\
 	return RFine;\
 }\
 MfxReturn obj::FuncInfor(MfxStrW* ret)\
 {\
 	MfxCodeLock(this);\
-	*ret = L"";\
+	*ret = MStr("");\
 	for(auto i : obj##MfxAutoFuncMap)\
 	{\
 		*ret += i.second->myAllName;\
-		*ret += L"\n";\
+		*ret += MStr("\n");\
 	}\
 	return RFine;\
 }\
 MfxReturn obj::ObjectName(MfxStrW* ret)\
 {\
 	MfxCodeLock(this);\
-	*ret = L#obj;\
+	*ret = MStr(#obj);\
 	return RFine;\
 }\
 class obj##FactoryHand\
@@ -354,7 +373,7 @@ MfxReturn obj::AutoFunc(MfxStrW setFunc...)\
 	}\
 	else\
 	{\
-		ret = father::AutoFunc(L"AutoFunc", setFunc, argc); \
+		ret = father::AutoFunc(MStr("AutoFunc"), setFunc, argc); \
 	}\
 	return ret;\
 }

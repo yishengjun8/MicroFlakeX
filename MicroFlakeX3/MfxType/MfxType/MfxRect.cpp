@@ -116,10 +116,10 @@ MfxReturn MicroFlakeX::MfxRect::Clone(MfxBase** ret)
 
 MfxBase& MicroFlakeX::MfxRect::operator=(MfxBase& rhs)
 {
-	rhs.AutoFunc(L"GetX", &myX);
-	rhs.AutoFunc(L"GetY", &myY);
-	rhs.AutoFunc(L"GetWidth", &myWidth);
-	rhs.AutoFunc(L"GetHeight", &myHeight);
+	rhs.AutoFunc(MfxText("GetX"), &myX);
+	rhs.AutoFunc(MfxText("GetY"), &myY);
+	rhs.AutoFunc(MfxText("GetWidth"), &myWidth);
+	rhs.AutoFunc(MfxText("GetHeight"), &myHeight);
 	return *this;
 }
 
@@ -149,10 +149,10 @@ MfxRect& MicroFlakeX::MfxRect::operator=(MfxPoint& rhs)
 BOOL MicroFlakeX::MfxRect::operator==(MfxBase& rhs)
 {
 	FLOAT tX = 0, tY = 0, tW = 0, tH = 0;
-	rhs.AutoFunc(L"GetX", &tX);
-	rhs.AutoFunc(L"GetY", &tY);
-	rhs.AutoFunc(L"GetWidth", &tW);
-	rhs.AutoFunc(L"GetHeight", &tH);
+	rhs.AutoFunc(MfxText("GetX"), &tX);
+	rhs.AutoFunc(MfxText("GetY"), &tY);
+	rhs.AutoFunc(MfxText("GetWidth"), &tW);
+	rhs.AutoFunc(MfxText("GetHeight"), &tH);
 	return tX == myX && tY == myY && tW == myWidth && tH == myHeight;
 }
 
@@ -412,10 +412,10 @@ MfxReturn MicroFlakeX::MfxRect::Collision(MfxBase* set, BOOL* ret)
 	FLOAT myTop = 0, myLeft = 0, myRight = 0, myBottom = 0;
 	FLOAT setTop = 0, setLeft = 0, setRight = 0, setBottom = 0;
 
-	GetTop(&myTop); set->AutoFunc(L"GetBottom", &setTop);
-	GetLeft(&myLeft); set->AutoFunc(L"GetLeft", &myLeft);
-	GetRight(&myRight); set->AutoFunc(L"GetRight", &myRight);
-	GetBottom(&myBottom); set->AutoFunc(L"GetBottom", &myBottom);
+	GetTop(&myTop); set->AutoFunc(MfxText("GetBottom"), &setTop);
+	GetLeft(&myLeft); set->AutoFunc(MfxText("GetLeft"), &myLeft);
+	GetRight(&myRight); set->AutoFunc(MfxText("GetRight"), &myRight);
+	GetBottom(&myBottom); set->AutoFunc(MfxText("GetBottom"), &myBottom);
 
 	*ret = (myLeft < setRight) && (myTop < setBottom) &&
 		(myRight > setLeft) && (myBottom > setTop);

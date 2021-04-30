@@ -24,7 +24,7 @@ MicroFlakeX::MfxApp::MfxApp()
 {
 	if (__theApp)
 	{
-		throw L"MfxApp Object Exceeds One";
+		throw MfxText("MfxApp Object Exceeds One");
 	}
 
 	overParam = 0;
@@ -44,13 +44,13 @@ MicroFlakeX::MfxApp::MfxApp()
 	tempWC.hCursor = LoadCursor(NULL, IDC_ARROW);                // predefined arrow 
 	tempWC.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
 
-	//tempWC.lpszMenuName = L"MainMenu";    // name of menu resource
-	tempWC.lpszClassName = L"MfxNormalUI";  // name of window class
+	//tempWC.lpszMenuName = MfxTextMainMenu";    // name of menu resource
+	tempWC.lpszClassName = MfxText("MfxNormalUI");  // name of window class
 	tempWC.hIconSm = LoadIconW(NULL, IDI_APPLICATION);  // small class icon 
 
 	if (!RegisterClassExW(&tempWC))
 	{
-		MessageBoxW(NULL, L"MfxNormalUI Registration Failed!", L"Error!", MB_ICONEXCLAMATION | MB_OK);
+		MessageBoxW(NULL, MfxText("MfxNormalUI Registration Failed!"), MfxText("Error!"), MB_ICONEXCLAMATION | MB_OK);
 	}
 }
 
@@ -72,7 +72,7 @@ void MicroFlakeX::MfxApp::Run()
 HWND MicroFlakeX::MfxApp::MfxCreateUIExW(
 	MfxUI* ui, MfxRect rect,
 	DWORD dwExStyle, DWORD dwStyle,
-	MfxStrW className, MfxStrW windowsName)
+	MfxString className, MfxString windowsName)
 {
 	while (myBindingUI);
 	myBindingUI = ui; 
@@ -83,7 +83,7 @@ HWND MicroFlakeX::MfxApp::MfxCreateUIExW(
 }
 
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxApp::ForwardMessage(HWND hWnd, MfxMsg message, WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxApp::ForwardMessage(HWND hWnd, MfxMsg message, WPARAM wParam, LPARAM lParam)
 {
 	auto t_Itera = myUIMap.find(hWnd);
 	if (t_Itera == myUIMap.end())

@@ -56,8 +56,8 @@ MfxReturn MicroFlakeX::MfxPoint::Clone(MfxBase** ret)
 
 MfxBase& MicroFlakeX::MfxPoint::operator=(MfxBase& rhs)
 {
-	rhs.AutoFunc(L"GetX", &myX);
-	rhs.AutoFunc(L"GetY", &myY);
+	rhs.AutoFunc(MfxText("GetX"), &myX);
+	rhs.AutoFunc(MfxText("GetY"), &myY);
 	return *this;
 }
 
@@ -78,8 +78,8 @@ MfxPoint& MicroFlakeX::MfxPoint::operator=(MfxPoint& rhs)
 BOOL MicroFlakeX::MfxPoint::operator==(MfxBase& rhs)
 {
 	FLOAT tX = 0, tY = 0;
-	rhs.AutoFunc(L"GetX", &tX);
-	rhs.AutoFunc(L"GetY", &tY);
+	rhs.AutoFunc(MfxText("GetX"), &tX);
+	rhs.AutoFunc(MfxText("GetY"), &tY);
 	return tX == myX && tY == myY;
 	return RFine;
 }

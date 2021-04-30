@@ -47,7 +47,7 @@ MfxReturn MicroFlakeX::MfxGraph::GetID2D1HwndRenderTarget(ID2D1RenderTarget** re
 	}
 }
 
-MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &path, MfxSize size)
+MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxString &path, MfxSize size)
 {
 	IWICBitmapDecoder* pDecoder = nullptr;
 	IWICBitmapFrameDecode* pSource = nullptr;
@@ -107,7 +107,7 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &p
 		WICBitmapCacheOnLoad, ret);
 
 	if (FAILED(hr))
-		throw L"CreateBitmapFromSource Failed";
+		throw MfxText("CreateBitmapFromSource Failed");
 
 	__MicroFlakeX::SafeRelease(pSource);
 	__MicroFlakeX::SafeRelease(pDecoder);
@@ -155,7 +155,7 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromColor(IWICBitmap** ret, MfxColor
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxStrW &path, MfxSize size)
+MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxString &path, MfxSize size)
 {
 	IWICBitmapDecoder* pDecoder = NULL;
 	IWICBitmapFrameDecode* pSource = NULL;
@@ -266,7 +266,7 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID
 	hr = pRendTar->CreateBitmapFromWicBitmap(pConverter, ret);
 
 	if (FAILED(hr))
-		throw L"CreateBitmapFromWicBitmap Failed";
+		throw MfxText("CreateBitmapFromWicBitmap Failed");
 
 	__MicroFlakeX::SafeRelease(pScaler);
 	__MicroFlakeX::SafeRelease(pConverter);

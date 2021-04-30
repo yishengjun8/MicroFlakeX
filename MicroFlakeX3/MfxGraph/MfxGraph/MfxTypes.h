@@ -39,6 +39,8 @@ namespace MicroFlakeX
     class MFX_PORT MfxPoint;
 
     class MFX_PORT MfxColor;
+
+    class MFX_PORT MfxMove;
 }
 
 namespace MicroFlakeX
@@ -243,5 +245,39 @@ namespace MicroFlakeX
         FLOAT myR;
         FLOAT myG;
         FLOAT myB;
+    };
+}
+
+namespace MicroFlakeX
+{
+    class MfxMove
+        : public MfxType
+    {
+        MfxObject;
+    public:
+        MfxMove();
+        MfxMove(MfxPoint* setBegin, MfxPoint* setEnd, time_t time_ms);
+        MfxMove(MfxPoint* setBegin, MfxPoint* setEnd, time_t timeBegin, time_t timeEnd);
+        ~MfxMove();
+        MfxReturn Clone(MfxBase** ret);
+        MfxBase& operator=(MfxBase& rhs);
+        MfxMove& operator=(MfxMove& rhs);
+        BOOL operator==(MfxBase& rhs);
+        BOOL operator==(MfxMove& rhs);
+
+    public:
+        MfxReturn MoveTo(MfxPoint* setEnd);
+        MfxReturn NextFrame();
+    public:
+        MfxReturn GetPoint(MfxPoint* ret);
+
+        MfxReturn GetD2D1PointU(D2D1_POINT_2U* ret);
+        MfxReturn GetD2D1PointF(D2D1_POINT_2F* ret);
+
+        MfxReturn GetX(FLOAT* ret);
+        MfxReturn GetY(FLOAT* ret);
+    public:
+        time_t myTime_Begin, myTime_End, myTime_Now;
+        MfxPoint myPoint_Begin, myPoint_End, myPoint_Now;
     };
 }

@@ -58,8 +58,8 @@ MfxReturn MicroFlakeX::MfxSize::Clone(MfxBase** ret)
 
 MfxBase& MicroFlakeX::MfxSize::operator=(MfxBase& rhs)
 {
-	rhs.AutoFunc(L"GetWidth", &myWidth);
-	rhs.AutoFunc(L"GetHeight", &myHeight);
+	rhs.AutoFunc(MfxText("GetWidth"), &myWidth);
+	rhs.AutoFunc(MfxText("GetHeight"), &myHeight);
 	return *this;
 }
 

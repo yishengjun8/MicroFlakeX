@@ -15,37 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MfxTypes.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
+    <ClCompile Include="Project1.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MfxTypes.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MfxSize.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MfxRect.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MfxPoint.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MfxColor.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MfxMove.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

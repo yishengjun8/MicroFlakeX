@@ -63,10 +63,10 @@ MfxReturn MicroFlakeX::MfxColor::Clone(MfxBase** ret)
 
 MfxBase& MicroFlakeX::MfxColor::operator=(MfxBase& rhs)
 {
-	rhs.AutoFunc(L"GetA", &myA);
-	rhs.AutoFunc(L"GetR", &myR);
-	rhs.AutoFunc(L"GetG", &myG);
-	rhs.AutoFunc(L"GetB", &myB);
+	rhs.AutoFunc(MfxText("GetA"), &myA);
+	rhs.AutoFunc(MfxText("GetR"), &myR);
+	rhs.AutoFunc(MfxText("GetG"), &myG);
+	rhs.AutoFunc(MfxText("GetB"), &myB);
 	return *this;
 }
 

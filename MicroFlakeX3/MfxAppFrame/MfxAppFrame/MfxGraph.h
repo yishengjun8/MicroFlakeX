@@ -72,11 +72,11 @@ namespace MicroFlakeX
 		static MfxReturn GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC &set, MfxRect rect);
 		static MfxReturn GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND &set, MfxSize size);
 
-		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, MfxStrW &path, MfxSize size);
+		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, MfxString &path, MfxSize size);
 		static MfxReturn IWICBitmapFromColor(IWICBitmap** ret, MfxColor color, MfxSize size);
 
 		static MfxReturn ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, 
-			MfxStrW &path, MfxSize size);
+			MfxString &path, MfxSize size);
 		static MfxReturn ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar,
 			IWICBitmap* bitmap, MfxSize size);
 
@@ -172,7 +172,7 @@ namespace MicroFlakeX
 		MfxObject;
 	public:
 		MfxImage();
-		MfxImage(MfxStrW* path, MfxRect set);
+		MfxImage(MfxString* path, MfxRect set);
 		MfxImage(MfxColor color, MfxRect set);
 		MfxImage(IWICBitmap* tIWICBitmap, MfxRect set);
 		virtual ~MfxImage();
@@ -195,13 +195,13 @@ namespace MicroFlakeX
 		MfxReturn GetCanvas(MfxCanvas** ret);
 
 	public:
-		MfxReturn ResetIWICBitmapFromFile(MfxStrW* path, MfxSize set);
+		MfxReturn ResetIWICBitmapFromFile(MfxString* path, MfxSize set);
 		MfxReturn ResetIWICBitmapFromColor(MfxColor color, MfxSize set);
 
 		MfxReturn ResetID2D1Bitmap();
 
 	public:
-		MfxReturn FromFile(MfxStrW* path, MfxSize set);
+		MfxReturn FromFile(MfxString* path, MfxSize set);
 		MfxReturn FromColor(MfxColor color, MfxSize set);
 
 	public:
@@ -227,9 +227,9 @@ namespace MicroFlakeX
 		MfxObject;
 	public:
 		MfxWords();
-		MfxWords(MfxStrW str, MfxRect set);
-		MfxWords(MfxStrW str, MfxRect set, FLOAT size);
-		MfxWords(MfxStrW str, MfxRect set, FLOAT size, IDWriteTextFormat* format);
+		MfxWords(MfxString str, MfxRect set);
+		MfxWords(MfxString str, MfxRect set, FLOAT size);
+		MfxWords(MfxString str, MfxRect set, FLOAT size, IDWriteTextFormat* format);
 		virtual ~MfxWords();
 		MfxReturn Clone(MfxBase** ret);
 		MfxReturn Clone(MfxWords** ret);
@@ -239,7 +239,7 @@ namespace MicroFlakeX
 		static IDWriteTextFormat* gDefTextFormat;
 	protected:
 		MfxRect myRect;
-		MfxStrW myText;
+		MfxString myText;
 		MfxColor myColor;
 		ID2D1Brush* myTextBrush;
 		IDWriteTextFormat* myTextFormat;
@@ -256,14 +256,14 @@ namespace MicroFlakeX
 	public:
 		MfxReturn ResetTextLayout();
 	public:
-		MfxReturn SetText(MfxStrW set);
-		MfxReturn GetText(MfxStrW* ret);
+		MfxReturn SetText(MfxString set);
+		MfxReturn GetText(MfxString* ret);
 
 		MfxReturn SetTextSize(FLOAT set);
 		MfxReturn GetTextSize(FLOAT* ret);
 
-		MfxReturn SetFontName(MfxStrW set);
-		MfxReturn GetFontName(MfxStrW* ret);
+		MfxReturn SetFontName(MfxString set);
+		MfxReturn GetFontName(MfxString* ret);
 
 		MfxReturn SetTextFormat(IDWriteTextFormat* set);
 		MfxReturn GetTextFormat(IDWriteTextFormat** ret);

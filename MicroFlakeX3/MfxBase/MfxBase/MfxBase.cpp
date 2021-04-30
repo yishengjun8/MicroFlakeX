@@ -4,20 +4,30 @@
 using namespace MicroFlakeX;
 using namespace __MicroFlakeX;
 
-std::map<MfxStrW, MfxFactoryHand*> MfxFactoryMap;
-typedef std::map<MfxStrW, MfxFactoryHand*>::value_type MfxFactoryValue;
+std::map<MfxString, MfxFactoryHand*> MfxFactoryMap;
+typedef std::map<MfxString, MfxFactoryHand*>::value_type MfxFactoryValue;
 
-MfxReturn MicroFlakeX::MfxBaseFactory(MfxStrW object, MfxBase** ret)
+MfxReturn MicroFlakeX::MfxBaseFactory(MfxString object, MfxBase** ret)
 {
 	auto iter = MfxFactoryMap.find(object);
 	if (iter != MfxFactoryMap.end())
 	{
 		return iter->second->Creat(ret);
 	}
-	return RFail;
+	return RFine;
 }
 
-MfxReturn __MicroFlakeX::MfxRegisterObject(MfxStrW object, MfxFactoryHand* hand)
+MfxReturn __MicroFlakeX::MfxRemoveObject(MfxString object)
+{
+	auto tIter = MfxFactoryMap.find(object);
+	if (tIter != MfxFactoryMap.end())
+	{
+		MfxFactoryMap.erase(tIter);
+	}
+	return RFine;
+}
+
+MfxReturn __MicroFlakeX::MfxRegisterObject(MfxString object, MfxFactoryHand* hand)
 {
 	auto ret = MfxFactoryMap.insert(MfxFactoryValue(object, hand));
 	return ret.second ? RFine : RFail;
@@ -26,71 +36,57 @@ MfxReturn __MicroFlakeX::MfxRegisterObject(MfxStrW object, MfxFactoryHand* hand)
 MicroFlakeX::MfxBase::MfxBase()
 {
 	InitializeCriticalSection(&myCriticalSection);
-	myFloor = 0;
 }
 
 MicroFlakeX::MfxBase::~MfxBase()
 {
-	MfxCodeLock(this);
 	DeleteCriticalSection(&myCriticalSection);
 }
 
 MfxReturn MicroFlakeX::MfxBase::Clone(MfxBase** ret)
 {
-	MfxCodeLock(this);
 	*ret = new MfxBase;
-	(*ret)->myFloor = myFloor;
 	return RFine;
 }
 
 MfxBase& MicroFlakeX::MfxBase::operator=(MfxBase& rhs)
 {
-	MfxCodeLock(this);
-	myFloor = rhs.myFloor;
 	return *this;
 }
 
 BOOL MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 {
-	return myFloor == rhs.myFloor;
+	return 0;
 }
 
-MfxReturn MicroFlakeX::MfxBase::AutoFunc(MfxStrW func ...)
+MfxReturn MicroFlakeX::MfxBase::AutoFunc(MfxString func ...)
 {
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxBase::FuncName(MfxStrW* ret)
+MfxReturn MicroFlakeX::MfxBase::FuncName(MfxString* ret)
 {
-	MfxCodeLock(this);
-	*ret = L"";
+	*ret = MfxText("");
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxBase::FuncInfor(MfxStrW* ret)
+MfxReturn MicroFlakeX::MfxBase::ObjectName(MfxString* ret)
 {
-	MfxCodeLock(this);
-	*ret = L"";
+	*ret = MfxText("MfxBase");
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxBase::ObjectName(MfxStrW* ret)
+__MicroFlakeX::MfxFactoryHand::MfxFactoryHand(MfxString object)
 {
-	MfxCodeLock(this);
-	*ret = L"MfxBase";
-	return RFine;
+	myObjectName = object;
+	MfxRegisterObject(myObjectName, this);
+	std::wcout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Register") << std::endl;
 }
 
-MfxReturn MicroFlakeX::MfxBase::ObjectFloor(UINT* ret)
+__MicroFlakeX::MfxFactoryHand::~MfxFactoryHand()
 {
-	MfxCodeLock(this);
-	*ret = myFloor;
-	return RFine;
-}
-
-__MicroFlakeX::MfxFactoryHand::MfxFactoryHand(MfxStrW object)
-{
-	MfxRegisterObject(object, this);
+	MfxRemoveObject(myObjectName);
+	std::wcout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Remove") << std::endl;
 }
 
 MicroFlakeX::MfxLock::MfxLock(MfxBase* object)
