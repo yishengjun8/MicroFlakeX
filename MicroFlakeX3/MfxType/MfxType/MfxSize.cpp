@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "MfxTypes.h"
+#include "MfxType.h"
 
 MfxObject_Init_0(MfxSize)
 MfxObject_Register(MfxSize, Init, 0);

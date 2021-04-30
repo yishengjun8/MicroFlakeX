@@ -71,6 +71,7 @@ typedef std::wstring MfxStringW;
 #define __MfxText(str) L##str
 #define __MfxString MfxStringW
 
+
 #elif 
 #define __MfxText(str) str
 #define __MfxString MfxStringA;
@@ -328,7 +329,9 @@ public:\
 		WCHAR typeName[1024]; size_t n = 0;\
 		MfxObject_Register(obj, AutoFunc, -1)
 //---------------------------------------------------
-//
+// //obj##Hand
+// obj##FactoryHand obj##Hand(MfxText(#obj));\
+// obj##FactoryHand *obj##Hand = new obj##FactoryHand(MfxText(#obj));\
 //---------------------------------------------------
 #define __MfxObject_Init_1(obj) \
 	};\

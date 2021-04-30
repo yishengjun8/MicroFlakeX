@@ -6,6 +6,7 @@
 #define MFX_PORT __declspec(dllimport)
 #pragma comment(lib, "MfxAppFrame.lib")
 #include "MfxGraph.h"
+
 #include <set>
 #include <thread>
 
@@ -18,6 +19,7 @@ namespace MicroFlakeX
 	class MFX_PORT MfxApp;
 
 	class MFX_PORT MfxUI;
+
 	class MFX_PORT MfxControl;
 }
 
@@ -270,7 +272,7 @@ namespace MicroFlakeX
 	private:
 		MfxUI* myBindingUI;
 	public:
-		HWND MfxCreateUIExW(
+		HWND MfxCreateUIEx(
 			MfxUI* ui, MfxRect rect,
 			DWORD dwExStyle, DWORD dwStyle,
 			MfxString className, MfxString windowsName);

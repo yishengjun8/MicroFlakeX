@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 
 #include "MfxGraph.h"
+
 using namespace MicroFlakeX;
 using namespace __MicroFlakeX;
 
@@ -60,6 +61,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     }break;
     case DLL_PROCESS_DETACH:
     {
+        /*
         Gdiplus::GdiplusShutdown(GdiPlus_Token);
 
         CoUninitialize();
@@ -67,6 +69,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
         SafeRelease(gID2DFactory);
         SafeRelease(gIDWriteFactory);
         SafeRelease(gIWICImagingFactory);
+        /**/
     }break;
 
     case DLL_THREAD_ATTACH:

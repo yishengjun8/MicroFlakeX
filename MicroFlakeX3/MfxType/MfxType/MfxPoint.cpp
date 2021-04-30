@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "MfxTypes.h"
+#include "MfxType.h"
 
 MfxObject_Init_0(MfxPoint)
 MfxObject_Register(MfxPoint, Init, 0);

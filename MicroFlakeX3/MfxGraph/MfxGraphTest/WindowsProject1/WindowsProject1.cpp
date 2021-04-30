@@ -4,6 +4,7 @@
 #include "framework.h"
 #include "WindowsProject1.h"
 #include "MfxGraph.h"
+using namespace MicroFlakeX;
 
 #define MAX_LOADSTRING 100
 
@@ -23,6 +24,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
+    MfxBase* temp = nullptr;
+    MfxBaseFactory(MfxText("MfxBaseTest00"), &temp);
+    temp->AutoFunc(MfxText("SayHello"), 10);
+
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -142,7 +147,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         myRect[0].Init(0, 0, 300, 300);
         myImage[0].SetRect(myRect[0]);
-        MfxStrW path = L"D:\\image\\rect.jpg";
+        MfxString path = L"D:\\image\\rect.jpg";
         myImage[0].FromFile(&path, mySize[9]);
         
         myImage[0].SetCanvas(&myCanvas);

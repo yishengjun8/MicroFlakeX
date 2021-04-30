@@ -7,7 +7,7 @@ HINSTANCE __theInstance = nullptr;
 MfxObject_Init_0(MfxApp)
 {
 	__theApp = new MfxApp;
-	__theInstance = GetModuleHandleW(NULL);
+	__theInstance = GetModuleHandle(NULL);
 }
 MfxObject_Init_1(MfxApp)
 MfxObject_Init_2(MfxApp, MfxBase);
@@ -46,11 +46,11 @@ MicroFlakeX::MfxApp::MfxApp()
 
 	//tempWC.lpszMenuName = MfxTextMainMenu";    // name of menu resource
 	tempWC.lpszClassName = MfxText("MfxNormalUI");  // name of window class
-	tempWC.hIconSm = LoadIconW(NULL, IDI_APPLICATION);  // small class icon 
+	tempWC.hIconSm = LoadIcon(NULL, IDI_APPLICATION);  // small class icon 
 
-	if (!RegisterClassExW(&tempWC))
+	if (!RegisterClassEx(&tempWC))
 	{
-		MessageBoxW(NULL, MfxText("MfxNormalUI Registration Failed!"), MfxText("Error!"), MB_ICONEXCLAMATION | MB_OK);
+		MessageBox(NULL, MfxText("MfxNormalUI Registration Failed!"), MfxText("Error!"), MB_ICONEXCLAMATION | MB_OK);
 	}
 }
 
@@ -62,21 +62,21 @@ MicroFlakeX::MfxApp::~MfxApp()
 void MicroFlakeX::MfxApp::Run()
 {
 	MSG tMsg;
-	while (GetMessageW(&tMsg, NULL, 0, 0) > 0) {
+	while (GetMessage(&tMsg, NULL, 0, 0) > 0) {
 		TranslateMessage(&tMsg);
-		DispatchMessageW(&tMsg);
+		DispatchMessage(&tMsg);
 	}
 	overParam = tMsg.wParam;
 }
 
-HWND MicroFlakeX::MfxApp::MfxCreateUIExW(
+HWND MicroFlakeX::MfxApp::MfxCreateUIEx(
 	MfxUI* ui, MfxRect rect,
 	DWORD dwExStyle, DWORD dwStyle,
 	MfxString className, MfxString windowsName)
 {
 	while (myBindingUI);
 	myBindingUI = ui; 
-	return CreateWindowExW(
+	return CreateWindowEx(
 		dwExStyle, className.c_str(), windowsName.c_str(), dwStyle,
 		rect.myX, rect.myY, rect.myWidth, rect.myHeight, NULL, NULL, __theInstance, NULL
 	);
@@ -105,5 +105,5 @@ MfxReturn MicroFlakeX::MfxApp::ForwardMessage(HWND hWnd, MfxMsg message, WPARAM 
 	{
 		return (t_Itera->second)->ProcMessage(message, wParam, lParam);
 	}
-	return DefWindowProcW(hWnd, message, wParam, lParam);
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }

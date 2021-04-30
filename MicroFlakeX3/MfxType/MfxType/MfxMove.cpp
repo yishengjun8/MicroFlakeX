@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "MfxTypes.h"
+#include "MfxType.h"
 
 MfxObject_Init_0(MfxMove)
 MfxObject_Register(MfxMove, EachFrame, 0);

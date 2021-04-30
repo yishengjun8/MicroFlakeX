@@ -33,6 +33,7 @@
 * 更新：
 * 1、线程池
 * 2、debug内存泄漏检测
+* 3、
 */
 
 
@@ -62,26 +63,23 @@
 #endif
 
 //公开 类型
-namespace MicroFlakeX
-{
-	MFX_PORT typedef long MfxReturn;
-	MFX_PORT typedef std::string MfxStrA;
-	MFX_PORT typedef std::wstring MfxStrW;
-
+typedef long MfxReturn;
+typedef std::string MfxStringA;
+typedef std::wstring MfxStringW;
 
 #ifdef UNICODE
-#define __MStr(str) L##str
-#define __MfxStr MfxStrW;
+#define __MfxText(str) L##str
+#define __MfxString MfxStringW
+
 
 #elif 
-#define __MStr(str) str
-#define __MfxStr MfxStrW;
+#define __MfxText(str) str
+#define __MfxString MfxStringA;
 
 #endif
 
-#define MStr(str) __MStr(str)
-#define MfxStr __MfxStr;
-}
+#define MfxString __MfxString
+#define MfxText(str) __MfxText(str)
 
 //公开 类 - 模板
 namespace MicroFlakeX
@@ -89,6 +87,8 @@ namespace MicroFlakeX
 	class MFX_PORT MfxBase;
 	class MFX_PORT MfxLock;
 
+
+	typedef std::vector<MfxBase*> MfxBase_Vector;
 	//Mfx模板
 	template<class DataType>
 	class MfxDataFlag;
@@ -104,7 +104,7 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	//Mfx工厂
-	MFX_PORT MfxReturn MfxBaseFactory(MfxStrW object, MfxBase** ret);
+	MFX_PORT MfxReturn MfxBaseFactory(MfxString object, MfxBase** ret);
 }
 
 //公开 宏
@@ -148,8 +148,8 @@ namespace MicroFlakeX
 namespace __MicroFlakeX
 {
 	class MFX_PORT MfxFactoryHand;
-	MFX_PORT MicroFlakeX::MfxReturn MfxRegisterObject(MicroFlakeX::MfxStrW object, MfxFactoryHand* hand);
-
+	MFX_PORT MfxReturn MfxRemoveObject(MfxString object);
+	MFX_PORT MfxReturn MfxRegisterObject(MfxString object, MfxFactoryHand* hand);
 }
 
 //公开 类声明
@@ -166,8 +166,9 @@ namespace MicroFlakeX
 		virtual BOOL operator==(MfxBase& rhs);
 
 	public:
-		virtual MfxReturn AutoFunc(MfxStrW func...);
-		virtual MfxReturn ObjectName(MfxStrW* ret);
+		virtual MfxReturn AutoFunc(MfxString func...);
+		virtual MfxReturn FuncName(MfxString* ret);
+		virtual MfxReturn ObjectName(MfxString* ret);
 	private:
 		CRITICAL_SECTION myCriticalSection;
 	};
@@ -188,8 +189,11 @@ namespace __MicroFlakeX
 	class MFX_PORT MfxFactoryHand
 	{
 	public:
-		MfxFactoryHand(MicroFlakeX::MfxStrW object);
-		virtual MicroFlakeX::MfxReturn Creat(MicroFlakeX::MfxBase** ret) = 0;
+		MfxFactoryHand(MfxString object);
+		virtual MfxReturn Creat(MicroFlakeX::MfxBase** ret) = 0;
+		virtual ~MfxFactoryHand();
+	private:
+		MfxString myObjectName;
 	};
 }
 
@@ -279,12 +283,13 @@ namespace MicroFlakeX
 
 #define __MfxObject \
 public:\
-	MfxReturn AutoFunc(MfxStrW setFunc...);\
-	MfxReturn FuncName(MfxStrW* ret);\
-	MfxReturn FuncInfor(MfxStrW* ret);\
-	MfxReturn ObjectName(MfxStrW* ret);
+	MfxReturn AutoFunc(MfxString setFunc...);\
+	MfxReturn FuncName(MfxString* ret);\
+	MfxReturn ObjectName(MfxString* ret);
 	
-
+//---------------------------------------------------
+// 
+//---------------------------------------------------
 #define __MfxObject_Init_0(obj) \
 using namespace MicroFlakeX;\
 using namespace __MicroFlakeX;\
@@ -292,51 +297,42 @@ using MicroFlakeX::obj;\
 struct obj##MfxAutoFuncInfor\
 {\
 	int myID = 0;\
-	std::wstring  myName;\
-	std::wstring myAllName;\
+	MfxString  myName;\
+	MfxString myAllName;\
 };\
-std::map<MfxStrW, obj##MfxAutoFuncInfor*> obj##MfxAutoFuncMap;\
-typedef std::map<MfxStrW,obj##MfxAutoFuncInfor*>::value_type obj##MfxAutoFuncValue;\
-typedef std::map<MfxStrW,obj##MfxAutoFuncInfor*>::iterator obj##MfxAutoFuncIterator;\
-MfxReturn obj::FuncName(MfxStrW* ret)\
+std::map<MfxString, obj##MfxAutoFuncInfor*> obj##MfxAutoFuncMap;\
+typedef std::map<MfxString,obj##MfxAutoFuncInfor*>::value_type obj##MfxAutoFuncValue;\
+typedef std::map<MfxString,obj##MfxAutoFuncInfor*>::iterator obj##MfxAutoFuncIterator;\
+MfxReturn obj::FuncName(MfxString* ret)\
 {\
-	MfxCodeLock(this);\
-	*ret = MStr("");\
+	*ret = MfxText("");\
 	for(auto i : obj##MfxAutoFuncMap)\
 	{\
 		*ret += i.second->myName;\
-		*ret += MStr("\n");\
+		*ret += MfxText("...\n");\
 	}\
 	return RFine;\
 }\
-MfxReturn obj::FuncInfor(MfxStrW* ret)\
+MfxReturn obj::ObjectName(MfxString* ret)\
 {\
-	MfxCodeLock(this);\
-	*ret = MStr("");\
-	for(auto i : obj##MfxAutoFuncMap)\
-	{\
-		*ret += i.second->myAllName;\
-		*ret += MStr("\n");\
-	}\
-	return RFine;\
-}\
-MfxReturn obj::ObjectName(MfxStrW* ret)\
-{\
-	MfxCodeLock(this);\
-	*ret = MStr(#obj);\
+	*ret = MfxText(#obj);\
 	return RFine;\
 }\
 class obj##FactoryHand\
 	: public MfxFactoryHand\
 {\
 public:\
-	obj##FactoryHand(MfxStrW object)\
+	obj##FactoryHand(MfxString object)\
 		: MfxFactoryHand(object)\
 	{\
 		obj##MfxAutoFuncInfor* infor = nullptr;\
 		WCHAR typeName[1024]; size_t n = 0;\
 		MfxObject_Register(obj, AutoFunc, -1)
-
+//---------------------------------------------------
+// //obj##Hand
+// obj##FactoryHand obj##Hand(MfxText(#obj));\
+// obj##FactoryHand *obj##Hand = new obj##FactoryHand(MfxText(#obj));\
+//---------------------------------------------------
 #define __MfxObject_Init_1(obj) \
 	};\
 	MfxReturn Creat(MfxBase** ret)\
@@ -345,8 +341,8 @@ public:\
 		return RFine;\
 	}\
 };\
-auto obj##Hand = new obj##FactoryHand(L#obj);\
-MfxReturn obj::AutoFunc(MfxStrW setFunc...)\
+obj##FactoryHand obj##Hand(MfxText(#obj));\
+MfxReturn obj::AutoFunc(MfxString setFunc...)\
 {\
 	MfxCodeLock(this);\
 	MfxReturn ret = RFail;\
@@ -360,11 +356,13 @@ MfxReturn obj::AutoFunc(MfxStrW setFunc...)\
 		int caID = iter->second->myID;\
 		switch (caID)\
 		{
-
+//---------------------------------------------------
+// 
+//---------------------------------------------------
 #define __MfxObject_Init_2(obj, father) \
 		case -1:\
 		{\
-			setFunc = va_arg(argc, MfxStrW);\
+			setFunc = va_arg(argc, MfxString);\
 			argc = va_arg(argc, va_list);\
 			goto BeginSwitch;\
 			break;\
@@ -373,11 +371,14 @@ MfxReturn obj::AutoFunc(MfxStrW setFunc...)\
 	}\
 	else\
 	{\
-		ret = father::AutoFunc(MStr("AutoFunc"), setFunc, argc); \
+		ret = father::AutoFunc(MfxText("AutoFunc"), setFunc, argc); \
 	}\
 	return ret;\
 }
 
+//---------------------------------------------------
+// 
+//---------------------------------------------------
 #define __MfxObject_Register(obj, func, id) \
 infor = new obj##MfxAutoFuncInfor;\
 infor->myID = id;\

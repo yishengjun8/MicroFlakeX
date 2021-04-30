@@ -82,7 +82,7 @@ MicroFlakeX::MfxUI::MfxUI()
     MfxRegMessages();
 
     MfxRect tRect(60, 60, 400, 400);
-    MfxApp::theApp->MfxCreateUIExW(
+    MfxApp::theApp->MfxCreateUIEx(
         this, tRect,
         NULL, MfxUI_Style_Normal,
         MfxText("MfxNormalUI"), MfxText("MfxNormalUI"));
@@ -93,7 +93,7 @@ MicroFlakeX::MfxUI::MfxUI(MfxRect set, MfxString title)
     MfxUIInitData();
     MfxRegMessages();
 
-    MfxApp::theApp->MfxCreateUIExW(
+    MfxApp::theApp->MfxCreateUIEx(
         this, set,
         NULL, MfxUI_Style_Normal,
         MfxText("MfxNormalUI"), title);
@@ -104,7 +104,7 @@ MicroFlakeX::MfxUI::MfxUI(MfxRect set, DWORD myStyle_EN, MfxString title)
     MfxUIInitData();
     MfxRegMessages();
 
-    MfxApp::theApp->MfxCreateUIExW(
+    MfxApp::theApp->MfxCreateUIEx(
         this, set,
         NULL, myStyle_EN,
         MfxText("MfxNormalUI"), title);
@@ -115,7 +115,7 @@ MicroFlakeX::MfxUI::MfxUI(MfxRect set, DWORD myStyleEx_EN, DWORD myStyle_EN, Mfx
     MfxUIInitData();
     MfxRegMessages();
 
-    MfxApp::theApp->MfxCreateUIExW(
+    MfxApp::theApp->MfxCreateUIEx(
         this, set,
         myStyleEx_EN, myStyle_EN,
         MfxText("MfxNormalUI"), title);

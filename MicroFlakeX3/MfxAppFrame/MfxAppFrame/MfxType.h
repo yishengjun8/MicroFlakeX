@@ -14,20 +14,20 @@
 /* STLÄ£°å¿â */
 /**/
 
-/* GDIPLUS */
-#include <gdiplus.h>
-#pragma comment(lib,"gdiplus.lib")
-/**/
-
 /* Direct2D1 */
 #include <d2d1.h>
-#include <dwmapi.h>
+#include <d2d1helper.h>
 #include <dwrite.h>
 #include <wincodec.h>
-#include <d2d1helper.h>
+#include <dwmapi.h>
+/**/
+
+/* time¿â */
+#include <ctime>
+/**/
+
 #pragma comment(lib, "D2D1.lib")
 #pragma comment(lib, "DWrite.lib")
-/**/
 #endif
 
 namespace MicroFlakeX
@@ -48,7 +48,7 @@ namespace MicroFlakeX
     class MfxType :
         public MfxBase
     {
-
+        MfxObject;
     };
 }
 
@@ -267,7 +267,7 @@ namespace MicroFlakeX
 
     public:
         MfxReturn MoveTo(MfxPoint* setEnd);
-        MfxReturn NextFrame();
+        MfxReturn EachFrame();
     public:
         MfxReturn GetPoint(MfxPoint* ret);
 

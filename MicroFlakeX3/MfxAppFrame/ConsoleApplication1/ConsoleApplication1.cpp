@@ -1,23 +1,15 @@
 ﻿#include <iostream>
 #include "MfxAppFrame.h"
+
 using namespace std;
 using namespace MicroFlakeX;
 
-
-class UI
-    : public MfxUI
-{
-public:
-    UI() :MfxUI::MfxUI()
-    {
-        //this->
-    }
-};
-
 int main()
 {
+    MfxImage myImage;
+
     std::cout << "Hello MicroFlakeX!\n";
-    UI myUI;
+    MfxUI myUI;
     myUI.SetBackColor(MfxColor(255, 0, 255, 0));
 
     MfxControl myControl0(MfxRect(19, 18, 360, 120));

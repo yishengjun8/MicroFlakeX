@@ -3,7 +3,10 @@
 #ifndef PCH_H
 #define PCH_H
 
-#include "MfxTypes.h"
+#include "MfxType.h"
+
+#include "Gdiplus.h"
+#pragma comment(lib, "Gdiplus.lib")
 
 #define MFX_BUILDING
 

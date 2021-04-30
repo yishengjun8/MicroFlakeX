@@ -5,10 +5,11 @@
 #else
 #define MFX_PORT __declspec(dllimport)
 #pragma comment(lib, "MfxGraph.lib")
-#include "MfxGraph.h"
 
-#include "MfxTypes.h"
+#include "MfxType.h"
 
+#include "Gdiplus.h"
+#pragma comment(lib, "Gdiplus.lib")
 #endif
 
 //公开 类 - 模板

@@ -2,7 +2,7 @@
 #include "MfxGraph.h"
 
 MfxObject_Init_0(MfxGraph)
-MfxObject_Init_1(MfxGraph);
+MfxObject_Init_1(MfxGraph)
 MfxObject_Init_2(MfxGraph, MfxBase);
 
 MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC &set, MfxRect rect)
