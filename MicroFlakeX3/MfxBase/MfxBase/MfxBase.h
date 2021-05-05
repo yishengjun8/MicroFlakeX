@@ -36,7 +36,6 @@
 * 3、
 */
 
-
 #ifdef MFX_BUILDING
 #define MFX_PORT __declspec(dllexport)
 #else
@@ -121,7 +120,7 @@ namespace MicroFlakeX
 	//强制 所有子类都需要声明
 #define MfxObject __MfxObject
 
-	//强制 所有的方法在使用前必须使用，以保证线程安全
+	//强制 所有的互斥方法在使用前必须使用，以保证实例的线程安全
 #define MfxCodeLock(obj) __MfxCodeLock(obj)
 
 	//强制 所有的子类必须在其.cpp中优先顺序调用下列三个初始化
@@ -329,7 +328,7 @@ public:\
 		WCHAR typeName[1024]; size_t n = 0;\
 		MfxObject_Register(obj, AutoFunc, -1)
 //---------------------------------------------------
-// //obj##Hand
+// obj##Hand
 // obj##FactoryHand obj##Hand(MfxText(#obj));\
 // obj##FactoryHand *obj##Hand = new obj##FactoryHand(MfxText(#obj));\
 //---------------------------------------------------

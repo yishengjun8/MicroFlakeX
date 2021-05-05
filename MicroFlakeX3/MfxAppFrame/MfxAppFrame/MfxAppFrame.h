@@ -475,6 +475,8 @@ namespace MicroFlakeX
 		MfxDataFlag_bool myRButtonPress;
 		MfxDataFlag_bool myRButtonClickFlag;
 		MfxDataFlag_bool myLButtonMoveFlag, myRButtonMoveFlag;
+
+	private:
 		MfxPoint myButtonMoveBegin;
 
 		MfxImage* myBackImage;

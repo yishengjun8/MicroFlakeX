@@ -626,6 +626,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnRemoveTimer(WPARAM wParam, LPARAM lParam)
 
 MfxReturn MicroFlakeX::MfxUI::__OnFrame(WPARAM wParam, LPARAM lParam)
 {
+    MfxCodeLock(this);
     for (auto tIter : myFrame)
     {
         tIter->AutoFunc(MfxText("EachFrame"));
