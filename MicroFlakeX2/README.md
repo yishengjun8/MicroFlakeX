@@ -24,6 +24,8 @@
 # MicroFlakeX2  
 * MicroFlakeX2包含两部分：MfxBasicModules和MfxAppFramework。前者负责提供WinApp基础，后者则负责构造WinApp框架。  
 * 目前的MicroFlakeX2，开始支持Direct2D绘制，所以这需要一点时间来统一。
+
+注意！！MicroFlakeX2已经放弃维护也就是不再更新和提供帮助支持，仅供学习参考。
 # MicroFlakeX2简介  
 * Mfx2的目标是让WinAPP开发远离复杂的框架，专注于开发本身。
 * Mfx2可以快速自定义控件、窗口的背景图片、蒙版，让你的程序变得更加好看  

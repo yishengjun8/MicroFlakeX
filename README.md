@@ -16,6 +16,8 @@ ____
 * 1、GDI+、GDI、WinAPI的初学者  
 * 2、设计模式初学者  
 * 3、框架设计初学者  
+
+注意！！MicroFlakeX1已经放弃维护也就是不再更新和提供帮助支持，仅供学习参考。
 ___
 ## MicroFlakeX2简介  
 * MfxBasicModules负责提供WinApp基础，例如绘制图像等  
@@ -25,6 +27,8 @@ ___
 * Mfx2采用`事件-方法队列`的模式处理消息，也就是说你可以自定义你的消息处于响应队列的前或后。  
 ## MicroFlakeX2参考  
 请下载并阅读Examples内的示例代码，里面详尽的展示了MicroFlakeX2的全部功能示范。
+
+注意！！MicroFlakeX2已经放弃维护也就是不再更新和提供帮助支持，仅供学习参考。
 ___
 ## MicroFlakeX3简介  
 * Mfx更新为direct2d绘制，更高效的刷新和图片支持  
