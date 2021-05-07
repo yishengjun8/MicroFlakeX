@@ -38,7 +38,7 @@
     <ClCompile Include="MfxUI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MfxControl.cpp">
+    <ClCompile Include="MfxFlake.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

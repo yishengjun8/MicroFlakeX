@@ -12,14 +12,14 @@ int main()
     MfxUI myUI;
     myUI.SetBackColor(MfxColor(255, 0, 255, 0));
 
-    MfxControl myControl0(MfxRect(19, 18, 360, 120));
-    MfxControl myControl1(MfxRect(19, 18*2 + 120, 360, 120));
+    MfxFlake* myControl0 = new MfxFlake(MfxRect(19, 18, 360, 120));
+    MfxFlake* myControl1 = new MfxFlake(MfxRect(19, 18 * 2 + 120, 360, 120));
 
-    myUI.AddControl(&myControl0);
-    myUI.AddControl(&myControl1);
+    myUI.AddFlake(myControl0);
+    myUI.AddFlake(myControl1);
 
-    myControl0.SetTitle(L"Hello MicroFlakeX!");
-    myControl1.SetTitle(L"Welcome to MFX based on D2D");
+    myControl0->SetTitle(L"Hello MicroFlakeX!");
+    myControl1->SetTitle(L"Welcome to MFX based on D2D");
 
     MfxApp::theApp->Run();
 

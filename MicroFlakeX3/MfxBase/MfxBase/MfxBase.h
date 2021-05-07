@@ -88,6 +88,7 @@ namespace MicroFlakeX
 
 
 	typedef std::vector<MfxBase*> MfxBase_Vector;
+
 	//Mfx模板
 	template<class DataType>
 	class MfxDataFlag;
@@ -97,6 +98,9 @@ namespace MicroFlakeX
 
 	template<class T>
 	class MfxThreadPool;
+
+	template<class T>
+	class MfxObjectPool;
 }
 
 //公开 函数
@@ -269,6 +273,17 @@ namespace MicroFlakeX
 		//Mfx智能指针
 
 		//Mfx线程池
+
+		//Mfx对象池
+	template<class T>
+	class MfxObjectPool
+	{
+	public:
+		MfxObjectPool(unsigned long long size)
+		{
+
+		}
+	};
 }
 
 #define __RFine	0

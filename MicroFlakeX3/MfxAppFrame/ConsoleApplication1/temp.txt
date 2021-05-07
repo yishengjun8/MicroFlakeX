@@ -12,10 +12,10 @@ ClassHand <MfxWords> Is Register
 ClassHand <MfxGraph> Is Register
 ClassHand <MfxCanvas> Is Register
 ClassHand <MfxApp> Is Register
-ClassHand <MfxControl> Is Register
+ClassHand <MfxFlake> Is Register
 ClassHand <MfxUI> Is Register
 ClassHand <MfxUI> Is Remove
-ClassHand <MfxControl> Is Remove
+ClassHand <MfxFlake> Is Remove
 ClassHand <MfxApp> Is Remove
 ClassHand <MfxCanvas> Is Remove
 ClassHand <MfxGraph> Is Remove

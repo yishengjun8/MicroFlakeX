@@ -14,6 +14,7 @@ MicroFlakeX::MfxMove::MfxMove()
 
 MicroFlakeX::MfxMove::MfxMove(MfxPoint* setBegin, MfxPoint* setEnd, time_t time_ms)
 {
+
 	myPoint_Now = myPoint_Begin = *setBegin;
 	myPoint_End = *setEnd;
 

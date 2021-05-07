@@ -20,7 +20,7 @@ namespace MicroFlakeX
 
 	class MFX_PORT MfxUI;
 
-	class MFX_PORT MfxControl;
+	class MFX_PORT MfxFlake;
 }
 
 //Mfx窃侏
@@ -46,7 +46,7 @@ namespace MicroFlakeX
 	typedef MfxReturn(MfxUI::* MfxUI_Func)(WPARAM, LPARAM);
 
 	typedef std::set<MfxMsg> MfxUI_Message_Set;
-	typedef std::set<MfxControl*> MfxUI_MfxControl_Set;
+	typedef std::set<MfxFlake*> MfxUI_MfxFlake_Set;
 
 	struct MfxUI_MessageMap_Value
 	{
@@ -65,35 +65,35 @@ namespace MicroFlakeX
 	typedef std::map<MfxMsg, MfxUI_MessageMap_Vector*> MfxUI_MessageMap;
 	typedef MfxUI_MessageMap::value_type MfxUI_MessageMap_elem;
 
-	struct MfxUI_ControlMessage_Key
+	struct MfxUI_FlakeMessage_Key
 	{
-		MfxUI_ControlMessage_Key(MfxControl* set, MfxMsg msg)
+		MfxUI_FlakeMessage_Key(MfxFlake* set, MfxMsg msg)
 		{
-			control = set;
+			Flake = set;
 			message = msg;
 		}
-		MfxControl* control;
+		MfxFlake* Flake;
 		MfxMsg message;
-		bool operator < (const MfxUI_ControlMessage_Key& get) const
+		bool operator < (const MfxUI_FlakeMessage_Key& get) const
 		{
-			if (control != get.control)
+			if (Flake != get.Flake)
 			{
-				return (control < get.control);
+				return (Flake < get.Flake);
 			}
 			else
 			{
-				return (control < get.control) || (message < get.message);
+				return (Flake < get.Flake) || (message < get.message);
 			}
 		}
 	};
-	struct MfxUI_ControlMessage_Value
+	struct MfxUI_FlakeMessage_Value
 	{
-		MfxUI_ControlMessage_Value(WPARAM wPara, LPARAM lPara)
+		MfxUI_FlakeMessage_Value(WPARAM wPara, LPARAM lPara)
 		{
 			wParam = wPara;
 			lParam = lPara;
 		}
-		bool operator < (const MfxUI_ControlMessage_Value& get) const
+		bool operator < (const MfxUI_FlakeMessage_Value& get) const
 		{
 			return true;
 		}
@@ -101,8 +101,8 @@ namespace MicroFlakeX
 		LPARAM lParam;
 	};
 
-	typedef std::map<MfxUI_ControlMessage_Key, MfxUI_Func> MfxUI_ControlMessage_Map;
-	typedef MfxUI_ControlMessage_Map::value_type MfxUI_ControlMessage_Map_elem;
+	typedef std::map<MfxUI_FlakeMessage_Key, MfxUI_Func> MfxUI_FlakeMessage_Map;
+	typedef MfxUI_FlakeMessage_Map::value_type MfxUI_FlakeMessage_Map_elem;
 
 	struct MfxUI_Timer_Value
 	{
@@ -144,26 +144,26 @@ namespace MicroFlakeX
 	/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 	/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
-	typedef std::deque<MfxControl*> MfxControl_Deque;
+	typedef std::deque<MfxFlake*> MfxFlake_Deque;
 
-	typedef MfxReturn(MfxControl::* MfxControl_Func)(WPARAM, LPARAM);
+	typedef MfxReturn(MfxFlake::* MfxFlake_Func)(WPARAM, LPARAM);
 
-	struct MfxControl_MessageMap_Value
+	struct MfxFlake_MessageMap_Value
 	{
-		MfxControl_MessageMap_Value(MfxControl_Func setFunc, MfxFloor setFloor, MfxString setName)
+		MfxFlake_MessageMap_Value(MfxFlake_Func setFunc, MfxFloor setFloor, MfxString setName)
 		{
 			myFunc = setFunc;
 			myFloor = setFloor;
 			myName = setName;
 		}
-		MfxControl_Func myFunc;
+		MfxFlake_Func myFunc;
 		MfxFloor myFloor;
 		MfxString myName;
 	};
-	typedef std::vector< MfxControl_MessageMap_Value*> MfxControl_MessageMap_Vector;
+	typedef std::vector< MfxFlake_MessageMap_Value*> MfxFlake_MessageMap_Vector;
 
-	typedef std::map<MfxMsg, MfxControl_MessageMap_Vector*> MfxControl_MessageMap;
-	typedef MfxControl_MessageMap::value_type MfxControl_MessageMap_elem;
+	typedef std::map<MfxMsg, MfxFlake_MessageMap_Vector*> MfxFlake_MessageMap;
+	typedef MfxFlake_MessageMap::value_type MfxFlake_MessageMap_elem;
 
 	/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 	/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
@@ -173,73 +173,75 @@ namespace MicroFlakeX
 //Mfx旦訟
 namespace MicroFlakeX
 {
-	enum MfxAppMessage
+	enum MFX_MSG
 	{
-		MfxUI_MessageBegin = 0xBFFF,
-		MfxUI_MessageOver = MfxUI_MessageBegin - 256,
+		UI_MSG_BEGIN = 0xBFFF,
+		UI_MSG_END = UI_MSG_BEGIN - 256,
+#define UI_MSG(msg, id) msg = UI_MSG_BEGIN - id,
 
-		MfxControl_MessageBegin = MfxUI_MessageOver,
-		MfxControl_MessageOver = MfxControl_MessageBegin - 256,
+		FLAKE_MSG_BEGIN = UI_MSG_END,
+		FLAKE_MSG_END = FLAKE_MSG_BEGIN - 256,
+#define FLAKE_MSG(msg, id) msg = FLAKE_MSG_BEGIN - id,
 
-		MfxButton_MessageBegin = MfxControl_MessageOver,
-		MfxButton_MessageOver = MfxButton_MessageBegin - 256,
+		BUTTON_MSG_BEGIN = FLAKE_MSG_END,
+		BUTTON_MSG_END = BUTTON_MSG_BEGIN - 256,
+#define BUTTON_MSG(msg, id) msg = BUTTON_MSG_BEGIN - id,
+
 	};
 
-
-	enum MfxUI_Message
+	enum UI_MSG
 	{
-		MfxUI_Message_PaintBack = MfxUI_MessageBegin - 3,
-		MfxUI_Message_PaintMask = MfxUI_MessageBegin - 4,
+		UI_MSG(UI_MSG_PaintBack, 1)
+		UI_MSG(UI_MSG_PaintMask, 2)
 
-		MfxUI_Message_ControlInsert = MfxUI_MessageBegin - 6,
-		MfxUI_Message_ControlRemove = MfxUI_MessageBegin - 7,
+		UI_MSG(UI_MSG_FlakeInsert, 3)
+		UI_MSG(UI_MSG_FlakeRemove, 4)
 
-		MfxUI_Message_SetPaper = MfxUI_MessageBegin - 8,
+		UI_MSG(UI_MSG_SetPaper, 5)
 
-		MfxUI_Message_AddControlMessage = MfxUI_MessageBegin - 10,
-		MfxUI_Message_RemoveControlMessage = MfxUI_MessageBegin - 11,
+		UI_MSG(UI_MSG_AddFlakeMessage, 6)
+		UI_MSG(UI_MSG_RemoveFlakeMessage, 7)
 
-		MfxUI_Message_AddTimer = MfxUI_MessageBegin - 12,
-		MfxUI_Message_RemoveTimer = MfxUI_MessageBegin - 13,
+		UI_MSG(UI_MSG_AddTimer, 8)
+		UI_MSG(UI_MSG_RemoveTimer, 9)
 
-		MfxUI_Message_SetBackColor = MfxUI_MessageBegin - 14,
-		MfxUI_Message_SetMaskColor = MfxUI_MessageBegin - 15,
-		MfxUI_Message_SetBackImage = MfxUI_MessageBegin - 16,
-		MfxUI_Message_SetMaskImage = MfxUI_MessageBegin - 17,
+		UI_MSG(UI_MSG_SetBackColor, 10)
+		UI_MSG(UI_MSG_SetMaskColor, 11)
+		UI_MSG(UI_MSG_SetBackImage, 12)
+		UI_MSG(UI_MSG_SetMaskImage, 13)
 
-		MfxUI_Message_TimerFrame = MfxUI_MessageBegin - 18,
+		UI_MSG(UI_MSG_TimerFrame, 14)
 	};
 
-	enum MfxControl_Message
+	enum FLAKE_MSG
 	{
-		MfxControl_Message_Size = MfxControl_MessageBegin - 1,
-		MfxControl_Message_Point = MfxControl_MessageBegin - 2,
+		FLAKE_MSG(FLAKE_MSG_Size, 1)
+		FLAKE_MSG(FLAKE_MSG_Point, 2)
 
-		MfxControl_Message_LButtonClick = MfxControl_MessageBegin - 5,
-		MfxControl_Message_RButtonClick = MfxControl_MessageBegin - 6,
+		FLAKE_MSG(FLAKE_MSG_LButtonClick, 3)
+		FLAKE_MSG(FLAKE_MSG_RButtonClick, 4)
 
-		MfxControl_Message_ControlFloorChange = MfxControl_MessageBegin - 7,
+		FLAKE_MSG(FLAKE_MSG_FlakeFloorChange, 5)
+		FLAKE_MSG(FLAKE_MSG_FlakeMessage, 6)
 
-		MfxControl_Message_ControlMessage = MfxControl_MessageBegin - 8,
+		FLAKE_MSG(FLAKE_MSG_SetFloor, 7)
+		FLAKE_MSG(FLAKE_MSG_SetTitle, 8)
 
-		MfxControl_Message_SetFloor = MfxControl_MessageBegin - 9,
+		FLAKE_MSG(FLAKE_MSG_SetBackColor, 9)
+		FLAKE_MSG(FLAKE_MSG_SetMaskColor, 10)
+		FLAKE_MSG(FLAKE_MSG_SetBackImage, 11)
+		FLAKE_MSG(FLAKE_MSG_SetMaskImage, 12)
 
-		MfxControl_Message_SetTitle = MfxControl_MessageBegin - 13,
-		MfxControl_Message_SetBackColor = MfxControl_MessageBegin - 14,
-		MfxControl_Message_SetMaskColor = MfxControl_MessageBegin - 15,
-		MfxControl_Message_SetBackImage = MfxControl_MessageBegin - 16,
-		MfxControl_Message_SetMaskImage = MfxControl_MessageBegin - 17,
-		MfxControl_Message_SetTitleWords = MfxControl_MessageBegin - 18,
-
-		MfxControl_Message_SetTitleSize = MfxControl_MessageBegin - 19,
-		MfxControl_Message_GetTitleSize = MfxControl_MessageBegin - 20,
+		FLAKE_MSG(FLAKE_MSG_SetTitleWords, 13)
+		FLAKE_MSG(FLAKE_MSG_SetTitleSize, 14)
+		FLAKE_MSG(FLAKE_MSG_GetTitleSize, 15)
 	};
 
-	enum MfxUI_Style_EN
+	enum UI_STYLE
 	{
-		MfxUI_Style_AntiFlicker = WS_CLIPCHILDREN | WS_CLIPSIBLINGS, //契描妨
-		MfxUI_Style_Normal = WS_OVERLAPPEDWINDOW | WS_VISIBLE | MfxUI_Style_AntiFlicker, //屎械
-		MfxUI_Style_Pop = WS_POPUP | WS_VISIBLE | MfxUI_Style_AntiFlicker, //涙円崇
+		UI_STYLE_AntiFlicker = WS_CLIPCHILDREN | WS_CLIPSIBLINGS, //契描妨
+		UI_STYLE_Normal = WS_OVERLAPPEDWINDOW | WS_VISIBLE | UI_STYLE_AntiFlicker, //屎械
+		UI_STYLE_Pop = WS_POPUP | WS_VISIBLE | UI_STYLE_AntiFlicker, //涙円崇
 	};
 }
 
@@ -305,21 +307,21 @@ namespace MicroFlakeX
 		MfxReturn CreateSuccess();
 
 		MfxReturn ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam);
-		MfxReturn SendMessageToControls(MfxMsg message, WPARAM wParam, LPARAM lParam, bool sort);
+		MfxReturn SendMessageToFlakes(MfxMsg message, WPARAM wParam, LPARAM lParam, bool sort);
 
 	private:
 		MfxUI_Timer_Map __myTimerMap;
-		MfxUI_ControlMessage_Map __myControlMessageMap;
-		MfxControl_Deque myControlDeque;
-		MfxUI_MfxControl_Set myControlSet;
+		MfxUI_FlakeMessage_Map __myFlakeMessageMap;
+		MfxFlake_Deque myFlakeDeque;
+		MfxUI_MfxFlake_Set myFlakeSet;
 	public:
-		MfxReturn AddControl(MfxControl* set);
-		MfxReturn RemoveControl(MfxControl* set);
+		MfxReturn AddFlake(MfxFlake* set);
+		MfxReturn RemoveFlake(MfxFlake* set);
 
-		MfxReturn AddControlMessage(MfxControl* target, MfxMsg message, MfxUI_Func recv);
-#define UI_ADD_CONMSG(Control, Msg, recvFunc)\
-	AddControlMessage(Control, Msg, (MfxUI_Func)&recvFunc)
-		MfxReturn RemoveControlMessage(MfxControl* target, MfxMsg message);
+		MfxReturn AddFlakeMessage(MfxFlake* target, MfxMsg message, MfxUI_Func recv);
+#define UI_ADD_CONMSG(Flake, Msg, recvFunc)\
+	AddFlakeMessage(Flake, Msg, (MfxUI_Func)&recvFunc)
+		MfxReturn RemoveFlakeMessage(MfxFlake* target, MfxMsg message);
 
 		MfxReturn AddTimer(WPARAM timerID, clock_t delay, MfxUI_Func recv);
 #define UI_ADD_TIMER(timerID, delay, recvFunc)\
@@ -354,23 +356,23 @@ namespace MicroFlakeX
 		//MfxReturn SetSmallIcon(MfxImage* set);
 
 	private:
-		MfxControl* myMutexFocus, * myKeyboardFocus;
+		MfxFlake* myMutexFocus, * myKeyboardFocus;
 		bool myMutexFocusLockFlag, myKeyboardFocusLockFag;
 	public:
-		MfxReturn LockMutexFocus(MfxControl* set);
+		MfxReturn LockMutexFocus(MfxFlake* set);
 		MfxReturn UnLockMutexFocus();
-		MfxReturn SetMutexFocus(MfxControl* set);
-		MfxReturn SetKeyboardFocus(MfxControl* set);
-		MfxReturn GetMutexFocus(MfxControl** ret);
-		MfxReturn GetKeyboardFocus(MfxControl** ret);
+		MfxReturn SetMutexFocus(MfxFlake* set);
+		MfxReturn SetKeyboardFocus(MfxFlake* set);
+		MfxReturn GetMutexFocus(MfxFlake** ret);
+		MfxReturn GetKeyboardFocus(MfxFlake** ret);
 
 
 	private:
 		MfxFloor myUnderFloor, myCoverFloor;
 		MfxUI_MessageMap myMessageMap;
-		MfxUI_Message_Set myControlMessageSet;
+		MfxUI_Message_Set myFlakeMessageSet;
 #define UI_CON_RECV_MSG(Msg)\
-	(myControlMessageSet.insert((MfxMsg)Msg))
+	(myFlakeMessageSet.insert((MfxMsg)Msg))
 
 	public:
 		MfxReturn RemoveMessage(MfxMsg message, MfxString name);
@@ -396,9 +398,9 @@ namespace MicroFlakeX
 		MfxReturn __OnPaintBackDC(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnPaintMaskDC(WPARAM wParam, LPARAM lParam);
 
-		MfxReturn __OnControlInsert(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnControlRemove(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnControlFloorChange(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnFlakeInsert(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnFlakeRemove(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnFlakeFloorChange(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnTimer(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnAddTimer(WPARAM wParam, LPARAM lParam);
@@ -407,9 +409,9 @@ namespace MicroFlakeX
 		MfxReturn __OnFrame(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnFrameMSGPost(WPARAM wParam, LPARAM lParam);
 
-		MfxReturn __OnControlMessage(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnAddControlMessage(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnRemoveControlMessage(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnFlakeMessage(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnAddFlakeMessage(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnRemoveFlakeMessage(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnSetBackColor(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnSetMaskColor(WPARAM wParam, LPARAM lParam);
@@ -418,11 +420,11 @@ namespace MicroFlakeX
 	};
 }
 
-//MfxControl
+//MfxFlake
 /**/
 namespace MicroFlakeX
 {
-	class MfxControl
+	class MfxFlake
 		: public MfxBase
 	{
 		MfxObject;
@@ -430,11 +432,11 @@ namespace MicroFlakeX
 		friend class MfxApp;
 	private:
 		void MfxRegMessages();
-		void MfxControlInitData();
+		void MfxFlakeInitData();
 	public:
-		MfxControl();
-		MfxControl(MfxRect set);
-		virtual ~MfxControl();
+		MfxFlake();
+		MfxFlake(MfxRect set);
+		virtual ~MfxFlake();
 		virtual MfxReturn GetType(MfxString* ret);
 
 		MfxReturn ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam);
@@ -501,21 +503,21 @@ namespace MicroFlakeX
 
 	private:
 		MfxFloor myUnderFloor, myCoverFloor;
-		MfxControl_MessageMap myMessageMap;
+		MfxFlake_MessageMap myMessageMap;
 	public:
 		MfxReturn RemoveMessage(MfxMsg message, MfxString name);
-		MfxReturn InsertMessage(MfxMsg message, MfxControl_MessageMap_Value* msgValue);
-#define CONTROL_REG_MSG(Msg, myClass, FuncName, Floor)\
-	InsertMessage(Msg, new MfxControl_MessageMap_Value(\
-		(MfxControl_Func)&myClass::FuncName, Floor, L#myClass#FuncName)\
+		MfxReturn InsertMessage(MfxMsg message, MfxFlake_MessageMap_Value* msgValue);
+#define FLAKE_REG_MSG(Msg, myClass, FuncName, Floor)\
+	InsertMessage(Msg, new MfxFlake_MessageMap_Value(\
+		(MfxFlake_Func)&myClass::FuncName, Floor, L#myClass#FuncName)\
 		);
 
 #define MfxSendMessageToUI(Msg, wPara, lPara)\
 	if(myUI)\
 	{\
-		MfxUI_ControlMessage_Key t_ControlMessageKey(this, Msg); \
-		MfxUI_ControlMessage_Value t_ControlMessageValue(wPara, lPara); \
-		myUI->ProcMessage(MfxControl_Message_ControlMessage, (WPARAM)&t_ControlMessageKey, (WPARAM)&t_ControlMessageValue);\
+		MfxUI_FlakeMessage_Key t_FlakeMessageKey(this, Msg); \
+		MfxUI_FlakeMessage_Value t_FlakeMessageValue(wPara, lPara); \
+		myUI->ProcMessage(FLAKE_MSG_FlakeMessage, (WPARAM)&t_FlakeMessageKey, (WPARAM)&t_FlakeMessageValue);\
 	}
 	
 	private:

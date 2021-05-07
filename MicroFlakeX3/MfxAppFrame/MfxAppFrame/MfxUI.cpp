@@ -16,10 +16,10 @@ void MicroFlakeX::MfxUI::MfxRegMessages()
     UI_CON_RECV_MSG(WM_RBUTTONDOWN);
     UI_CON_RECV_MSG(WM_RBUTTONUP);
 
-    UI_CON_RECV_MSG(MfxUI_Message_SetPaper);
+    UI_CON_RECV_MSG(UI_MSG_SetPaper);
 
-    UI_CON_RECV_MSG(MfxUI_Message_PaintBack);
-    UI_CON_RECV_MSG(MfxUI_Message_PaintMask);
+    UI_CON_RECV_MSG(UI_MSG_PaintBack);
+    UI_CON_RECV_MSG(UI_MSG_PaintMask);
 
     /* ¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª */
     /* ¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª */
@@ -36,27 +36,27 @@ void MicroFlakeX::MfxUI::MfxRegMessages()
 
 
     UI_REG_MSG(WM_PAINT, MfxUI, __OnPaint, myCoverFloor);
-    UI_REG_MSG(MfxUI_Message_PaintBack, MfxUI, __OnPaintBackDC, myCoverFloor);
-    UI_REG_MSG(MfxUI_Message_PaintMask, MfxUI, __OnPaintMaskDC, myCoverFloor);
+    UI_REG_MSG(UI_MSG_PaintBack, MfxUI, __OnPaintBackDC, myCoverFloor);
+    UI_REG_MSG(UI_MSG_PaintMask, MfxUI, __OnPaintMaskDC, myCoverFloor);
 
-    UI_REG_MSG(MfxUI_Message_ControlInsert, MfxUI, __OnControlInsert, myCoverFloor);
-    UI_REG_MSG(MfxUI_Message_ControlRemove, MfxUI, __OnControlRemove, myCoverFloor);
-    UI_REG_MSG(MfxControl_Message_ControlFloorChange, MfxUI, __OnControlFloorChange, myCoverFloor);
+    UI_REG_MSG(UI_MSG_FlakeInsert, MfxUI, __OnFlakeInsert, myCoverFloor);
+    UI_REG_MSG(UI_MSG_FlakeRemove, MfxUI, __OnFlakeRemove, myCoverFloor);
+    UI_REG_MSG(FLAKE_MSG_FlakeFloorChange, MfxUI, __OnFlakeFloorChange, myCoverFloor);
 
     UI_REG_MSG(WM_TIMER, MfxUI, __OnTimer, myCoverFloor);
-    UI_REG_MSG(MfxUI_Message_AddTimer, MfxUI, __OnAddTimer, myCoverFloor);
-    UI_REG_MSG(MfxUI_Message_RemoveTimer, MfxUI, __OnRemoveTimer, myCoverFloor);
+    UI_REG_MSG(UI_MSG_AddTimer, MfxUI, __OnAddTimer, myCoverFloor);
+    UI_REG_MSG(UI_MSG_RemoveTimer, MfxUI, __OnRemoveTimer, myCoverFloor);
 
-    UI_REG_MSG(MfxControl_Message_ControlMessage, MfxUI, __OnControlMessage, myCoverFloor);
-    UI_REG_MSG(MfxUI_Message_AddControlMessage, MfxUI, __OnAddControlMessage, myCoverFloor);
-    UI_REG_MSG(MfxUI_Message_RemoveControlMessage, MfxUI, __OnRemoveControlMessage, myCoverFloor);
+    UI_REG_MSG(FLAKE_MSG_FlakeMessage, MfxUI, __OnFlakeMessage, myCoverFloor);
+    UI_REG_MSG(UI_MSG_AddFlakeMessage, MfxUI, __OnAddFlakeMessage, myCoverFloor);
+    UI_REG_MSG(UI_MSG_RemoveFlakeMessage, MfxUI, __OnRemoveFlakeMessage, myCoverFloor);
 
-    UI_REG_MSG(MfxUI_Message_SetBackColor, MfxUI, __OnSetBackColor, myCoverFloor);
-    UI_REG_MSG(MfxUI_Message_SetMaskColor, MfxUI, __OnSetMaskColor, myCoverFloor);
-    UI_REG_MSG(MfxUI_Message_SetBackImage, MfxUI, __OnSetBackImage, myCoverFloor);
-    UI_REG_MSG(MfxUI_Message_SetMaskImage, MfxUI, __OnSetMaskImage, myCoverFloor);
+    UI_REG_MSG(UI_MSG_SetBackColor, MfxUI, __OnSetBackColor, myCoverFloor);
+    UI_REG_MSG(UI_MSG_SetMaskColor, MfxUI, __OnSetMaskColor, myCoverFloor);
+    UI_REG_MSG(UI_MSG_SetBackImage, MfxUI, __OnSetBackImage, myCoverFloor);
+    UI_REG_MSG(UI_MSG_SetMaskImage, MfxUI, __OnSetMaskImage, myCoverFloor);
 
-    UI_REG_MSG(MfxUI_Message_TimerFrame, MfxUI, __OnFrame, myCoverFloor);
+    UI_REG_MSG(UI_MSG_TimerFrame, MfxUI, __OnFrame, myCoverFloor);
     UI_ADD_TIMER(9999, 20, MfxUI::__OnFrameMSGPost);
 }
 
@@ -84,7 +84,7 @@ MicroFlakeX::MfxUI::MfxUI()
     MfxRect tRect(60, 60, 400, 400);
     MfxApp::theApp->MfxCreateUIEx(
         this, tRect,
-        NULL, MfxUI_Style_Normal,
+        NULL, UI_STYLE_Normal,
         MfxText("MfxNormalUI"), MfxText("MfxNormalUI"));
 }
 
@@ -95,7 +95,7 @@ MicroFlakeX::MfxUI::MfxUI(MfxRect set, MfxString title)
 
     MfxApp::theApp->MfxCreateUIEx(
         this, set,
-        NULL, MfxUI_Style_Normal,
+        NULL, UI_STYLE_Normal,
         MfxText("MfxNormalUI"), title);
 }
 
@@ -124,12 +124,7 @@ MicroFlakeX::MfxUI::MfxUI(MfxRect set, DWORD myStyleEx_EN, DWORD myStyle_EN, Mfx
 MicroFlakeX::MfxUI::~MfxUI()
 {
     MfxCodeLock(this);
-    while (myControlDeque.size())
-    {
-        //Ö»ÐèÒªµ÷ÓÃ¿Ø¼þµÄÎö¹¹º¯Êý¾Í¿ÉÒÔÁË
-        //Îö¹¹º¯Êý»á×Ô¶¯·¢ËÍ¿Ø¼þÏú»ÙÏûÏ¢À´×¢ÏúËûµÄ¿Ø¼þÓ³Éä
-        delete myControlDeque[0];
-    }
+    SendMessage(myWnd, WM_DESTROY, 0, 0);
 
     SafeDelete(myBackImage);
     SafeDelete(myMaskImage);
@@ -142,7 +137,7 @@ MfxReturn MicroFlakeX::MfxUI::CreateSuccess()
 
 MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam)
 {
-    SendMessageToControls(message, wParam, lParam, false);
+    SendMessageToFlakes(message, wParam, lParam, false);
 
     MfxReturn t_Ret = RFail;
     auto t_Iter = myMessageMap.find(message);
@@ -160,23 +155,23 @@ MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxMsg message, WPARAM wParam, LPARAM 
     return DefWindowProc(myWnd, message, wParam, lParam);
 }
 
-MfxReturn MicroFlakeX::MfxUI::SendMessageToControls(MfxMsg message, WPARAM wParam, LPARAM lParam, bool sort)
+MfxReturn MicroFlakeX::MfxUI::SendMessageToFlakes(MfxMsg message, WPARAM wParam, LPARAM lParam, bool sort)
 {
-    MfxControl* t_FloatFocus = myMutexFocus;
+    MfxFlake* t_FloatFocus = myMutexFocus;
     myMutexFocus = myMutexFocusLockFlag ? myMutexFocus : nullptr;
 
-    if (myControlMessageSet.find(message) != myControlMessageSet.end())
+    if (myFlakeMessageSet.find(message) != myFlakeMessageSet.end())
     {
         if (sort)
         {
-            for (int i = myControlDeque.size() - 1; i >= 0; i--)
+            for (int i = myFlakeDeque.size() - 1; i >= 0; i--)
             {
-                myControlDeque[i]->ProcMessage(message, wParam, lParam);
+                myFlakeDeque[i]->ProcMessage(message, wParam, lParam);
             }
         }
         else
         {
-            for (auto t_Iter : myControlDeque)
+            for (auto t_Iter : myFlakeDeque)
             {
                 t_Iter->ProcMessage(message, wParam, lParam);
             }
@@ -196,37 +191,37 @@ MfxReturn MicroFlakeX::MfxUI::SendMessageToControls(MfxMsg message, WPARAM wPara
 /* ¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª */
 /* ¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª */
 
-MfxReturn MicroFlakeX::MfxUI::AddControl(MfxControl* set)
+MfxReturn MicroFlakeX::MfxUI::AddFlake(MfxFlake* set)
 {
-    return ProcMessage(MfxUI_Message_ControlInsert, (WPARAM)set, NULL);
+    return ProcMessage(UI_MSG_FlakeInsert, (WPARAM)set, NULL);
 }
 
-MfxReturn MicroFlakeX::MfxUI::RemoveControl(MfxControl* set)
+MfxReturn MicroFlakeX::MfxUI::RemoveFlake(MfxFlake* set)
 {
-    return ProcMessage(MfxUI_Message_ControlRemove, (WPARAM)set, NULL);
+    return ProcMessage(UI_MSG_FlakeRemove, (WPARAM)set, NULL);
 }
 
-MfxReturn MicroFlakeX::MfxUI::AddControlMessage(MfxControl* target, MfxMsg message, MfxUI_Func recv)
+MfxReturn MicroFlakeX::MfxUI::AddFlakeMessage(MfxFlake* target, MfxMsg message, MfxUI_Func recv)
 {
-    MfxUI_ControlMessage_Key t_ControlMessage(target, message);
-    return ProcMessage(MfxUI_Message_AddControlMessage, (WPARAM)&recv, (LPARAM)&t_ControlMessage);
+    MfxUI_FlakeMessage_Key t_FlakeMessage(target, message);
+    return ProcMessage(UI_MSG_AddFlakeMessage, (WPARAM)&recv, (LPARAM)&t_FlakeMessage);
 }
 
-MfxReturn MicroFlakeX::MfxUI::RemoveControlMessage(MfxControl* target, MfxMsg message)
+MfxReturn MicroFlakeX::MfxUI::RemoveFlakeMessage(MfxFlake* target, MfxMsg message)
 {
-    MfxUI_ControlMessage_Key t_ControlMessage(target, message);
-    return ProcMessage(MfxUI_Message_RemoveControlMessage, NULL, (LPARAM)&t_ControlMessage);
+    MfxUI_FlakeMessage_Key t_FlakeMessage(target, message);
+    return ProcMessage(UI_MSG_RemoveFlakeMessage, NULL, (LPARAM)&t_FlakeMessage);
 }
 
 MfxReturn MicroFlakeX::MfxUI::AddTimer(WPARAM timerID, clock_t delay, MfxUI_Func recv)
 {
     MfxUI_Timer_Value t_TimerValue(delay, clock(), recv);
-    return ProcMessage(MfxUI_Message_AddTimer, timerID, (LPARAM)&t_TimerValue);
+    return ProcMessage(UI_MSG_AddTimer, timerID, (LPARAM)&t_TimerValue);
 }
 
 MfxReturn MicroFlakeX::MfxUI::RemoveTimer(WPARAM cid)
 {
-    return ProcMessage(MfxUI_Message_RemoveTimer, cid, NULL);
+    return ProcMessage(UI_MSG_RemoveTimer, cid, NULL);
 }
 
 /* ¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª */
@@ -292,22 +287,22 @@ MfxReturn MicroFlakeX::MfxUI::SetPoint(MfxPoint set)
 
 MfxReturn MicroFlakeX::MfxUI::SetBackColor(MfxColor set)
 {
-    return ProcMessage(MfxUI_Message_SetBackColor, NULL, (LPARAM)&set);
+    return ProcMessage(UI_MSG_SetBackColor, NULL, (LPARAM)&set);
 }
 
 MfxReturn MicroFlakeX::MfxUI::SetMaskColor(MfxColor set)
 {
-    return ProcMessage(MfxUI_Message_SetMaskColor, NULL, (LPARAM)&set);
+    return ProcMessage(UI_MSG_SetMaskColor, NULL, (LPARAM)&set);
 }
 
 MfxReturn MicroFlakeX::MfxUI::SetBackImage(MfxImage* set)
 {
-    return ProcMessage(MfxUI_Message_SetBackImage, NULL, (LPARAM)set);
+    return ProcMessage(UI_MSG_SetBackImage, NULL, (LPARAM)set);
 }
 
 MfxReturn MicroFlakeX::MfxUI::SetMaskImage(MfxImage* set)
 {
-    return ProcMessage(MfxUI_Message_SetMaskImage, NULL, (LPARAM)set);
+    return ProcMessage(UI_MSG_SetMaskImage, NULL, (LPARAM)set);
 }
 
 /**
@@ -338,7 +333,7 @@ MfxReturn MicroFlakeX::MfxUI::SetSmallIcon(MfxImage* set)
 /* ¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª */
 /* ¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª */
 
-MfxReturn MicroFlakeX::MfxUI::LockMutexFocus(MfxControl* set)
+MfxReturn MicroFlakeX::MfxUI::LockMutexFocus(MfxFlake* set)
 {
     MfxCodeLock(this);
     myMutexFocus = set;
@@ -353,7 +348,7 @@ MfxReturn MicroFlakeX::MfxUI::UnLockMutexFocus()
     return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxUI::SetMutexFocus(MfxControl* set)
+MfxReturn MicroFlakeX::MfxUI::SetMutexFocus(MfxFlake* set)
 {
     MfxCodeLock(this);
     if (!myMutexFocus && !myMutexFocusLockFlag)
@@ -367,7 +362,7 @@ MfxReturn MicroFlakeX::MfxUI::SetMutexFocus(MfxControl* set)
     }
 }
 
-MfxReturn MicroFlakeX::MfxUI::SetKeyboardFocus(MfxControl* set)
+MfxReturn MicroFlakeX::MfxUI::SetKeyboardFocus(MfxFlake* set)
 {
     MfxCodeLock(this);
     if (!myMutexFocusLockFlag)
@@ -381,14 +376,14 @@ MfxReturn MicroFlakeX::MfxUI::SetKeyboardFocus(MfxControl* set)
     }
 }
 
-MfxReturn MicroFlakeX::MfxUI::GetMutexFocus(MfxControl** ret)
+MfxReturn MicroFlakeX::MfxUI::GetMutexFocus(MfxFlake** ret)
 {
     MfxCodeLock(this);
     *ret = myMutexFocus;
     return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxUI::GetKeyboardFocus(MfxControl** ret)
+MfxReturn MicroFlakeX::MfxUI::GetKeyboardFocus(MfxFlake** ret)
 {
     MfxCodeLock(this);
     *ret = myKeyboardFocus;
@@ -472,12 +467,20 @@ MfxReturn MicroFlakeX::MfxUI::__OnCreate(WPARAM wParam, LPARAM lParam)
 
     myBackImage = new MfxImage(MfxColor(255, 0, 255, 255), MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
     myBackImage->SetCanvas(&myCanvas);
-    return 0;
+    return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::__OnDestroy(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
+
+    while (myFlakeDeque.size())
+    {
+        //Ö»ÐèÒªµ÷ÓÃ¿Ø¼þµÄÎö¹¹º¯Êý¾Í¿ÉÒÔÁË
+        //Îö¹¹º¯Êý»á×Ô¶¯·¢ËÍ¿Ø¼þÏú»ÙÏûÏ¢À´×¢ÏúËûµÄ¿Ø¼þÓ³Éä
+        delete myFlakeDeque[0];
+    }
+
     PostQuitMessage(0); //½áÊøÏûÏ¢Ñ­»·
     return RFine;
 }
@@ -528,7 +531,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnPaintBackDC(WPARAM wParam, LPARAM lParam)
         myBackImage->Paint();
     }
     //ÕâÀï»æÖÆMain
-    SendMessageToControls(MfxUI_Message_PaintBack, wParam, lParam, true);
+    SendMessageToFlakes(UI_MSG_PaintBack, wParam, lParam, true);
     return RFine;
 }
 
@@ -536,7 +539,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnPaintMaskDC(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
     //ÕâÀï»æÖÆMask
-    SendMessageToControls(MfxUI_Message_PaintMask, wParam, lParam, true);
+    SendMessageToFlakes(UI_MSG_PaintMask, wParam, lParam, true);
     if (myMaskImage)
     {
         myMaskImage->Paint();
@@ -544,18 +547,18 @@ MfxReturn MicroFlakeX::MfxUI::__OnPaintMaskDC(WPARAM wParam, LPARAM lParam)
     return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxUI::__OnControlInsert(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxUI::__OnFlakeInsert(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
     if (wParam)
     {
-        if (myControlSet.insert((MfxControl*)wParam).second)
+        if (myFlakeSet.insert((MfxFlake*)wParam).second)
         {
-            myControlDeque.push_back(((MfxControl*)wParam));
+            myFlakeDeque.push_back(((MfxFlake*)wParam));
             MfxUI_Paper_Value t_PaperValue(this, myWnd, &myCanvas);
-            ((MfxControl*)wParam)->ProcMessage(MfxUI_Message_SetPaper, NULL, (LPARAM)&t_PaperValue);
+            ((MfxFlake*)wParam)->ProcMessage(UI_MSG_SetPaper, NULL, (LPARAM)&t_PaperValue);
 
-            std::sort(myControlDeque.begin(), myControlDeque.end(), MfxApp::FloorCompare<MfxControl>);
+            std::sort(myFlakeDeque.begin(), myFlakeDeque.end(), MfxApp::FloorCompare<MfxFlake>);
             PostMessage(myWnd, WM_PAINT, NULL, NULL);
             return RFine;
         }
@@ -563,19 +566,19 @@ MfxReturn MicroFlakeX::MfxUI::__OnControlInsert(WPARAM wParam, LPARAM lParam)
     return RFail;
 }
 
-MfxReturn MicroFlakeX::MfxUI::__OnControlRemove(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxUI::__OnFlakeRemove(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
     if (wParam)
     {
-        for (auto delIt = myControlDeque.begin(); delIt != myControlDeque.end(); delIt++)
+        for (auto delIt = myFlakeDeque.begin(); delIt != myFlakeDeque.end(); delIt++)
         {
-            if (*delIt == (MfxControl*)wParam)
+            if (*delIt == (MfxFlake*)wParam)
             {
                 MfxUI_Paper_Value t_PaperValue;
-                ((MfxControl*)wParam)->ProcMessage(MfxUI_Message_SetPaper, NULL, (LPARAM)&t_PaperValue);
-                myControlDeque.erase(delIt);
-                myControlSet.erase((MfxControl*)wParam);
+                ((MfxFlake*)wParam)->ProcMessage(UI_MSG_SetPaper, NULL, (LPARAM)&t_PaperValue);
+                myFlakeDeque.erase(delIt);
+                myFlakeSet.erase((MfxFlake*)wParam);
                 return RFine;
             }
         }
@@ -583,10 +586,10 @@ MfxReturn MicroFlakeX::MfxUI::__OnControlRemove(WPARAM wParam, LPARAM lParam)
     return RFail;
 }
 
-MfxReturn MicroFlakeX::MfxUI::__OnControlFloorChange(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxUI::__OnFlakeFloorChange(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
-    std::sort(myControlDeque.begin(), myControlDeque.end(), MfxApp::FloorCompare<MfxControl>);
+    std::sort(myFlakeDeque.begin(), myFlakeDeque.end(), MfxApp::FloorCompare<MfxFlake>);
     return RFine;
 }
 
@@ -637,34 +640,34 @@ MfxReturn MicroFlakeX::MfxUI::__OnFrame(WPARAM wParam, LPARAM lParam)
 MfxReturn MicroFlakeX::MfxUI::__OnFrameMSGPost(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
-    PostMessage(myWnd, MfxUI_Message_TimerFrame, wParam, lParam);
+    PostMessage(myWnd, UI_MSG_TimerFrame, wParam, lParam);
     return RFine;
 }
 
 
-MfxReturn MicroFlakeX::MfxUI::__OnControlMessage(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxUI::__OnFlakeMessage(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
-    auto t_Iter = __myControlMessageMap.find(*(MfxUI_ControlMessage_Key*)wParam);
-    if (t_Iter != __myControlMessageMap.end())
+    auto t_Iter = __myFlakeMessageMap.find(*(MfxUI_FlakeMessage_Key*)wParam);
+    if (t_Iter != __myFlakeMessageMap.end())
     {
-        (this->*t_Iter->second)(((MfxUI_ControlMessage_Value*)lParam)->wParam, ((MfxUI_ControlMessage_Value*)lParam)->lParam);
+        (this->*t_Iter->second)(((MfxUI_FlakeMessage_Value*)lParam)->wParam, ((MfxUI_FlakeMessage_Value*)lParam)->lParam);
         return RFine;
     }
     return RFail;
 }
 
-MfxReturn MicroFlakeX::MfxUI::__OnAddControlMessage(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxUI::__OnAddFlakeMessage(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
-    return __myControlMessageMap.insert(
-        MfxUI_ControlMessage_Map_elem(*(MfxUI_ControlMessage_Key*)lParam, *(MfxUI_Func*)wParam)).second ? RFine : RFail;
+    return __myFlakeMessageMap.insert(
+        MfxUI_FlakeMessage_Map_elem(*(MfxUI_FlakeMessage_Key*)lParam, *(MfxUI_Func*)wParam)).second ? RFine : RFail;
 }
 
-MfxReturn MicroFlakeX::MfxUI::__OnRemoveControlMessage(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxUI::__OnRemoveFlakeMessage(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
-    return  __myControlMessageMap.erase(*(MfxUI_ControlMessage_Key*)lParam) ? RFine : RFail;
+    return  __myFlakeMessageMap.erase(*(MfxUI_FlakeMessage_Key*)lParam) ? RFine : RFail;
 }
 
 /**/

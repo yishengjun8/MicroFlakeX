@@ -1,43 +1,43 @@
 #include "pch.h"
 #include "MfxAppFrame.h"
 
-MfxObject_Init_0(MfxControl)
-MfxObject_Init_1(MfxControl)
-MfxObject_Init_2(MfxControl, MfxBase);
+MfxObject_Init_0(MfxFlake)
+MfxObject_Init_1(MfxFlake)
+MfxObject_Init_2(MfxFlake, MfxBase);
 
-void MicroFlakeX::MfxControl::MfxRegMessages()
+void MicroFlakeX::MfxFlake::MfxRegMessages()
 {
 	myUnderFloor--;
 	myCoverFloor++;
 
-	CONTROL_REG_MSG(MfxUI_Message_SetPaper, MfxControl, __OnSetPaper, myCoverFloor);
+	FLAKE_REG_MSG(UI_MSG_SetPaper, MfxFlake, __OnSetPaper, myCoverFloor);
 
-	CONTROL_REG_MSG(MfxUI_Message_PaintBack, MfxControl, __OnPaintBackDC, myCoverFloor);
-	CONTROL_REG_MSG(MfxUI_Message_PaintMask, MfxControl, __OnPaintMaskDC, myCoverFloor);
+	FLAKE_REG_MSG(UI_MSG_PaintBack, MfxFlake, __OnPaintBackDC, myCoverFloor);
+	FLAKE_REG_MSG(UI_MSG_PaintMask, MfxFlake, __OnPaintMaskDC, myCoverFloor);
 
-	CONTROL_REG_MSG(WM_SIZE, MfxControl, __OnUISize, myCoverFloor);
+	FLAKE_REG_MSG(WM_SIZE, MfxFlake, __OnUISize, myCoverFloor);
 
-	CONTROL_REG_MSG(MfxControl_Message_Size, MfxControl, __OnSize, myCoverFloor);
-	CONTROL_REG_MSG(MfxControl_Message_Point, MfxControl, __OnPoint, myCoverFloor);
+	FLAKE_REG_MSG(FLAKE_MSG_Size, MfxFlake, __OnSize, myCoverFloor);
+	FLAKE_REG_MSG(FLAKE_MSG_Point, MfxFlake, __OnPoint, myCoverFloor);
 
-	CONTROL_REG_MSG(MfxControl_Message_SetFloor, MfxControl, __OnSetFloor, myCoverFloor);
+	FLAKE_REG_MSG(FLAKE_MSG_SetFloor, MfxFlake, __OnSetFloor, myCoverFloor);
 
-	CONTROL_REG_MSG(WM_MOUSEMOVE, MfxControl, __OnMouseMove, myCoverFloor);
+	FLAKE_REG_MSG(WM_MOUSEMOVE, MfxFlake, __OnMouseMove, myCoverFloor);
 
-	CONTROL_REG_MSG(WM_LBUTTONUP, MfxControl, __OnLButtonUp, myCoverFloor);
-	CONTROL_REG_MSG(WM_RBUTTONUP, MfxControl, __OnRButtonUp, myCoverFloor);
-	CONTROL_REG_MSG(WM_LBUTTONDOWN, MfxControl, __OnLButtonDown, myCoverFloor);
-	CONTROL_REG_MSG(WM_RBUTTONDOWN, MfxControl, __OnRButtonDown, myCoverFloor);
+	FLAKE_REG_MSG(WM_LBUTTONUP, MfxFlake, __OnLButtonUp, myCoverFloor);
+	FLAKE_REG_MSG(WM_RBUTTONUP, MfxFlake, __OnRButtonUp, myCoverFloor);
+	FLAKE_REG_MSG(WM_LBUTTONDOWN, MfxFlake, __OnLButtonDown, myCoverFloor);
+	FLAKE_REG_MSG(WM_RBUTTONDOWN, MfxFlake, __OnRButtonDown, myCoverFloor);
 
-	CONTROL_REG_MSG(MfxControl_Message_SetTitle, MfxControl, __OnSetTitle, myCoverFloor);
-	CONTROL_REG_MSG(MfxControl_Message_SetBackColor, MfxControl, __OnSetBackColor, myCoverFloor);
-	CONTROL_REG_MSG(MfxControl_Message_SetMaskColor, MfxControl, __OnSetMaskColor, myCoverFloor);
-	CONTROL_REG_MSG(MfxControl_Message_SetBackImage, MfxControl, __OnSetBackImage, myCoverFloor);
-	CONTROL_REG_MSG(MfxControl_Message_SetMaskImage, MfxControl, __OnSetMaskImage, myCoverFloor);
-	CONTROL_REG_MSG(MfxControl_Message_SetTitleWords, MfxControl, __OnSetTitleWords, myCoverFloor);
+	FLAKE_REG_MSG(FLAKE_MSG_SetTitle, MfxFlake, __OnSetTitle, myCoverFloor);
+	FLAKE_REG_MSG(FLAKE_MSG_SetBackColor, MfxFlake, __OnSetBackColor, myCoverFloor);
+	FLAKE_REG_MSG(FLAKE_MSG_SetMaskColor, MfxFlake, __OnSetMaskColor, myCoverFloor);
+	FLAKE_REG_MSG(FLAKE_MSG_SetBackImage, MfxFlake, __OnSetBackImage, myCoverFloor);
+	FLAKE_REG_MSG(FLAKE_MSG_SetMaskImage, MfxFlake, __OnSetMaskImage, myCoverFloor);
+	FLAKE_REG_MSG(FLAKE_MSG_SetTitleWords, MfxFlake, __OnSetTitleWords, myCoverFloor);
 }
 
-void MicroFlakeX::MfxControl::MfxControlInitData()
+void MicroFlakeX::MfxFlake::MfxFlakeInitData()
 {
 	myUnderFloor = 0;
 	myCoverFloor = 0;
@@ -48,7 +48,7 @@ void MicroFlakeX::MfxControl::MfxControlInitData()
 
 	myFloor = 66;
 
-	myTitle = myType = MfxText("MfxControl");
+	myTitle = myType = MfxText("MfxFlake");
 
 	myMouseFloat = false;
 	myLButtonClickFlag = false;
@@ -66,26 +66,27 @@ void MicroFlakeX::MfxControl::MfxControlInitData()
 	myTitleWords->SetTextAlignmentY(TextAlignmentY::DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 }
 
-MicroFlakeX::MfxControl::MfxControl()
+MicroFlakeX::MfxFlake::MfxFlake()
 {
 	myRect.Init(100, 100, 128, 128);
-	MfxControlInitData();
+	MfxFlakeInitData();
 	MfxRegMessages();
 }
 
-MicroFlakeX::MfxControl::MfxControl(MfxRect set)
+MicroFlakeX::MfxFlake::MfxFlake(MfxRect set)
 {
 	myRect = set;
-	MfxControlInitData();
+	MfxFlakeInitData();
 	MfxRegMessages();
 }
 
-MicroFlakeX::MfxControl::~MfxControl()
+MicroFlakeX::MfxFlake::~MfxFlake()
 {
 	MfxCodeLock(this);
 	if (myUI)
 	{
-		myUI->ProcMessage(MfxUI_Message_ControlRemove, (WPARAM)this, NULL);
+		//��支扮��叙幻完笥辛需
+		myUI->ProcMessage(UI_MSG_FlakeRemove, (WPARAM)this, NULL);
 	}
 
 	SafeDelete(myBackImage);
@@ -93,13 +94,13 @@ MicroFlakeX::MfxControl::~MfxControl()
 	SafeDelete(myTitleWords);
 }
 
-MfxReturn MicroFlakeX::MfxControl::GetType(MfxString* ret)
+MfxReturn MicroFlakeX::MfxFlake::GetType(MfxString* ret)
 {
 	*ret = myType;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxReturn t_Ret = RFail;
@@ -136,47 +137,47 @@ MfxReturn MicroFlakeX::MfxControl::ProcMessage(MfxMsg message, WPARAM wParam, LP
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
-MfxReturn MicroFlakeX::MfxControl::GetMyUI(MfxUI** ret)
+MfxReturn MicroFlakeX::MfxFlake::GetMyUI(MfxUI** ret)
 {
 	*ret = myUI;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::GetFloor(MfxFloor* ret)
+MfxReturn MicroFlakeX::MfxFlake::GetFloor(MfxFloor* ret)
 {
 	*ret = myFloor;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::GetTitle(MfxString* ret)
+MfxReturn MicroFlakeX::MfxFlake::GetTitle(MfxString* ret)
 {
 	*ret = myTitle;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::GetTitleSize(FLOAT* ret)
+MfxReturn MicroFlakeX::MfxFlake::GetTitleSize(FLOAT* ret)
 {
 	return MfxReturn();
 }
 
-MfxReturn MicroFlakeX::MfxControl::GetTitleColor(MfxColor* ret)
+MfxReturn MicroFlakeX::MfxFlake::GetTitleColor(MfxColor* ret)
 {
 	return MfxReturn();
 }
 
-MfxReturn MicroFlakeX::MfxControl::GetRect(MfxRect* ret)
+MfxReturn MicroFlakeX::MfxFlake::GetRect(MfxRect* ret)
 {
 	*ret = myRect;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::GetSize(MfxSize* ret)
+MfxReturn MicroFlakeX::MfxFlake::GetSize(MfxSize* ret)
 {
 	*ret = myRect;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::GetPoint(MfxPoint* ret)
+MfxReturn MicroFlakeX::MfxFlake::GetPoint(MfxPoint* ret)
 {
 	*ret = myRect;
 	return RFine;
@@ -187,45 +188,45 @@ MfxReturn MicroFlakeX::MfxControl::GetPoint(MfxPoint* ret)
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
-MfxReturn MicroFlakeX::MfxControl::SetTitle(MfxString set)
+MfxReturn MicroFlakeX::MfxFlake::SetTitle(MfxString set)
 {
-	return ProcMessage(MfxControl_Message_SetTitle, NULL, (LPARAM)&set);
+	return ProcMessage(FLAKE_MSG_SetTitle, NULL, (LPARAM)&set);
 }
 
-MfxReturn MicroFlakeX::MfxControl::SetTitleSize(FLOAT set)
-{
-	return MfxReturn();
-}
-
-MfxReturn MicroFlakeX::MfxControl::SetTitleColor(MfxColor set)
+MfxReturn MicroFlakeX::MfxFlake::SetTitleSize(FLOAT set)
 {
 	return MfxReturn();
 }
 
-MfxReturn MicroFlakeX::MfxControl::SetFloor(MfxFloor floor)
+MfxReturn MicroFlakeX::MfxFlake::SetTitleColor(MfxColor set)
 {
-	return ProcMessage(MfxControl_Message_SetFloor, NULL, floor);
+	return MfxReturn();
 }
 
-MfxReturn MicroFlakeX::MfxControl::SetRect(MfxRect set)
+MfxReturn MicroFlakeX::MfxFlake::SetFloor(MfxFloor floor)
+{
+	return ProcMessage(FLAKE_MSG_SetFloor, NULL, floor);
+}
+
+MfxReturn MicroFlakeX::MfxFlake::SetRect(MfxRect set)
 {
 	MfxSize t_Size(&set);
 	MfxPoint t_Point(&set);
 
-	ProcMessage(MfxControl_Message_Size, NULL, (LPARAM)&t_Size);
-	ProcMessage(MfxControl_Message_Point, NULL, (LPARAM)&t_Point);
+	ProcMessage(FLAKE_MSG_Size, NULL, (LPARAM)&t_Size);
+	ProcMessage(FLAKE_MSG_Point, NULL, (LPARAM)&t_Point);
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::SetSize(MfxSize set)
+MfxReturn MicroFlakeX::MfxFlake::SetSize(MfxSize set)
 {
-	ProcMessage(MfxControl_Message_Size, NULL, (LPARAM)&set);
+	ProcMessage(FLAKE_MSG_Size, NULL, (LPARAM)&set);
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::SetPoint(MfxPoint set)
+MfxReturn MicroFlakeX::MfxFlake::SetPoint(MfxPoint set)
 {
-	ProcMessage(MfxControl_Message_Point, NULL, (LPARAM)&set);
+	ProcMessage(FLAKE_MSG_Point, NULL, (LPARAM)&set);
 	return RFine;
 }
 
@@ -234,72 +235,72 @@ MfxReturn MicroFlakeX::MfxControl::SetPoint(MfxPoint set)
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
-MfxReturn MicroFlakeX::MfxControl::OpenLButtonMove()
+MfxReturn MicroFlakeX::MfxFlake::OpenLButtonMove()
 {
 	MfxCodeLock(this);
 	myLButtonMoveFlag = true;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::CloseLButtonMove()
+MfxReturn MicroFlakeX::MfxFlake::CloseLButtonMove()
 {
 	MfxCodeLock(this);
 	myLButtonMoveFlag = false;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::OpenRButtonMove()
+MfxReturn MicroFlakeX::MfxFlake::OpenRButtonMove()
 {
 	MfxCodeLock(this);
 	myRButtonMoveFlag = true;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::CloseRButtonMove()
+MfxReturn MicroFlakeX::MfxFlake::CloseRButtonMove()
 {
 	MfxCodeLock(this);
 	myRButtonMoveFlag = false;
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::GetBackImage(MfxImage** ret)
+MfxReturn MicroFlakeX::MfxFlake::GetBackImage(MfxImage** ret)
 {
 	return myBackImage ? myBackImage->Clone(ret) : RFail;
 }
 
-MfxReturn MicroFlakeX::MfxControl::GetMaskImage(MfxImage** ret)
+MfxReturn MicroFlakeX::MfxFlake::GetMaskImage(MfxImage** ret)
 {
 	return myMaskImage ? myMaskImage->Clone(ret) : RFail;
 }
 
-MfxReturn MicroFlakeX::MfxControl::GetTitleWords(MfxWords** ret)
+MfxReturn MicroFlakeX::MfxFlake::GetTitleWords(MfxWords** ret)
 {
 	return myTitleWords ? myTitleWords->Clone(ret) : RFail;
 }
 
-MfxReturn MicroFlakeX::MfxControl::SetBackColor(MfxColor set)
+MfxReturn MicroFlakeX::MfxFlake::SetBackColor(MfxColor set)
 {
-	return ProcMessage(MfxControl_Message_SetBackColor, NULL, (LPARAM)&set);
+	return ProcMessage(FLAKE_MSG_SetBackColor, NULL, (LPARAM)&set);
 }
 
-MfxReturn MicroFlakeX::MfxControl::SetMaskColor(MfxColor set)
+MfxReturn MicroFlakeX::MfxFlake::SetMaskColor(MfxColor set)
 {
-	return ProcMessage(MfxControl_Message_SetMaskColor, NULL, (LPARAM)&set);
+	return ProcMessage(FLAKE_MSG_SetMaskColor, NULL, (LPARAM)&set);
 }
 
-MfxReturn MicroFlakeX::MfxControl::SetBackImage(MfxImage* set)
+MfxReturn MicroFlakeX::MfxFlake::SetBackImage(MfxImage* set)
 {
-	return ProcMessage(MfxControl_Message_SetBackImage, NULL, (LPARAM)set);
+	return ProcMessage(FLAKE_MSG_SetBackImage, NULL, (LPARAM)set);
 }
 
-MfxReturn MicroFlakeX::MfxControl::SetMaskImage(MfxImage* set)
+MfxReturn MicroFlakeX::MfxFlake::SetMaskImage(MfxImage* set)
 {
-	return ProcMessage(MfxControl_Message_SetMaskImage, NULL, (LPARAM)set);
+	return ProcMessage(FLAKE_MSG_SetMaskImage, NULL, (LPARAM)set);
 }
 
-MfxReturn MicroFlakeX::MfxControl::SetTitleWords(MfxWords* set)
+MfxReturn MicroFlakeX::MfxFlake::SetTitleWords(MfxWords* set)
 {
-	return ProcMessage(MfxControl_Message_SetTitleWords, NULL, (LPARAM)set);
+	return ProcMessage(FLAKE_MSG_SetTitleWords, NULL, (LPARAM)set);
 }
 
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
@@ -307,7 +308,7 @@ MfxReturn MicroFlakeX::MfxControl::SetTitleWords(MfxWords* set)
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
-MfxReturn MicroFlakeX::MfxControl::RemoveMessage(MfxMsg message, MfxString name)
+MfxReturn MicroFlakeX::MfxFlake::RemoveMessage(MfxMsg message, MfxString name)
 {
 	MfxCodeLock(this);
 	auto t_Iter = myMessageMap.find(message);
@@ -325,18 +326,18 @@ MfxReturn MicroFlakeX::MfxControl::RemoveMessage(MfxMsg message, MfxString name)
 	return RFail;
 }
 
-MfxReturn MicroFlakeX::MfxControl::InsertMessage(MfxMsg message, MfxControl_MessageMap_Value* msgValue)
+MfxReturn MicroFlakeX::MfxFlake::InsertMessage(MfxMsg message, MfxFlake_MessageMap_Value* msgValue)
 {
 	MfxCodeLock(this);
 	auto t_Iter = myMessageMap.find(message);
 	if (t_Iter == myMessageMap.end())
 	{
-		auto t_AddVector = new MfxControl_MessageMap_Vector;
-		t_Iter = myMessageMap.insert(MfxControl_MessageMap_elem(message, t_AddVector)).first;
+		auto t_AddVector = new MfxFlake_MessageMap_Vector;
+		t_Iter = myMessageMap.insert(MfxFlake_MessageMap_elem(message, t_AddVector)).first;
 	}
 
 	t_Iter->second->push_back(msgValue);
-	std::sort(t_Iter->second->begin(), t_Iter->second->end(), MfxApp::FloorCompare<MfxControl_MessageMap_Value>);
+	std::sort(t_Iter->second->begin(), t_Iter->second->end(), MfxApp::FloorCompare<MfxFlake_MessageMap_Value>);
 
 	return RFine;
 }
@@ -346,7 +347,7 @@ MfxReturn MicroFlakeX::MfxControl::InsertMessage(MfxMsg message, MfxControl_Mess
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 /* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
-MfxReturn MicroFlakeX::MfxControl::__OnSetPaper(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnSetPaper(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxUI_Paper_Value* t_PaperValue = (MfxUI_Paper_Value*)lParam;
@@ -369,7 +370,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnSetPaper(WPARAM wParam, LPARAM lParam)
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnPaintBackDC(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnPaintBackDC(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	if (myBackImage)
@@ -387,19 +388,19 @@ MfxReturn MicroFlakeX::MfxControl::__OnPaintBackDC(WPARAM wParam, LPARAM lParam)
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnPaintMaskDC(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnPaintMaskDC(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	return RFail;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnUISize(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnUISize(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnSize(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnSize(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxSize* t_Size = (MfxSize*)lParam;
@@ -424,7 +425,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnSize(WPARAM wParam, LPARAM lParam)
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnPoint(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnPoint(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint* t_Point = (MfxPoint*)lParam;
@@ -448,19 +449,19 @@ MfxReturn MicroFlakeX::MfxControl::__OnPoint(WPARAM wParam, LPARAM lParam)
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnSetFloor(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnSetFloor(WPARAM wParam, LPARAM lParam)
 {
 	myFloor = lParam;
 	if (myUI)
 	{
-		myUI->ProcMessage(MfxControl_Message_ControlFloorChange, NULL, NULL);
+		myUI->ProcMessage(FLAKE_MSG_FlakeFloorChange, NULL, NULL);
 		PostMessage(myWnd, WM_PAINT, NULL, NULL);
 	}
 	return RFine;
 }
 
 
-MfxReturn MicroFlakeX::MfxControl::__OnMouseMove(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -468,7 +469,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 	myRect.Collision(&mousePos, &tCollision);
 	if (tCollision)
 	{
-		MfxControl* t_Conctrol = nullptr;
+		MfxFlake* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
 		myUI->GetMutexFocus(&t_Conctrol);
 
@@ -502,7 +503,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 
 		MfxPoint t_Point(t_Rect.myX, t_Rect.myY);
 
-		ProcMessage(MfxControl_Message_Point, NULL, (LPARAM)&t_Point);
+		ProcMessage(FLAKE_MSG_Point, NULL, (LPARAM)&t_Point);
 		myButtonMoveBegin = nowPos;
 	}
 	else
@@ -515,7 +516,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnLButtonDown(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDown(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -523,7 +524,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnLButtonDown(WPARAM wParam, LPARAM lParam)
 	myRect.Collision(&mousePos, &tCollision);
 	if (tCollision)
 	{
-		MfxControl* t_Conctrol = nullptr;
+		MfxFlake* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
 		myUI->GetMutexFocus(&t_Conctrol);
 
@@ -551,7 +552,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnLButtonDown(WPARAM wParam, LPARAM lParam)
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnLButtonUp(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -559,7 +560,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnLButtonUp(WPARAM wParam, LPARAM lParam)
 	myRect.Collision(&mousePos, &tCollision);
 	if (tCollision)
 	{
-		MfxControl* t_Conctrol = nullptr;
+		MfxFlake* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
 		myUI->GetMutexFocus(&t_Conctrol);
 
@@ -570,7 +571,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnLButtonUp(WPARAM wParam, LPARAM lParam)
 				myMouseFloat = true;
 				myLButtonPress = false;
 				myLButtonClickFlag = false;
-				MfxSendMessageToUI(MfxControl_Message_LButtonClick, wParam, lParam);
+				MfxSendMessageToUI(FLAKE_MSG_LButtonClick, wParam, lParam);
 			}
 			else
 			{
@@ -593,7 +594,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnLButtonUp(WPARAM wParam, LPARAM lParam)
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnRButtonDown(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDown(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -601,7 +602,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnRButtonDown(WPARAM wParam, LPARAM lParam)
 	myRect.Collision(&mousePos, &tCollision);
 	if (tCollision)
 	{
-		MfxControl* t_Conctrol = nullptr;
+		MfxFlake* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
 		myUI->GetMutexFocus(&t_Conctrol);
 
@@ -628,7 +629,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnRButtonDown(WPARAM wParam, LPARAM lParam)
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -636,7 +637,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 	myRect.Collision(&mousePos, &tCollision);
 	if (tCollision)
 	{
-		MfxControl* t_Conctrol = nullptr;
+		MfxFlake* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
 		myUI->GetMutexFocus(&t_Conctrol);
 
@@ -647,7 +648,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 				myMouseFloat = true;
 				myRButtonPress = false;
 				myRButtonClickFlag = false;
-				MfxSendMessageToUI(MfxControl_Message_RButtonClick, wParam, lParam);
+				MfxSendMessageToUI(FLAKE_MSG_RButtonClick, wParam, lParam);
 			}
 			else
 			{
@@ -671,7 +672,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 }
 
 
-MfxReturn MicroFlakeX::MfxControl::__OnSetTitle(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnSetTitle(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	myTitle = *(MfxString*)lParam;
@@ -682,7 +683,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnSetTitle(WPARAM wParam, LPARAM lParam)
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnSetBackColor(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnSetBackColor(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxColor* t_Set = (MfxColor*)lParam;
@@ -698,7 +699,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnSetBackColor(WPARAM wParam, LPARAM lParam
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnSetMaskColor(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnSetMaskColor(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxColor* t_Set = (MfxColor*)lParam;
@@ -714,7 +715,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnSetMaskColor(WPARAM wParam, LPARAM lParam
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnSetBackImage(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnSetBackImage(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxImage* t_Set = (MfxImage*)lParam;
@@ -728,7 +729,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnSetBackImage(WPARAM wParam, LPARAM lParam
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnSetMaskImage(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnSetMaskImage(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxImage* t_Set = (MfxImage*)lParam;
@@ -742,7 +743,7 @@ MfxReturn MicroFlakeX::MfxControl::__OnSetMaskImage(WPARAM wParam, LPARAM lParam
 	return RFine;
 }
 
-MfxReturn MicroFlakeX::MfxControl::__OnSetTitleWords(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnSetTitleWords(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxWords* t_Set = (MfxWords*)lParam;
