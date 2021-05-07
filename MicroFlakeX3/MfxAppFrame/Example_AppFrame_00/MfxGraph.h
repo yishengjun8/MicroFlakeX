@@ -6,11 +6,10 @@
 #define MFX_PORT __declspec(dllimport)
 #pragma comment(lib, "MfxGraph.lib")
 
-#include "MfxTypes.h"
+#include "MfxType.h"
 
-#include <windowsx.h>
-
-
+#include "Gdiplus.h"
+#pragma comment(lib, "Gdiplus.lib")
 #endif
 
 //公开 类 - 模板
@@ -240,7 +239,6 @@ namespace MicroFlakeX
 
 		static IDWriteTextFormat* gDefTextFormat;
 	protected:
-		MfxRect myRect;
 		MfxString myText;
 		MfxColor myColor;
 		ID2D1Brush* myTextBrush;

@@ -239,7 +239,6 @@ namespace MicroFlakeX
 
 		static IDWriteTextFormat* gDefTextFormat;
 	protected:
-		MfxRect myRect;
 		MfxString myText;
 		MfxColor myColor;
 		ID2D1Brush* myTextBrush;
