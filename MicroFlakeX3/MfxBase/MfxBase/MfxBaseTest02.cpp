@@ -42,7 +42,7 @@ BOOL MicroFlakeX::MfxBaseTest02::operator==(MfxBase& rhs)
 MfxReturn MicroFlakeX::MfxBaseTest02::SayHello(int set)
 {
 	MfxCodeLock(this);
-	std::cout << "Hello MfxBaseTest02 SayHello!" << myData << std::endl;
+	std::cout << "Hello MfxBaseTest02 SayHello!" << set << std::endl;
 	return RFine;
 }
 

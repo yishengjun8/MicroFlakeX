@@ -1,16 +1,14 @@
 ﻿
 #include <iostream>
-#include "MfxGraph.h"
+#include "MfxBase.h"
 using namespace MicroFlakeX;
 
 int main()
 {
     MfxBase* temp = nullptr;
-    MfxRect myRect;
-    MfxImage myImage;
 
-    MfxBaseFactory(MfxText("MfxRect"), &temp);
-    //temp->AutoFunc(MfxText("SayHello"), 10);
+    MfxBaseFactory(MfxText("MfxBaseTest00"), &temp);
+    temp->AutoFunc(MfxText("SayHello"), 66);
 
     std::cout << "Hello World!\n";
     return 0;

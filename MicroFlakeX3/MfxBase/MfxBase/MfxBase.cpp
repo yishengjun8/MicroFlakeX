@@ -77,7 +77,7 @@ MfxReturn MicroFlakeX::MfxBase::ObjectName(MfxString* ret)
 }
 
 #include <fstream>
-std::wofstream mycout("temp.txt");
+std::wofstream mycout("DebugOut.txt");
 
 __MicroFlakeX::MfxFactoryHand::MfxFactoryHand(MfxString object)
 {

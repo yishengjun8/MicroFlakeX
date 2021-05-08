@@ -48,7 +48,6 @@ namespace MicroFlakeX
     class MfxType :
         public MfxBase
     {
-        MfxObject;
     };
 }
 
@@ -119,6 +118,8 @@ namespace MicroFlakeX
         MfxReturn Inflate(FLOAT setX, FLOAT setY);
 
         MfxReturn Collision(MfxBase* set, BOOL* ret);
+
+        MfxReturn PointInside(MfxPoint* set, BOOL* ret);
     public:
         FLOAT myX;
         FLOAT myY;

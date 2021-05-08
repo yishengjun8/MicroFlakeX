@@ -249,25 +249,66 @@ namespace MicroFlakeX
 		UINT myUseFlag;
 		UINT myChangeFlag;
 	public:
-		DataType operator-> () { myUseFlag++; return myData; };
-
-		DataType& operator* () { myUseFlag++; return myData; };
+		DataType& operator-> () { myUseFlag++; return myData; };
 
 		DataType operator= (DataType rhs)
 		{
+			if (myData == rhs)
+			{
+				return myData;
+			}
 			myChangeFlag++;
 			myBeforData = myData;
 			myData = rhs;
 			return myData;
 		};
 
+		operator bool() { return (bool)(myData); };
+
+		operator char() { return (char)(myData); };
+		operator unsigned char() { return (unsigned char)(myData); };
+
+		operator short() { return (short)(myData); };
+		operator unsigned short() { return (unsigned short)(myData); };
+
+		operator int() { return (int)(myData); };
+		operator unsigned int() { return (unsigned int)(myData); };
+
+		operator long() { return (int)(myData); };
+		operator unsigned long() { return (unsigned long)(myData); };
+
+		operator long long() { return (int)(myData); };
+		operator unsigned long long() { return (unsigned long long)(myData); };
+
 		bool operator< (DataType rhs) { return myData < rhs; };
+		bool operator< (DataType& rhs) { return myData < rhs; };
+		bool operator< (DataType&& rhs) { return myData < rhs; };
+		bool operator< (MfxDataFlag<DataType>& rhs) { return myData < rhs.GetData(); };
 
 		bool operator> (DataType rhs) { return myData > rhs; };
+		bool operator> (DataType& rhs) { return myData > rhs; };
+		bool operator> (DataType&& rhs) { return myData > rhs; };
+		bool operator> (MfxDataFlag<DataType>& rhs) { return myData > rhs.GetData(); };
 
 		bool operator== (DataType rhs) { return myData == rhs; };
+		bool operator== (DataType& rhs) { return myData == rhs; };
+		bool operator== (DataType&& rhs) { return myData == rhs; };
+		bool operator== (MfxDataFlag<DataType>& rhs) { return myData == rhs.GetData(); };
 
 		bool operator!= (DataType rhs) { return myData != rhs; };
+		bool operator!= (DataType& rhs) { return myData != rhs; };
+		bool operator!= (DataType&& rhs) { return myData != rhs; };
+		bool operator!= (MfxDataFlag<DataType>& rhs) { return myData != rhs.GetData(); };
+
+		bool operator&& (DataType rhs) { return myData && rhs; };
+		bool operator&& (DataType& rhs) { return myData && rhs; };
+		bool operator&& (DataType&& rhs) { return myData && rhs; };
+		bool operator&& (MfxDataFlag<DataType>& rhs) { return myData && rhs.GetData(); };
+
+		bool operator|| (DataType rhs) { return myData || rhs; };
+		bool operator|| (DataType& rhs) { return myData || rhs; };
+		bool operator|| (DataType&& rhs) { return myData || rhs; };
+		bool operator|| (MfxDataFlag<DataType>& rhs) { return myData || rhs.GetData(); };
 	};
 
 		//Mfx÷«ƒ‹÷∏’Î

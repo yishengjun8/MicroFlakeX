@@ -33,6 +33,7 @@ MfxObject_Register(MfxRect, Empty, 27);
 MfxObject_Register(MfxRect, Offset, 28);
 MfxObject_Register(MfxRect, Inflate, 29);
 MfxObject_Register(MfxRect, Collision, 30);
+MfxObject_Register(MfxRect, PointInside, 31);
 MfxObject_Init_1(MfxRect)
 MfxObject_Case_4(MfxRect, MfxType, Init, 0)
 MfxObject_Case_1(MfxRect, MfxType, GetD2D1RectU, 1)
@@ -65,6 +66,7 @@ MfxObject_Case_1(MfxRect, MfxType, Empty, 27)
 MfxObject_Case_2(MfxRect, MfxType, Offset, 28)
 MfxObject_Case_2(MfxRect, MfxType, Inflate, 29)
 MfxObject_Case_2(MfxRect, MfxType, Collision, 30)
+MfxObject_Case_2(MfxRect, MfxType, PointInside, 31)
 MfxObject_Init_2(MfxRect, MfxType);
 
 MicroFlakeX::MfxRect::MfxRect()
@@ -419,5 +421,17 @@ MfxReturn MicroFlakeX::MfxRect::Collision(MfxBase* set, BOOL* ret)
 
 	*ret = (myLeft < setRight) && (myTop < setBottom) &&
 		(myRight > setLeft) && (myBottom > setTop);
+	return RFine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::PointInside(MfxPoint* set, BOOL* ret)
+{
+	FLOAT myTop = 0, myLeft = 0, myRight = 0, myBottom = 0;
+
+	GetTop(&myTop); GetLeft(&myLeft); GetRight(&myRight); GetBottom(&myBottom);
+
+	*ret = (myTop < set->myY) && (myBottom > set->myY) &&
+		(myLeft < set->myX) && (myRight > set->myX);
+
 	return RFine;
 }

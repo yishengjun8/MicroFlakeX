@@ -88,10 +88,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\..\MfxBase\MfxBase;..\..\MfxType\MfxType;..\..\MfxGraph\MfxGraph;..\..\MfxAppFrame\MfxAppFrame</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\..\MfxBase\MfxBase\Debug;..\..\MfxType\MfxType\Debug;..\..\MfxGraph\MfxGraph\Debug;..\..\MfxAppFrame\MfxAppFrame\Debug</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

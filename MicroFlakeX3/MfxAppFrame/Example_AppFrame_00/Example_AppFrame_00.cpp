@@ -1,6 +1,4 @@
-﻿// Example_AppFrame_00.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
-
-#include <iostream>
+﻿#include <iostream>
 #include "MfxAppFrame.h"
 
 using namespace std;
@@ -29,6 +27,9 @@ int main()
 
     myFlake_00->SetTitle(L"Hello MicroFlakeX!");
     myFlake_01->SetTitle(L"Welcome to MFX based on D2D");
+
+    myFlake_00->OpenLButtonMove();
+    myFlake_00->OpenRButtonMove();
 
     MfxApp::theApp->Run();
 

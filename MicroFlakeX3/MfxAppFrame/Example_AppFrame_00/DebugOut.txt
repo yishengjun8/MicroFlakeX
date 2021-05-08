@@ -1,7 +1,6 @@
 ClassHand <MfxBaseTest00> Is Register
 ClassHand <MfxBaseTest01> Is Register
 ClassHand <MfxBaseTest02> Is Register
-ClassHand <MfxType> Is Register
 ClassHand <MfxSize> Is Register
 ClassHand <MfxRect> Is Register
 ClassHand <MfxPoint> Is Register
@@ -26,7 +25,6 @@ ClassHand <MfxColor> Is Remove
 ClassHand <MfxPoint> Is Remove
 ClassHand <MfxRect> Is Remove
 ClassHand <MfxSize> Is Remove
-ClassHand <MfxType> Is Remove
 ClassHand <MfxBaseTest02> Is Remove
 ClassHand <MfxBaseTest01> Is Remove
 ClassHand <MfxBaseTest00> Is Remove

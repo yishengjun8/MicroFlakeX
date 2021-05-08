@@ -465,9 +465,9 @@ MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	BOOL tCollision = false;
-	myRect.Collision(&mousePos, &tCollision);
-	if (tCollision)
+	BOOL tInside = false;
+	myRect.PointInside(&mousePos, &tInside);
+	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
@@ -490,8 +490,8 @@ MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 		myRButtonClickFlag = false;
 	}
 
-	if ((*myLButtonPress && *myLButtonMoveFlag) ||
-		(*myRButtonPress && *myRButtonMoveFlag))
+	if ((myLButtonPress && myLButtonMoveFlag) ||
+		(myRButtonPress && myRButtonMoveFlag))
 	{
 		if (myUI)
 		{
@@ -520,9 +520,9 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDown(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	BOOL tCollision = false;
-	myRect.Collision(&mousePos, &tCollision);
-	if (tCollision)
+	BOOL tInside = false;
+	myRect.PointInside(&mousePos, &tInside);
+	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
@@ -556,9 +556,9 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	BOOL tCollision = false;
-	myRect.Collision(&mousePos, &tCollision);
-	if (tCollision)
+	BOOL tInside = false;
+	myRect.PointInside(&mousePos, &tInside);
+	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
@@ -566,7 +566,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(WPARAM wParam, LPARAM lParam)
 
 		if (t_Conctrol == this) //获取互斥焦点成功
 		{
-			if (*myLButtonClickFlag) //点击成功
+			if (myLButtonClickFlag) //点击成功
 			{
 				myMouseFloat = true;
 				myLButtonPress = false;
@@ -598,9 +598,9 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDown(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	BOOL tCollision = false;
-	myRect.Collision(&mousePos, &tCollision);
-	if (tCollision)
+	BOOL tInside = false;
+	myRect.PointInside(&mousePos, &tInside);
+	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
@@ -633,9 +633,9 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	BOOL tCollision = false;
-	myRect.Collision(&mousePos, &tCollision);
-	if (tCollision)
+	BOOL tInside = false;
+	myRect.PointInside(&mousePos, &tInside);
+	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
 		myUI->SetMutexFocus(this);
@@ -643,7 +643,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 
 		if (t_Conctrol == this) //获取互斥焦点成功
 		{
-			if (*myRButtonClickFlag) //点击成功
+			if (myRButtonClickFlag) //点击成功
 			{
 				myMouseFloat = true;
 				myRButtonPress = false;
