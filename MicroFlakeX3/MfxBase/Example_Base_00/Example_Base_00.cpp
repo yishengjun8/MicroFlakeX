@@ -2,14 +2,25 @@
 #include <iostream>
 #include "MfxBase.h"
 using namespace MicroFlakeX;
+using namespace std;
+
 
 int main()
 {
+    cout << endl;
     MfxBase* temp = nullptr;
 
     MfxBaseFactory(MfxText("MfxBaseTest00"), &temp);
-    temp->AutoFunc(MfxText("SayHello"), 66);
 
-    std::cout << "Hello World!\n";
+    MfxString func = MfxText("SayHello");
+
+    temp->AutoFunc(func, 66);
+
+    func = MfxText("SayGoodBy");
+
+    temp->AutoFunc(func, 66);
+
+
+    cout << endl;
     return 0;
 }

@@ -9,7 +9,7 @@ MfxObject_Init_0(MfxApp)
 	__theApp = new MfxApp;
 	__theInstance = GetModuleHandle(NULL);
 }
-MfxObject_Init_1(MfxApp)
+MfxObject_Init_1(MfxApp, END)
 MfxObject_Init_2(MfxApp, MfxBase);
 
 MfxApp*& MfxApp::theApp = __theApp;

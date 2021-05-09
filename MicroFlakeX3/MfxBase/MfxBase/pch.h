@@ -18,6 +18,8 @@
 
 /* STL模板库 */
 #include <map>
+#include <mutex>
+#include <thread>
 #include <string>
 #include <vector>
 #include <utility>

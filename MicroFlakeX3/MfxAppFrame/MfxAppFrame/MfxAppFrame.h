@@ -209,8 +209,6 @@ namespace MicroFlakeX
 		UI_MSG(UI_MSG_SetMaskColor, 11)
 		UI_MSG(UI_MSG_SetBackImage, 12)
 		UI_MSG(UI_MSG_SetMaskImage, 13)
-
-		UI_MSG(UI_MSG_TimerFrame, 14)
 	};
 
 	enum FLAKE_MSG
@@ -405,9 +403,6 @@ namespace MicroFlakeX
 		MfxReturn __OnTimer(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnAddTimer(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnRemoveTimer(WPARAM wParam, LPARAM lParam);
-
-		MfxReturn __OnFrame(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnFrameMSGPost(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnFlakeMessage(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnAddFlakeMessage(WPARAM wParam, LPARAM lParam);

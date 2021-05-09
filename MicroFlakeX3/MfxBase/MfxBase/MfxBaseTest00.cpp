@@ -1,12 +1,11 @@
 #include "pch.h"
 #include "MfxBaseTest00.h"
 
+
 MfxObject_Init_0(MfxBaseTest00)
-MfxObject_Register(MfxBaseTest00, SayHello, 1)
-MfxObject_Register(MfxBaseTest00, SayGoodBy, 2)
-MfxObject_Init_1(MfxBaseTest00)
-MfxObject_Case_1(MfxBaseTest00, MfxBase, SayHello, 1)
-MfxObject_Case_0(MfxBaseTest00, MfxBase, SayGoodBy, 2)
+MfxObject_Init_1(MfxBaseTest00, SayHello)
+MfxAutoFunc_1(MfxBaseTest00, SayHello, SayGoodBy)
+MfxAutoFunc_0(MfxBaseTest00, SayGoodBy, END)
 MfxObject_Init_2(MfxBaseTest00, MfxBase);
 
 MicroFlakeX::MfxBaseTest00::MfxBaseTest00()
@@ -41,14 +40,14 @@ BOOL MicroFlakeX::MfxBaseTest00::operator==(MfxBase& rhs)
 MfxReturn MicroFlakeX::MfxBaseTest00::SayHello(int set)
 {
 	MfxCodeLock(this);
-	std::cout << "Hello MfxBaseTest00 SayHello!" << set << std::endl;
+	std::cout << "Hello MfxBaseTest00 SayHello! setNum = " << set << std::endl;
 	return RFine;
 }
 
 MfxReturn MicroFlakeX::MfxBaseTest00::SayGoodBy()
 {
 	MfxCodeLock(this);
-	std::cout << "Hello MfxBaseTest00 SayGoodBy!" << myData << std::endl;
+	std::cout << "Hello MfxBaseTest00 SayGoodBy! myData = " << myData << std::endl;
 	return RFine;
 }
 

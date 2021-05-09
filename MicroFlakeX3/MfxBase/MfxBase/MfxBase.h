@@ -86,7 +86,6 @@ namespace MicroFlakeX
 	class MFX_PORT MfxBase;
 	class MFX_PORT MfxLock;
 
-
 	typedef std::vector<MfxBase*> MfxBase_Vector;
 
 	//Mfx模板
@@ -95,9 +94,6 @@ namespace MicroFlakeX
 
 	template<class T>
 	class MfxSmartPointer;
-
-	template<class T>
-	class MfxThreadPool;
 
 	template<class T>
 	class MfxObjectPool;
@@ -129,22 +125,19 @@ namespace MicroFlakeX
 
 	//强制 所有的子类必须在其.cpp中优先顺序调用下列三个初始化
 #define MfxObject_Init_0(obj) __MfxObject_Init_0(obj)
-#define MfxObject_Init_1(obj) __MfxObject_Init_1(obj)
+#define MfxObject_Init_1(obj, GOTO_BEGIN) __MfxObject_Init_1(obj, GOTO_BEGIN)
 #define MfxObject_Init_2(obj, father) __MfxObject_Init_2(obj, father)
 
-	//可选 注册反射调用 -强制 只能在INIT_0-INIT_1之间使用
-#define MfxObject_Register(obj, func, id) __MfxObject_Register(obj, func, id) 
-
 	//可选 实现反射调用 -强制 只能在INIT_1-INIT_2之间使用
-#define MfxObject_Case_0(obj, father, func, id) __MfxObject_Case_0(obj, father, func, id) 
-#define MfxObject_Case_1(obj, father, func, id) __MfxObject_Case_1(obj, father, func, id) 
-#define MfxObject_Case_2(obj, father, func, id) __MfxObject_Case_2(obj, father, func, id) 
-#define MfxObject_Case_3(obj, father, func, id) __MfxObject_Case_3(obj, father, func, id) 
-#define MfxObject_Case_4(obj, father, func, id) __MfxObject_Case_4(obj, father, func, id) 
-#define MfxObject_Case_5(obj, father, func, id) __MfxObject_Case_5(obj, father, func, id) 
-#define MfxObject_Case_6(obj, father, func, id) __MfxObject_Case_6(obj, father, func, id) 
-#define MfxObject_Case_7(obj, father, func, id) __MfxObject_Case_7(obj, father, func, id) 
-#define MfxObject_Case_8(obj, father, func, id) __MfxObject_Case_8(obj, father, func, id) 
+#define MfxAutoFunc_0(obj, func, GOTO_NEXT) __MfxAutoFunc_0(obj, func, GOTO_NEXT) 
+#define MfxAutoFunc_1(obj, func, GOTO_NEXT) __MfxAutoFunc_1(obj, func, GOTO_NEXT) 
+#define MfxAutoFunc_2(obj, func, GOTO_NEXT) __MfxAutoFunc_2(obj, func, GOTO_NEXT) 
+#define MfxAutoFunc_3(obj, func, GOTO_NEXT) __MfxAutoFunc_3(obj, func, GOTO_NEXT) 
+#define MfxAutoFunc_4(obj, func, GOTO_NEXT) __MfxAutoFunc_4(obj, func, GOTO_NEXT) 
+#define MfxAutoFunc_5(obj, func, GOTO_NEXT) __MfxAutoFunc_5(obj, func, GOTO_NEXT) 
+#define MfxAutoFunc_6(obj, func, GOTO_NEXT) __MfxAutoFunc_6(obj, func, GOTO_NEXT) 
+#define MfxAutoFunc_7(obj, func, GOTO_NEXT) __MfxAutoFunc_7(obj, func, GOTO_NEXT) 
+#define MfxAutoFunc_8(obj, func, GOTO_NEXT) __MfxAutoFunc_8(obj, func, GOTO_NEXT) 
 }
 
 //内部 类型 - 类 - 函数 - 模板 - 宏
@@ -184,6 +177,11 @@ namespace MicroFlakeX
 		MfxLock(MfxBase* object);
 		~MfxLock();
 	};
+}
+
+
+namespace MicroFlakeX
+{
 }
 
 //内部 类声明
@@ -313,7 +311,6 @@ namespace MicroFlakeX
 
 		//Mfx智能指针
 
-		//Mfx线程池
 
 		//Mfx对象池
 	template<class T>
@@ -345,25 +342,18 @@ public:\
 //---------------------------------------------------
 // 
 //---------------------------------------------------
-#define __MfxObject_Init_0(obj) \
+#define __MfxObject_Init_0(obj)\
 using namespace MicroFlakeX;\
 using namespace __MicroFlakeX;\
 using MicroFlakeX::obj;\
-struct obj##MfxAutoFuncInfor\
-{\
-	int myID = 0;\
-	MfxString  myName;\
-	MfxString myAllName;\
-};\
-std::map<MfxString, obj##MfxAutoFuncInfor*> obj##MfxAutoFuncMap;\
-typedef std::map<MfxString,obj##MfxAutoFuncInfor*>::value_type obj##MfxAutoFuncValue;\
-typedef std::map<MfxString,obj##MfxAutoFuncInfor*>::iterator obj##MfxAutoFuncIterator;\
+std::map<MfxString, int> Mfx##obj##FuncMap;\
+typedef std::map<MfxString,int>::value_type Mfx##obj##FuncMapValue;\
 MfxReturn obj::FuncName(MfxString* ret)\
 {\
 	*ret = MfxText("");\
-	for(auto i : obj##MfxAutoFuncMap)\
+	for(auto& i : Mfx##obj##FuncMap)\
 	{\
-		*ret += i.second->myName;\
+		(*ret) += (i.first);\
 		*ret += MfxText("...\n");\
 	}\
 	return RFine;\
@@ -373,6 +363,9 @@ MfxReturn obj::ObjectName(MfxString* ret)\
 	*ret = MfxText(#obj);\
 	return RFine;\
 }\
+\
+\
+\
 class obj##FactoryHand\
 	: public MfxFactoryHand\
 {\
@@ -380,16 +373,13 @@ public:\
 	obj##FactoryHand(MfxString object)\
 		: MfxFactoryHand(object)\
 	{\
-		obj##MfxAutoFuncInfor* infor = nullptr;\
-		WCHAR typeName[1024]; size_t n = 0;\
-		MfxObject_Register(obj, AutoFunc, -1)
-//---------------------------------------------------
-// obj##Hand
-// obj##FactoryHand obj##Hand(MfxText(#obj));\
-// obj##FactoryHand *obj##Hand = new obj##FactoryHand(MfxText(#obj));\
-//---------------------------------------------------
-#define __MfxObject_Init_1(obj) \
-	};\
+		Mfx##obj##FuncMap.insert(Mfx##obj##FuncMapValue(MfxText("AUTOFUNC_INIT"), -1));\
+		obj init##obj;\
+		init##obj.AutoFunc(MfxText("AUTOFUNC_INIT"));\
+
+
+#define __MfxObject_Init_1(obj, GOTO_BEGIN) \
+	}\
 	MfxReturn Creat(MfxBase** ret)\
 	{\
 		*ret = new obj;\
@@ -401,144 +391,183 @@ MfxReturn obj::AutoFunc(MfxString setFunc...)\
 {\
 	MfxCodeLock(this);\
 	MfxReturn ret = RFail;\
+	int countID = -1;\
 	va_list argc;\
 	va_start(argc, setFunc);\
-	obj##MfxAutoFuncIterator iter = obj##MfxAutoFuncMap.end();\
+	auto iter = Mfx##obj##FuncMap.end();\
 	BeginSwitch:\
-	iter = obj##MfxAutoFuncMap.find(setFunc); \
-	if (iter != obj##MfxAutoFuncMap.end())\
+	iter = Mfx##obj##FuncMap.find(setFunc); \
+	if (iter != Mfx##obj##FuncMap.end())\
 	{\
-		int caID = iter->second->myID;\
-		switch (caID)\
-		{
-//---------------------------------------------------
-// 
-//---------------------------------------------------
+		int iterID = iter->second;\
+		countID = -1;\
+		if(iterID == countID++)\
+		{\
+			goto REG_##GOTO_BEGIN;\
+		}
+
 #define __MfxObject_Init_2(obj, father) \
-		case -1:\
+		if(iterID == countID++)\
 		{\
 			setFunc = va_arg(argc, MfxString);\
 			argc = va_arg(argc, va_list);\
 			goto BeginSwitch;\
-			break;\
-		}\
+			REG_END:\
+				Mfx##obj##FuncMap.insert(Mfx##obj##FuncMapValue(MfxText("AUTOFUNC_NOTFOUND"), countID++));\
+			return RFine;\
 		}\
 	}\
 	else\
 	{\
-		ret = father::AutoFunc(MfxText("AutoFunc"), setFunc, argc); \
+		return father::AutoFunc(MfxText("AUTOFUNC_NOTFOUND"), setFunc, argc); \
 	}\
-	return ret;\
 }
 
 //---------------------------------------------------
 // 
 //---------------------------------------------------
-#define __MfxObject_Register(obj, func, id) \
-infor = new obj##MfxAutoFuncInfor;\
-infor->myID = id;\
-infor->myName = L#func;\
-mbstowcs_s(&n, typeName, 1024,\
-	typeid(&obj::func).name(), 1023);\
-infor->myAllName = typeName;\
-obj##MfxAutoFuncMap.insert(obj##MfxAutoFuncValue(L#func, infor));
 
-#define __MfxObject_Case_0(obj, father, func, id) \
-case id:\
+#define __MfxAutoFunc_0(obj, func, GOTO_NEXT) \
+if(iterID == countID++)\
 {\
-	ret = func();\
-	break;\
-}
+	{\
+		return func(); \
+	}\
+	REG_##func:\
+		Mfx##obj##FuncMap.insert(Mfx##obj##FuncMapValue(MfxText(#func), countID++));\
+	goto REG_##GOTO_NEXT;\
+}\
 
-#define __MfxObject_Case_1(obj, father, func, id) \
-case id:\
+#define __MfxAutoFunc_1(obj, func, GOTO_NEXT) \
+if(iterID == countID++)\
 {\
-	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
-	ret = func(A1);\
-	break;\
-}
+	{\
+		auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func))); \
+		return func(A1); \
+	}\
+	\
+	REG_##func:\
+		Mfx##obj##FuncMap.insert(Mfx##obj##FuncMapValue(MfxText(#func), countID++));\
+	goto REG_##GOTO_NEXT;\
+}\
 
-#define __MfxObject_Case_2(obj, father, func, id) \
-case id:\
+#define __MfxAutoFunc_2(obj, func, GOTO_NEXT) \
+if(iterID == countID++)\
 {\
-	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
-	auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
-	ret = func(A1, A2);\
-	break;\
-}
+	{\
+		auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
+		auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
+		ret = func(A1, A2);\
+	}\
+	\
+	REG_##func:\
+		Mfx##obj##FuncMap.insert(Mfx##obj##FuncMapValue(MfxText(#func), countID++));\
+	goto REG_##GOTO_NEXT;\
+}\
 
-#define __MfxObject_Case_3(obj, father, func, id) \
-case id:\
+#define __MfxAutoFunc_3(obj, func, GOTO_NEXT) \
+if(iterID == countID++)\
 {\
-	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
-	auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
-	auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
-	ret = func(A1, A2, A3);\
-	break;\
-}
+	{\
+		auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
+		auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
+		auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
+		ret = func(A1, A2, A3);\
+	}\
+	\
+	REG_##func:\
+		Mfx##obj##FuncMap.insert(Mfx##obj##FuncMapValue(MfxText(#func), countID++));\
+	goto REG_##GOTO_NEXT;\
+}\
 
-#define __MfxObject_Case_4(obj, father, func, id) \
-case id:\
+#define __MfxAutoFunc_4(obj, func, GOTO_NEXT) \
+if(iterID == countID++)\
 {\
-	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
-	auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
-	auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
-	auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
-	ret = func(A1, A2, A3, A4);\
-	break;\
-}
+	{\
+		auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
+		auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
+		auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
+		auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
+		ret = func(A1, A2, A3, A4);\
+	}\
+	\
+	REG_##func:\
+		Mfx##obj##FuncMap.insert(Mfx##obj##FuncMapValue(MfxText(#func), countID++));\
+	goto REG_##GOTO_NEXT;\
+}\
 
-#define __MfxObject_Case_5(obj, father, func, id) \
-case id:\
+#define __MfxAutoFunc_5(obj, func, GOTO_NEXT) \
+if(iterID == countID++)\
 {\
-	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
-	auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
-	auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
-	auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
-	auto A5 = va_arg(argc, decltype(MfxArg5(&obj::func)));\
-	ret = func(A1, A2, A3, A4, A5);\
-	break;\
-}
+	{\
+		auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
+		auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
+		auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
+		auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
+		auto A5 = va_arg(argc, decltype(MfxArg5(&obj::func)));\
+		ret = func(A1, A2, A3, A4, A5);\
+	}\
+	\
+	REG_##func:\
+		Mfx##obj##FuncMap.insert(Mfx##obj##FuncMapValue(MfxText(#func), countID++));\
+	goto REG_##GOTO_NEXT;\
+}\
 
-#define __MfxObject_Case_6(obj, father, func, id) \
-case id:\
+#define __MfxAutoFunc_6(obj, func, GOTO_NEXT) \
+if(iterID == countID++)\
 {\
-	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
-	auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
-	auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
-	auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
-	auto A5 = va_arg(argc, decltype(MfxArg5(&obj::func)));\
-	auto A6 = va_arg(argc, decltype(MfxArg6(&obj::func)));\
-	ret = func(A1, A2, A3, A4, A5, A6);\
-	break;\
-}
+	{\
+		auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
+		auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
+		auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
+		auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
+		auto A5 = va_arg(argc, decltype(MfxArg5(&obj::func)));\
+		auto A6 = va_arg(argc, decltype(MfxArg6(&obj::func)));\
+		ret = func(A1, A2, A3, A4, A5, A6);\
+	}\
+	\
+	REG_##func:\
+		Mfx##obj##FuncMap.insert(Mfx##obj##FuncMapValue(MfxText(#func), countID++));\
+	goto REG_##GOTO_NEXT;\
+}\
 
-#define __MfxObject_Case_7(obj, father, func, id) \
-case id:\
-{\
-	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
-	auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
-	auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
-	auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
-	auto A5 = va_arg(argc, decltype(MfxArg5(&obj::func)));\
-	auto A6 = va_arg(argc, decltype(MfxArg6(&obj::func)));\
-	auto A7 = va_arg(argc, decltype(MfxArg7(&obj::func)));\
-	ret = func(A1, A2, A3, A4, A5, A6, A7);\
-	break;\
-}
 
-#define __MfxObject_Case_8(obj, father, func, id) \
-case id:\
+#define __MfxAutoFunc_7(obj, func, GOTO_NEXT) \
+if(iterID == countID++)\
 {\
-	auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
-	auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
-	auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
-	auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
-	auto A5 = va_arg(argc, decltype(MfxArg5(&obj::func)));\
-	auto A6 = va_arg(argc, decltype(MfxArg6(&obj::func)));\
-	auto A7 = va_arg(argc, decltype(MfxArg7(&obj::func)));\
-	auto A8 = va_arg(argc, decltype(MfxArg8(&obj::func)));\
-	ret = func(A1, A2, A3, A4, A5, A6, A7, A8);\
-	break;\
-}
+	{\
+		auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
+		auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
+		auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
+		auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
+		auto A5 = va_arg(argc, decltype(MfxArg5(&obj::func)));\
+		auto A6 = va_arg(argc, decltype(MfxArg6(&obj::func)));\
+		auto A7 = va_arg(argc, decltype(MfxArg7(&obj::func)));\
+		ret = func(A1, A2, A3, A4, A5, A6, A7);\
+	}\
+	\
+	REG_##func:\
+		Mfx##obj##FuncMap.insert(Mfx##obj##FuncMapValue(MfxText(#func), countID++));\
+	goto REG_##GOTO_NEXT;\
+}\
+
+#define __MfxAutoFunc_8(obj, func, GOTO_NEXT) \
+if(iterID == countID++)\
+{\
+	{\
+		auto A1 = va_arg(argc, decltype(MfxArg1(&obj::func)));\
+		auto A2 = va_arg(argc, decltype(MfxArg2(&obj::func)));\
+		auto A3 = va_arg(argc, decltype(MfxArg3(&obj::func)));\
+		auto A4 = va_arg(argc, decltype(MfxArg4(&obj::func)));\
+		auto A5 = va_arg(argc, decltype(MfxArg5(&obj::func)));\
+		auto A6 = va_arg(argc, decltype(MfxArg6(&obj::func)));\
+		auto A7 = va_arg(argc, decltype(MfxArg7(&obj::func)));\
+		auto A8 = va_arg(argc, decltype(MfxArg8(&obj::func)));\
+		ret = func(A1, A2, A3, A4, A5, A6, A7, A8);\
+	}\
+	\
+	REG_##func:\
+		Mfx##obj##FuncMap.insert(Mfx##obj##FuncMapValue(MfxText(#func), countID++));\
+	goto REG_##GOTO_NEXT;\
+}\
 

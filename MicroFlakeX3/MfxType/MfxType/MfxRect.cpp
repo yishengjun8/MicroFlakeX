@@ -2,72 +2,40 @@
 #include "MfxType.h"
 
 MfxObject_Init_0(MfxRect)
-MfxObject_Register(MfxRect, Init, 0);
-MfxObject_Register(MfxRect, GetD2D1RectU, 1);
-MfxObject_Register(MfxRect, GetD2D1SizeU, 2);
-MfxObject_Register(MfxRect, GetD2D1PointU, 3);
-MfxObject_Register(MfxRect, GetD2D1RectF, 4);
-MfxObject_Register(MfxRect, GetD2D1SizeF, 5);
-MfxObject_Register(MfxRect, GetD2D1PointF, 6);
-MfxObject_Register(MfxRect, SetSize, 7);
-MfxObject_Register(MfxRect, SetPoint, 8);
-MfxObject_Register(MfxRect, SetX, 9);
-MfxObject_Register(MfxRect, SetY, 10);
-MfxObject_Register(MfxRect, SetWidth, 11);
-MfxObject_Register(MfxRect, SetHeight, 12);
-MfxObject_Register(MfxRect, SetTop, 13);
-MfxObject_Register(MfxRect, SetLeft, 14);
-MfxObject_Register(MfxRect, SetRight, 15);
-MfxObject_Register(MfxRect, SetBottom, 16);
-MfxObject_Register(MfxRect, GetSize, 17);
-MfxObject_Register(MfxRect, GetPoint, 18);
-MfxObject_Register(MfxRect, GetX, 19);
-MfxObject_Register(MfxRect, GetY, 20);
-MfxObject_Register(MfxRect, GetWidth, 21);
-MfxObject_Register(MfxRect, GetHeight, 22);
-MfxObject_Register(MfxRect, GetTop, 23);
-MfxObject_Register(MfxRect, GetLeft, 24);
-MfxObject_Register(MfxRect, GetRight, 25);
-MfxObject_Register(MfxRect, GetBottom, 26);
-MfxObject_Register(MfxRect, Empty, 27);
-MfxObject_Register(MfxRect, Offset, 28);
-MfxObject_Register(MfxRect, Inflate, 29);
-MfxObject_Register(MfxRect, Collision, 30);
-MfxObject_Register(MfxRect, PointInside, 31);
-MfxObject_Init_1(MfxRect)
-MfxObject_Case_4(MfxRect, MfxType, Init, 0)
-MfxObject_Case_1(MfxRect, MfxType, GetD2D1RectU, 1)
-MfxObject_Case_1(MfxRect, MfxType, GetD2D1SizeU, 2)
-MfxObject_Case_1(MfxRect, MfxType, GetD2D1PointU, 3)
-MfxObject_Case_1(MfxRect, MfxType, GetD2D1RectF, 4)
-MfxObject_Case_1(MfxRect, MfxType, GetD2D1SizeF, 5)
-MfxObject_Case_1(MfxRect, MfxType, GetD2D1PointF, 6)
-MfxObject_Case_1(MfxRect, MfxType, SetSize, 7)
-MfxObject_Case_1(MfxRect, MfxType, SetPoint, 8)
-MfxObject_Case_1(MfxRect, MfxType, SetX, 9)
-MfxObject_Case_1(MfxRect, MfxType, SetY, 10)
-MfxObject_Case_1(MfxRect, MfxType, SetWidth, 11)
-MfxObject_Case_1(MfxRect, MfxType, SetHeight, 12)
-MfxObject_Case_1(MfxRect, MfxType, SetTop, 13)
-MfxObject_Case_1(MfxRect, MfxType, SetLeft, 14)
-MfxObject_Case_1(MfxRect, MfxType, SetRight, 15)
-MfxObject_Case_1(MfxRect, MfxType, SetBottom, 16)
-MfxObject_Case_1(MfxRect, MfxType, GetSize, 17)
-MfxObject_Case_1(MfxRect, MfxType, GetPoint, 18)
-MfxObject_Case_1(MfxRect, MfxType, GetX, 19)
-MfxObject_Case_1(MfxRect, MfxType, GetY, 20)
-MfxObject_Case_1(MfxRect, MfxType, GetWidth, 21)
-MfxObject_Case_1(MfxRect, MfxType, GetHeight, 22)
-MfxObject_Case_1(MfxRect, MfxType, GetTop, 23)
-MfxObject_Case_1(MfxRect, MfxType, GetLeft, 24)
-MfxObject_Case_1(MfxRect, MfxType, GetRight, 25)
-MfxObject_Case_1(MfxRect, MfxType, GetBottom, 26)
-MfxObject_Case_1(MfxRect, MfxType, Empty, 27)
-MfxObject_Case_2(MfxRect, MfxType, Offset, 28)
-MfxObject_Case_2(MfxRect, MfxType, Inflate, 29)
-MfxObject_Case_2(MfxRect, MfxType, Collision, 30)
-MfxObject_Case_2(MfxRect, MfxType, PointInside, 31)
-MfxObject_Init_2(MfxRect, MfxType);
+MfxObject_Init_1(MfxRect, Init)
+MfxAutoFunc_4(MfxRect, Init, GetD2D1RectU)
+MfxAutoFunc_1(MfxRect, GetD2D1RectU, GetD2D1SizeU)
+MfxAutoFunc_1(MfxRect, GetD2D1SizeU, GetD2D1PointU)
+MfxAutoFunc_1(MfxRect, GetD2D1PointU, GetD2D1RectF)
+MfxAutoFunc_1(MfxRect, GetD2D1RectF, GetD2D1SizeF)
+MfxAutoFunc_1(MfxRect, GetD2D1SizeF, GetD2D1PointF)
+MfxAutoFunc_1(MfxRect, GetD2D1PointF, SetSize)
+MfxAutoFunc_1(MfxRect, SetSize, SetPoint)
+MfxAutoFunc_1(MfxRect, SetPoint, SetX)
+MfxAutoFunc_1(MfxRect, SetX, SetY)
+MfxAutoFunc_1(MfxRect, SetY, SetWidth)
+MfxAutoFunc_1(MfxRect, SetWidth, SetHeight)
+MfxAutoFunc_1(MfxRect, SetHeight, SetTop)
+MfxAutoFunc_1(MfxRect, SetTop, SetLeft)
+MfxAutoFunc_1(MfxRect, SetLeft, SetRight)
+MfxAutoFunc_1(MfxRect, SetRight, SetBottom)
+MfxAutoFunc_1(MfxRect, SetBottom, GetSize)
+MfxAutoFunc_1(MfxRect, GetSize, GetPoint)
+MfxAutoFunc_1(MfxRect, GetPoint, GetX)
+MfxAutoFunc_1(MfxRect, GetX, GetY)
+MfxAutoFunc_1(MfxRect, GetY, GetWidth)
+MfxAutoFunc_1(MfxRect, GetWidth, GetHeight)
+MfxAutoFunc_1(MfxRect, GetHeight, GetTop)
+MfxAutoFunc_1(MfxRect, GetTop, GetLeft)
+MfxAutoFunc_1(MfxRect, GetLeft, GetRight)
+MfxAutoFunc_1(MfxRect, GetRight, GetBottom)
+MfxAutoFunc_1(MfxRect, GetBottom, Empty)
+MfxAutoFunc_1(MfxRect, Empty, Offset)
+MfxAutoFunc_2(MfxRect, Offset, Inflate)
+MfxAutoFunc_2(MfxRect, Inflate, Collision)
+MfxAutoFunc_2(MfxRect, Collision, PointInside)
+MfxAutoFunc_2(MfxRect, PointInside, END)
+MfxObject_Init_2(MfxRect, MfxType)
 
 MicroFlakeX::MfxRect::MfxRect()
 {

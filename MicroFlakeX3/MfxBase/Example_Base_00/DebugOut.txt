@@ -1,0 +1,2 @@
+ClassHand <MfxBaseTest00> Is Register
+ClassHand <MfxBaseTest00> Is Remove

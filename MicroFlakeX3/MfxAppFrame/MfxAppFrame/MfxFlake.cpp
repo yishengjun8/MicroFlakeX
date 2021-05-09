@@ -2,7 +2,7 @@
 #include "MfxAppFrame.h"
 
 MfxObject_Init_0(MfxFlake)
-MfxObject_Init_1(MfxFlake)
+MfxObject_Init_1(MfxFlake, END)
 MfxObject_Init_2(MfxFlake, MfxBase);
 
 void MicroFlakeX::MfxFlake::MfxRegMessages()

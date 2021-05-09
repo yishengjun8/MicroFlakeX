@@ -2,7 +2,6 @@
 #include "Example_Graph_00.h"
 
 #include "MfxGraph.h"
-using namespace MicroFlakeX;
 
 #define MAX_LOADSTRING 100
 
@@ -138,10 +137,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
     {
-        myCanvas.SetSize(MfxSize(300, 300));
-        myCanvas.SetWnd(hWnd);
+        //myCanvas.SetDC(GetDC(hWnd));
 
-        myRect[0].Init(0, 0, 300, 300);
+        myCanvas.SetWnd((hWnd));
+
+        myRect[0].Init(0, 0, 1000, 1000);
         myImage[0].SetRect(myRect[0]);
         MfxString path = L"D:\\image\\rect.jpg";
         myImage[0].FromFile(&path, mySize[9]);
@@ -154,6 +154,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         myWords[0].SetRect(MfxRect(19, 18, 360, 120));
         myWords[0].SetPoint(MfxPoint(19, 200));
         myWords[0].SetText(L"Welcome to MFX based on D2D");
+    }
+    case WM_SIZE:
+    {
+        myCanvas.SetSize(MfxSize(LOWORD(lParam), HIWORD(lParam)));
+        myImage[0].SetSize(MfxSize(LOWORD(lParam), HIWORD(lParam)));
+        break;
     }
     case WM_COMMAND:
     {
@@ -183,6 +189,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         LPARAM test = (LPARAM)&myImage[0];
 
         myCanvas.PaintBegin();
+
 
         ((MfxImage*)test)->Paint();
         myWords[0].Paint();

@@ -2,7 +2,7 @@
 #include "MfxGraph.h"
 
 MfxObject_Init_0(MfxWords)
-MfxObject_Init_1(MfxWords)
+MfxObject_Init_1(MfxWords, END)
 MfxObject_Init_2(MfxWords, MfxGraph);
 
 IDWriteTextFormat* MfxWords::gDefTextFormat = nullptr;

@@ -2,7 +2,7 @@
 #include "MfxGraph.h"
 
 MfxObject_Init_0(MfxCanvas)
-MfxObject_Init_1(MfxCanvas)
+MfxObject_Init_1(MfxCanvas, END)
 MfxObject_Init_2(MfxCanvas, MfxGraph);
 
 MicroFlakeX::MfxCanvas::MfxCanvas()
@@ -168,8 +168,9 @@ MfxReturn MicroFlakeX::MfxCanvas::SetRect(MfxRect set)
 	{
 		if (myWnd)
 		{
-			SafeRelease(myRenderTarget);
-			GetID2D1HwndRenderTarget(&myRenderTarget, myWnd, MfxSize(&myRect));
+			D2D1_SIZE_U tSize;
+			myRect.GetD2D1SizeU(&tSize);
+			((ID2D1HwndRenderTarget*)myRenderTarget)->Resize(tSize);
 		}
 		else if (myDC)
 		{
@@ -187,8 +188,9 @@ MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize set)
 	{
 		if (myWnd)
 		{
-			SafeRelease(myRenderTarget);
-			GetID2D1HwndRenderTarget(&myRenderTarget, myWnd, MfxSize(&myRect));
+			D2D1_SIZE_U tSize;
+			myRect.GetD2D1SizeU(&tSize);
+			((ID2D1HwndRenderTarget*)myRenderTarget)->Resize(tSize);
 		}
 		else if (myDC)
 		{

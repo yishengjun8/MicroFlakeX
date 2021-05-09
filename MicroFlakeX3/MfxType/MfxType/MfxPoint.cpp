@@ -2,24 +2,16 @@
 #include "MfxType.h"
 
 MfxObject_Init_0(MfxPoint)
-MfxObject_Register(MfxPoint, Init, 0);
-MfxObject_Register(MfxPoint, GetD2D1PointU, 1);
-MfxObject_Register(MfxPoint, GetD2D1PointF, 2);
-MfxObject_Register(MfxPoint, Offset, 3);
-MfxObject_Register(MfxPoint, SetX, 4);
-MfxObject_Register(MfxPoint, SetY, 5);
-MfxObject_Register(MfxPoint, GetX, 6);
-MfxObject_Register(MfxPoint, GetY, 7);
-MfxObject_Init_1(MfxPoint)
-MfxObject_Case_2(MfxPoint, MfxType, Init, 0)
-MfxObject_Case_1(MfxPoint, MfxType, GetD2D1PointU, 1)
-MfxObject_Case_1(MfxPoint, MfxType, GetD2D1PointF, 2)
-MfxObject_Case_2(MfxPoint, MfxType, Offset, 3)
-MfxObject_Case_1(MfxPoint, MfxType, SetX, 4)
-MfxObject_Case_1(MfxPoint, MfxType, SetY, 5)
-MfxObject_Case_1(MfxPoint, MfxType, GetX, 6)
-MfxObject_Case_1(MfxPoint, MfxType, GetY, 7)
-MfxObject_Init_2(MfxPoint, MfxType);
+MfxObject_Init_1(MfxPoint, Init)
+MfxAutoFunc_2(MfxPoint, Init, GetD2D1PointU)
+MfxAutoFunc_1(MfxPoint, GetD2D1PointU, GetD2D1PointF)
+MfxAutoFunc_1(MfxPoint, GetD2D1PointF, Offset)
+MfxAutoFunc_2(MfxPoint, Offset, SetX)
+MfxAutoFunc_1(MfxPoint, SetX, SetY)
+MfxAutoFunc_1(MfxPoint, SetY, GetX)
+MfxAutoFunc_1(MfxPoint, GetX, GetY)
+MfxAutoFunc_1(MfxPoint, GetY, END)
+MfxObject_Init_2(MfxPoint, MfxType)
 
 MicroFlakeX::MfxPoint::MfxPoint()
 {

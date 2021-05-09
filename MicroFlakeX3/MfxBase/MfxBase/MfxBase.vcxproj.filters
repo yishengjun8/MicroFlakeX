@@ -24,12 +24,6 @@
     <ClInclude Include="MfxBaseTest00.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MfxBaseTest01.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MfxBaseTest02.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -44,11 +38,8 @@
     <ClCompile Include="MfxBaseTest00.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MfxBaseTest01.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MfxBaseTest02.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

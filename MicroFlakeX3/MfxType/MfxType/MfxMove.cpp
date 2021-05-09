@@ -2,9 +2,8 @@
 #include "MfxType.h"
 
 MfxObject_Init_0(MfxMove)
-MfxObject_Register(MfxMove, EachFrame, 0);
-MfxObject_Init_1(MfxMove)
-MfxObject_Case_0(MfxMove, MfxType, EachFrame, 0)
+MfxObject_Init_1(MfxMove, EachFrame)
+MfxAutoFunc_0(MfxMove, EachFrame, END)
 MfxObject_Init_2(MfxMove, MfxType);
 
 MicroFlakeX::MfxMove::MfxMove()

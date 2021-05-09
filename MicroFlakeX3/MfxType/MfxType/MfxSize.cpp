@@ -2,26 +2,17 @@
 #include "MfxType.h"
 
 MfxObject_Init_0(MfxSize)
-MfxObject_Register(MfxSize, Init, 0);
-MfxObject_Register(MfxSize, GetD2D1SizeF, 1);
-MfxObject_Register(MfxSize, GetD2D1SizeU, 2);
-MfxObject_Register(MfxSize, Empty, 3);
-MfxObject_Register(MfxSize, Inflate, 4);
-MfxObject_Register(MfxSize, SetWidth, 5);
-MfxObject_Register(MfxSize, SetHeight, 6);
-MfxObject_Register(MfxSize, GetWidth, 7);
-MfxObject_Register(MfxSize, GetHeight, 8);
-MfxObject_Init_1(MfxSize)
-MfxObject_Case_2(MfxSize, MfxType, Init, 0)
-MfxObject_Case_1(MfxSize, MfxType, GetD2D1SizeF, 1)
-MfxObject_Case_1(MfxSize, MfxType, GetD2D1SizeU, 2)
-MfxObject_Case_1(MfxSize, MfxType, Empty, 3)
-MfxObject_Case_2(MfxSize, MfxType, Inflate, 4)
-MfxObject_Case_1(MfxSize, MfxType, SetWidth, 5)
-MfxObject_Case_1(MfxSize, MfxType, SetHeight, 6)
-MfxObject_Case_1(MfxSize, MfxType, GetWidth, 7)
-MfxObject_Case_1(MfxSize, MfxType, GetHeight, 8)
-MfxObject_Init_2(MfxSize, MfxType);
+MfxObject_Init_1(MfxSize, Init)
+MfxAutoFunc_2(MfxSize, Init, GetD2D1SizeF)
+MfxAutoFunc_1(MfxSize, GetD2D1SizeF, GetD2D1SizeU)
+MfxAutoFunc_1(MfxSize, GetD2D1SizeU, Empty)
+MfxAutoFunc_1(MfxSize, Empty, Inflate)
+MfxAutoFunc_2(MfxSize, Inflate, SetWidth)
+MfxAutoFunc_1(MfxSize, SetWidth, SetHeight)
+MfxAutoFunc_1(MfxSize, SetHeight, GetWidth)
+MfxAutoFunc_1(MfxSize, GetWidth, GetHeight)
+MfxAutoFunc_1(MfxSize, GetHeight, END)
+MfxObject_Init_2(MfxSize, MfxType)
 
 MicroFlakeX::MfxSize::MfxSize()
 {

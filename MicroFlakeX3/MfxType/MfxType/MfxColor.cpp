@@ -2,32 +2,20 @@
 #include "MfxType.h"
 
 MfxObject_Init_0(MfxColor)
-MfxObject_Register(MfxColor, Init, 0);
-MfxObject_Register(MfxColor, SetColor, 1);
-MfxObject_Register(MfxColor, GetD2D1ColorF, 2);
-MfxObject_Register(MfxColor, SetA, 3);
-MfxObject_Register(MfxColor, SetR, 4);
-MfxObject_Register(MfxColor, SetG, 5);
-MfxObject_Register(MfxColor, SetB, 6);
-MfxObject_Register(MfxColor, GetA, 7);
-MfxObject_Register(MfxColor, GetR, 8);
-MfxObject_Register(MfxColor, GetG, 9);
-MfxObject_Register(MfxColor, GetB, 10);
-MfxObject_Register(MfxColor, GetRGB, 11);
-MfxObject_Init_1(MfxColor)
-MfxObject_Case_4(MfxColor, MfxType, Init, 0)
-MfxObject_Case_2(MfxColor, MfxType, SetColor, 1)
-MfxObject_Case_1(MfxColor, MfxType, GetD2D1ColorF, 2)
-MfxObject_Case_1(MfxColor, MfxType, SetA, 3)
-MfxObject_Case_1(MfxColor, MfxType, SetR, 4)
-MfxObject_Case_1(MfxColor, MfxType, SetG, 5)
-MfxObject_Case_1(MfxColor, MfxType, SetB, 6)
-MfxObject_Case_1(MfxColor, MfxType, GetA, 7)
-MfxObject_Case_1(MfxColor, MfxType, GetR, 8)
-MfxObject_Case_1(MfxColor, MfxType, GetG, 9)
-MfxObject_Case_1(MfxColor, MfxType, GetB, 10)
-MfxObject_Case_1(MfxColor, MfxType, GetRGB, 11)
-MfxObject_Init_2(MfxColor, MfxType);
+MfxObject_Init_1(MfxColor, Init)
+MfxAutoFunc_4(MfxColor, Init, SetColor)
+MfxAutoFunc_2(MfxColor, SetColor, GetD2D1ColorF)
+MfxAutoFunc_1(MfxColor, GetD2D1ColorF, SetA)
+MfxAutoFunc_1(MfxColor, SetA, SetR)
+MfxAutoFunc_1(MfxColor, SetR, SetG)
+MfxAutoFunc_1(MfxColor, SetG, SetB)
+MfxAutoFunc_1(MfxColor, SetB, GetA)
+MfxAutoFunc_1(MfxColor, GetA, GetR)
+MfxAutoFunc_1(MfxColor, GetR, GetG)
+MfxAutoFunc_1(MfxColor, GetG, GetB)
+MfxAutoFunc_1(MfxColor, GetB, GetRGB)
+MfxAutoFunc_1(MfxColor, GetRGB, END)
+MfxObject_Init_2(MfxColor, MfxType)
 
 static const UINT32 sc_redShift = 16;
 static const UINT32 sc_greenShift = 8;

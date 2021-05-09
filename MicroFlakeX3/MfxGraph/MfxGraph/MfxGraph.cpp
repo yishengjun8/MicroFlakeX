@@ -2,7 +2,7 @@
 #include "MfxGraph.h"
 
 MfxObject_Init_0(MfxGraph)
-MfxObject_Init_1(MfxGraph)
+MfxObject_Init_1(MfxGraph, END)
 MfxObject_Init_2(MfxGraph, MfxBase);
 
 MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC &set, MfxRect rect)
@@ -319,6 +319,10 @@ MfxReturn MicroFlakeX::MfxGraph::CopyIWICBitmap(IWICBitmap** ret, IWICBitmap* se
 
 MfxReturn MicroFlakeX::MfxGraph::CopyTextFormat(IDWriteTextFormat** ret, IDWriteTextFormat* set)
 {
+	if (set == nullptr)
+	{
+		return RFail;
+	}
 	WCHAR* fontLocalName = new WCHAR[set->GetLocaleNameLength() + 1]{ 0 };
 	WCHAR* fontFamilyName = new WCHAR[set->GetFontFamilyNameLength() + 1]{ 0 };
 

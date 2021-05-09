@@ -2,7 +2,7 @@
 #include "MfxAppFrame.h"
 
 MfxObject_Init_0(MfxUI)
-MfxObject_Init_1(MfxUI)
+MfxObject_Init_1(MfxUI, END)
 MfxObject_Init_2(MfxUI, MfxBase);
 
 void MicroFlakeX::MfxUI::MfxRegMessages()
@@ -55,9 +55,6 @@ void MicroFlakeX::MfxUI::MfxRegMessages()
     UI_REG_MSG(UI_MSG_SetMaskColor, MfxUI, __OnSetMaskColor, myCoverFloor);
     UI_REG_MSG(UI_MSG_SetBackImage, MfxUI, __OnSetBackImage, myCoverFloor);
     UI_REG_MSG(UI_MSG_SetMaskImage, MfxUI, __OnSetMaskImage, myCoverFloor);
-
-    UI_REG_MSG(UI_MSG_TimerFrame, MfxUI, __OnFrame, myCoverFloor);
-    UI_ADD_TIMER(9999, 20, MfxUI::__OnFrameMSGPost);
 }
 
 void MicroFlakeX::MfxUI::MfxUIInitData()
@@ -624,23 +621,6 @@ MfxReturn MicroFlakeX::MfxUI::__OnRemoveTimer(WPARAM wParam, LPARAM lParam)
     MfxCodeLock(this);
     __myTimerMap.erase(wParam);
     KillTimer(myWnd, wParam);
-    return RFine;
-}
-
-MfxReturn MicroFlakeX::MfxUI::__OnFrame(WPARAM wParam, LPARAM lParam)
-{
-    MfxCodeLock(this);
-    for (auto tIter : myFrame)
-    {
-        tIter->AutoFunc(MfxText("EachFrame"));
-    }
-    return RFine;
-}
-
-MfxReturn MicroFlakeX::MfxUI::__OnFrameMSGPost(WPARAM wParam, LPARAM lParam)
-{
-    MfxCodeLock(this);
-    PostMessage(myWnd, UI_MSG_TimerFrame, wParam, lParam);
     return RFine;
 }
 

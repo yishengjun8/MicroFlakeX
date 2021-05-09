@@ -2,7 +2,7 @@
 #include "MfxGraph.h"
 
 MfxObject_Init_0(MfxImage)
-MfxObject_Init_1(MfxImage)
+MfxObject_Init_1(MfxImage, END)
 MfxObject_Init_2(MfxImage, MfxGraph);
 
 MicroFlakeX::MfxImage::MfxImage()
@@ -88,7 +88,7 @@ MfxReturn MicroFlakeX::MfxImage::Paint()
 			ResetID2D1Bitmap();
 		}
 
-		if (myRenderTarget && myRenderTarget == tRenderTarget)
+		if (myRenderTarget && (myRenderTarget == tRenderTarget))
 		{
 			D2D1_RECT_F tRectF; myRect.GetD2D1RectF(&tRectF);
 			myRenderTarget->DrawBitmap(myID2D1Bitmap, &tRectF);
