@@ -1,29 +1,19 @@
 # MicroFlakeX  
-* `MicroFlakeX`的目标是让WinApp开发更加的快速和可扩展。  
-[MicroFlakeX1](README.md#MicroFlakeX1简介)  
-[MicroFlakeX2](README.md#MicroFlakeX2简介)  
-[MicroFlakeX3](README.md#MicroFlakeX3简介)  
-
-
-____
-# MicroFlakeX简介  
-
 * MFX的目标是让WinAPP开发远离复杂的框架，专注于开发本身  
 * MFX可以自定义控件、窗口的背景图片、蒙版，让你的程序变得更加好看  
 * MFX支持运行时动态调用和运行时动态创建  
 * MFX支持GPU渲染  
 
+[MicroFlakeX1](README.md#MicroFlakeX1简介)  
+[MicroFlakeX2](README.md#MicroFlakeX2简介)  
+[MicroFlakeX3](README.md#MicroFlakeX3简介)  
+___
+# MicroFlakeX3简介  
+`MicroFlakeX3`在MFX2的基础上，重写了MfxGraph，重构了MfxBase以及其反射框架。拥有更好的扩展性和阅读性。同时顶层框架支持更多的特性，因为其操作进一步通过宏函数简化  
 
-____
-#### MicroFlakeX1简介
-`MicroFlakeX1`是一个简陋而空旷的框架。它仅仅实现了一个最简单的二层消息映射转发和UI创建但这并不表明MFX1是无用的，MFX1虽然简单，但他体现了如何构造UI框架的思路和设计模式，非常适合初学者参考和学习。
-
-###### MicroFlakeX1适合哪些人  
-* 1、GDI+、GDI、WinMain、WinAPI的初学者  
-* 2、设计模式初学者  
-* 3、框架设计初学者  
-
-#### 注意！！MicroFlakeX1已经放弃维护，也就是说MFX1不再更新和提供帮助支持，仅供学习参考  
+* MFX3为Direct2D绘制，更快的刷新和图片支持(也就是说可以做游戏了！60帧很轻松！)  
+* MfxFlake(原MfxControl)支持线性插值动画，支持：变速滑动、曲线移动等。暂不支持旋转  
+* MfxBase是反射基类框架支持：全能工厂、反射调用、继承反射、优先初始化    
 
 
 ___
@@ -39,13 +29,34 @@ ___
 #### 注意！！MicroFlakeX2已经放弃维护，也就是说MFX2不再更新和提供帮助支持，仅供学习参考  
 
 
-___
-# MicroFlakeX3简介  
-`MicroFlakeX3`在MFX2的基础上，重写了MfxGraph，重构了MfxBase以及其反射框架。拥有更好的扩展性和阅读性。同时顶层框架支持更多的特性，因为其操作进一步通过宏函数简化  
+____
+#### MicroFlakeX1简介
+`MicroFlakeX1`是一个简陋而空旷的框架。它仅仅实现了一个最简单的二层消息映射转发和UI创建但这并不表明MFX1是无用的，MFX1虽然简单，但他体现了如何构造UI框架的思路和设计模式，非常适合初学者参考和学习。
 
-* MFX3为Direct2D绘制，更快的刷新和图片支持(也就是说可以做游戏了！60帧很轻松！)  
-* MfxFlake(原MfxControl)支持线性插值动画，支持：变速滑动、曲线移动等。暂不支持旋转  
-* MfxBase是反射基类框架支持：全能工厂、反射调用、继承反射、优先初始化    
+###### MicroFlakeX1适合哪些人  
+* 1、GDI+、GDI、WinMain、WinAPI的初学者  
+* 2、设计模式初学者  
+* 3、框架设计初学者  
+
+#### 注意！！MicroFlakeX1已经放弃维护，也就是说MFX1不再更新和提供帮助支持，仅供学习参考  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
