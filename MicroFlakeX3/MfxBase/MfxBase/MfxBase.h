@@ -61,7 +61,7 @@
 /**/
 #endif
 
-//公开 类型
+// 公开 类型
 typedef long MfxReturn;
 typedef std::string MfxStringA;
 typedef std::wstring MfxStringW;
@@ -80,7 +80,7 @@ typedef std::wstring MfxStringW;
 #define MfxString __MfxString
 #define MfxText(str) __MfxText(str)
 
-//公开 类 - 模板
+// 公开 类 - 模板
 namespace MicroFlakeX
 {
 	class MFX_PORT MfxBase;
@@ -88,7 +88,7 @@ namespace MicroFlakeX
 
 	typedef std::vector<MfxBase*> MfxBase_Vector;
 
-	//Mfx模板
+	// Mfx模板
 	template<class DataType>
 	class MfxDataFlag;
 
@@ -99,36 +99,36 @@ namespace MicroFlakeX
 	class MfxObjectPool;
 }
 
-//公开 函数
+// 公开 函数
 namespace MicroFlakeX
 {
-	//Mfx工厂
+	// Mfx工厂
 	MFX_PORT MfxReturn MfxBaseFactory(MfxString object, MfxBase** ret);
 }
 
-//公开 宏
+// 公开 宏
 namespace MicroFlakeX
 {
-	//强制 MfxReturn必须选择下列一项返回
+	// 强制 MfxReturn必须选择下列一项返回
 #define RFine __RFine
 #define RFail __RFail
 
-	//可选 检查Mfx函数是否成功
+	// 可选 检查Mfx函数是否成功
 #define Failed(mr) __Failed(mr)
 #define Seccess(mr) __Seccess(mr)
 
-	//强制 所有子类都需要声明
+	// 强制 所有子类都需要声明
 #define MfxObject __MfxObject
 
-	//强制 所有的互斥方法在使用前必须使用，以保证实例的线程安全
+	// 强制 所有的互斥方法在使用前必须使用，以保证实例的线程安全
 #define MfxCodeLock(obj) __MfxCodeLock(obj)
 
-	//强制 所有的子类必须在其.cpp中优先顺序调用下列三个初始化
+	// 强制 所有的子类必须在其.cpp中优先顺序调用下列三个初始化
 #define MfxObject_Init_0(obj) __MfxObject_Init_0(obj)
 #define MfxObject_Init_1(obj, GOTO_BEGIN) __MfxObject_Init_1(obj, GOTO_BEGIN)
 #define MfxObject_Init_2(obj, father) __MfxObject_Init_2(obj, father)
 
-	//可选 实现反射调用 -强制 只能在INIT_1-INIT_2之间使用
+	// 可选 实现反射调用 -强制 只能在INIT_1-INIT_2之间使用
 #define MfxAutoFunc_0(obj, func, GOTO_NEXT) __MfxAutoFunc_0(obj, func, GOTO_NEXT) 
 #define MfxAutoFunc_1(obj, func, GOTO_NEXT) __MfxAutoFunc_1(obj, func, GOTO_NEXT) 
 #define MfxAutoFunc_2(obj, func, GOTO_NEXT) __MfxAutoFunc_2(obj, func, GOTO_NEXT) 
@@ -140,7 +140,7 @@ namespace MicroFlakeX
 #define MfxAutoFunc_8(obj, func, GOTO_NEXT) __MfxAutoFunc_8(obj, func, GOTO_NEXT) 
 }
 
-//内部 类型 - 类 - 函数 - 模板 - 宏
+// 内部 类型 - 类 - 函数 - 模板 - 宏
 namespace __MicroFlakeX
 {
 	class MFX_PORT MfxFactoryHand;
@@ -571,3 +571,667 @@ if(iterID == countID++)\
 	goto REG_##GOTO_NEXT;\
 }\
 
+//根据总数推断实际的函数数量，上限为62个函数
+#define MfxAutoFunc_AutoEnum_ArgsMap(NUM) CCONNECT(MfxAutoFunc_AutoEnum_ArgsMap_, NUM)
+
+//跳转对应的自动函数注册
+#define MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2) CCONNECT(CONNECT(MfxAutoFunc_, NUM_1), (OBJ, FUNC_1, FUNC_2))
+
+//自动注册宏，最高支持62组注册数据
+//超过62组宏注册请使用MfxAutoFunc_Enum_NUM()
+#define MfxAutoFunc_AutoEnum(...) \
+    CONNECT(CCONNECT(MfxAutoFunc_Enum_, MfxAutoFunc_AutoEnum_ArgsMap(GET_ARGS_NUM(__VA_ARGS__))), (__VA_ARGS__))
+
+//延迟连接
+#define CONNECT(A, B) A##B
+#define CCONNECT(A, B) CONNECT(A, B)
+#define CCCONNECT(A, B) CCONNECT(A, B)
+#define CCCCONNECT(A, B) CCCONNECT(A, B)
+#define CCCCCONNECT(A, B) CCCCONNECT(A, B)
+
+#define ARGS_NUM_(\
+N1, N2, N3, N4, N5, N6, N7, N8, N9, N10, N11, N12, N13, N14, N15, N16, \
+N17, N18, N19, N20, N21, N22, N23, N24, N25, N26, N27, N28, N29, N30, N31, N32, \
+N33, N34, N35, N36, N37, N38, N39, N40, N41, N42, N43, N44, N45, N46, N47, N48, \
+N49, N50, N51, N52, N53, N54, N55, N56, N57, N58, N59, N60, N61, N62, N63, N64, \
+N65, N66, N67, N68, N69, N70, N71, N72, N73, N74, N75, N76, N77, N78, N79, N80, \
+N81, N82, N83, N84, N85, N86, N87, N88, N89, N90, N91, N92, N93, N94, N95, N96, \
+N97, N98, N99, N100, N101, N102, N103, N104, N105, N106, N107, N108, N109, N110, N111, N112, \
+N113, N114, N115, N116, N117, N118, N119, N120, N121, N122, N123, N124, N125, N126, ...) N126
+
+#define GET_ARGS_NUM(...) CONNECT(ARGS_NUM_, (__VA_ARGS__, \
+125, 124, 123, 122, 121, 120, 119, 118, 117, 116, 115, 114, 113, 112, 111, \
+110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, \
+94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, \
+78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, \
+62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, \
+46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, \
+30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, \
+14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_3 1
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_5 2
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_7 3
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_9 4
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_11 5
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_13 6
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_15 7
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_17 8
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_19 9
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_21 10
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_23 11
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_25 12
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_27 13
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_29 14
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_31 15
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_33 16
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_35 17
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_37 18
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_39 19
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_41 20
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_43 21
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_45 22
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_47 23
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_49 24
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_51 25
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_53 26
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_55 27
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_57 28
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_59 29
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_61 30
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_63 31
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_65 32
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_67 33
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_69 34
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_71 35
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_73 36
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_75 37
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_77 38
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_79 39
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_81 40
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_83 41
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_85 42
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_87 43
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_89 44
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_91 45
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_93 46
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_95 47
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_97 48
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_99 49
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_101 50
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_103 51
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_105 52
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_107 53
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_109 54
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_111 55
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_113 56
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_115 57
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_117 58
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_119 59
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_121 60
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_123 61
+
+#define MfxAutoFunc_AutoEnum_ArgsMap_125 62
+
+#define MfxAutoFunc_Enum_1(OBJ, NUM_1, FUNC_1, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, END)
+
+#define MfxAutoFunc_Enum_2(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_1(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_3(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_2(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_4(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_3(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_5(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_4(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_6(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_5(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_7(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_6(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_8(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_7(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_9(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_8(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_10(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_9(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_11(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_10(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_12(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_11(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_13(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_12(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_14(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_13(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_15(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_14(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_16(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_15(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_17(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_16(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_18(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_17(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_19(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_18(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_20(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_19(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_21(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_20(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_22(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_21(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_23(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_22(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_24(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_23(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_25(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_24(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_26(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_25(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_27(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_26(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_28(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_27(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_29(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_28(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_30(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_29(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_31(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_30(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_32(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_31(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_33(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_32(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_34(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_33(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_35(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_34(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_36(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_35(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_37(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_36(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_38(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_37(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_39(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_38(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_40(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_39(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_41(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_40(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_42(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_41(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_43(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_42(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_44(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_43(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_45(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_44(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_46(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_45(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_47(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_46(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_48(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_47(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_49(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_48(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_50(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_49(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_51(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_50(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_52(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_51(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_53(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_52(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_54(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_53(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_55(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_54(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_56(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_55(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_57(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_56(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_58(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_57(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_59(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_58(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_60(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_59(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_61(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_60(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_62(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_61(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_63(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_62(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_64(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_63(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_65(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_64(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_66(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_65(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_67(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_66(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_68(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_67(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_69(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_68(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_70(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_69(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_71(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_70(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_72(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_71(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_73(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_72(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_74(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_73(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_75(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_74(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_76(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_75(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_77(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_76(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_78(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_77(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_79(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_78(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_80(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_79(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_81(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_80(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_82(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_81(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_83(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_82(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_84(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_83(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_85(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_84(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_86(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_85(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_87(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_86(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_88(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_87(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_89(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_88(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_90(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_89(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_91(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_90(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_92(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_91(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_93(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_92(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_94(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_93(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_95(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_94(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_96(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_95(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_97(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_96(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_98(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_97(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_99(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_98(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_100(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_99(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_101(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_100(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_102(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_101(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_103(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_102(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_104(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_103(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_105(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_104(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_106(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_105(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_107(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_106(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_108(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_107(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_109(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_108(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_110(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_109(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_111(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_110(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_112(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_111(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_113(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_112(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_114(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_113(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_115(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_114(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_116(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_115(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_117(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_116(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_118(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_117(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_119(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_118(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_120(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_119(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_121(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_120(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_122(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_121(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_123(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_122(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_124(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_123(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_125(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_124(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_126(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_125(OBJ, NUM_2, FUNC_2, __VA_ARGS__))

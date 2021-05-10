@@ -3,7 +3,9 @@
 
 MfxObject_Init_0(MfxMove)
 MfxObject_Init_1(MfxMove, EachFrame)
-MfxAutoFunc_0(MfxMove, EachFrame, END)
+MfxAutoFunc_AutoEnum(MfxMove, \
+	0 , EachFrame \
+)
 MfxObject_Init_2(MfxMove, MfxType);
 
 MicroFlakeX::MfxMove::MfxMove()

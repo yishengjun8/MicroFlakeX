@@ -3,15 +3,17 @@
 
 MfxObject_Init_0(MfxSize)
 MfxObject_Init_1(MfxSize, Init)
-MfxAutoFunc_2(MfxSize, Init, GetD2D1SizeF)
-MfxAutoFunc_1(MfxSize, GetD2D1SizeF, GetD2D1SizeU)
-MfxAutoFunc_1(MfxSize, GetD2D1SizeU, Empty)
-MfxAutoFunc_1(MfxSize, Empty, Inflate)
-MfxAutoFunc_2(MfxSize, Inflate, SetWidth)
-MfxAutoFunc_1(MfxSize, SetWidth, SetHeight)
-MfxAutoFunc_1(MfxSize, SetHeight, GetWidth)
-MfxAutoFunc_1(MfxSize, GetWidth, GetHeight)
-MfxAutoFunc_1(MfxSize, GetHeight, END)
+MfxAutoFunc_AutoEnum(MfxSize, \
+	2, Init, \
+	1, GetD2D1SizeF, \
+	1, GetD2D1SizeU, \
+	1, Empty, \
+	2, Inflate, \
+	1, SetWidth, \
+	1, SetHeight, \
+	1, GetWidth, \
+	1, GetHeight \
+)
 MfxObject_Init_2(MfxSize, MfxType)
 
 MicroFlakeX::MfxSize::MfxSize()

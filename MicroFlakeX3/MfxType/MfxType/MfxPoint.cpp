@@ -3,14 +3,16 @@
 
 MfxObject_Init_0(MfxPoint)
 MfxObject_Init_1(MfxPoint, Init)
-MfxAutoFunc_2(MfxPoint, Init, GetD2D1PointU)
-MfxAutoFunc_1(MfxPoint, GetD2D1PointU, GetD2D1PointF)
-MfxAutoFunc_1(MfxPoint, GetD2D1PointF, Offset)
-MfxAutoFunc_2(MfxPoint, Offset, SetX)
-MfxAutoFunc_1(MfxPoint, SetX, SetY)
-MfxAutoFunc_1(MfxPoint, SetY, GetX)
-MfxAutoFunc_1(MfxPoint, GetX, GetY)
-MfxAutoFunc_1(MfxPoint, GetY, END)
+MfxAutoFunc_AutoEnum(MfxPoint, \
+	2, Init, \
+	1, GetD2D1PointU, \
+	1, GetD2D1PointF, \
+	2, Offset, \
+	1, SetX, \
+	1, SetY, \
+	1, GetX, \
+	1, GetY \
+)
 MfxObject_Init_2(MfxPoint, MfxType)
 
 MicroFlakeX::MfxPoint::MfxPoint()

@@ -4,8 +4,7 @@
 
 MfxObject_Init_0(MfxBaseTest00)
 MfxObject_Init_1(MfxBaseTest00, SayHello)
-MfxAutoFunc_1(MfxBaseTest00, SayHello, SayGoodBy)
-MfxAutoFunc_0(MfxBaseTest00, SayGoodBy, END)
+MfxAutoFunc_AutoEnum(MfxBaseTest00, 1, SayHello, 0, SayGoodBy, 1, SetData)
 MfxObject_Init_2(MfxBaseTest00, MfxBase);
 
 MicroFlakeX::MfxBaseTest00::MfxBaseTest00()

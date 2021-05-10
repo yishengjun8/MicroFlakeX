@@ -3,18 +3,20 @@
 
 MfxObject_Init_0(MfxColor)
 MfxObject_Init_1(MfxColor, Init)
-MfxAutoFunc_4(MfxColor, Init, SetColor)
-MfxAutoFunc_2(MfxColor, SetColor, GetD2D1ColorF)
-MfxAutoFunc_1(MfxColor, GetD2D1ColorF, SetA)
-MfxAutoFunc_1(MfxColor, SetA, SetR)
-MfxAutoFunc_1(MfxColor, SetR, SetG)
-MfxAutoFunc_1(MfxColor, SetG, SetB)
-MfxAutoFunc_1(MfxColor, SetB, GetA)
-MfxAutoFunc_1(MfxColor, GetA, GetR)
-MfxAutoFunc_1(MfxColor, GetR, GetG)
-MfxAutoFunc_1(MfxColor, GetG, GetB)
-MfxAutoFunc_1(MfxColor, GetB, GetRGB)
-MfxAutoFunc_1(MfxColor, GetRGB, END)
+MfxAutoFunc_AutoEnum(MfxColor, \
+	4, Init, \
+	2, SetColor, \
+	1, GetD2D1ColorF, \
+	1, SetA, \
+	1, SetR, \
+	1, SetG, \
+	1, SetB, \
+	1, GetA, \
+	1, GetR, \
+	1, GetG, \
+	1, GetB, \
+	1, GetRGB\
+)
 MfxObject_Init_2(MfxColor, MfxType)
 
 static const UINT32 sc_redShift = 16;

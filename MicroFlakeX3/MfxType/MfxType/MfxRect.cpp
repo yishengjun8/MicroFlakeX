@@ -3,38 +3,41 @@
 
 MfxObject_Init_0(MfxRect)
 MfxObject_Init_1(MfxRect, Init)
-MfxAutoFunc_4(MfxRect, Init, GetD2D1RectU)
-MfxAutoFunc_1(MfxRect, GetD2D1RectU, GetD2D1SizeU)
-MfxAutoFunc_1(MfxRect, GetD2D1SizeU, GetD2D1PointU)
-MfxAutoFunc_1(MfxRect, GetD2D1PointU, GetD2D1RectF)
-MfxAutoFunc_1(MfxRect, GetD2D1RectF, GetD2D1SizeF)
-MfxAutoFunc_1(MfxRect, GetD2D1SizeF, GetD2D1PointF)
-MfxAutoFunc_1(MfxRect, GetD2D1PointF, SetSize)
-MfxAutoFunc_1(MfxRect, SetSize, SetPoint)
-MfxAutoFunc_1(MfxRect, SetPoint, SetX)
-MfxAutoFunc_1(MfxRect, SetX, SetY)
-MfxAutoFunc_1(MfxRect, SetY, SetWidth)
-MfxAutoFunc_1(MfxRect, SetWidth, SetHeight)
-MfxAutoFunc_1(MfxRect, SetHeight, SetTop)
-MfxAutoFunc_1(MfxRect, SetTop, SetLeft)
-MfxAutoFunc_1(MfxRect, SetLeft, SetRight)
-MfxAutoFunc_1(MfxRect, SetRight, SetBottom)
-MfxAutoFunc_1(MfxRect, SetBottom, GetSize)
-MfxAutoFunc_1(MfxRect, GetSize, GetPoint)
-MfxAutoFunc_1(MfxRect, GetPoint, GetX)
-MfxAutoFunc_1(MfxRect, GetX, GetY)
-MfxAutoFunc_1(MfxRect, GetY, GetWidth)
-MfxAutoFunc_1(MfxRect, GetWidth, GetHeight)
-MfxAutoFunc_1(MfxRect, GetHeight, GetTop)
-MfxAutoFunc_1(MfxRect, GetTop, GetLeft)
-MfxAutoFunc_1(MfxRect, GetLeft, GetRight)
-MfxAutoFunc_1(MfxRect, GetRight, GetBottom)
-MfxAutoFunc_1(MfxRect, GetBottom, Empty)
-MfxAutoFunc_1(MfxRect, Empty, Offset)
-MfxAutoFunc_2(MfxRect, Offset, Inflate)
-MfxAutoFunc_2(MfxRect, Inflate, Collision)
-MfxAutoFunc_2(MfxRect, Collision, PointInside)
-MfxAutoFunc_2(MfxRect, PointInside, END)
+MfxAutoFunc_AutoEnum(MfxRect, \
+	4, Init, \
+	1, GetD2D1RectU, \
+	1, GetD2D1SizeU, \
+	1, GetD2D1PointU, \
+	1, GetD2D1RectF, \
+	1, GetD2D1SizeF, \
+	1, GetD2D1PointF, \
+	1, SetSize, \
+	1, SetPoint, \
+	1, SetX, \
+	1, SetY, \
+	1, SetWidth, \
+	1, SetHeight, \
+	1, SetTop, \
+	1, SetLeft, \
+	1, SetRight, \
+	1, SetBottom, \
+	1, GetSize, \
+	1, GetPoint, \
+	1, GetX, \
+	1, GetY, \
+	1, GetWidth, \
+	1, GetHeight, \
+	1, GetTop, \
+	1, GetLeft, \
+	1, GetRight, \
+	1, GetBottom, \
+	1, Empty, \
+	2, Offset, \
+	2, Inflate, \
+	2, Collision, \
+	2, PointInside \
+)
+
 MfxObject_Init_2(MfxRect, MfxType)
 
 MicroFlakeX::MfxRect::MfxRect()
