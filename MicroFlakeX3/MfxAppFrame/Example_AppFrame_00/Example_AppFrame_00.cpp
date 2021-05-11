@@ -16,7 +16,7 @@ int main()
     //{
     MfxUI* myUI2 = new MfxUI(MfxRect(10,10,600,600), MfxText("myUI2"));
     //}
-    delete myUI2;
+    //delete myUI2;
     MfxUI* myUI = nullptr;
     MfxFlake* myFlake_00 = nullptr;
     MfxFlake* myFlake_01 = nullptr;

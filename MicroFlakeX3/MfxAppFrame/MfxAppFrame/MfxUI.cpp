@@ -489,8 +489,18 @@ MfxReturn MicroFlakeX::MfxUI::__OnDestroy(WPARAM wParam, LPARAM lParam)
 MfxReturn MicroFlakeX::MfxUI::__OnSize(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
-    myRect.myWidth = LOWORD(lParam);
-    myRect.myHeight = HIWORD(lParam);
+    MfxSize tSize(LOWORD(lParam), HIWORD(lParam));
+
+    myRect = tSize;
+    myCanvas.SetSize(&tSize);
+    if (myBackImage)
+    {
+        myBackImage->SetSize(&tSize);
+    }
+    if (myMaskImage)
+    {
+        myMaskImage->SetSize(&tSize);
+    }
     return DefWindowProc(myWnd, WM_SIZE, wParam, lParam);
 }
 
