@@ -5,10 +5,10 @@
 * 
 *   版本：1.01       作者：yishengjun8     
 *	
-*	简介：
+* 
+*	简介
 *	MfxBase.h	提供了构造	MicroFlakeX	的基础类和基础支持
 *	
-* 
 * 
 *	强制 - 
 *	1、所有的	MicroFlakeX子类	必须继承于	MfxBase基类
@@ -232,7 +232,6 @@ namespace MicroFlakeX
 	*			比较两个MfxBase是否相等。
 	* 
 	*	其余的	MfxBase	函数不需要用户管理，请声明	MfxObject宏	用以自动生成剩余函数。
-	* 
 	* 
 	****************************************************************/
 	class MfxBase
@@ -541,8 +540,6 @@ namespace MicroFlakeX
 *	MicroFlakeX辅助宏
 *	
 *	这里是	MicroFlakeX辅助宏	的集中定义，不多赘述。
-* 
-* 
 * 
 ****************************************************************/
 
