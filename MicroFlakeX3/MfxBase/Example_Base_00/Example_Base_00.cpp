@@ -10,7 +10,7 @@ int main()
     cout << endl;
     MfxBase* temp = nullptr;
 
-    MfxBaseFactory(MfxText("MfxBaseTest00"), &temp);
+    MfxFactory(MfxText("MfxBaseTest00"), &temp);
 
     MfxString func = MfxText("SayHello");
 

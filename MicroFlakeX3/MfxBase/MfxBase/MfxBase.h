@@ -197,21 +197,33 @@ namespace MicroFlakeX
 namespace __MicroFlakeX
 {
 	/***************************************************************
+	*	__MicroFlakeX内部函数	
+	*		>>	一般情况下这里的函数不需要额外的关注
+	*
+	*	MicroFlakeX辅助函数
+	*	
+	*		MicroFlakeX的子类通过 MfxFactoryHand 来注册工厂创建。
+	*		MfxRemoveObject - 移除注册
+	*		MfxRegisterObject - 注册工厂
+	* 
+	****************************************************************/
+	using namespace MicroFlakeX;
+
+	class MFX_PORT MfxFactoryHand;
+
+	MFX_PORT MfxReturn MfxRemoveObject(MfxString object);
+	MFX_PORT MfxReturn MfxRegisterObject(MfxString object, MfxFactoryHand* hand);
+}
+
+namespace MicroFlakeX
+{
+	/***************************************************************
 	* 
 	* 
 	* 
 	* 
 	* 
 	****************************************************************/
-	using namespace MicroFlakeX;
-	class MFX_PORT MfxFactoryHand;
-	MFX_PORT MfxReturn MfxRemoveObject(MfxString object);
-	MFX_PORT MfxReturn MfxRegisterObject(MfxString object, MfxFactoryHand* hand);
-}
-
-//公开 类声明
-namespace MicroFlakeX
-{
 	class MfxBase
 	{
 		friend class MfxLock;
