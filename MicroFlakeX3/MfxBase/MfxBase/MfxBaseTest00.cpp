@@ -21,7 +21,7 @@ MicroFlakeX::MfxBaseTest00::~MfxBaseTest00()
 MfxReturn MicroFlakeX::MfxBaseTest00::Clone(MfxBase** ret)
 {
 	MfxCodeLock(this);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxBase& MicroFlakeX::MfxBaseTest00::operator=(MfxBase& rhs)
@@ -40,19 +40,19 @@ MfxReturn MicroFlakeX::MfxBaseTest00::SayHello(int set)
 {
 	MfxCodeLock(this);
 	std::cout << "Hello MfxBaseTest00 SayHello! setNum = " << set << std::endl;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxBaseTest00::SayGoodBy()
 {
 	MfxCodeLock(this);
 	std::cout << "Hello MfxBaseTest00 SayGoodBy! myData = " << myData << std::endl;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxBaseTest00::SetData(int set)
 {
 	MfxCodeLock(this);
 	myData = set;
-	return RFine;
+	return Mfx_Return_Fine;
 }

@@ -7,14 +7,14 @@ using namespace __MicroFlakeX;
 std::map<MfxString, MfxFactoryHand*> MfxFactoryMap;
 typedef std::map<MfxString, MfxFactoryHand*>::value_type MfxFactoryValue;
 
-MfxReturn MicroFlakeX::MfxBaseFactory(MfxString object, MfxBase** ret)
+MfxReturn MicroFlakeX::MfxFactory(MfxString object, MfxBase** ret)
 {
 	auto iter = MfxFactoryMap.find(object);
 	if (iter != MfxFactoryMap.end())
 	{
 		return iter->second->Creat(ret);
 	}
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn __MicroFlakeX::MfxRemoveObject(MfxString object)
@@ -24,13 +24,13 @@ MfxReturn __MicroFlakeX::MfxRemoveObject(MfxString object)
 	{
 		MfxFactoryMap.erase(tIter);
 	}
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn __MicroFlakeX::MfxRegisterObject(MfxString object, MfxFactoryHand* hand)
 {
 	auto ret = MfxFactoryMap.insert(MfxFactoryValue(object, hand));
-	return ret.second ? RFine : RFail;
+	return ret.second ? Mfx_Return_Fine : Mfx_Return_Fail;
 }
 
 MicroFlakeX::MfxBase::MfxBase()
@@ -46,7 +46,7 @@ MicroFlakeX::MfxBase::~MfxBase()
 MfxReturn MicroFlakeX::MfxBase::Clone(MfxBase** ret)
 {
 	*ret = new MfxBase;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxBase& MicroFlakeX::MfxBase::operator=(MfxBase& rhs)
@@ -61,19 +61,19 @@ BOOL MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 
 MfxReturn MicroFlakeX::MfxBase::AutoFunc(MfxString func ...)
 {
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxBase::FuncName(MfxString* ret)
 {
 	*ret = MfxText("");
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxBase::ObjectName(MfxString* ret)
 {
 	*ret = MfxText("MfxBase");
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 #include <fstream>

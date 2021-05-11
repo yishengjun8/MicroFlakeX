@@ -18,6 +18,8 @@
 
 /* STL模板库 */
 #include <map>
+#include <set>
+#include <deque>
 #include <mutex>
 #include <thread>
 #include <string>
@@ -27,6 +29,6 @@
 #include <algorithm>
 /**/
 
-#define MFX_BUILDING
+#define MFXDLL_BUILDING
 
 #endif //PCH_H
