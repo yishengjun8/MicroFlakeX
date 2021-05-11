@@ -14,6 +14,7 @@ namespace MicroFlakeX
         BOOL operator==(MfxBase& rhs);
         MfxBase& operator=(MfxBase& rhs);
 
+        static void Test(MfxBaseTest00* set, int a);
     public:
         MfxReturn SayHello(int set);
         MfxReturn SayGoodBy();

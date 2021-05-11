@@ -22,11 +22,11 @@ MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret,
 		rect.GetRECT(&rc);
 		tDCRenderTarget->BindDC(set, &rc);
 		*ret = tDCRenderTarget;
-		return RFine;
+		return Mfx_Return_Fine;
 	}
 	else
 	{
-		return RFail;
+		return Mfx_Return_Fail;
 	}
 }
 
@@ -39,11 +39,11 @@ MfxReturn MicroFlakeX::MfxGraph::GetID2D1HwndRenderTarget(ID2D1RenderTarget** re
 		D2D1::HwndRenderTargetProperties(set, tSize), &tHwndRenderTarget)))
 	{
 		*ret = tHwndRenderTarget;
-		return RFine;
+		return Mfx_Return_Fine;
 	}
 	else
 	{
-		return RFail;
+		return Mfx_Return_Fail;
 	}
 }
 
@@ -59,7 +59,7 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxString 
 		path.c_str(), NULL, GENERIC_READ,
 		WICDecodeMetadataCacheOnLoad, &pDecoder)))
 	{
-		return RFail;
+		return Mfx_Return_Fail;
 	};
 
 	HRESULT hr = pDecoder->GetFrame(0, &pSource);
@@ -113,7 +113,7 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxString 
 	__MicroFlakeX::SafeRelease(pDecoder);
 	__MicroFlakeX::SafeRelease(pScaler);
 	__MicroFlakeX::SafeRelease(pConverter);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromColor(IWICBitmap** ret, MfxColor
@@ -123,7 +123,7 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromColor(IWICBitmap** ret, MfxColor
 	if (FAILED(myIWICImagingFactory->CreateBitmap(size.myWidth, size.myHeight,
 		formatGUID, WICBitmapCacheOnDemand, ret)))
 	{
-		return RFail;
+		return Mfx_Return_Fail;
 	}
 
 	WICRect tLockRect = { 0, 0, size.myWidth, size.myHeight };
@@ -152,7 +152,7 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromColor(IWICBitmap** ret, MfxColor
 		}
 	}
 	SafeRelease(tBitmapLock);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxString &path, MfxSize size)
@@ -166,7 +166,7 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1Ren
 		path.c_str(), NULL, GENERIC_READ,
 		WICDecodeMetadataCacheOnLoad, &pDecoder)))
 	{
-		return RFail;
+		return Mfx_Return_Fail;
 	};
 
 	HRESULT hr = pDecoder->GetFrame(0, &pSource);
@@ -215,7 +215,7 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1Ren
 	__MicroFlakeX::SafeRelease(pDecoder);
 	__MicroFlakeX::SafeRelease(pScaler);
 	__MicroFlakeX::SafeRelease(pConverter);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, IWICBitmap* bitmap, MfxSize size)
@@ -270,7 +270,7 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID
 
 	__MicroFlakeX::SafeRelease(pScaler);
 	__MicroFlakeX::SafeRelease(pConverter);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::CopyIWICBitmap(IWICBitmap** ret, IWICBitmap* set)
@@ -282,7 +282,7 @@ MfxReturn MicroFlakeX::MfxGraph::CopyIWICBitmap(IWICBitmap** ret, IWICBitmap* se
 	if (FAILED(myIWICImagingFactory->CreateBitmap(tWidth, tHeight,
 		formatGUID, WICBitmapCacheOnDemand, ret)))
 	{
-		return RFail;
+		return Mfx_Return_Fail;
 	}
 
 	WICRect tLockRect = { 0, 0, tWidth, tWidth };
@@ -314,14 +314,14 @@ MfxReturn MicroFlakeX::MfxGraph::CopyIWICBitmap(IWICBitmap** ret, IWICBitmap* se
 	}
 	SafeRelease(tReadLock);
 	SafeRelease(tWriteLock);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::CopyTextFormat(IDWriteTextFormat** ret, IDWriteTextFormat* set)
 {
 	if (set == nullptr)
 	{
-		return RFail;
+		return Mfx_Return_Fail;
 	}
 	WCHAR* fontLocalName = new WCHAR[set->GetLocaleNameLength() + 1]{ 0 };
 	WCHAR* fontFamilyName = new WCHAR[set->GetFontFamilyNameLength() + 1]{ 0 };
@@ -380,7 +380,7 @@ MicroFlakeX::MfxGraph::~MfxGraph()
 
 MfxReturn MicroFlakeX::MfxGraph::Clone(MfxBase** ret)
 {
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxBase& MicroFlakeX::MfxGraph::operator=(MfxBase& rhs)
@@ -398,43 +398,43 @@ MfxReturn MicroFlakeX::MfxGraph::SetRect(MfxRect set)
 {
 	SetSize(MfxSize(&set));
 	SetPoint(MfxPoint(&set));
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::SetSize(MfxSize set)
 {
 	myRect = set;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::SetPoint(MfxPoint set)
 {
 	myRect = set;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::GetRect(MfxRect* set)
 {
 	*set = myRect;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::GetSize(MfxSize* set)
 {
 	*set = myRect;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::GetPoint(MfxPoint* set)
 {
 	*set = myRect;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::CollisionWith(MfxGraph* set, BOOL* ret)
 {
 	myRect.Collision(set, ret);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 

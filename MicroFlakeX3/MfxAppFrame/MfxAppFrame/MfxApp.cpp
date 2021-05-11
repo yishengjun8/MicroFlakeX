@@ -97,13 +97,23 @@ MfxReturn MicroFlakeX::MfxApp::ForwardMessage(HWND hWnd, MfxMsg message, WPARAM 
 			t_Itera = myUIMap.find(hWnd);
 			if (t_Itera != myUIMap.end())
 			{
-				return (t_Itera->second)->ProcMessage(message, wParam, lParam);
+				auto ret = (t_Itera->second)->ProcMessage(message, wParam, lParam);
+				if (message == WM_DESTROY)
+				{
+					myUIMap.erase(t_Itera);
+				}
+				return ret;
 			}
 		}
 	}
 	else
 	{
-		return (t_Itera->second)->ProcMessage(message, wParam, lParam);
+		auto ret = (t_Itera->second)->ProcMessage(message, wParam, lParam);
+		if (message == WM_DESTROY)
+		{
+			myUIMap.erase(t_Itera);
+		}
+		return ret;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }

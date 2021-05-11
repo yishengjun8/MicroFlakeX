@@ -46,7 +46,7 @@ MicroFlakeX::MfxSize::~MfxSize()
 MfxReturn MicroFlakeX::MfxSize::Clone(MfxBase** ret)
 {
 	*ret = new MfxSize(this);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxBase& MicroFlakeX::MfxSize::operator=(MfxBase& rhs)
@@ -76,7 +76,7 @@ BOOL MicroFlakeX::MfxSize::operator==(MfxBase& rhs)
 	rhs.AutoFunc(L"GetWidth", &tW);
 	rhs.AutoFunc(L"GetHeight", &tH);
 	return tW == myWidth && tH == myHeight;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 BOOL MicroFlakeX::MfxSize::operator==(MfxSize& rhs)
@@ -88,14 +88,14 @@ MfxReturn MicroFlakeX::MfxSize::Init(FLOAT setWidth, FLOAT setHeight)
 {
 	myWidth = setWidth;
 	myHeight = setHeight;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeF(D2D1_SIZE_F* ret)
 {
 	GetWidth(&(ret->width));
 	GetHeight(&(ret->height));
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeU(D2D1_SIZE_U* ret)
@@ -105,7 +105,7 @@ MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeU(D2D1_SIZE_U* ret)
 	GetHeight(&tH);
 	ret->width = tW;
 	ret->height = tH;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetSIZE(SIZE* ret)
@@ -115,42 +115,42 @@ MfxReturn MicroFlakeX::MfxSize::GetSIZE(SIZE* ret)
 	GetHeight(&tH);
 	ret->cx = tW;
 	ret->cy = tH;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::Empty(BOOL* ret)
 {
 	*ret = myWidth < 0 || myHeight < 0;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::Inflate(FLOAT setX, FLOAT setY)
 {
 	myWidth += 2 * setX;
 	myHeight += 2 * setY;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::SetWidth(FLOAT set)
 {
 	myWidth = set;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::SetHeight(FLOAT set)
 {
 	myHeight = set;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetWidth(FLOAT* ret)
 {
 	*ret = myWidth;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetHeight(FLOAT* ret)
 {
 	*ret = myHeight;
-	return RFine;
+	return Mfx_Return_Fine;
 }

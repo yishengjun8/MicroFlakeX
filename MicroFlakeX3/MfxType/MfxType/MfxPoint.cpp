@@ -45,7 +45,7 @@ MicroFlakeX::MfxPoint::~MfxPoint()
 MfxReturn MicroFlakeX::MfxPoint::Clone(MfxBase** ret)
 {
 	*ret = new MfxPoint(this);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxBase& MicroFlakeX::MfxPoint::operator=(MfxBase& rhs)
@@ -75,7 +75,7 @@ BOOL MicroFlakeX::MfxPoint::operator==(MfxBase& rhs)
 	rhs.AutoFunc(MfxText("GetX"), &tX);
 	rhs.AutoFunc(MfxText("GetY"), &tY);
 	return tX == myX && tY == myY;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 BOOL MicroFlakeX::MfxPoint::operator==(MfxPoint& rhs)
@@ -87,7 +87,7 @@ MfxReturn MicroFlakeX::MfxPoint::Init(FLOAT setX, FLOAT setY)
 {
 	myX = setX;
 	myY = setY;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointU(D2D1_POINT_2U* ret)
@@ -97,43 +97,43 @@ MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointU(D2D1_POINT_2U* ret)
 	GetY(&tY);
 	ret->x = tX;
 	ret->y = tY;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointF(D2D1_POINT_2F* ret)
 {
 	GetX(&(ret->x));
 	GetY(&(ret->y));
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::Offset(FLOAT setX, FLOAT setY)
 {
 	myX += setX;
 	myY += setY;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::SetX(FLOAT set)
 {
 	myX = set;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::SetY(FLOAT set)
 {
 	myY = set;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::GetX(FLOAT* ret)
 {
 	*ret = myX;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::GetY(FLOAT* ret)
 {
 	*ret = myY;
-	return RFine;
+	return Mfx_Return_Fine;
 }

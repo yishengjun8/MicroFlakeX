@@ -15,9 +15,11 @@ int main()
     MfxString func = MfxText("SayHello");
 
     temp->AutoFunc(func, 66);
+    temp->AutoFunc(func, 66);
 
     func = MfxText("SayGoodBy");
 
+    temp->AutoFunc(func, 66);
     temp->AutoFunc(func, 66);
 
 

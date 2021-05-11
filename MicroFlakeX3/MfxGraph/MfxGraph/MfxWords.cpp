@@ -132,7 +132,7 @@ MfxReturn MicroFlakeX::MfxWords::Clone(MfxWords** ret)
 	*ret = new MfxWords(myText, myRect, myTextLayout->GetFontSize(), myTextLayout);
 	(*ret)->SetCanvas(myCanvas);
 	(*ret)->SetTextColor(myColor);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxBase& MicroFlakeX::MfxWords::operator=(MfxBase& rhs)
@@ -172,7 +172,7 @@ MfxReturn MicroFlakeX::MfxWords::Paint()
 				myTextBrush);
 		}
 	}
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetCanvas(MfxCanvas* set)
@@ -180,7 +180,7 @@ MfxReturn MicroFlakeX::MfxWords::SetCanvas(MfxCanvas* set)
 	myCanvas = set; 
 	if (!myCanvas)
 	{
-		return RFine;
+		return Mfx_Return_Fine;
 	}
 	ID2D1RenderTarget* tRenderTarget = nullptr;
 	myCanvas->GetRenderTarget(&tRenderTarget);
@@ -191,13 +191,13 @@ MfxReturn MicroFlakeX::MfxWords::SetCanvas(MfxCanvas* set)
 		myColor.GetD2D1ColorF(&tColor);
 		myRenderTarget->CreateSolidColorBrush(tColor, (ID2D1SolidColorBrush**)&myTextBrush);
 	}
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::GetCanvas(MfxCanvas** ret)
 {
 	*ret = myCanvas;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::ResetTextLayout()
@@ -219,31 +219,31 @@ MfxReturn MicroFlakeX::MfxWords::SetText(MfxString set)
 {
 	myText = set;
 	ResetTextLayout();
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::GetText(MfxString* ret)
 {
 	*ret = myText;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetTextSize(FLOAT set)
 {
 	myTextLayout->SetFontSize(set, DWRITE_TEXT_RANGE{ 0,myText.length() });
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::GetTextSize(FLOAT* ret)
 {
 	*ret = myTextLayout->GetFontSize();
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetFontName(MfxString set)
 {
 	myTextLayout->SetFontFamilyName(set.c_str(), DWRITE_TEXT_RANGE{ 0,myText.length() });
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::GetFontName(MfxString* ret)
@@ -253,7 +253,7 @@ MfxReturn MicroFlakeX::MfxWords::GetFontName(MfxString* ret)
 
 	*ret = fontFamilyName;
 	SafeDeleteL(fontFamilyName);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetTextFormat(IDWriteTextFormat* set)
@@ -283,13 +283,13 @@ MfxReturn MicroFlakeX::MfxWords::SetTextColor(MfxColor set)
 			myRenderTarget->CreateSolidColorBrush(tColor, (ID2D1SolidColorBrush**)&myTextBrush);
 		}
 	}
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::GetTextColor(MfxColor* set)
 {
 	*set = myColor;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetRect(MfxRect set)
@@ -297,7 +297,7 @@ MfxReturn MicroFlakeX::MfxWords::SetRect(MfxRect set)
 	myRect = set;
 	myTextLayout->SetMaxWidth(myRect.myWidth);
 	myTextLayout->SetMaxHeight(myRect.myHeight);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetSize(MfxSize set)
@@ -305,29 +305,29 @@ MfxReturn MicroFlakeX::MfxWords::SetSize(MfxSize set)
 	myRect = set;
 	myTextLayout->SetMaxWidth(myRect.myWidth);
 	myTextLayout->SetMaxHeight(myRect.myHeight);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetTextAlignmentX(TextAlignmentX set)
 {
 	myTextLayout->SetTextAlignment(set);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::GetTextAlignmentX(TextAlignmentX* ret)
 {
 	*ret = myTextLayout->GetTextAlignment();
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetTextAlignmentY(TextAlignmentY set)
 {
 	myTextLayout->SetParagraphAlignment(set);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::GetTextAlignmentY(TextAlignmentY* ret)
 {
 	*ret = myTextLayout->GetParagraphAlignment();
-	return RFine;
+	return Mfx_Return_Fine;
 }

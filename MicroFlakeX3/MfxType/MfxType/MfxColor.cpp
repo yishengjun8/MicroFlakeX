@@ -48,7 +48,7 @@ MfxReturn MicroFlakeX::MfxColor::Clone(MfxBase** ret)
 {
 	*ret = new MfxColor;
 	((MfxColor*)(*ret))->Init(myA, myR, myG, myB);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxBase& MicroFlakeX::MfxColor::operator=(MfxBase& rhs)
@@ -90,7 +90,7 @@ MfxReturn MicroFlakeX::MfxColor::Init(FLOAT setA, FLOAT setR, FLOAT setG, FLOAT 
 	myR = setR;
 	myG = setG;
 	myB = setB;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::SetColor(FLOAT setA, UINT32 set)
@@ -99,7 +99,7 @@ MfxReturn MicroFlakeX::MfxColor::SetColor(FLOAT setA, UINT32 set)
 	myG = static_cast<FLOAT>((set & sc_greenMask) >> sc_greenShift) / 255.f;
 	myB = static_cast<FLOAT>((set & sc_blueMask) >> sc_blueShift) / 255.f;
 	myA = setA;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::GetD2D1ColorF(D2D1_COLOR_F* ret)
@@ -108,59 +108,59 @@ MfxReturn MicroFlakeX::MfxColor::GetD2D1ColorF(D2D1_COLOR_F* ret)
 	GetR(&(ret->r));
 	GetG(&(ret->g));
 	GetB(&(ret->b));
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::SetA(FLOAT ret)
 {
 	myA = ret;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::SetR(FLOAT ret)
 {
 	myR = ret;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::SetG(FLOAT ret)
 {
 	myG = ret;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::SetB(FLOAT ret)
 {
 	myB = ret;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::GetA(FLOAT* ret)
 {
 	*ret = myA;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::GetR(FLOAT* ret)
 {
 	*ret = myR;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::GetG(FLOAT* ret)
 {
 	*ret = myG;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::GetB(FLOAT* ret)
 {
 	*ret = myB;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxColor::GetRGB(UINT32* ret)
 {
 	*ret = RGB(myR, myG, myB);
-	return RFine;
+	return Mfx_Return_Fine;
 }

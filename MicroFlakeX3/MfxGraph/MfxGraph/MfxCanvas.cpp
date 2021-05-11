@@ -63,7 +63,7 @@ MfxReturn MicroFlakeX::MfxCanvas::Clone(MfxBase** ret)
 		*ret = new MfxCanvas(myDC, myRect);
 	}
 	*ret = new MfxCanvas(myRect);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxBase& MicroFlakeX::MfxCanvas::operator=(MfxBase& rhs)
@@ -106,60 +106,60 @@ MfxReturn MicroFlakeX::MfxCanvas::SetDC(HDC set)
 {
 	if (myDC || myWnd)
 	{
-		return RFail;
+		return Mfx_Return_Fail;
 	}
 	myDC = set;
 	GetID2D1DCRenderTarget(&myRenderTarget, set, myRect);
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetDC(HDC* ret)
 {
 	*ret = myDC;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::SetWnd(HWND set)
 {
 	if (myDC || myWnd)
 	{
-		return RFail;
+		return Mfx_Return_Fail;
 	}
 	myWnd = set;
 	GetID2D1HwndRenderTarget(&myRenderTarget, set, MfxSize(&myRect));
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetWnd(HWND* ret)
 {
 	*ret = myWnd;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::PaintBegin()
 {
 	myRenderTarget->BeginDraw();
 	myPaintFlag = true;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::PaintFinish()
 {
 	myRenderTarget->EndDraw();
 	myPaintFlag = false;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::PaintCheck(bool* ret)
 {
 	*ret = myPaintFlag;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetRenderTarget(ID2D1RenderTarget** ret)
 {
 	*ret = myRenderTarget;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::SetRect(MfxRect set)
@@ -179,7 +179,7 @@ MfxReturn MicroFlakeX::MfxCanvas::SetRect(MfxRect set)
 			((ID2D1DCRenderTarget*)myRenderTarget)->BindDC(myDC, &rc);
 		}
 	}
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize set)
@@ -199,7 +199,7 @@ MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize set)
 			((ID2D1DCRenderTarget*)myRenderTarget)->BindDC(myDC, &rc);
 		}
 	}
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::SetPoint(MfxPoint set)
@@ -213,5 +213,5 @@ MfxReturn MicroFlakeX::MfxCanvas::SetPoint(MfxPoint set)
 			((ID2D1DCRenderTarget*)myRenderTarget)->BindDC(myDC, &rc);
 		}
 	}
-	return RFine;
+	return Mfx_Return_Fine;
 }

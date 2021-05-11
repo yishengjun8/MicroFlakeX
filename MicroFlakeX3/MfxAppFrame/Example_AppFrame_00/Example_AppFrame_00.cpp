@@ -8,14 +8,23 @@ int main()
 {
     cout << "Hello MicroFlakeX!\n";
 
+
+    {
+        MfxUI myUI3(MfxRect(10, 10, 600, 600), MfxText("myUI3"));
+    }
+
+    //{
+    MfxUI* myUI2 = new MfxUI(MfxRect(10,10,600,600), MfxText("myUI2"));
+    //}
+    delete myUI2;
     MfxUI* myUI = nullptr;
     MfxFlake* myFlake_00 = nullptr;
     MfxFlake* myFlake_01 = nullptr;
 
     //利用Mfx工厂创建一个对象 - 当然你也可以直接new对象
-    MfxBaseFactory(MfxText("MfxUI"), (MfxBase**)&myUI);
-    MfxBaseFactory(MfxText("MfxFlake"), (MfxBase**)&myFlake_00);
-    MfxBaseFactory(MfxText("MfxFlake"), (MfxBase**)&myFlake_01);
+    MfxFactory(MfxText("MfxUI"), (MfxBase**)&myUI);
+    MfxFactory(MfxText("MfxFlake"), (MfxBase**)&myFlake_00);
+    MfxFactory(MfxText("MfxFlake"), (MfxBase**)&myFlake_01);
 
     myUI->SetBackColor(MfxColor(255, 0, 255, 0));
 
@@ -32,6 +41,6 @@ int main()
     myFlake_00->OpenRButtonMove();
 
     MfxApp::theApp->Run();
-
-    return MfxApp::theApp->overParam;
+    return 0;
+    //return MfxApp::theApp->overParam;
 }

@@ -69,7 +69,7 @@ BOOL MicroFlakeX::MfxMove::operator==(MfxMove& rhs)
 MfxReturn MicroFlakeX::MfxMove::MoveTo(MfxPoint* setEnd)
 {
 	myPoint_End = *setEnd;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxMove::EachFrame()
@@ -82,13 +82,13 @@ MfxReturn MicroFlakeX::MfxMove::EachFrame()
 	myPoint_Now.myX = myPoint_Begin.myX +
 		((myPoint_End.myX - myPoint_Begin.myX) / (myTime_End - myTime_Begin)) * tTime;
 
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxMove::GetPoint(MfxPoint* ret)
 {
 	*ret = myPoint_Now;
-	return RFine;
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxMove::GetD2D1PointU(D2D1_POINT_2U* ret)

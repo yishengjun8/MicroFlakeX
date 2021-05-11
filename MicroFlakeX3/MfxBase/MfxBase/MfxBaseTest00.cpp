@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "MfxBaseTest00.h"
 
-
 MfxObject_Init_0(MfxBaseTest00)
 MfxObject_Init_1(MfxBaseTest00, SayHello)
 MfxAutoFunc_AutoEnum(MfxBaseTest00, 1, SayHello, 0, SayGoodBy, 1, SetData)
@@ -10,6 +9,7 @@ MfxObject_Init_2(MfxBaseTest00, MfxBase);
 MicroFlakeX::MfxBaseTest00::MfxBaseTest00()
 {
 	MfxCodeLock(this);
+	std::cout << "MfxBaseTest00 creat" << std::endl;
 	myData = 0;
 }
 
@@ -29,6 +29,11 @@ MfxBase& MicroFlakeX::MfxBaseTest00::operator=(MfxBase& rhs)
 	MfxCodeLock(this);
 	rhs.AutoFunc(L"SetData", myData);
 	return *this;
+}
+
+void MicroFlakeX::MfxBaseTest00::Test(MfxBaseTest00* set, int a)
+{
+	std::cout << set->myData;
 }
 
 BOOL MicroFlakeX::MfxBaseTest00::operator==(MfxBase& rhs)

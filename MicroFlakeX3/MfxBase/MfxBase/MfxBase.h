@@ -59,6 +59,10 @@
 
 /* STL模板库 */
 #include <map>
+#include <set>
+#include <deque>
+#include <mutex>
+#include <thread>
 #include <string>
 #include <vector>
 #include <utility>
@@ -209,7 +213,15 @@ namespace __MicroFlakeX
 	****************************************************************/
 	using namespace MicroFlakeX;
 
-	class MFX_PORT MfxFactoryHand;
+	class MFX_PORT MfxFactoryHand
+	{
+	public:
+		MfxFactoryHand(MfxString object);
+		virtual MfxReturn Creat(MicroFlakeX::MfxBase** ret) = 0;
+		virtual ~MfxFactoryHand();
+	private:
+		MfxString myObjectName;
+	};
 
 	MFX_PORT MfxReturn MfxRemoveObject(MfxString object);
 	MFX_PORT MfxReturn MfxRegisterObject(MfxString object, MfxFactoryHand* hand);
@@ -218,9 +230,19 @@ namespace __MicroFlakeX
 namespace MicroFlakeX
 {
 	/***************************************************************
+	*	MfxBase	基类
+	*	
+	*	若要继承MfxBase，则需要重写以下几个函数：
+	*		①：virtual MfxReturn Clone(MfxBase** ret);
+	*			深拷贝当前对象，并生成新的对象返回。
 	* 
+	*		②：virtual MfxBase& operator=(MfxBase& rhs);
+	*			浅拷贝一份当前对象，C++内部默认的拷贝函数。
 	* 
+	*		③：virtual BOOL operator==(MfxBase& rhs);
+	*			比较两个MfxBase是否相等。
 	* 
+	*	其余的	MfxBase	函数不需要用户管理，请声明	MfxObject宏	用以自动生成剩余函数。
 	* 
 	* 
 	****************************************************************/
@@ -235,13 +257,22 @@ namespace MicroFlakeX
 		virtual BOOL operator==(MfxBase& rhs);
 
 	public:
-		virtual MfxReturn AutoFunc(MfxString AUTO_FUNC...);
+		virtual MfxReturn AutoFunc(MfxString func...);
 		virtual MfxReturn FuncName(MfxString* ret);
 		virtual MfxReturn ObjectName(MfxString* ret);
 	private:
 		CRITICAL_SECTION myCriticalSection;
 	};
 
+
+	/***************************************************************
+	*	MfxLock	
+	* 
+	*	这个类负责MfxBase及其派生类的线程安全，当你需要对象的某些方法不被多个线程
+	*	同时调用的时候，请在该方法的开头或者需要的地方加上 ： MfxCodeLock(shit);
+	*
+	*
+	****************************************************************/
 	class MfxLock
 	{
 	private:
@@ -252,77 +283,209 @@ namespace MicroFlakeX
 	};
 }
 
-
 namespace MicroFlakeX
 {
-}
-
-//内部 类声明
-namespace __MicroFlakeX
-{
-	class MFX_PORT MfxFactoryHand
-	{
-	public:
-		MfxFactoryHand(MfxString object);
-		virtual MfxReturn Creat(MicroFlakeX::MfxBase** ret) = 0;
-		virtual ~MfxFactoryHand();
-	private:
-		MfxString myObjectName;
-	};
-}
-
-//公开 模板实现
-namespace MicroFlakeX
-{
-	template<typename AUTO_FUNC>
+	/***************************************************************
+	*	MicroFlakeX辅助模板
+	* 
+	*	①：获取函数的参数长度Argc - 模板实现
+	*		int Argc = Mfx_GetFuncArgc(T) 
+	*
+	*	②：获取函数第N个参数的类型并重命名为FuncT - 模板实现
+	*		typedef decltype(Mfx_GetFuncArgv_N( pFunc ))) FuncT;
+	*
+	****************************************************************/
+	template<typename T>
 	struct MfxArgNum_;
+
 	template<typename R, class O, typename... Args>
-	struct MfxArgNum_<R(O::*)(Args...)> { static const int num = sizeof...(Args); };
-	template<typename AUTO_FUNC>
-	int MfxArgNum(AUTO_FUNC) { return MfxArgNum_<AUTO_FUNC>::num; };
+	struct MfxArgNum_<R(O::*)(Args...)>
+	{
+		static const int Argc = sizeof...(Args);
+	};
+
+	template<typename R, typename... Args>
+	struct MfxArgNum_<R(*)(Args...)>
+	{
+		static const int Argc = sizeof...(Args);
+	};
+
+	template<typename T>
+	int Mfx_GetFuncArgc(T) 
+	{ 
+		return MfxArgNum_<T>::Argc;
+	};
 
 	template <class R, class O, class A1, class... Args>
-	A1 MfxArg1(R(O::*)(A1, Args...)) { return A1(); };
-	template <class R, class O, class A1, class A2, class... Args>
-	A2 MfxArg2(R(O::*)(A1, A2, Args...)) { return A2(); };
-	template <class R, class O, class A1, class A2, class A3, class... Args>
-	A3 MfxArg3(R(O::*)(A1, A2, A3, Args...)) { return A3(); };
-	template <class R, class O, class A1, class A2, class A3, class A4, class... Args>
-	A4 MfxArg4(R(O::*)(A1, A2, A3, A4, Args...)) { return A4(); };
-	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class... Args>
-	A5 MfxArg5(R(O::*)(A1, A2, A3, A4, A5, Args...)) { return A5(); };
-	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class... Args>
-	A6 MfxArg6(R(O::*)(A1, A2, A3, A4, A5, A6, Args...)) { return A6(); };
-	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class... Args>
-	A7 MfxArg7(R(O::*)(A1, A2, A3, A4, A5, A6, A7, Args...)) { return A7(); };
-	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class... Args>
-	A8 MfxArg8(R(O::*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...)) { return A8(); };
+	A1 Mfx_GetFuncArgv_1(R(O::*)(A1, Args...))
+	{
+		return A1();
+	};
 
+	template <class R, class A1, class... Args>
+	A1 Mfx_GetFuncArgv_1(R(*)(A1, Args...))
+	{
+		return A1();
+	};
+
+	template <class R, class O, class A1, class A2, class... Args>
+	A2 Mfx_GetFuncArgv_2(R(O::*)(A1, A2, Args...))
+	{
+		return A2();
+	};
+
+	template <class R, class A1, class A2, class... Args>
+	A2 Mfx_GetFuncArgv_2(R(*)(A1, A2, Args...))
+	{
+		return A2();
+	};
+
+	template <class R, class O, class A1, class A2, class A3, class... Args>
+	A3 Mfx_GetFuncArgv_3(R(O::*)(A1, A2, A3, Args...))
+	{
+		return A3();
+	};
+
+	template <class R, class A1, class A2, class A3, class... Args>
+	A3 Mfx_GetFuncArgv_3(R(*)(A1, A2, A3, Args...))
+	{
+		return A3();
+	};
+
+	template <class R, class O, class A1, class A2, class A3, class A4, class... Args>
+	A4 Mfx_GetFuncArgv_4(R(O::*)(A1, A2, A3, A4, Args...))
+	{
+		return A4();
+	};
+
+	template <class R, class A1, class A2, class A3, class A4, class... Args>
+	A4 Mfx_GetFuncArgv_4(R(*)(A1, A2, A3, A4, Args...))
+	{
+		return A4();
+	};
+
+	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class... Args>
+	A5 Mfx_GetFuncArgv_5(R(O::*)(A1, A2, A3, A4, A5, Args...))
+	{
+		return A5();
+	};
+
+	template <class R, class A1, class A2, class A3, class A4, class A5, class... Args>
+	A5 Mfx_GetFuncArgv_5(R(*)(A1, A2, A3, A4, A5, Args...))
+	{
+		return A5();
+	};
+
+	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class... Args>
+	A6 Mfx_GetFuncArgv_6(R(O::*)(A1, A2, A3, A4, A5, A6, Args...))
+	{
+		return A6();
+	};
+
+	template <class R, class A1, class A2, class A3, class A4, class A5, class A6, class... Args>
+	A6 Mfx_GetFuncArgv_6(R(*)(A1, A2, A3, A4, A5, A6, Args...))
+	{
+		return A6();
+	};
+
+	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class... Args>
+	A7 Mfx_GetFuncArgv_7(R(O::*)(A1, A2, A3, A4, A5, A6, A7, Args...))
+	{
+		return A7();
+	};
+
+	template <class R, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class... Args>
+	A7 Mfx_GetFuncArgv_7(R(*)(A1, A2, A3, A4, A5, A6, A7, Args...))
+	{
+		return A7();
+	};
+
+	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class... Args>
+	A8 Mfx_GetFuncArgv_8(R(O::*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...))
+	{
+		return A8();
+	};
+
+	template <class R, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class... Args>
+	A8 Mfx_GetFuncArgv_8(R(*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...))
+	{
+		return A8();
+	};
+
+	/***************************************************************
+	*	MicroFlakeX辅助模板 - MfxDataFlag
+	*
+	*	MfxDataFlag	可以记录变量被更改的次数以及被使用的次数
+	* 
+	*	MfxDataFlag	重载了众多的运算符，使其在计算使用的时候，跟原版变量几乎相等
+	*	MfxDataFlag	出于安全考虑，禁止了隐式类型转换，但你仍可以使用显示的类型转换
+	*
+	****************************************************************/
 	template<class DataType>
 	class MfxDataFlag
 	{
-	public:
-		MfxDataFlag()
-		{
-			myBeforData = myData = DataType();
-			myChangeFlag = myUseFlag = 0;
-		}
-		~MfxDataFlag() { };
-		DataType& GetData() { return myData; };
-		DataType& GetBeforData() { return myBeforData; };
-		void CleanUseFlag() { myUseFlag = 0; }
-		void CleanChangeFlag() { myChangeFlag = 0; }
-		UINT CheckUseFlag() { return myUseFlag; };
-		UINT CheckChangeFlag() { return myChangeFlag; };
 	private:
 		DataType myData;
 		DataType myBeforData;
 		UINT myUseFlag;
 		UINT myChangeFlag;
 	public:
-		DataType& operator-> () { myUseFlag++; return myData; };
+		MfxDataFlag()
+		{
+			myBeforData = myData = DataType();
+			myChangeFlag = myUseFlag = 0;
+		}
 
-		DataType operator= (DataType rhs)
+		DataType& GetData()
+		{
+			return myData;
+		};
+
+		DataType& GetBeforData()
+		{
+			return myBeforData;
+		};
+
+		void CleanUseFlag()
+		{
+			myUseFlag = 0;
+		};
+
+		void CleanChangeFlag()
+		{
+			myChangeFlag = 0;
+		};
+
+		UINT CheckUseFlag()
+		{
+			return myUseFlag;
+		};
+
+		UINT CheckChangeFlag()
+		{
+			return myChangeFlag;
+		};
+
+	public:
+		DataType& operator-> ()
+		{
+			myUseFlag++; 
+			return myData;
+		};
+
+		DataType operator= (DataType& rhs)
+		{
+			if (myData == rhs)
+			{
+				return myData;
+			}
+			myChangeFlag++;
+			myBeforData = myData;
+			myData = rhs;
+			return myData;
+		};
+
+		DataType operator= (DataType&& rhs)
 		{
 			if (myData == rhs)
 			{
@@ -351,51 +514,48 @@ namespace MicroFlakeX
 		operator long long() { return (int)(myData); };
 		operator unsigned long long() { return (unsigned long long)(myData); };
 
-		bool operator< (DataType rhs) { return myData < rhs; };
 		bool operator< (DataType& rhs) { return myData < rhs; };
 		bool operator< (DataType&& rhs) { return myData < rhs; };
 		bool operator< (MfxDataFlag<DataType>& rhs) { return myData < rhs.GetData(); };
+		bool operator< (MfxDataFlag<DataType>&& rhs) { return myData < rhs.GetData(); };
 
-		bool operator> (DataType rhs) { return myData > rhs; };
 		bool operator> (DataType& rhs) { return myData > rhs; };
 		bool operator> (DataType&& rhs) { return myData > rhs; };
 		bool operator> (MfxDataFlag<DataType>& rhs) { return myData > rhs.GetData(); };
+		bool operator> (MfxDataFlag<DataType>&& rhs) { return myData > rhs.GetData(); };
 
-		bool operator== (DataType rhs) { return myData == rhs; };
 		bool operator== (DataType& rhs) { return myData == rhs; };
 		bool operator== (DataType&& rhs) { return myData == rhs; };
 		bool operator== (MfxDataFlag<DataType>& rhs) { return myData == rhs.GetData(); };
+		bool operator== (MfxDataFlag<DataType>&& rhs) { return myData == rhs.GetData(); };
 
-		bool operator!= (DataType rhs) { return myData != rhs; };
 		bool operator!= (DataType& rhs) { return myData != rhs; };
 		bool operator!= (DataType&& rhs) { return myData != rhs; };
 		bool operator!= (MfxDataFlag<DataType>& rhs) { return myData != rhs.GetData(); };
+		bool operator!= (MfxDataFlag<DataType>&& rhs) { return myData != rhs.GetData(); };
 
-		bool operator&& (DataType rhs) { return myData && rhs; };
 		bool operator&& (DataType& rhs) { return myData && rhs; };
 		bool operator&& (DataType&& rhs) { return myData && rhs; };
 		bool operator&& (MfxDataFlag<DataType>& rhs) { return myData && rhs.GetData(); };
+		bool operator&& (MfxDataFlag<DataType>&& rhs) { return myData && rhs.GetData(); };
 
-		bool operator|| (DataType rhs) { return myData || rhs; };
 		bool operator|| (DataType& rhs) { return myData || rhs; };
 		bool operator|| (DataType&& rhs) { return myData || rhs; };
 		bool operator|| (MfxDataFlag<DataType>& rhs) { return myData || rhs.GetData(); };
+		bool operator|| (MfxDataFlag<DataType>&& rhs) { return myData || rhs.GetData(); };
 	};
 
-		//Mfx智能指针
-
-
-		//Mfx对象池
-	template<class T>
-	class MfxObjectPool
-	{
-	public:
-		MfxObjectPool(unsigned long long size)
-		{
-
-		}
-	};
 }
+
+
+/***************************************************************
+*	MicroFlakeX辅助宏
+*	
+*	这里是	MicroFlakeX辅助宏	的集中定义，不多赘述。
+* 
+* 
+* 
+****************************************************************/
 
 #define __MfxCodeLock(OBJ) \
 	MfxLock tLock(OBJ);
@@ -405,10 +565,13 @@ public:\
 	MfxReturn AutoFunc(MfxString setFunc...);\
 	MfxReturn FuncName(MfxString* ret);\
 	MfxReturn ObjectName(MfxString* ret);
-	
-//---------------------------------------------------
-// 
-//---------------------------------------------------
+
+
+/***************************************************************
+*
+*
+*
+****************************************************************/
 #define __MfxObject_Init_0(OBJ)\
 using namespace MicroFlakeX;\
 using namespace __MicroFlakeX;\
@@ -431,20 +594,20 @@ MfxReturn OBJ::ObjectName(MfxString* ret)\
 	return Mfx_Return_Fine;\
 }\
 \
-\
-\
 class OBJ##FactoryHand\
 	: public MfxFactoryHand\
 {\
 public:\
 	OBJ##FactoryHand(MfxString object)\
 		: MfxFactoryHand(object)\
-	{\
-		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText("AUTOFUNC_INIT"), -1));\
-		OBJ init##OBJ;\
-		init##OBJ.AutoFunc(MfxText("AUTOFUNC_INIT"));\
+	{
 
 
+/***************************************************************
+*
+*
+*
+****************************************************************/
 #define __MfxObject_Init_1(OBJ, GOTO_BEGIN) \
 	}\
 	MfxReturn Creat(MfxBase** ret)\
@@ -454,25 +617,34 @@ public:\
 	}\
 };\
 OBJ##FactoryHand OBJ##Hand(MfxText(#OBJ));\
+bool OBJ##isFirst = true;\
 MfxReturn OBJ::AutoFunc(MfxString setFunc...)\
 {\
-	MfxCodeLock(this);\
 	MfxReturn ret = Mfx_Return_Fail;\
-	int countID = -1;\
+	int countID = 0;\
+	int iterID = 0;\
 	va_list argc;\
 	va_start(argc, setFunc);\
 	auto iter = Mfx##OBJ##FuncMap.end();\
+	if(OBJ##isFirst)\
+	{\
+		OBJ##isFirst = false;\
+		goto REG_##GOTO_BEGIN;\
+	}\
+	\
 	BeginSwitch:\
-	iter = Mfx##OBJ##FuncMap.find(setFunc); \
+	iter = Mfx##OBJ##FuncMap.find(setFunc);\
 	if (iter != Mfx##OBJ##FuncMap.end())\
 	{\
-		int iterID = iter->second;\
-		countID = -1;\
-		if(iterID == countID++)\
-		{\
-			goto REG_##GOTO_BEGIN;\
-		}
+		iterID = iter->second;\
+		countID = 0;
 
+
+/***************************************************************
+*
+*
+*
+****************************************************************/
 #define __MfxObject_Init_2(OBJ, FATHER_OBJ) \
 		if(iterID == countID++)\
 		{\
@@ -481,7 +653,7 @@ MfxReturn OBJ::AutoFunc(MfxString setFunc...)\
 			goto BeginSwitch;\
 			REG_END:\
 				Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText("AUTOFUNC_NOTFOUND"), countID++));\
-			return Mfx_Return_Fine;\
+			goto BeginSwitch;\
 		}\
 	}\
 	else\
@@ -490,9 +662,12 @@ MfxReturn OBJ::AutoFunc(MfxString setFunc...)\
 	}\
 }
 
-//---------------------------------------------------
-// 
-//---------------------------------------------------
+
+/***************************************************************
+*
+*
+*
+****************************************************************/
 
 #define __MfxAutoFunc_0(OBJ, AUTO_FUNC, GOTO_NEXT) \
 if(iterID == countID++)\
@@ -509,7 +684,7 @@ if(iterID == countID++)\
 if(iterID == countID++)\
 {\
 	{\
-		auto A1 = va_arg(argc, decltype(MfxArg1(&OBJ::AUTO_FUNC))); \
+		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC))); \
 		return AUTO_FUNC(A1); \
 	}\
 	\
@@ -522,8 +697,8 @@ if(iterID == countID++)\
 if(iterID == countID++)\
 {\
 	{\
-		auto A1 = va_arg(argc, decltype(MfxArg1(&OBJ::AUTO_FUNC)));\
-		auto A2 = va_arg(argc, decltype(MfxArg2(&OBJ::AUTO_FUNC)));\
+		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
+		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
 		ret = AUTO_FUNC(A1, A2);\
 	}\
 	\
@@ -536,9 +711,9 @@ if(iterID == countID++)\
 if(iterID == countID++)\
 {\
 	{\
-		auto A1 = va_arg(argc, decltype(MfxArg1(&OBJ::AUTO_FUNC)));\
-		auto A2 = va_arg(argc, decltype(MfxArg2(&OBJ::AUTO_FUNC)));\
-		auto A3 = va_arg(argc, decltype(MfxArg3(&OBJ::AUTO_FUNC)));\
+		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
+		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
+		auto A3 = va_arg(argc, decltype(Mfx_GetFuncArgv_3(&OBJ::AUTO_FUNC)));\
 		ret = AUTO_FUNC(A1, A2, A3);\
 	}\
 	\
@@ -551,10 +726,10 @@ if(iterID == countID++)\
 if(iterID == countID++)\
 {\
 	{\
-		auto A1 = va_arg(argc, decltype(MfxArg1(&OBJ::AUTO_FUNC)));\
-		auto A2 = va_arg(argc, decltype(MfxArg2(&OBJ::AUTO_FUNC)));\
-		auto A3 = va_arg(argc, decltype(MfxArg3(&OBJ::AUTO_FUNC)));\
-		auto A4 = va_arg(argc, decltype(MfxArg4(&OBJ::AUTO_FUNC)));\
+		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
+		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
+		auto A3 = va_arg(argc, decltype(Mfx_GetFuncArgv_3(&OBJ::AUTO_FUNC)));\
+		auto A4 = va_arg(argc, decltype(Mfx_GetFuncArgv_4(&OBJ::AUTO_FUNC)));\
 		ret = AUTO_FUNC(A1, A2, A3, A4);\
 	}\
 	\
@@ -567,11 +742,11 @@ if(iterID == countID++)\
 if(iterID == countID++)\
 {\
 	{\
-		auto A1 = va_arg(argc, decltype(MfxArg1(&OBJ::AUTO_FUNC)));\
-		auto A2 = va_arg(argc, decltype(MfxArg2(&OBJ::AUTO_FUNC)));\
-		auto A3 = va_arg(argc, decltype(MfxArg3(&OBJ::AUTO_FUNC)));\
-		auto A4 = va_arg(argc, decltype(MfxArg4(&OBJ::AUTO_FUNC)));\
-		auto A5 = va_arg(argc, decltype(MfxArg5(&OBJ::AUTO_FUNC)));\
+		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
+		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
+		auto A3 = va_arg(argc, decltype(Mfx_GetFuncArgv_3(&OBJ::AUTO_FUNC)));\
+		auto A4 = va_arg(argc, decltype(Mfx_GetFuncArgv_4(&OBJ::AUTO_FUNC)));\
+		auto A5 = va_arg(argc, decltype(Mfx_GetFuncArgv_5(&OBJ::AUTO_FUNC)));\
 		ret = AUTO_FUNC(A1, A2, A3, A4, A5);\
 	}\
 	\
@@ -584,12 +759,12 @@ if(iterID == countID++)\
 if(iterID == countID++)\
 {\
 	{\
-		auto A1 = va_arg(argc, decltype(MfxArg1(&OBJ::AUTO_FUNC)));\
-		auto A2 = va_arg(argc, decltype(MfxArg2(&OBJ::AUTO_FUNC)));\
-		auto A3 = va_arg(argc, decltype(MfxArg3(&OBJ::AUTO_FUNC)));\
-		auto A4 = va_arg(argc, decltype(MfxArg4(&OBJ::AUTO_FUNC)));\
-		auto A5 = va_arg(argc, decltype(MfxArg5(&OBJ::AUTO_FUNC)));\
-		auto A6 = va_arg(argc, decltype(MfxArg6(&OBJ::AUTO_FUNC)));\
+		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
+		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
+		auto A3 = va_arg(argc, decltype(Mfx_GetFuncArgv_3(&OBJ::AUTO_FUNC)));\
+		auto A4 = va_arg(argc, decltype(Mfx_GetFuncArgv_4(&OBJ::AUTO_FUNC)));\
+		auto A5 = va_arg(argc, decltype(Mfx_GetFuncArgv_5(&OBJ::AUTO_FUNC)));\
+		auto A6 = va_arg(argc, decltype(Mfx_GetFuncArgv_6(&OBJ::AUTO_FUNC)));\
 		ret = AUTO_FUNC(A1, A2, A3, A4, A5, A6);\
 	}\
 	\
@@ -603,13 +778,13 @@ if(iterID == countID++)\
 if(iterID == countID++)\
 {\
 	{\
-		auto A1 = va_arg(argc, decltype(MfxArg1(&OBJ::AUTO_FUNC)));\
-		auto A2 = va_arg(argc, decltype(MfxArg2(&OBJ::AUTO_FUNC)));\
-		auto A3 = va_arg(argc, decltype(MfxArg3(&OBJ::AUTO_FUNC)));\
-		auto A4 = va_arg(argc, decltype(MfxArg4(&OBJ::AUTO_FUNC)));\
-		auto A5 = va_arg(argc, decltype(MfxArg5(&OBJ::AUTO_FUNC)));\
-		auto A6 = va_arg(argc, decltype(MfxArg6(&OBJ::AUTO_FUNC)));\
-		auto A7 = va_arg(argc, decltype(MfxArg7(&OBJ::AUTO_FUNC)));\
+		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
+		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
+		auto A3 = va_arg(argc, decltype(Mfx_GetFuncArgv_3(&OBJ::AUTO_FUNC)));\
+		auto A4 = va_arg(argc, decltype(Mfx_GetFuncArgv_4(&OBJ::AUTO_FUNC)));\
+		auto A5 = va_arg(argc, decltype(Mfx_GetFuncArgv_5(&OBJ::AUTO_FUNC)));\
+		auto A6 = va_arg(argc, decltype(Mfx_GetFuncArgv_6(&OBJ::AUTO_FUNC)));\
+		auto A7 = va_arg(argc, decltype(Mfx_GetFuncArgv_7(&OBJ::AUTO_FUNC)));\
 		ret = AUTO_FUNC(A1, A2, A3, A4, A5, A6, A7);\
 	}\
 	\
@@ -622,34 +797,41 @@ if(iterID == countID++)\
 if(iterID == countID++)\
 {\
 	{\
-		auto A1 = va_arg(argc, decltype(MfxArg1(&OBJ::AUTO_FUNC)));\
-		auto A2 = va_arg(argc, decltype(MfxArg2(&OBJ::AUTO_FUNC)));\
-		auto A3 = va_arg(argc, decltype(MfxArg3(&OBJ::AUTO_FUNC)));\
-		auto A4 = va_arg(argc, decltype(MfxArg4(&OBJ::AUTO_FUNC)));\
-		auto A5 = va_arg(argc, decltype(MfxArg5(&OBJ::AUTO_FUNC)));\
-		auto A6 = va_arg(argc, decltype(MfxArg6(&OBJ::AUTO_FUNC)));\
-		auto A7 = va_arg(argc, decltype(MfxArg7(&OBJ::AUTO_FUNC)));\
-		auto A8 = va_arg(argc, decltype(MfxArg8(&OBJ::AUTO_FUNC)));\
+		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
+		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
+		auto A3 = va_arg(argc, decltype(Mfx_GetFuncArgv_3(&OBJ::AUTO_FUNC)));\
+		auto A4 = va_arg(argc, decltype(Mfx_GetFuncArgv_4(&OBJ::AUTO_FUNC)));\
+		auto A5 = va_arg(argc, decltype(Mfx_GetFuncArgv_5(&OBJ::AUTO_FUNC)));\
+		auto A6 = va_arg(argc, decltype(Mfx_GetFuncArgv_6(&OBJ::AUTO_FUNC)));\
+		auto A7 = va_arg(argc, decltype(Mfx_GetFuncArgv_7(&OBJ::AUTO_FUNC)));\
+		auto A8 = va_arg(argc, decltype(Mfx_GetFuncArgv_8(&OBJ::AUTO_FUNC)));\
 		ret = AUTO_FUNC(A1, A2, A3, A4, A5, A6, A7, A8);\
 	}\
 	\
 	REG_##AUTO_FUNC:\
 		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), countID++));\
 	goto REG_##GOTO_NEXT;\
-}\
+}
 
-// 根据总数推断实际的函数数量，上限为62个函数
-#define MfxAutoFunc_AutoEnum_ArgsMap(NUM) CCONNECT(MfxAutoFunc_AutoEnum_ArgsMap_, NUM)
 
-// 跳转对应的自动函数注册
+/***************************************************************
+*	①：MfxAutoFunc_AutoEnum_ArgcMap宏 - 从参数总数映射函数数量
+*	
+*	②：MfxAutoFunc_Connect宏 - 跳转生成对应的	MfxAutoFunc_NUM
+* 
+*	③：MfxAutoFunc_AutoEnum宏 - 根据给定的参数，自动推断需要生成的
+*		MfxAutoFunc_NUM。推断上限为62个函数。
+*	
+*	④：CONNECT组宏 - 延迟展开宏，非常重要的辅助宏，用来延迟宏的展开层次
+*
+****************************************************************/
+#define MfxAutoFunc_AutoEnum_ArgcMap(NUM) CCONNECT(MfxAutoFunc_AutoEnum_ArgcMap_, NUM)
+
 #define MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2) CCONNECT(CONNECT(MfxAutoFunc_, NUM_1), (OBJ, FUNC_1, FUNC_2))
 
-// 自动注册宏，最高支持62组注册数据
-// 超过62组宏注册请使用MfxAutoFunc_Enum_NUM()
 #define __MfxAutoFunc_AutoEnum(...) \
-    CONNECT(CCONNECT(MfxAutoFunc_Enum_, MfxAutoFunc_AutoEnum_ArgsMap(GET_ARGS_NUM(__VA_ARGS__))), (__VA_ARGS__))
+    CONNECT(CCONNECT(MfxAutoFunc_Enum_, MfxAutoFunc_AutoEnum_ArgcMap(GET_ARGS_NUM(__VA_ARGS__))), (__VA_ARGS__))
 
-// 延迟连接
 #define CONNECT(A, B) A##B
 #define CCONNECT(A, B) CONNECT(A, B)
 #define CCCONNECT(A, B) CCONNECT(A, B)
@@ -676,129 +858,129 @@ N113, N114, N115, N116, N117, N118, N119, N120, N121, N122, N123, N124, N125, N1
 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, \
 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_3 1
+#define MfxAutoFunc_AutoEnum_ArgcMap_3 1
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_5 2
+#define MfxAutoFunc_AutoEnum_ArgcMap_5 2
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_7 3
+#define MfxAutoFunc_AutoEnum_ArgcMap_7 3
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_9 4
+#define MfxAutoFunc_AutoEnum_ArgcMap_9 4
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_11 5
+#define MfxAutoFunc_AutoEnum_ArgcMap_11 5
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_13 6
+#define MfxAutoFunc_AutoEnum_ArgcMap_13 6
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_15 7
+#define MfxAutoFunc_AutoEnum_ArgcMap_15 7
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_17 8
+#define MfxAutoFunc_AutoEnum_ArgcMap_17 8
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_19 9
+#define MfxAutoFunc_AutoEnum_ArgcMap_19 9
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_21 10
+#define MfxAutoFunc_AutoEnum_ArgcMap_21 10
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_23 11
+#define MfxAutoFunc_AutoEnum_ArgcMap_23 11
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_25 12
+#define MfxAutoFunc_AutoEnum_ArgcMap_25 12
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_27 13
+#define MfxAutoFunc_AutoEnum_ArgcMap_27 13
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_29 14
+#define MfxAutoFunc_AutoEnum_ArgcMap_29 14
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_31 15
+#define MfxAutoFunc_AutoEnum_ArgcMap_31 15
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_33 16
+#define MfxAutoFunc_AutoEnum_ArgcMap_33 16
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_35 17
+#define MfxAutoFunc_AutoEnum_ArgcMap_35 17
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_37 18
+#define MfxAutoFunc_AutoEnum_ArgcMap_37 18
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_39 19
+#define MfxAutoFunc_AutoEnum_ArgcMap_39 19
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_41 20
+#define MfxAutoFunc_AutoEnum_ArgcMap_41 20
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_43 21
+#define MfxAutoFunc_AutoEnum_ArgcMap_43 21
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_45 22
+#define MfxAutoFunc_AutoEnum_ArgcMap_45 22
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_47 23
+#define MfxAutoFunc_AutoEnum_ArgcMap_47 23
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_49 24
+#define MfxAutoFunc_AutoEnum_ArgcMap_49 24
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_51 25
+#define MfxAutoFunc_AutoEnum_ArgcMap_51 25
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_53 26
+#define MfxAutoFunc_AutoEnum_ArgcMap_53 26
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_55 27
+#define MfxAutoFunc_AutoEnum_ArgcMap_55 27
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_57 28
+#define MfxAutoFunc_AutoEnum_ArgcMap_57 28
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_59 29
+#define MfxAutoFunc_AutoEnum_ArgcMap_59 29
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_61 30
+#define MfxAutoFunc_AutoEnum_ArgcMap_61 30
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_63 31
+#define MfxAutoFunc_AutoEnum_ArgcMap_63 31
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_65 32
+#define MfxAutoFunc_AutoEnum_ArgcMap_65 32
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_67 33
+#define MfxAutoFunc_AutoEnum_ArgcMap_67 33
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_69 34
+#define MfxAutoFunc_AutoEnum_ArgcMap_69 34
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_71 35
+#define MfxAutoFunc_AutoEnum_ArgcMap_71 35
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_73 36
+#define MfxAutoFunc_AutoEnum_ArgcMap_73 36
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_75 37
+#define MfxAutoFunc_AutoEnum_ArgcMap_75 37
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_77 38
+#define MfxAutoFunc_AutoEnum_ArgcMap_77 38
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_79 39
+#define MfxAutoFunc_AutoEnum_ArgcMap_79 39
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_81 40
+#define MfxAutoFunc_AutoEnum_ArgcMap_81 40
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_83 41
+#define MfxAutoFunc_AutoEnum_ArgcMap_83 41
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_85 42
+#define MfxAutoFunc_AutoEnum_ArgcMap_85 42
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_87 43
+#define MfxAutoFunc_AutoEnum_ArgcMap_87 43
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_89 44
+#define MfxAutoFunc_AutoEnum_ArgcMap_89 44
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_91 45
+#define MfxAutoFunc_AutoEnum_ArgcMap_91 45
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_93 46
+#define MfxAutoFunc_AutoEnum_ArgcMap_93 46
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_95 47
+#define MfxAutoFunc_AutoEnum_ArgcMap_95 47
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_97 48
+#define MfxAutoFunc_AutoEnum_ArgcMap_97 48
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_99 49
+#define MfxAutoFunc_AutoEnum_ArgcMap_99 49
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_101 50
+#define MfxAutoFunc_AutoEnum_ArgcMap_101 50
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_103 51
+#define MfxAutoFunc_AutoEnum_ArgcMap_103 51
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_105 52
+#define MfxAutoFunc_AutoEnum_ArgcMap_105 52
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_107 53
+#define MfxAutoFunc_AutoEnum_ArgcMap_107 53
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_109 54
+#define MfxAutoFunc_AutoEnum_ArgcMap_109 54
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_111 55
+#define MfxAutoFunc_AutoEnum_ArgcMap_111 55
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_113 56
+#define MfxAutoFunc_AutoEnum_ArgcMap_113 56
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_115 57
+#define MfxAutoFunc_AutoEnum_ArgcMap_115 57
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_117 58
+#define MfxAutoFunc_AutoEnum_ArgcMap_117 58
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_119 59
+#define MfxAutoFunc_AutoEnum_ArgcMap_119 59
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_121 60
+#define MfxAutoFunc_AutoEnum_ArgcMap_121 60
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_123 61
+#define MfxAutoFunc_AutoEnum_ArgcMap_123 61
 
-#define MfxAutoFunc_AutoEnum_ArgsMap_125 62
+#define MfxAutoFunc_AutoEnum_ArgcMap_125 62
 
 #define MfxAutoFunc_Enum_1(OBJ, NUM_1, FUNC_1, ...)\
     MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, END)
