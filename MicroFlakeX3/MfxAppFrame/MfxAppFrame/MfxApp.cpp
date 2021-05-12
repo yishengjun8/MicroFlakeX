@@ -51,13 +51,14 @@ MicroFlakeX::MfxApp::MfxApp()
 
 MicroFlakeX::MfxApp::~MfxApp()
 {
-	//删除全部UI-并不需要
+	//删除全部UI - 并不需要
 }
 
 WPARAM MicroFlakeX::MfxApp::Run()
 {
 	MSG tMsg;
-	while (GetMessage(&tMsg, NULL, 0, 0) > 0) {
+	while (GetMessage(&tMsg, NULL, 0, 0) > 0) 
+	{
 		TranslateMessage(&tMsg);
 		DispatchMessage(&tMsg);
 	}
@@ -70,7 +71,7 @@ HWND MicroFlakeX::MfxApp::MfxCreateUIEx(MfxUI* ui, MfxRect rect,
 	MfxString className, MfxString windowsName)
 {
 	while (myBindingUI);
-	myBindingUI = ui; 
+	myBindingUI = ui;
 	return CreateWindowEx(
 		dwExStyle, className.c_str(), windowsName.c_str(), dwStyle,
 		rect.myX, rect.myY, rect.myWidth, rect.myHeight, NULL, NULL, __theInstance, NULL

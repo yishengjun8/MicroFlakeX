@@ -344,7 +344,7 @@ namespace MicroFlakeX
 		FLAKE_MSG(FLAKE_MSG_SetBackImage)
 		FLAKE_MSG(FLAKE_MSG_SetMaskImage)
 
-		FLAKE_MSG(FLAKE_MSG_SetTitleWords)
+		FLAKE_MSG(FLAKE_MSG_SetWords)
 		FLAKE_MSG(FLAKE_MSG_SetTitleSize)
 		FLAKE_MSG(FLAKE_MSG_SetTitleColor)
 		
@@ -728,6 +728,7 @@ namespace MicroFlakeX
 		MfxReturn GetFloor(MfxFloor* ret);
 		MfxReturn GetCanvas(MfxCanvas** ret);
 
+		MfxReturn SetFloor(MfxFloor floor);
 	/********************************************************************************
 	*
 	*
@@ -745,9 +746,8 @@ namespace MicroFlakeX
 		MfxReturn GetRect(MfxRect* ret);
 		MfxReturn GetSize(MfxSize* ret);
 		MfxReturn GetPoint(MfxPoint* ret);
-	public:
-		MfxReturn SetFloor(MfxFloor floor);
 
+	public:
 		MfxReturn SetTitle(MfxString set);
 		MfxReturn SetTitleSize(FLOAT set);
 		MfxReturn SetTitleColor(MfxColor set);
@@ -787,20 +787,20 @@ namespace MicroFlakeX
 	*
 	*********************************************************************************/
 	private:
+		MfxWords* myWords;
 		MfxImage* myBackImage;
 		MfxImage* myMaskImage;
-		MfxWords* myTitleWords;
 	public:
+		MfxReturn GetWords(MfxWords** ret);
 		MfxReturn GetBackImage(MfxImage** ret);
 		MfxReturn GetMaskImage(MfxImage** ret);
-		MfxReturn GetTitleWords(MfxWords** ret);
+
+		MfxReturn SetWords(MfxWords * set);
+		MfxReturn SetBackImage(MfxImage* set);
+		MfxReturn SetMaskImage(MfxImage* set);
 
 		MfxReturn SetBackColor(MfxColor set);
 		MfxReturn SetMaskColor(MfxColor set);
-
-		MfxReturn SetBackImage(MfxImage* set);
-		MfxReturn SetMaskImage(MfxImage* set);
-		MfxReturn SetTitleWords(MfxWords* set);
 
 	/********************************************************************************
 	*
@@ -810,6 +810,7 @@ namespace MicroFlakeX
 	*********************************************************************************/
 	private:
 		MfxReturn __OnSetPaper(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnSetFloor(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnPaintBackDC(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnPaintMaskDC(WPARAM wParam, LPARAM lParam);
@@ -828,8 +829,6 @@ namespace MicroFlakeX
 		MfxReturn __OnOpenPercentRect(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnClosePercentRect(WPARAM wParam, LPARAM lParam);
 
-		MfxReturn __OnSetFloor(WPARAM wParam, LPARAM lParam);
-
 		MfxReturn __OnMouseMove(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnLButtonUp(WPARAM wParam, LPARAM lParam);
@@ -840,14 +839,9 @@ namespace MicroFlakeX
 		MfxReturn __OnSetTitle(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnSetBackColor(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnSetMaskColor(WPARAM wParam, LPARAM lParam);
+
+		MfxReturn __OnSetWords(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnSetBackImage(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnSetMaskImage(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnSetTitleWords(WPARAM wParam, LPARAM lParam);
 	};
-}
-/**/
-
-namespace MicroFlakeX
-{
-
 }

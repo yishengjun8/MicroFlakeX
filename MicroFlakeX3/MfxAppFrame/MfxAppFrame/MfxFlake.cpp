@@ -10,9 +10,12 @@ void MicroFlakeX::MfxFlake::MfxRegMessages()
 	UI_ADD_FLOOR;
 
 	FLAKE_ADD_RECVMSG(UI_MSG_SetPaper, MfxFlake, __OnSetPaper, myCoverFloor);
+	FLAKE_ADD_RECVMSG(FLAKE_MSG_SetFloor, MfxFlake, __OnSetFloor, myCoverFloor);
 
 	FLAKE_ADD_RECVMSG(UI_MSG_PaintBack, MfxFlake, __OnPaintBackDC, myCoverFloor);
 	FLAKE_ADD_RECVMSG(UI_MSG_PaintMask, MfxFlake, __OnPaintMaskDC, myCoverFloor);
+
+
 
 	FLAKE_ADD_RECVMSG(WM_SIZE, MfxFlake, __OnUISize, myCoverFloor);
 
@@ -22,7 +25,15 @@ void MicroFlakeX::MfxFlake::MfxRegMessages()
 	FLAKE_ADD_RECVMSG(FLAKE_MSG_PercentSize, MfxFlake, __OnPercentSize, myCoverFloor);
 	FLAKE_ADD_RECVMSG(FLAKE_MSG_PercentPoint, MfxFlake, __OnPercentPoint, myCoverFloor);
 
-	FLAKE_ADD_RECVMSG(FLAKE_MSG_SetFloor, MfxFlake, __OnSetFloor, myCoverFloor);
+	FLAKE_ADD_RECVMSG(FLAKE_MSG_ResetRect, MfxFlake, __OnResetRect, myCoverFloor);
+
+	FLAKE_ADD_RECVMSG(UI_MSG_OpenPercentRect, MfxFlake, __OnResetPercentRect, myCoverFloor);
+	FLAKE_ADD_RECVMSG(FLAKE_MSG_ResetPercentRect, MfxFlake, __OnResetPercentRect, myCoverFloor);
+
+	FLAKE_ADD_RECVMSG(FLAKE_MSG_OpenPercentRect, MfxFlake, __OnOpenPercentRect, myCoverFloor);
+	FLAKE_ADD_RECVMSG(FLAKE_MSG_ClosePercentRect, MfxFlake, __OnClosePercentRect, myCoverFloor);
+
+
 
 	FLAKE_ADD_RECVMSG(WM_MOUSEMOVE, MfxFlake, __OnMouseMove, myCoverFloor);
 
@@ -34,17 +45,13 @@ void MicroFlakeX::MfxFlake::MfxRegMessages()
 	FLAKE_ADD_RECVMSG(FLAKE_MSG_SetTitle, MfxFlake, __OnSetTitle, myCoverFloor);
 	FLAKE_ADD_RECVMSG(FLAKE_MSG_SetBackColor, MfxFlake, __OnSetBackColor, myCoverFloor);
 	FLAKE_ADD_RECVMSG(FLAKE_MSG_SetMaskColor, MfxFlake, __OnSetMaskColor, myCoverFloor);
+
+	FLAKE_ADD_RECVMSG(FLAKE_MSG_SetWords, MfxFlake, __OnSetWords, myCoverFloor);
 	FLAKE_ADD_RECVMSG(FLAKE_MSG_SetBackImage, MfxFlake, __OnSetBackImage, myCoverFloor);
 	FLAKE_ADD_RECVMSG(FLAKE_MSG_SetMaskImage, MfxFlake, __OnSetMaskImage, myCoverFloor);
-	FLAKE_ADD_RECVMSG(FLAKE_MSG_SetTitleWords, MfxFlake, __OnSetTitleWords, myCoverFloor);
 
-	FLAKE_ADD_RECVMSG(FLAKE_MSG_ResetRect, MfxFlake, __OnResetRect, myCoverFloor);
 
-	FLAKE_ADD_RECVMSG(UI_MSG_OpenPercentRect, MfxFlake, __OnResetPercentRect, myCoverFloor);
-	FLAKE_ADD_RECVMSG(FLAKE_MSG_ResetPercentRect, MfxFlake, __OnResetPercentRect, myCoverFloor);
 
-	FLAKE_ADD_RECVMSG(FLAKE_MSG_OpenPercentRect, MfxFlake, __OnOpenPercentRect, myCoverFloor);
-	FLAKE_ADD_RECVMSG(FLAKE_MSG_ClosePercentRect, MfxFlake, __OnClosePercentRect, myCoverFloor);
 }
 
 void MicroFlakeX::MfxFlake::MfxFlakeInitData()
@@ -72,9 +79,9 @@ void MicroFlakeX::MfxFlake::MfxFlakeInitData()
 	myBackImage = new MfxImage(MfxColor(255,255,0,0), myRect);
 	myMaskImage = nullptr;
 
-	myTitleWords = new MfxWords(myTitle, myRect);
-	myTitleWords->SetTextAlignmentX(TextAlignmentX::DWRITE_TEXT_ALIGNMENT_CENTER);
-	myTitleWords->SetTextAlignmentY(TextAlignmentY::DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	myWords = new MfxWords(myTitle, myRect);
+	myWords->SetTextAlignmentX(TextAlignmentX::DWRITE_TEXT_ALIGNMENT_CENTER);
+	myWords->SetTextAlignmentY(TextAlignmentY::DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 }
 
 MicroFlakeX::MfxFlake::MfxFlake()
@@ -102,7 +109,7 @@ MicroFlakeX::MfxFlake::~MfxFlake()
 
 	SafeDelete(myBackImage);
 	SafeDelete(myMaskImage);
-	SafeDelete(myTitleWords);
+	SafeDelete(myWords);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::GetType(MfxString* ret)
@@ -143,6 +150,55 @@ MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMsg message, WPARAM wParam, LPAR
 	return t_Ret;
 }
 
+
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
+MfxReturn MicroFlakeX::MfxFlake::RemoveMessage(MfxMsg message, MfxString name)
+{
+	MfxCodeLock(this);
+	auto t_Iter = myMessageMap.find(message);
+	if (t_Iter != myMessageMap.end())
+	{
+		for (auto i = t_Iter->second->begin(); i != t_Iter->second->end(); i++)
+		{
+			if ((*i)->myFuncName == name)
+			{
+				delete (*i);
+				t_Iter->second->erase(i);
+				return Mfx_Return_Fine;
+			}
+		}
+	}
+	return Mfx_Return_Fail;
+}
+
+MfxReturn MicroFlakeX::MfxFlake::InsertMessage(MfxMsg message, MfxFlake_MsgMap_Infor* msgValue)
+{
+	MfxCodeLock(this);
+	auto t_Iter = myMessageMap.find(message);
+	if (t_Iter == myMessageMap.end())
+	{
+		auto t_AddVector = new MfxFlake_MsgMap_Vector;
+		t_Iter = myMessageMap.insert(MfxFlake_MsgMap_elem(message, t_AddVector)).first;
+	}
+
+	t_Iter->second->push_back(msgValue);
+	std::sort(t_Iter->second->begin(), t_Iter->second->end(), FloorCompare<MfxFlake_MsgMap_Infor>);
+
+	return Mfx_Return_Fine;
+}
+
+
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::OpenPercentRect()
 {
 	return ProcMessage(FLAKE_MSG_OpenPercentRect, NULL, NULL);
@@ -158,11 +214,13 @@ MfxReturn MicroFlakeX::MfxFlake::ChickPercentRect()
 	return  myPercentRectFlag ? Mfx_Return_Fine : Mfx_Return_Fail;
 }
 
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::GetUI(MfxUI** ret)
 {
 	*ret = myUI;
@@ -187,6 +245,18 @@ MfxReturn MicroFlakeX::MfxFlake::GetCanvas(MfxCanvas** ret)
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxFlake::SetFloor(MfxFloor floor)
+{
+	return ProcMessage(FLAKE_MSG_SetFloor, NULL, floor);
+}
+
+
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::GetTitle(MfxString* ret)
 {
 	*ret = myTitle;
@@ -221,11 +291,13 @@ MfxReturn MicroFlakeX::MfxFlake::GetPoint(MfxPoint* ret)
 	return Mfx_Return_Fine;
 }
 
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::SetTitle(MfxString set)
 {
 	return ProcMessage(FLAKE_MSG_SetTitle, NULL, (LPARAM)&set);
@@ -239,11 +311,6 @@ MfxReturn MicroFlakeX::MfxFlake::SetTitleSize(FLOAT set)
 MfxReturn MicroFlakeX::MfxFlake::SetTitleColor(MfxColor set)
 {
 	return ProcMessage(FLAKE_MSG_SetTitleColor, NULL, (LPARAM)&set);
-}
-
-MfxReturn MicroFlakeX::MfxFlake::SetFloor(MfxFloor floor)
-{
-	return ProcMessage(FLAKE_MSG_SetFloor, NULL, floor);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::SetRect(MfxRect set)
@@ -282,11 +349,13 @@ MfxReturn MicroFlakeX::MfxFlake::SetPoint(MfxPoint set)
 	return Mfx_Return_Fine;
 }
 
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
 
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::OpenLButtonMove()
 {
 	MfxCodeLock(this);
@@ -315,6 +384,18 @@ MfxReturn MicroFlakeX::MfxFlake::CloseRButtonMove()
 	return Mfx_Return_Fine;
 }
 
+
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
+MfxReturn MicroFlakeX::MfxFlake::GetWords(MfxWords** ret)
+{
+	return myWords ? myWords->Clone(ret) : Mfx_Return_Fail;
+}
+
 MfxReturn MicroFlakeX::MfxFlake::GetBackImage(MfxImage** ret)
 {
 	return myBackImage ? myBackImage->Clone(ret) : Mfx_Return_Fail;
@@ -325,19 +406,9 @@ MfxReturn MicroFlakeX::MfxFlake::GetMaskImage(MfxImage** ret)
 	return myMaskImage ? myMaskImage->Clone(ret) : Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxFlake::GetTitleWords(MfxWords** ret)
+MfxReturn MicroFlakeX::MfxFlake::SetWords(MfxWords* set)
 {
-	return myTitleWords ? myTitleWords->Clone(ret) : Mfx_Return_Fail;
-}
-
-MfxReturn MicroFlakeX::MfxFlake::SetBackColor(MfxColor set)
-{
-	return ProcMessage(FLAKE_MSG_SetBackColor, NULL, (LPARAM)&set);
-}
-
-MfxReturn MicroFlakeX::MfxFlake::SetMaskColor(MfxColor set)
-{
-	return ProcMessage(FLAKE_MSG_SetMaskColor, NULL, (LPARAM)&set);
+	return ProcMessage(FLAKE_MSG_SetWords, NULL, (LPARAM)set);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::SetBackImage(MfxImage* set)
@@ -350,56 +421,23 @@ MfxReturn MicroFlakeX::MfxFlake::SetMaskImage(MfxImage* set)
 	return ProcMessage(FLAKE_MSG_SetMaskImage, NULL, (LPARAM)set);
 }
 
-MfxReturn MicroFlakeX::MfxFlake::SetTitleWords(MfxWords* set)
+MfxReturn MicroFlakeX::MfxFlake::SetBackColor(MfxColor set)
 {
-	return ProcMessage(FLAKE_MSG_SetTitleWords, NULL, (LPARAM)set);
+	return ProcMessage(FLAKE_MSG_SetBackColor, NULL, (LPARAM)&set);
 }
 
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-
-MfxReturn MicroFlakeX::MfxFlake::RemoveMessage(MfxMsg message, MfxString name)
+MfxReturn MicroFlakeX::MfxFlake::SetMaskColor(MfxColor set)
 {
-	MfxCodeLock(this);
-	auto t_Iter = myMessageMap.find(message);
-	if (t_Iter != myMessageMap.end())
-	{
-		for (auto i = t_Iter->second->begin(); i != t_Iter->second->end(); i++)
-		{
-			if ((*i)->myFuncName == name)
-			{
-				delete (*i);
-				t_Iter->second->erase(i);
-				return Mfx_Return_Fine;
-			}
-		}
-	}
-	return Mfx_Return_Fail;
+	return ProcMessage(FLAKE_MSG_SetMaskColor, NULL, (LPARAM)&set);
 }
 
-MfxReturn MicroFlakeX::MfxFlake::InsertMessage(MfxMsg message, MfxFlake_MsgMap_Infor* msgValue)
-{
-	MfxCodeLock(this);
-	auto t_Iter = myMessageMap.find(message);
-	if (t_Iter == myMessageMap.end())
-	{
-		auto t_AddVector = new MfxFlake_MsgMap_Vector;
-		t_Iter = myMessageMap.insert(MfxFlake_MsgMap_elem(message, t_AddVector)).first;
-	}
 
-	t_Iter->second->push_back(msgValue);
-	std::sort(t_Iter->second->begin(), t_Iter->second->end(), FloorCompare<MfxFlake_MsgMap_Infor>);
-
-	return Mfx_Return_Fine;
-}
-
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-/* ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！ */
-
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::__OnSetPaper(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
@@ -412,9 +450,9 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetPaper(WPARAM wParam, LPARAM lParam)
 	{
 		myBackImage->SetCanvas(myCanvas);
 	}
-	if (myTitleWords)
+	if (myWords)
 	{
-		myTitleWords->SetCanvas(myCanvas);
+		myWords->SetCanvas(myCanvas);
 	}
 	if (myMaskImage)
 	{
@@ -425,6 +463,25 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetPaper(WPARAM wParam, LPARAM lParam)
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxFlake::__OnSetFloor(WPARAM wParam, LPARAM lParam)
+{
+	MfxCodeLock(this);
+	myFloor = lParam;
+	if (myUI)
+	{
+		myUI->ProcMessage(FLAKE_MSG_FlakeFloorChange, NULL, NULL);
+		PostMessage(myWnd, WM_PAINT, NULL, NULL);
+	}
+	return Mfx_Return_Fine;
+}
+
+
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::__OnPaintBackDC(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
@@ -432,9 +489,9 @@ MfxReturn MicroFlakeX::MfxFlake::__OnPaintBackDC(WPARAM wParam, LPARAM lParam)
 	{
 		myBackImage->Paint();
 	}
-	if (myTitleWords)
+	if (myWords)
 	{
-		myTitleWords->Paint();
+		myWords->Paint();
 	}
 	if (myMaskImage)
 	{
@@ -449,6 +506,13 @@ MfxReturn MicroFlakeX::MfxFlake::__OnPaintMaskDC(WPARAM wParam, LPARAM lParam)
 	return Mfx_Return_Fail;
 }
 
+
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::__OnUISize(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
@@ -472,9 +536,9 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSize(WPARAM wParam, LPARAM lParam)
 	{
 		myMaskImage->SetSize(*t_Size);
 	}
-	if (myTitleWords)
+	if (myWords)
 	{
-		myTitleWords->SetSize(*t_Size);
+		myWords->SetSize(*t_Size);
 	}
 
 	myRect.myWidth = t_Size->myWidth;
@@ -497,9 +561,9 @@ MfxReturn MicroFlakeX::MfxFlake::__OnPoint(WPARAM wParam, LPARAM lParam)
 	{
 		myMaskImage->SetPoint(*t_Point);
 	}
-	if (myTitleWords)
+	if (myWords)
 	{
-		myTitleWords->SetPoint(*t_Point);
+		myWords->SetPoint(*t_Point);
 	}
 	myRect.myX = t_Point->myX;
 	myRect.myY = t_Point->myY;
@@ -528,6 +592,13 @@ MfxReturn MicroFlakeX::MfxFlake::__OnPercentPoint(WPARAM wParam, LPARAM lParam)
 	return Mfx_Return_Fine;
 }
 
+
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::__OnResetRect(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
@@ -578,6 +649,13 @@ MfxReturn MicroFlakeX::MfxFlake::__OnResetPercentRect(WPARAM wParam, LPARAM lPar
 	return Mfx_Return_Fine;
 }
 
+
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::__OnOpenPercentRect(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
@@ -596,18 +674,22 @@ MfxReturn MicroFlakeX::MfxFlake::__OnClosePercentRect(WPARAM wParam, LPARAM lPar
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxFlake::__OnSetFloor(WPARAM wParam, LPARAM lParam)
-{
-	MfxCodeLock(this);
-	myFloor = lParam;
-	if (myUI)
-	{
-		myUI->ProcMessage(FLAKE_MSG_FlakeFloorChange, NULL, NULL);
-		PostMessage(myWnd, WM_PAINT, NULL, NULL);
-	}
-	return Mfx_Return_Fine;
-}
 
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
+
+
+
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
@@ -818,13 +900,19 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 }
 
 
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::__OnSetTitle(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	myTitle = *(MfxString*)lParam;
-	if (myTitleWords)
+	if (myWords)
 	{
-		myTitleWords->SetText(myTitle);
+		myWords->SetText(myTitle);
 	}
 	return Mfx_Return_Fine;
 }
@@ -861,6 +949,27 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetMaskColor(WPARAM wParam, LPARAM lParam)
 	return Mfx_Return_Fine;
 }
 
+
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
+MfxReturn MicroFlakeX::MfxFlake::__OnSetWords(WPARAM wParam, LPARAM lParam)
+{
+	MfxCodeLock(this);
+	MfxWords* t_Set = (MfxWords*)lParam;
+	if (t_Set)
+	{
+		SafeDelete(myWords);
+		(t_Set)->Clone(&myWords);
+		myWords->SetRect(myRect);
+		myWords->SetCanvas(myCanvas);
+	}
+	return Mfx_Return_Fine;
+}
+
 MfxReturn MicroFlakeX::MfxFlake::__OnSetBackImage(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
@@ -885,20 +994,6 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetMaskImage(WPARAM wParam, LPARAM lParam)
 		(t_Set)->Clone(&myMaskImage);
 		myMaskImage->SetRect(myRect);
 		myMaskImage->SetCanvas(myCanvas);
-	}
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxFlake::__OnSetTitleWords(WPARAM wParam, LPARAM lParam)
-{
-	MfxCodeLock(this);
-	MfxWords* t_Set = (MfxWords*)lParam;
-	if (t_Set)
-	{
-		SafeDelete(myTitleWords);
-		(t_Set)->Clone(&myTitleWords);
-		myTitleWords->SetRect(myRect);
-		myTitleWords->SetCanvas(myCanvas);
 	}
 	return Mfx_Return_Fine;
 }
