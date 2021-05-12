@@ -1,6 +1,17 @@
 #pragma once
 
-#ifdef MFX_BUILDING
+
+/**************************************************************
+*	UTF-8 - win - x86
+*
+*   版本：1.01       作者：yishengjun8
+*
+*
+*	MfxType.h	提供了	MicroFlakeX	的基础类型对象
+* 
+**************************************************************/
+
+#ifdef MFXDLL_BUILDING
 #define MFX_PORT __declspec(dllexport)
 #else
 #define MFX_PORT __declspec(dllimport)
@@ -48,6 +59,11 @@ namespace MicroFlakeX
     class MfxType :
         public MfxBase
     {
+        MfxObject;
+    public:
+        MfxReturn Clone(MfxBase** ret);
+        MfxBase& operator=(MfxBase& rhs);
+        BOOL operator==(MfxBase& rhs);
     };
 }
 

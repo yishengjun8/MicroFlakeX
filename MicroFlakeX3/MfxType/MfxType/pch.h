@@ -25,6 +25,6 @@
 /**/
 #include "MfxBase.h"
 
-#define MFX_BUILDING
+#define MFXDLL_BUILDING
 
 #endif //PCH_H

@@ -34,12 +34,15 @@ int main()
     myUI->AddFlake(myFlake_00);
     myUI->AddFlake(myFlake_01);
 
+    myFlake_00->SetBackColor(MfxColor(255, 0, 0, 255));
     myFlake_00->SetTitle(L"Hello MicroFlakeX!");
     myFlake_01->SetTitle(L"Welcome to MFX based on D2D");
 
     myFlake_00->OpenLButtonMove();
     myFlake_00->OpenRButtonMove();
 
+    myUI->OpenPercentRect();
+    myFlake_00->OpenPercentRect();
     MfxApp::theApp->Run();
     return 0;
     //return MfxApp::theApp->overParam;

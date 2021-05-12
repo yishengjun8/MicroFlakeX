@@ -1,2 +1,2 @@
-ClassHand <MfxBaseTest00> Is Register
-ClassHand <MfxBaseTest00> Is Remove
+ClassHand <MfxBaseExample_00> Is Register
+ClassHand <MfxBaseExample_00> Is Remove

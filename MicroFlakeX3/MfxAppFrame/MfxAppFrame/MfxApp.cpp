@@ -15,11 +15,6 @@ MfxObject_Init_2(MfxApp, MfxBase);
 MfxApp*& MfxApp::theApp = __theApp;
 const HINSTANCE& MfxApp::theInstance = __theInstance;
 
-LRESULT MicroFlakeX::MfxApp::AppProc(HWND hWnd, MfxMsg msg, WPARAM wParam, LPARAM lParam)
-{
-	return __theApp->ForwardMessage(hWnd, msg, wParam, lParam);
-}
-
 MicroFlakeX::MfxApp::MfxApp()
 {
 	if (__theApp)
@@ -59,7 +54,7 @@ MicroFlakeX::MfxApp::~MfxApp()
 	//删除全部UI-并不需要
 }
 
-void MicroFlakeX::MfxApp::Run()
+WPARAM MicroFlakeX::MfxApp::Run()
 {
 	MSG tMsg;
 	while (GetMessage(&tMsg, NULL, 0, 0) > 0) {
@@ -67,10 +62,10 @@ void MicroFlakeX::MfxApp::Run()
 		DispatchMessage(&tMsg);
 	}
 	overParam = tMsg.wParam;
+	return tMsg.wParam;
 }
 
-HWND MicroFlakeX::MfxApp::MfxCreateUIEx(
-	MfxUI* ui, MfxRect rect,
+HWND MicroFlakeX::MfxApp::MfxCreateUIEx(MfxUI* ui, MfxRect rect,
 	DWORD dwExStyle, DWORD dwStyle,
 	MfxString className, MfxString windowsName)
 {
@@ -116,4 +111,9 @@ MfxReturn MicroFlakeX::MfxApp::ForwardMessage(HWND hWnd, MfxMsg message, WPARAM 
 		return ret;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+LRESULT MicroFlakeX::MfxApp::AppProc(HWND hWnd, MfxMsg msg, WPARAM wParam, LPARAM lParam)
+{
+	return __theApp->ForwardMessage(hWnd, msg, wParam, lParam);
 }

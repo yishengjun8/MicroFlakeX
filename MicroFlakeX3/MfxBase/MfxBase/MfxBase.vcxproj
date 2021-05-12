@@ -152,13 +152,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="MfxBase.h" />
-    <ClInclude Include="MfxBaseTest00.h" />
+    <ClInclude Include="MfxBaseExample_00.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="MfxBase.cpp" />
-    <ClCompile Include="MfxBaseTest00.cpp" />
+    <ClCompile Include="MfxBaseExample_00.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

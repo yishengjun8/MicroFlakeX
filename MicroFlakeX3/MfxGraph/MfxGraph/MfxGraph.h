@@ -1,6 +1,18 @@
 #pragma once
 
-#ifdef MFX_BUILDING
+/**************************************************************
+*	UTF-8 - win - x86
+*
+*   版本：1.01       作者：yishengjun8
+*
+*
+*	MfxGraph.h	提供了	MicroFlakeX	的绘制基础
+* 
+*	包含了一个画板，以及众多的绘制类
+*
+**************************************************************/
+
+#ifdef MFXDLL_BUILDING
 #define MFX_PORT __declspec(dllexport)
 #else
 #define MFX_PORT __declspec(dllimport)
@@ -12,7 +24,6 @@
 #pragma comment(lib, "Gdiplus.lib")
 #endif
 
-//公开 类 - 模板
 namespace MicroFlakeX
 {
 	class MFX_PORT MfxGraph;
@@ -23,7 +34,6 @@ namespace MicroFlakeX
 	class MFX_PORT MfxWords;
 }
 
-//公开 容器
 namespace MicroFlakeX
 {
 	typedef std::vector<MfxGraph*> MfxGraphVector;
@@ -62,10 +72,8 @@ namespace __MicroFlakeX
 	}
 }
 
-//MfxBasicGraph基类
 namespace MicroFlakeX
 {
-	//MfxGraph类
 	class MfxGraph
 		: public MfxBase
 	{
@@ -110,11 +118,6 @@ namespace MicroFlakeX
 	};
 }
 
-/* ———————————————————————————————————————————— */
-/* ———————————————————————————————————————————— */
-/* ———————————————————————————————————————————— */
-
-//公开 DS画板
 namespace MicroFlakeX
 {
 	class MfxCanvas
@@ -163,10 +166,8 @@ namespace MicroFlakeX
 	};
 }
 
-//MfxImage
 namespace MicroFlakeX
 {
-	//支持两种绘制模式
 	class MfxImage
 		: public MfxGraph
 	{
@@ -214,14 +215,11 @@ namespace MicroFlakeX
 	};
 }
 
-//MfxWorld
-/**/
 namespace MicroFlakeX
 {
-	//文字排版 - X轴
 	typedef enum DWRITE_TEXT_ALIGNMENT TextAlignmentX;
-	//文字排版 - Y轴
 	typedef enum DWRITE_PARAGRAPH_ALIGNMENT TextAlignmentY;
+
 	class MfxWords
 		: public MfxGraph
 	{

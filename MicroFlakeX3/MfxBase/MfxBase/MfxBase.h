@@ -1,15 +1,13 @@
 #pragma once
 
 /**************************************************************************************************
-*	UTF-8
+*	UTF-8 - win - x86
 * 
 *   版本：1.01       作者：yishengjun8     
 *	
 * 
-*	简介
 *	MfxBase.h	提供了构造	MicroFlakeX	的基础类和基础支持
 *	
-* 
 *	强制 - 
 *	1、所有的	MicroFlakeX子类	必须继承于	MfxBase基类
 *	2、所有的类必须实现 'operator=' 和 'Clone' 
@@ -77,8 +75,8 @@ namespace MicroFlakeX
 #define Mfx_Return_Fine 0
 #define Mfx_Return_Fail -1
 
-#define Failed(mr) (((MfxReturn)(DR)) < 0)
-#define Seccess(mr) (((MfxReturn)(DR)) >= 0)
+#define Mfx_Failed(MR) (((MfxReturn)(MR)) < 0)
+#define Mfx_Seccess(MR) (((MfxReturn)(MR)) >= 0)
 
 	/***************************************************************
 	*	字符集自动展开宏
@@ -92,12 +90,15 @@ namespace MicroFlakeX
 	typedef std::wstring MfxStringW;
 
 #define MfxString __MfxString
+#define MfxCout __MfxCout
 #define MfxText(str) __MfxText(str)
 
 #ifdef UNICODE
+#define __MfxCout std::wcout
 #define __MfxText(str) L##str
 #define __MfxString MfxStringW
 #elif 
+#define __MfxCout std::cout
 #define __MfxText(str) str
 #define __MfxString MfxStringA;
 #endif
@@ -129,7 +130,7 @@ namespace MicroFlakeX
 	*			②：MfxAutoFunc_AutoEnum_半自动扩展反射 - 最高支持扩展126个函数
 	*			③：MfxAutoFunc_手动反射 - 无上限
 	*
-	*	更加详细的MfxObject宏示例请参照	MfxBaseTest00.h	
+	*	更加详细的MfxObject宏示例请参照	MfxBaseExample_00.h	
 	*	
 	*	MfxCodeLock宏：
 	*		1、MfxBase	支持线程安全，具体方案就是保证对象不会在同一时间被两个不同的线程
@@ -810,6 +811,10 @@ if(iterID == countID++)\
 *	
 *	④：CONNECT组宏 - 延迟展开宏，非常重要的辅助宏，用来延迟宏的展开层次
 *
+*	⑤：MFX_COUNT宏 - 利用__COUNTER__自动展开计数。
+* 
+*	⑥：Mfx_Inc宏 - 自增宏，最高支持自增到512
+* 
 ****************************************************************/
 #define MfxAutoFunc_AutoEnum_ArgcMap(NUM) CCONNECT(MfxAutoFunc_AutoEnum_ArgcMap_, NUM)
 
@@ -843,6 +848,524 @@ N113, N114, N115, N116, N117, N118, N119, N120, N121, N122, N123, N124, N125, N1
 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, \
 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, \
 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
+
+
+#define MFX_COUNT(BEGIN) (__COUNTER__ - BEGIN)
+
+#define Mfx_Inc(Num) CONNECT(Mfx_Inc_, Num)
+#define Mfx_Inc_0 1
+#define Mfx_Inc_1 2
+#define Mfx_Inc_2 3
+#define Mfx_Inc_3 4
+#define Mfx_Inc_4 5
+#define Mfx_Inc_5 6
+#define Mfx_Inc_6 7
+#define Mfx_Inc_7 8
+#define Mfx_Inc_8 9
+#define Mfx_Inc_9 10
+#define Mfx_Inc_10 11
+#define Mfx_Inc_11 12
+#define Mfx_Inc_12 13
+#define Mfx_Inc_13 14
+#define Mfx_Inc_14 15
+#define Mfx_Inc_15 16
+#define Mfx_Inc_16 17
+#define Mfx_Inc_17 18
+#define Mfx_Inc_18 19
+#define Mfx_Inc_19 20
+#define Mfx_Inc_20 21
+#define Mfx_Inc_21 22
+#define Mfx_Inc_22 23
+#define Mfx_Inc_23 24
+#define Mfx_Inc_24 25
+#define Mfx_Inc_25 26
+#define Mfx_Inc_26 27
+#define Mfx_Inc_27 28
+#define Mfx_Inc_28 29
+#define Mfx_Inc_29 30
+#define Mfx_Inc_30 31
+#define Mfx_Inc_31 32
+#define Mfx_Inc_32 33
+#define Mfx_Inc_33 34
+#define Mfx_Inc_34 35
+#define Mfx_Inc_35 36
+#define Mfx_Inc_36 37
+#define Mfx_Inc_37 38
+#define Mfx_Inc_38 39
+#define Mfx_Inc_39 40
+#define Mfx_Inc_40 41
+#define Mfx_Inc_41 42
+#define Mfx_Inc_42 43
+#define Mfx_Inc_43 44
+#define Mfx_Inc_44 45
+#define Mfx_Inc_45 46
+#define Mfx_Inc_46 47
+#define Mfx_Inc_47 48
+#define Mfx_Inc_48 49
+#define Mfx_Inc_49 50
+#define Mfx_Inc_50 51
+#define Mfx_Inc_51 52
+#define Mfx_Inc_52 53
+#define Mfx_Inc_53 54
+#define Mfx_Inc_54 55
+#define Mfx_Inc_55 56
+#define Mfx_Inc_56 57
+#define Mfx_Inc_57 58
+#define Mfx_Inc_58 59
+#define Mfx_Inc_59 60
+#define Mfx_Inc_60 61
+#define Mfx_Inc_61 62
+#define Mfx_Inc_62 63
+#define Mfx_Inc_63 64
+#define Mfx_Inc_64 65
+#define Mfx_Inc_65 66
+#define Mfx_Inc_66 67
+#define Mfx_Inc_67 68
+#define Mfx_Inc_68 69
+#define Mfx_Inc_69 70
+#define Mfx_Inc_70 71
+#define Mfx_Inc_71 72
+#define Mfx_Inc_72 73
+#define Mfx_Inc_73 74
+#define Mfx_Inc_74 75
+#define Mfx_Inc_75 76
+#define Mfx_Inc_76 77
+#define Mfx_Inc_77 78
+#define Mfx_Inc_78 79
+#define Mfx_Inc_79 80
+#define Mfx_Inc_80 81
+#define Mfx_Inc_81 82
+#define Mfx_Inc_82 83
+#define Mfx_Inc_83 84
+#define Mfx_Inc_84 85
+#define Mfx_Inc_85 86
+#define Mfx_Inc_86 87
+#define Mfx_Inc_87 88
+#define Mfx_Inc_88 89
+#define Mfx_Inc_89 90
+#define Mfx_Inc_90 91
+#define Mfx_Inc_91 92
+#define Mfx_Inc_92 93
+#define Mfx_Inc_93 94
+#define Mfx_Inc_94 95
+#define Mfx_Inc_95 96
+#define Mfx_Inc_96 97
+#define Mfx_Inc_97 98
+#define Mfx_Inc_98 99
+#define Mfx_Inc_99 100
+#define Mfx_Inc_100 101
+#define Mfx_Inc_101 102
+#define Mfx_Inc_102 103
+#define Mfx_Inc_103 104
+#define Mfx_Inc_104 105
+#define Mfx_Inc_105 106
+#define Mfx_Inc_106 107
+#define Mfx_Inc_107 108
+#define Mfx_Inc_108 109
+#define Mfx_Inc_109 110
+#define Mfx_Inc_110 111
+#define Mfx_Inc_111 112
+#define Mfx_Inc_112 113
+#define Mfx_Inc_113 114
+#define Mfx_Inc_114 115
+#define Mfx_Inc_115 116
+#define Mfx_Inc_116 117
+#define Mfx_Inc_117 118
+#define Mfx_Inc_118 119
+#define Mfx_Inc_119 120
+#define Mfx_Inc_120 121
+#define Mfx_Inc_121 122
+#define Mfx_Inc_122 123
+#define Mfx_Inc_123 124
+#define Mfx_Inc_124 125
+#define Mfx_Inc_125 126
+#define Mfx_Inc_126 127
+#define Mfx_Inc_127 128
+#define Mfx_Inc_128 129
+#define Mfx_Inc_129 130
+#define Mfx_Inc_130 131
+#define Mfx_Inc_131 132
+#define Mfx_Inc_132 133
+#define Mfx_Inc_133 134
+#define Mfx_Inc_134 135
+#define Mfx_Inc_135 136
+#define Mfx_Inc_136 137
+#define Mfx_Inc_137 138
+#define Mfx_Inc_138 139
+#define Mfx_Inc_139 140
+#define Mfx_Inc_140 141
+#define Mfx_Inc_141 142
+#define Mfx_Inc_142 143
+#define Mfx_Inc_143 144
+#define Mfx_Inc_144 145
+#define Mfx_Inc_145 146
+#define Mfx_Inc_146 147
+#define Mfx_Inc_147 148
+#define Mfx_Inc_148 149
+#define Mfx_Inc_149 150
+#define Mfx_Inc_150 151
+#define Mfx_Inc_151 152
+#define Mfx_Inc_152 153
+#define Mfx_Inc_153 154
+#define Mfx_Inc_154 155
+#define Mfx_Inc_155 156
+#define Mfx_Inc_156 157
+#define Mfx_Inc_157 158
+#define Mfx_Inc_158 159
+#define Mfx_Inc_159 160
+#define Mfx_Inc_160 161
+#define Mfx_Inc_161 162
+#define Mfx_Inc_162 163
+#define Mfx_Inc_163 164
+#define Mfx_Inc_164 165
+#define Mfx_Inc_165 166
+#define Mfx_Inc_166 167
+#define Mfx_Inc_167 168
+#define Mfx_Inc_168 169
+#define Mfx_Inc_169 170
+#define Mfx_Inc_170 171
+#define Mfx_Inc_171 172
+#define Mfx_Inc_172 173
+#define Mfx_Inc_173 174
+#define Mfx_Inc_174 175
+#define Mfx_Inc_175 176
+#define Mfx_Inc_176 177
+#define Mfx_Inc_177 178
+#define Mfx_Inc_178 179
+#define Mfx_Inc_179 180
+#define Mfx_Inc_180 181
+#define Mfx_Inc_181 182
+#define Mfx_Inc_182 183
+#define Mfx_Inc_183 184
+#define Mfx_Inc_184 185
+#define Mfx_Inc_185 186
+#define Mfx_Inc_186 187
+#define Mfx_Inc_187 188
+#define Mfx_Inc_188 189
+#define Mfx_Inc_189 190
+#define Mfx_Inc_190 191
+#define Mfx_Inc_191 192
+#define Mfx_Inc_192 193
+#define Mfx_Inc_193 194
+#define Mfx_Inc_194 195
+#define Mfx_Inc_195 196
+#define Mfx_Inc_196 197
+#define Mfx_Inc_197 198
+#define Mfx_Inc_198 199
+#define Mfx_Inc_199 200
+#define Mfx_Inc_200 201
+#define Mfx_Inc_201 202
+#define Mfx_Inc_202 203
+#define Mfx_Inc_203 204
+#define Mfx_Inc_204 205
+#define Mfx_Inc_205 206
+#define Mfx_Inc_206 207
+#define Mfx_Inc_207 208
+#define Mfx_Inc_208 209
+#define Mfx_Inc_209 210
+#define Mfx_Inc_210 211
+#define Mfx_Inc_211 212
+#define Mfx_Inc_212 213
+#define Mfx_Inc_213 214
+#define Mfx_Inc_214 215
+#define Mfx_Inc_215 216
+#define Mfx_Inc_216 217
+#define Mfx_Inc_217 218
+#define Mfx_Inc_218 219
+#define Mfx_Inc_219 220
+#define Mfx_Inc_220 221
+#define Mfx_Inc_221 222
+#define Mfx_Inc_222 223
+#define Mfx_Inc_223 224
+#define Mfx_Inc_224 225
+#define Mfx_Inc_225 226
+#define Mfx_Inc_226 227
+#define Mfx_Inc_227 228
+#define Mfx_Inc_228 229
+#define Mfx_Inc_229 230
+#define Mfx_Inc_230 231
+#define Mfx_Inc_231 232
+#define Mfx_Inc_232 233
+#define Mfx_Inc_233 234
+#define Mfx_Inc_234 235
+#define Mfx_Inc_235 236
+#define Mfx_Inc_236 237
+#define Mfx_Inc_237 238
+#define Mfx_Inc_238 239
+#define Mfx_Inc_239 240
+#define Mfx_Inc_240 241
+#define Mfx_Inc_241 242
+#define Mfx_Inc_242 243
+#define Mfx_Inc_243 244
+#define Mfx_Inc_244 245
+#define Mfx_Inc_245 246
+#define Mfx_Inc_246 247
+#define Mfx_Inc_247 248
+#define Mfx_Inc_248 249
+#define Mfx_Inc_249 250
+#define Mfx_Inc_250 251
+#define Mfx_Inc_251 252
+#define Mfx_Inc_252 253
+#define Mfx_Inc_253 254
+#define Mfx_Inc_254 255
+#define Mfx_Inc_255 256
+#define Mfx_Inc_256 257
+#define Mfx_Inc_257 258
+#define Mfx_Inc_258 259
+#define Mfx_Inc_259 260
+#define Mfx_Inc_260 261
+#define Mfx_Inc_261 262
+#define Mfx_Inc_262 263
+#define Mfx_Inc_263 264
+#define Mfx_Inc_264 265
+#define Mfx_Inc_265 266
+#define Mfx_Inc_266 267
+#define Mfx_Inc_267 268
+#define Mfx_Inc_268 269
+#define Mfx_Inc_269 270
+#define Mfx_Inc_270 271
+#define Mfx_Inc_271 272
+#define Mfx_Inc_272 273
+#define Mfx_Inc_273 274
+#define Mfx_Inc_274 275
+#define Mfx_Inc_275 276
+#define Mfx_Inc_276 277
+#define Mfx_Inc_277 278
+#define Mfx_Inc_278 279
+#define Mfx_Inc_279 280
+#define Mfx_Inc_280 281
+#define Mfx_Inc_281 282
+#define Mfx_Inc_282 283
+#define Mfx_Inc_283 284
+#define Mfx_Inc_284 285
+#define Mfx_Inc_285 286
+#define Mfx_Inc_286 287
+#define Mfx_Inc_287 288
+#define Mfx_Inc_288 289
+#define Mfx_Inc_289 290
+#define Mfx_Inc_290 291
+#define Mfx_Inc_291 292
+#define Mfx_Inc_292 293
+#define Mfx_Inc_293 294
+#define Mfx_Inc_294 295
+#define Mfx_Inc_295 296
+#define Mfx_Inc_296 297
+#define Mfx_Inc_297 298
+#define Mfx_Inc_298 299
+#define Mfx_Inc_299 300
+#define Mfx_Inc_300 301
+#define Mfx_Inc_301 302
+#define Mfx_Inc_302 303
+#define Mfx_Inc_303 304
+#define Mfx_Inc_304 305
+#define Mfx_Inc_305 306
+#define Mfx_Inc_306 307
+#define Mfx_Inc_307 308
+#define Mfx_Inc_308 309
+#define Mfx_Inc_309 310
+#define Mfx_Inc_310 311
+#define Mfx_Inc_311 312
+#define Mfx_Inc_312 313
+#define Mfx_Inc_313 314
+#define Mfx_Inc_314 315
+#define Mfx_Inc_315 316
+#define Mfx_Inc_316 317
+#define Mfx_Inc_317 318
+#define Mfx_Inc_318 319
+#define Mfx_Inc_319 320
+#define Mfx_Inc_320 321
+#define Mfx_Inc_321 322
+#define Mfx_Inc_322 323
+#define Mfx_Inc_323 324
+#define Mfx_Inc_324 325
+#define Mfx_Inc_325 326
+#define Mfx_Inc_326 327
+#define Mfx_Inc_327 328
+#define Mfx_Inc_328 329
+#define Mfx_Inc_329 330
+#define Mfx_Inc_330 331
+#define Mfx_Inc_331 332
+#define Mfx_Inc_332 333
+#define Mfx_Inc_333 334
+#define Mfx_Inc_334 335
+#define Mfx_Inc_335 336
+#define Mfx_Inc_336 337
+#define Mfx_Inc_337 338
+#define Mfx_Inc_338 339
+#define Mfx_Inc_339 340
+#define Mfx_Inc_340 341
+#define Mfx_Inc_341 342
+#define Mfx_Inc_342 343
+#define Mfx_Inc_343 344
+#define Mfx_Inc_344 345
+#define Mfx_Inc_345 346
+#define Mfx_Inc_346 347
+#define Mfx_Inc_347 348
+#define Mfx_Inc_348 349
+#define Mfx_Inc_349 350
+#define Mfx_Inc_350 351
+#define Mfx_Inc_351 352
+#define Mfx_Inc_352 353
+#define Mfx_Inc_353 354
+#define Mfx_Inc_354 355
+#define Mfx_Inc_355 356
+#define Mfx_Inc_356 357
+#define Mfx_Inc_357 358
+#define Mfx_Inc_358 359
+#define Mfx_Inc_359 360
+#define Mfx_Inc_360 361
+#define Mfx_Inc_361 362
+#define Mfx_Inc_362 363
+#define Mfx_Inc_363 364
+#define Mfx_Inc_364 365
+#define Mfx_Inc_365 366
+#define Mfx_Inc_366 367
+#define Mfx_Inc_367 368
+#define Mfx_Inc_368 369
+#define Mfx_Inc_369 370
+#define Mfx_Inc_370 371
+#define Mfx_Inc_371 372
+#define Mfx_Inc_372 373
+#define Mfx_Inc_373 374
+#define Mfx_Inc_374 375
+#define Mfx_Inc_375 376
+#define Mfx_Inc_376 377
+#define Mfx_Inc_377 378
+#define Mfx_Inc_378 379
+#define Mfx_Inc_379 380
+#define Mfx_Inc_380 381
+#define Mfx_Inc_381 382
+#define Mfx_Inc_382 383
+#define Mfx_Inc_383 384
+#define Mfx_Inc_384 385
+#define Mfx_Inc_385 386
+#define Mfx_Inc_386 387
+#define Mfx_Inc_387 388
+#define Mfx_Inc_388 389
+#define Mfx_Inc_389 390
+#define Mfx_Inc_390 391
+#define Mfx_Inc_391 392
+#define Mfx_Inc_392 393
+#define Mfx_Inc_393 394
+#define Mfx_Inc_394 395
+#define Mfx_Inc_395 396
+#define Mfx_Inc_396 397
+#define Mfx_Inc_397 398
+#define Mfx_Inc_398 399
+#define Mfx_Inc_399 400
+#define Mfx_Inc_400 401
+#define Mfx_Inc_401 402
+#define Mfx_Inc_402 403
+#define Mfx_Inc_403 404
+#define Mfx_Inc_404 405
+#define Mfx_Inc_405 406
+#define Mfx_Inc_406 407
+#define Mfx_Inc_407 408
+#define Mfx_Inc_408 409
+#define Mfx_Inc_409 410
+#define Mfx_Inc_410 411
+#define Mfx_Inc_411 412
+#define Mfx_Inc_412 413
+#define Mfx_Inc_413 414
+#define Mfx_Inc_414 415
+#define Mfx_Inc_415 416
+#define Mfx_Inc_416 417
+#define Mfx_Inc_417 418
+#define Mfx_Inc_418 419
+#define Mfx_Inc_419 420
+#define Mfx_Inc_420 421
+#define Mfx_Inc_421 422
+#define Mfx_Inc_422 423
+#define Mfx_Inc_423 424
+#define Mfx_Inc_424 425
+#define Mfx_Inc_425 426
+#define Mfx_Inc_426 427
+#define Mfx_Inc_427 428
+#define Mfx_Inc_428 429
+#define Mfx_Inc_429 430
+#define Mfx_Inc_430 431
+#define Mfx_Inc_431 432
+#define Mfx_Inc_432 433
+#define Mfx_Inc_433 434
+#define Mfx_Inc_434 435
+#define Mfx_Inc_435 436
+#define Mfx_Inc_436 437
+#define Mfx_Inc_437 438
+#define Mfx_Inc_438 439
+#define Mfx_Inc_439 440
+#define Mfx_Inc_440 441
+#define Mfx_Inc_441 442
+#define Mfx_Inc_442 443
+#define Mfx_Inc_443 444
+#define Mfx_Inc_444 445
+#define Mfx_Inc_445 446
+#define Mfx_Inc_446 447
+#define Mfx_Inc_447 448
+#define Mfx_Inc_448 449
+#define Mfx_Inc_449 450
+#define Mfx_Inc_450 451
+#define Mfx_Inc_451 452
+#define Mfx_Inc_452 453
+#define Mfx_Inc_453 454
+#define Mfx_Inc_454 455
+#define Mfx_Inc_455 456
+#define Mfx_Inc_456 457
+#define Mfx_Inc_457 458
+#define Mfx_Inc_458 459
+#define Mfx_Inc_459 460
+#define Mfx_Inc_460 461
+#define Mfx_Inc_461 462
+#define Mfx_Inc_462 463
+#define Mfx_Inc_463 464
+#define Mfx_Inc_464 465
+#define Mfx_Inc_465 466
+#define Mfx_Inc_466 467
+#define Mfx_Inc_467 468
+#define Mfx_Inc_468 469
+#define Mfx_Inc_469 470
+#define Mfx_Inc_470 471
+#define Mfx_Inc_471 472
+#define Mfx_Inc_472 473
+#define Mfx_Inc_473 474
+#define Mfx_Inc_474 475
+#define Mfx_Inc_475 476
+#define Mfx_Inc_476 477
+#define Mfx_Inc_477 478
+#define Mfx_Inc_478 479
+#define Mfx_Inc_479 480
+#define Mfx_Inc_480 481
+#define Mfx_Inc_481 482
+#define Mfx_Inc_482 483
+#define Mfx_Inc_483 484
+#define Mfx_Inc_484 485
+#define Mfx_Inc_485 486
+#define Mfx_Inc_486 487
+#define Mfx_Inc_487 488
+#define Mfx_Inc_488 489
+#define Mfx_Inc_489 490
+#define Mfx_Inc_490 491
+#define Mfx_Inc_491 492
+#define Mfx_Inc_492 493
+#define Mfx_Inc_493 494
+#define Mfx_Inc_494 495
+#define Mfx_Inc_495 496
+#define Mfx_Inc_496 497
+#define Mfx_Inc_497 498
+#define Mfx_Inc_498 499
+#define Mfx_Inc_499 500
+#define Mfx_Inc_500 501
+#define Mfx_Inc_501 502
+#define Mfx_Inc_502 503
+#define Mfx_Inc_503 504
+#define Mfx_Inc_504 505
+#define Mfx_Inc_505 506
+#define Mfx_Inc_506 507
+#define Mfx_Inc_507 508
+#define Mfx_Inc_508 509
+#define Mfx_Inc_509 510
+#define Mfx_Inc_510 511
+#define Mfx_Inc_511 512
+
 
 #define MfxAutoFunc_AutoEnum_ArgcMap_3 1
 

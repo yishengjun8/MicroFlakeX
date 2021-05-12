@@ -8,6 +8,6 @@
 
 #include <deque>
 #include <windowsx.h>
-#define MFX_BUILDING
+#define MFXDLL_BUILDING
 
 #endif

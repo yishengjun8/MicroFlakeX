@@ -8,7 +8,7 @@
 #include "Gdiplus.h"
 #pragma comment(lib, "Gdiplus.lib")
 
-#define MFX_BUILDING
+#define MFXDLL_BUILDING
 
 
 #endif

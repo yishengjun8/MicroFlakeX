@@ -21,7 +21,7 @@
     <ClInclude Include="MfxBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MfxBaseTest00.h">
+    <ClInclude Include="MfxBaseExample_00.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,7 +35,7 @@
     <ClCompile Include="MfxBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MfxBaseTest00.cpp">
+    <ClCompile Include="MfxBaseExample_00.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
