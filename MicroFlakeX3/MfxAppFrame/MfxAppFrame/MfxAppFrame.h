@@ -685,10 +685,10 @@ namespace MicroFlakeX
 
 #define FLAKE_ADD_RECVMSG(Msg, myClass, FuncName, Floor)\
 	InsertMessage(Msg, new MfxFlake_MsgMap_Infor(\
-		(MfxFlake_MsgFunc)&myClass::FuncName, Floor, L#myClass#FuncName)\
+		(MfxFlake_MsgFunc)&myClass::FuncName, Floor, MfxText(#myClass#FuncName))\
 		);
 
-#define MfxPostMessageToUI(Msg, wPara, lPara)\
+#define FLAKE_POST_MSG(Msg, wPara, lPara)\
 	if(myUI)\
 	{\
 		MfxUI_FlakeMsg_Infor t_FlakeMessageKey(this, Msg); \
@@ -696,7 +696,7 @@ namespace MicroFlakeX
 		PostMessage(myWnd, UI_MSG_FlakeMessage, (WPARAM)&t_FlakeMessageKey, (WPARAM)&t_FlakeMessageValue);\
 	}
 
-#define MfxSendMessageToUI(Msg, wPara, lPara)\
+#define FLAKE_SEND_MSG(Msg, wPara, lPara)\
 	if(myUI)\
 	{\
 		MfxUI_FlakeMsg_Infor t_FlakeMessageKey(this, Msg); \

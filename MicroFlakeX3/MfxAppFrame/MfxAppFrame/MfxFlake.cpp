@@ -717,7 +717,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(WPARAM wParam, LPARAM lParam)
 				myMouseFloat = true;
 				myLButtonPress = false;
 				myLButtonClickFlag = false;
-				MfxPostMessageToUI(FLAKE_MSG_LButtonClick, wParam, lParam);
+				FLAKE_POST_MSG(FLAKE_MSG_LButtonClick, wParam, lParam);
 			}
 			else
 			{
@@ -794,7 +794,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 				myMouseFloat = true;
 				myRButtonPress = false;
 				myRButtonClickFlag = false;
-				MfxPostMessageToUI(FLAKE_MSG_RButtonClick, wParam, lParam);
+				FLAKE_POST_MSG(FLAKE_MSG_RButtonClick, wParam, lParam);
 			}
 			else
 			{
