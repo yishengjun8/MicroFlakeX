@@ -21,7 +21,7 @@ MicroFlakeX::MfxImage::MfxImage(MfxString* path, MfxRect set)
 	myID2D1Bitmap = nullptr;
 
 	myRect = set;
-	ResetIWICBitmapFromFile(path, MfxSize(&set));
+	ResetIWICBitmapFromFile(path, MfxSize(set));
 }
 
 MicroFlakeX::MfxImage::MfxImage(MfxColor color, MfxRect set)
@@ -32,7 +32,7 @@ MicroFlakeX::MfxImage::MfxImage(MfxColor color, MfxRect set)
 	myID2D1Bitmap = nullptr;
 
 	myRect = set;
-	ResetIWICBitmapFromColor(color, MfxSize(&set));
+	ResetIWICBitmapFromColor(color, MfxSize(set));
 }
 
 MicroFlakeX::MfxImage::MfxImage(IWICBitmap* tIWICBitmap, MfxRect set)
@@ -70,7 +70,7 @@ MfxBase& MicroFlakeX::MfxImage::operator=(MfxBase& rhs)
 	return *this;
 }
 
-BOOL MicroFlakeX::MfxImage::operator==(MfxBase& rhs)
+bool MicroFlakeX::MfxImage::operator==(MfxBase& rhs)
 {
 	// TODO: 在此处插入 return 语句
 	return false;
@@ -178,17 +178,15 @@ MfxReturn MicroFlakeX::MfxImage::GetID2D1Bitmap(ID2D1Bitmap** ret)
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxImage::GetGdipBitmap(Gdiplus::Bitmap** ret)
+{
+	return GdipBitmapFromIWICBitmap(ret, myIWICBitmap, MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
+}
+
 MfxReturn MicroFlakeX::MfxImage::SetIWICBitmap(IWICBitmap* set)
 {
 	SafeRelease(myIWICBitmap);
 	myIWICBitmap = set;
 	ResetID2D1Bitmap();
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxImage::SetID2D1Bitmap(ID2D1Bitmap* set)
-{
-	SafeRelease(myID2D1Bitmap);
-	myID2D1Bitmap = set;
 	return Mfx_Return_Fine;
 }

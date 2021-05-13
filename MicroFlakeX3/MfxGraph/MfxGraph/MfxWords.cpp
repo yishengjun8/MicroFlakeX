@@ -10,9 +10,9 @@ IDWriteTextFormat* MfxWords::gDefTextFormat = nullptr;
 MicroFlakeX::MfxWords::MfxWords()
 {
 
-	myRect.Init(60, 60, 120, 120);
+	myRect.Reset(60, 60, 120, 120);
 	myText = MfxText("Welcome to MfxWords");
-	myColor.Init(255, 255, 100, 100);
+	myColor.Reset(255, 255, 100, 100);
 	myTextBrush = nullptr;
 	myTextFormat = nullptr;
 	myTextLayout = nullptr;
@@ -39,7 +39,7 @@ MicroFlakeX::MfxWords::MfxWords(MfxString str, MfxRect set)
 {
 	myRect = set;
 	myText = str;
-	myColor.Init(255, 255, 100, 100);
+	myColor.Reset(255, 255, 100, 100);
 	myTextBrush = nullptr;
 	myTextFormat = nullptr;
 	myTextLayout = nullptr;
@@ -65,7 +65,7 @@ MicroFlakeX::MfxWords::MfxWords(MfxString str, MfxRect set, FLOAT size)
 {
 	myRect = set;
 	myText = str;
-	myColor.Init(255, 255, 100, 100);
+	myColor.Reset(255, 255, 100, 100);
 	myTextBrush = nullptr;
 	myTextFormat = nullptr;
 	myTextLayout = nullptr;
@@ -92,7 +92,7 @@ MicroFlakeX::MfxWords::MfxWords(MfxString str, MfxRect set, FLOAT size, IDWriteT
 {
 	myRect = set;
 	myText = str;
-	myColor.Init(255, 255, 100, 100);
+	myColor.Reset(255, 255, 100, 100);
 	myTextBrush = nullptr;
 	myTextFormat = nullptr;
 	myTextLayout = nullptr;
@@ -141,7 +141,7 @@ MfxBase& MicroFlakeX::MfxWords::operator=(MfxBase& rhs)
 	return *this;
 }
 
-BOOL MicroFlakeX::MfxWords::operator==(MfxBase& rhs)
+bool MicroFlakeX::MfxWords::operator==(MfxBase& rhs)
 {
 	return 0;
 }

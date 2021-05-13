@@ -570,7 +570,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnCreate(WPARAM wParam, LPARAM lParam)
     MfxCodeLock(this);
     CREATESTRUCTA* t_Create = (CREATESTRUCTA*)lParam;
 
-    myRect.Init(t_Create->x, t_Create->y, t_Create->cx, t_Create->cy);
+    myRect.Reset(t_Create->x, t_Create->y, t_Create->cx, t_Create->cy);
 
     //MfxSize t_Size(GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN));
 
@@ -610,14 +610,14 @@ MfxReturn MicroFlakeX::MfxUI::__OnSize(WPARAM wParam, LPARAM lParam)
     MfxSize tSize(LOWORD(lParam), HIWORD(lParam));
 
     myRect = tSize;
-    myCanvas.SetSize(&tSize);
+    myCanvas.SetSize(tSize);
     if (myBackImage)
     {
-        myBackImage->SetSize(&tSize);
+        myBackImage->SetSize(tSize);
     }
     if (myMaskImage)
     {
-        myMaskImage->SetSize(&tSize);
+        myMaskImage->SetSize(tSize);
     }
     return DefWindowProc(myWnd, WM_SIZE, wParam, lParam);
 }
@@ -841,7 +841,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnSetBackColor(WPARAM wParam, LPARAM lParam)
     MfxColor* t_Set = (MfxColor*)lParam;
     if (myBackImage)
     {
-        myBackImage->FromColor(*t_Set, MfxSize(&myRect));
+        myBackImage->FromColor(*t_Set, MfxSize(myRect));
     }
     else
     {
@@ -857,7 +857,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnSetMaskColor(WPARAM wParam, LPARAM lParam)
     MfxColor* t_Set = (MfxColor*)lParam;
     if (myMaskImage)
     {
-        myMaskImage->FromColor(*t_Set, MfxSize(&myRect));
+        myMaskImage->FromColor(*t_Set, MfxSize(myRect));
     }
     else
     {

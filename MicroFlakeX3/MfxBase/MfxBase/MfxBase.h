@@ -152,6 +152,7 @@ namespace MicroFlakeX
 #define MfxObject_Init_2(OBJ, FATHER_OBJ) __MfxObject_Init_2(OBJ, FATHER_OBJ)
 
 #define MfxAutoFunc_AutoEnum(...) CONNECT(__MfxAutoFunc_AutoEnum, (__VA_ARGS__))
+#define MfxAutoFunc_AutoEnumBig(...) CONNECT(MfxAutoFunc_Enum_126, (__VA_ARGS__))
 
 #define MfxAutoFunc_0(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_0(OBJ, AUTO_FUNC, GOTO_NEXT) 
 #define MfxAutoFunc_1(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_1(OBJ, AUTO_FUNC, GOTO_NEXT) 
@@ -243,7 +244,7 @@ namespace MicroFlakeX
 		virtual ~MfxBase();
 		virtual MfxReturn Clone(MfxBase** ret);
 		virtual MfxBase& operator=(MfxBase& rhs);
-		virtual BOOL operator==(MfxBase& rhs);
+		virtual bool operator==(MfxBase& rhs);
 
 	public:
 		virtual MfxReturn AutoFunc(MfxString func...);
@@ -686,7 +687,7 @@ if(iterID == countID++)\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
 		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
-		ret = AUTO_FUNC(A1, A2);\
+		return AUTO_FUNC(A1, A2);\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -701,7 +702,7 @@ if(iterID == countID++)\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
 		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
 		auto A3 = va_arg(argc, decltype(Mfx_GetFuncArgv_3(&OBJ::AUTO_FUNC)));\
-		ret = AUTO_FUNC(A1, A2, A3);\
+		return AUTO_FUNC(A1, A2, A3);\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -717,7 +718,7 @@ if(iterID == countID++)\
 		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
 		auto A3 = va_arg(argc, decltype(Mfx_GetFuncArgv_3(&OBJ::AUTO_FUNC)));\
 		auto A4 = va_arg(argc, decltype(Mfx_GetFuncArgv_4(&OBJ::AUTO_FUNC)));\
-		ret = AUTO_FUNC(A1, A2, A3, A4);\
+		return AUTO_FUNC(A1, A2, A3, A4);\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -734,7 +735,7 @@ if(iterID == countID++)\
 		auto A3 = va_arg(argc, decltype(Mfx_GetFuncArgv_3(&OBJ::AUTO_FUNC)));\
 		auto A4 = va_arg(argc, decltype(Mfx_GetFuncArgv_4(&OBJ::AUTO_FUNC)));\
 		auto A5 = va_arg(argc, decltype(Mfx_GetFuncArgv_5(&OBJ::AUTO_FUNC)));\
-		ret = AUTO_FUNC(A1, A2, A3, A4, A5);\
+		return AUTO_FUNC(A1, A2, A3, A4, A5);\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -752,7 +753,7 @@ if(iterID == countID++)\
 		auto A4 = va_arg(argc, decltype(Mfx_GetFuncArgv_4(&OBJ::AUTO_FUNC)));\
 		auto A5 = va_arg(argc, decltype(Mfx_GetFuncArgv_5(&OBJ::AUTO_FUNC)));\
 		auto A6 = va_arg(argc, decltype(Mfx_GetFuncArgv_6(&OBJ::AUTO_FUNC)));\
-		ret = AUTO_FUNC(A1, A2, A3, A4, A5, A6);\
+		return AUTO_FUNC(A1, A2, A3, A4, A5, A6);\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -772,7 +773,7 @@ if(iterID == countID++)\
 		auto A5 = va_arg(argc, decltype(Mfx_GetFuncArgv_5(&OBJ::AUTO_FUNC)));\
 		auto A6 = va_arg(argc, decltype(Mfx_GetFuncArgv_6(&OBJ::AUTO_FUNC)));\
 		auto A7 = va_arg(argc, decltype(Mfx_GetFuncArgv_7(&OBJ::AUTO_FUNC)));\
-		ret = AUTO_FUNC(A1, A2, A3, A4, A5, A6, A7);\
+		return AUTO_FUNC(A1, A2, A3, A4, A5, A6, A7);\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -792,7 +793,7 @@ if(iterID == countID++)\
 		auto A6 = va_arg(argc, decltype(Mfx_GetFuncArgv_6(&OBJ::AUTO_FUNC)));\
 		auto A7 = va_arg(argc, decltype(Mfx_GetFuncArgv_7(&OBJ::AUTO_FUNC)));\
 		auto A8 = va_arg(argc, decltype(Mfx_GetFuncArgv_8(&OBJ::AUTO_FUNC)));\
-		ret = AUTO_FUNC(A1, A2, A3, A4, A5, A6, A7, A8);\
+		return AUTO_FUNC(A1, A2, A3, A4, A5, A6, A7, A8);\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -819,6 +820,10 @@ if(iterID == countID++)\
 #define MfxAutoFunc_AutoEnum_ArgcMap(NUM) CCONNECT(MfxAutoFunc_AutoEnum_ArgcMap_, NUM)
 
 #define MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2) CCONNECT(CONNECT(MfxAutoFunc_, NUM_1), (OBJ, FUNC_1, FUNC_2))
+
+#define MfxAutoFunc_END(...)
+
+#define MfxAutoFunc_(...)
 
 #define __MfxAutoFunc_AutoEnum(...) \
     CONNECT(CCONNECT(MfxAutoFunc_Enum_, MfxAutoFunc_AutoEnum_ArgcMap(GET_ARGS_NUM(__VA_ARGS__))), (__VA_ARGS__))
@@ -1993,3 +1998,44 @@ N113, N114, N115, N116, N117, N118, N119, N120, N121, N122, N123, N124, N125, N1
 #define MfxAutoFunc_Enum_126(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
     MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
     CONNECT(MfxAutoFunc_Enum_125(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_127(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_126(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+#define MfxAutoFunc_Enum_128(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CONNECT(MfxAutoFunc_Enum_127(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
+
+
+
+// 实验失败的宏递归
+// 宏不支持递归展开
+#define Mfx_AutoEnumBig_ForInc(Num) CONNECT(Mfx_AutoEnumBig_ForInc_, Num)
+#define Mfx_AutoEnumBig_ForInc_0 1
+#define Mfx_AutoEnumBig_ForInc_1 0
+#define Mfx_AutoEnumBig_ForInc_END END
+
+#define __MfxAutoFunc_AutoEnumBig(BEGIN, OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, FLAG, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CCCCONNECT(CCCONNECT(MfxAutoFunc_AutoEnumBig_, CCONNECT(Mfx_AutoEnumBig_ForInc(BEGIN) , FLAG))(BEGIN, OBJ, NUM_2, FUNC_2, FLAG, __VA_ARGS__))
+
+#define MfxAutoFunc_AutoEnumBig_END(BEGIN, OBJ, NUM_1, FUNC_1, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, END)
+
+#define MfxAutoFunc_AutoEnumBig_00(BEGIN, OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, FLAG, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CCCCONNECT(CCCONNECT(MfxAutoFunc_AutoEnumBig_, CCONNECT(Mfx_AutoEnumBig_ForInc(BEGIN), FLAG))(BEGIN, OBJ, NUM_2, FUNC_2, FLAG, __VA_ARGS__))
+
+#define MfxAutoFunc_AutoEnumBig_10(BEGIN, OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, FLAG, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CCCCONNECT(CCCONNECT(MfxAutoFunc_AutoEnumBig_, CCONNECT(Mfx_AutoEnumBig_ForInc(BEGIN), FLAG))(BEGIN, OBJ, NUM_2, FUNC_2, FLAG, __VA_ARGS__))
+
+#define MfxAutoFunc_AutoEnumBig_01(BEGIN, OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, FLAG, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CCCCONNECT(CCCONNECT(MfxAutoFunc_AutoEnumBig_, CCONNECT(Mfx_AutoEnumBig_ForInc(BEGIN), FLAG))(BEGIN, OBJ, NUM_2, FUNC_2, FLAG, __VA_ARGS__))
+
+#define MfxAutoFunc_AutoEnumBig_11(BEGIN, OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, FLAG, ...)\
+    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
+    CCCCONNECT(CCCONNECT(MfxAutoFunc_AutoEnumBig_, CCONNECT(Mfx_AutoEnumBig_ForInc(BEGIN), FLAG))(BEGIN, OBJ, NUM_2, FUNC_2, FLAG, __VA_ARGS__))
+  

@@ -56,12 +56,12 @@ MfxMove& MicroFlakeX::MfxMove::operator=(MfxMove& rhs)
 	return *this;
 }
 
-BOOL MicroFlakeX::MfxMove::operator==(MfxBase& rhs)
+bool MicroFlakeX::MfxMove::operator==(MfxBase& rhs)
 {
 	return 0;
 }
 
-BOOL MicroFlakeX::MfxMove::operator==(MfxMove& rhs)
+bool MicroFlakeX::MfxMove::operator==(MfxMove& rhs)
 {
 	return 0;
 }
@@ -101,12 +101,12 @@ MfxReturn MicroFlakeX::MfxMove::GetD2D1PointF(D2D1_POINT_2F* ret)
 	return myPoint_Now.GetD2D1PointF(ret);
 }
 
-MfxReturn MicroFlakeX::MfxMove::GetX(FLOAT* ret)
+MfxReturn MicroFlakeX::MfxMove::GetX(LONG* ret)
 {
 	return myPoint_Now.GetX(ret);
 }
 
-MfxReturn MicroFlakeX::MfxMove::GetY(FLOAT* ret)
+MfxReturn MicroFlakeX::MfxMove::GetY(LONG* ret)
 {
 	return myPoint_Now.GetY(ret);
 }

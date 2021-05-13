@@ -131,19 +131,30 @@ MfxRect myRect[10];
 MfxSize mySize[10];
 MfxPoint myPoint[10];
 
+IWICBitmap* myIWICBitmap;
+Gdiplus::Bitmap* myBitmap;
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
     case WM_CREATE:
     {
+        MfxString path = L"D:\\image\\rect.jpg";
+        if (Mfx_Seccess(MfxGraph::IWICBitmapFromFile(&myIWICBitmap, path, MfxSize(300, 300))))
+        {
+            //MessageBox(NULL, MfxText("Mfx_Seccess"), MfxText("Mfx_Seccess"), 0);
+            ;
+        }
+
+        MfxGraph::GdipBitmapFromIWICBitmap(&myBitmap, myIWICBitmap, MfxRect(0, 0, 100, 200));
         //myCanvas.SetDC(GetDC(hWnd));
 
         myCanvas.SetWnd((hWnd));
 
-        myRect[0].Init(0, 0, 1000, 1000);
+        myRect[0].Reset(0, 0, 1000, 1000);
         myImage[0].SetRect(myRect[0]);
-        MfxString path = L"D:\\image\\rect.jpg";
+       
         myImage[0].FromFile(&path, mySize[9]);
 
         myImage[0].SetCanvas(&myCanvas);
@@ -197,6 +208,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         myCanvas.PaintFinish();
 
+        //Gdiplus::Graphics tempG(GetDC(hWnd));
+
+        //const Gdiplus::Rect tRect(20, 20, 300, 300);
+        //tempG.DrawImage(myBitmap, tRect);
     }
     break;
     case WM_DESTROY:

@@ -5,7 +5,7 @@ MfxObject_Init_0(MfxGraph)
 MfxObject_Init_1(MfxGraph, END)
 MfxObject_Init_2(MfxGraph, MfxBase);
 
-MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC &set, MfxRect rect)
+MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC set, MfxRect rect)
 {
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT,
@@ -30,7 +30,7 @@ MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret,
 	}
 }
 
-MfxReturn MicroFlakeX::MfxGraph::GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND &set, MfxSize size)
+MfxReturn MicroFlakeX::MfxGraph::GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND set, MfxSize size)
 {
 	ID2D1HwndRenderTarget* tHwndRenderTarget = nullptr;
 	D2D1_SIZE_U tSize; size.GetD2D1SizeU(&tSize);
@@ -47,7 +47,7 @@ MfxReturn MicroFlakeX::MfxGraph::GetID2D1HwndRenderTarget(ID2D1RenderTarget** re
 	}
 }
 
-MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxString &path, MfxSize size)
+MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxString path, MfxSize size)
 {
 	IWICBitmapDecoder* pDecoder = nullptr;
 	IWICBitmapFrameDecode* pSource = nullptr;
@@ -116,8 +116,7 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxString 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromColor(IWICBitmap** ret, MfxColor
-	color, MfxSize size)
+MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromColor(IWICBitmap** ret, MfxColor color, MfxSize size)
 {
 	WICPixelFormatGUID formatGUID = GUID_WICPixelFormat32bppPBGRA;
 	if (FAILED(myIWICImagingFactory->CreateBitmap(size.myWidth, size.myHeight,
@@ -145,9 +144,9 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromColor(IWICBitmap** ret, MfxColor
 			for (int tP = 0; tP * 4 < tLockSize; tP++)
 			{
 				tData[tP * 4] = (BYTE)color.myB;
-				tData[tP * 4 + 1] = (BYTE)color.myG;
-				tData[tP * 4 + 2] = (BYTE)color.myR;
-				tData[tP * 4 + 3] = (BYTE)color.myA;
+				tData[(tP * 4) + 1] = (BYTE)color.myG;
+				tData[(tP * 4) + 2] = (BYTE)color.myR;
+				tData[(tP * 4) + 3] = (BYTE)color.myA;
 			}
 		}
 	}
@@ -155,7 +154,12 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromColor(IWICBitmap** ret, MfxColor
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxString &path, MfxSize size)
+MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromGdipBitmap(IWICBitmap** ret, Gdiplus::Bitmap* set, MfxRect rect)
+{
+	return Mfx_Return_Fail;
+}
+
+MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxString path, MfxSize size)
 {
 	IWICBitmapDecoder* pDecoder = NULL;
 	IWICBitmapFrameDecode* pSource = NULL;
@@ -273,6 +277,51 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxGraph::GdipBitmapFromIWICBitmap(Gdiplus::Bitmap** ret, IWICBitmap* set, MfxRect rect)
+{
+	WICRect tLockRect = { rect.myX, rect.myY, rect.myWidth, rect.myHeight };
+	IWICBitmapLock* tBitmapLock = nullptr;
+
+	HRESULT hr = set->Lock(&tLockRect, WICBitmapLockWrite, &tBitmapLock);
+	if (SUCCEEDED(hr))
+	{
+		UINT tLockSize = 0, tStride = 0;
+		BYTE* tData = nullptr;
+
+		hr = tBitmapLock->GetStride(&tStride);
+		if (SUCCEEDED(hr))
+		{
+			hr = tBitmapLock->GetDataPointer(&tLockSize, &tData);
+		}
+		if (SUCCEEDED(hr) && tData)
+		{
+			*ret = new Gdiplus::Bitmap(rect.myWidth, rect.myHeight, PixelFormat32bppARGB);
+			const Gdiplus::Rect tRect(rect.myX, rect.myY, rect.myWidth, rect.myHeight);
+			Gdiplus::BitmapData bitData;
+			(*ret)->LockBits(&tRect, Gdiplus::ImageLockModeWrite, PixelFormat32bppPARGB, &bitData);
+
+			int tP = 0, tGP = 0;
+			for (int y = 0; y < rect.myHeight; y++)
+			{
+				tP = y * tStride / 4;
+				tGP = y * rect.myWidth;
+				for (int x = 0; x < rect.myWidth; x++, tP++, tGP++)
+				{
+					byte* row = ((byte*)bitData.Scan0 + tGP * 4);
+
+					row[0] = tData[tP * 4];// = (BYTE)color.myB;
+					row[1] = tData[(tP * 4) + 1];// = (BYTE)color.myG;
+					row[2] = tData[tP * 4 + 2];// = (BYTE)color.myR;
+					row[3] = tData[tP * 4 + 3];// = (BYTE)color.myA;
+				}
+			}
+			(*ret)->UnlockBits(&bitData);
+		}
+	}
+	SafeRelease(tBitmapLock);
+	return Mfx_Return_Fine;
+}
+
 MfxReturn MicroFlakeX::MfxGraph::CopyIWICBitmap(IWICBitmap** ret, IWICBitmap* set)
 {
 	WICPixelFormatGUID formatGUID = GUID_WICPixelFormat32bppPBGRA;
@@ -301,7 +350,8 @@ MfxReturn MicroFlakeX::MfxGraph::CopyIWICBitmap(IWICBitmap** ret, IWICBitmap* se
 		if (SUCCEEDED(hr))
 		{
 			if (SUCCEEDED(tReadLock->GetDataPointer(&tReadSize, &tReadData))
-				&& SUCCEEDED(tWriteLock->GetDataPointer(&tWriteSize, &tWriteData)))
+				&& SUCCEEDED(tWriteLock->GetDataPointer(&tWriteSize, &tWriteData))
+				&& tWriteData && tReadData)
 			{
 				for (int i = 0; i < tReadSize && i < tWriteSize; i++)
 				{
@@ -388,7 +438,7 @@ MfxBase& MicroFlakeX::MfxGraph::operator=(MfxBase& rhs)
 	return *this;
 }
 
-BOOL MicroFlakeX::MfxGraph::operator==(MfxBase& rhs)
+bool MicroFlakeX::MfxGraph::operator==(MfxBase& rhs)
 {
 	// TODO: 在此处插入 return 语句
 	return false;
@@ -396,8 +446,8 @@ BOOL MicroFlakeX::MfxGraph::operator==(MfxBase& rhs)
 
 MfxReturn MicroFlakeX::MfxGraph::SetRect(MfxRect set)
 {
-	SetSize(MfxSize(&set));
-	SetPoint(MfxPoint(&set));
+	SetSize(MfxSize(set));
+	SetPoint(MfxPoint(set));
 	return Mfx_Return_Fine;
 }
 
@@ -431,9 +481,12 @@ MfxReturn MicroFlakeX::MfxGraph::GetPoint(MfxPoint* set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::CollisionWith(MfxGraph* set, BOOL* ret)
+MfxReturn MicroFlakeX::MfxGraph::CollisionWith(MfxGraph* set, bool* ret)
 {
-	myRect.Collision(set, ret);
+	MfxRect tRect;
+	myRect.Intersect_Widely(set, &tRect);
+
+	tRect.IsEmpty(ret);
 	return Mfx_Return_Fine;
 }
 

@@ -19,6 +19,10 @@
 #include <ctime>
 /**/
 
+
+#include <gdiplus.h>
+
+
 #pragma comment(lib, "D2D1.lib")
 #pragma comment(lib, "DWrite.lib")
 

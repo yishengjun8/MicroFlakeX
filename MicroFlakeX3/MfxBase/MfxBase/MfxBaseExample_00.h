@@ -24,12 +24,16 @@ namespace MicroFlakeX
         MfxBaseExample_00();
         ~MfxBaseExample_00();
         virtual MfxReturn Clone(MfxBase** ret);
-        virtual BOOL operator==(MfxBase& rhs);
+        virtual bool operator==(MfxBase& rhs);
         virtual MfxBase& operator=(MfxBase& rhs);
     public:
         MfxReturn SayHello(MfxString set);
         MfxReturn SayGoodBy();
         MfxReturn SetData(int set);
+
+        MfxReturn SSetData(int set);
+        MfxReturn SSSetData(int set);
+        MfxReturn SayTest(int a, int b, int c, int d);
     protected:
         int myData;
     };

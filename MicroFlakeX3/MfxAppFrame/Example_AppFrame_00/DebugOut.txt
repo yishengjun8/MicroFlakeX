@@ -1,4 +1,5 @@
-ClassHand <MfxBaseTest00> Is Register
+ClassHand <MfxBaseExample_00> Is Register
+ClassHand <MfxType> Is Register
 ClassHand <MfxSize> Is Register
 ClassHand <MfxRect> Is Register
 ClassHand <MfxPoint> Is Register

@@ -3,7 +3,7 @@
 
 MfxObject_Init_0(MfxType)
 MfxObject_Init_1(MfxType, END)
-MfxObject_Init_2(MfxType, MfxBase)
+MfxObject_Init_2(MfxType, MfxBase);
 
 
 MfxReturn MicroFlakeX::MfxType::Clone(MfxBase** ret)
@@ -18,7 +18,7 @@ MfxBase& MicroFlakeX::MfxType::operator=(MfxBase& rhs)
 	return *this;
 }
 
-BOOL MicroFlakeX::MfxType::operator==(MfxBase& rhs)
+bool MicroFlakeX::MfxType::operator==(MfxBase& rhs)
 {
 	return 0;
 }

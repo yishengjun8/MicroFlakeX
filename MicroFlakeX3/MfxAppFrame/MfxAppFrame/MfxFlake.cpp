@@ -86,7 +86,7 @@ void MicroFlakeX::MfxFlake::MfxFlakeInitData()
 
 MicroFlakeX::MfxFlake::MfxFlake()
 {
-	myRect.Init(100, 100, 128, 128);
+	myRect.Reset(100, 100, 128, 128);
 	MfxFlakeInitData();
 	MfxRegMessages();
 }
@@ -315,8 +315,8 @@ MfxReturn MicroFlakeX::MfxFlake::SetTitleColor(MfxColor set)
 
 MfxReturn MicroFlakeX::MfxFlake::SetRect(MfxRect set)
 {
-	MfxSize t_Size(&set);
-	MfxPoint t_Point(&set);
+	MfxSize t_Size(set);
+	MfxPoint t_Point(set);
 
 	ProcMessage(FLAKE_MSG_Size, NULL, (LPARAM)&t_Size);
 	ProcMessage(FLAKE_MSG_Point, NULL, (LPARAM)&t_Point);
@@ -694,8 +694,8 @@ MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	BOOL tInside = false;
-	myRect.PointInside(&mousePos, &tInside);
+	bool tInside = false;
+	myRect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
@@ -731,7 +731,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 		t_Rect.Offset(nowPos.myX - myButtonMoveBegin.myX, nowPos.myY - myButtonMoveBegin.myY);
 
 		MfxPoint t_Point(t_Rect.myX, t_Rect.myY);
-		SetPoint(&t_Point);
+		SetPoint(t_Point);
 		myButtonMoveBegin = nowPos;
 	}
 	else
@@ -748,8 +748,8 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDown(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	BOOL tInside = false;
-	myRect.PointInside(&mousePos, &tInside);
+	bool tInside = false;
+	myRect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
@@ -784,8 +784,8 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	BOOL tInside = false;
-	myRect.PointInside(&mousePos, &tInside);
+	bool tInside = false;
+	myRect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
@@ -826,8 +826,8 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDown(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	BOOL tInside = false;
-	myRect.PointInside(&mousePos, &tInside);
+	bool tInside = false;
+	myRect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
@@ -861,8 +861,8 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	BOOL tInside = false;
-	myRect.PointInside(&mousePos, &tInside);
+	bool tInside = false;
+	myRect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
@@ -923,7 +923,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetBackColor(WPARAM wParam, LPARAM lParam)
 	MfxColor* t_Set = (MfxColor*)lParam;
 	if (myBackImage)
 	{
-		myBackImage->FromColor(*t_Set, MfxSize(&myRect));
+		myBackImage->FromColor(*t_Set, MfxSize(myRect));
 	}
 	else
 	{
@@ -939,7 +939,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetMaskColor(WPARAM wParam, LPARAM lParam)
 	MfxColor* t_Set = (MfxColor*)lParam;
 	if (myMaskImage)
 	{
-		myMaskImage->FromColor(*t_Set, MfxSize(&myRect));
+		myMaskImage->FromColor(*t_Set, MfxSize(myRect));
 	}
 	else
 	{

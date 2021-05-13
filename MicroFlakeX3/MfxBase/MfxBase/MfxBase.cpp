@@ -54,7 +54,7 @@ MfxBase& MicroFlakeX::MfxBase::operator=(MfxBase& rhs)
 	return *this;
 }
 
-BOOL MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
+bool MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 {
 	return 0;
 }

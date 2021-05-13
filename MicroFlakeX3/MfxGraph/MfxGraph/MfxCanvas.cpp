@@ -44,7 +44,7 @@ MicroFlakeX::MfxCanvas::MfxCanvas(HWND sWnd, MfxRect sRect)
 
 	myWnd = sWnd;
 	myRect = sRect;
-	GetID2D1HwndRenderTarget(&myRenderTarget, myWnd, MfxSize(&myRect));
+	GetID2D1HwndRenderTarget(&myRenderTarget, myWnd, MfxSize(myRect));
 }
 
 MicroFlakeX::MfxCanvas::~MfxCanvas()
@@ -81,7 +81,7 @@ MfxCanvas& MicroFlakeX::MfxCanvas::operator=(MfxCanvas& rhs)
 	if (rhs.myWnd)
 	{
 		SafeRelease(myRenderTarget);
-		GetID2D1HwndRenderTarget(&myRenderTarget, myWnd, MfxSize(&myRect));
+		GetID2D1HwndRenderTarget(&myRenderTarget, myWnd, MfxSize(myRect));
 	}
 	else if (rhs.myDC)
 	{
@@ -92,7 +92,7 @@ MfxCanvas& MicroFlakeX::MfxCanvas::operator=(MfxCanvas& rhs)
 	return *this;
 }
 
-BOOL MicroFlakeX::MfxCanvas::operator==(MfxBase& rhs)
+bool MicroFlakeX::MfxCanvas::operator==(MfxBase& rhs)
 {
 	return 0;
 }
@@ -126,7 +126,7 @@ MfxReturn MicroFlakeX::MfxCanvas::SetWnd(HWND set)
 		return Mfx_Return_Fail;
 	}
 	myWnd = set;
-	GetID2D1HwndRenderTarget(&myRenderTarget, set, MfxSize(&myRect));
+	GetID2D1HwndRenderTarget(&myRenderTarget, set, MfxSize(myRect));
 	return Mfx_Return_Fine;
 }
 

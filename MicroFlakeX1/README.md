@@ -1,7 +1,7 @@
 # MicroFlakeX - 一个`Windows`上的精巧`DirectUI`库
 * `MFX`的目标是让WinApp开发远离复杂的框架，`专注于开发和逻辑`，并且可以快速自定义背景、图片和蒙版  
 
-注意！！MicroFlakeX1已经放弃维护也就是不再更新和提供帮助支持，仅供学习参考。
+# 注意！！MicroFlakeX1已经放弃维护也就是不再更新和提供帮助支持，仅供学习参考。
 
 ## MicroFlakeX简介
 * MFX尽量的使用简单的逻辑和命令来降低难度  

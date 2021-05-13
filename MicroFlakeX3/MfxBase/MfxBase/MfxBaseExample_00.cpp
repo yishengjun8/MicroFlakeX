@@ -84,6 +84,8 @@
 *	③：如果你需要在程序从入口函数开始之前，就执行一些语句，
 *		请在MfxObject_Init_0宏和MfxObject_Init_1宏之间添加。
 * 
+* 
+* MfxAutoFunc_AutoEnum(MfxBaseExample_00, 1, SayHello, 0, SayGoodBy, 1, SetData)
 ****************************************************************/
 
 MfxObject_Init_0(MfxBaseExample_00)
@@ -91,8 +93,19 @@ MfxObject_Init_0(MfxBaseExample_00)
 	//执行一些语句，这些语句将在程序从入口函数开始执行之前执行
 }
 MfxObject_Init_1(MfxBaseExample_00, SayHello)
-MfxAutoFunc_AutoEnum(MfxBaseExample_00, 1, SayHello, 0, SayGoodBy, 1, SetData)
-MfxObject_Init_2(MfxBaseExample_00, MfxBase)
+
+//MfxAutoFunc_AutoEnum(MfxBaseExample_00, 1, SayHello, 0, SayGoodBy, 1, SetData)
+MfxAutoFunc_AutoEnumBig(MfxBaseExample_00, \
+	1, SayHello, \
+	1, SetData,\
+	1, SSetData, \
+	1, SSSetData, \
+	0, SayGoodBy, \
+	\
+	END, END)
+
+;
+MfxObject_Init_2(MfxBaseExample_00, MfxBase);
 
 MicroFlakeX::MfxBaseExample_00::MfxBaseExample_00()
 {
@@ -121,7 +134,7 @@ MfxBase& MicroFlakeX::MfxBaseExample_00::operator=(MfxBase& rhs)
 	return *this;
 }
 
-BOOL MicroFlakeX::MfxBaseExample_00::operator==(MfxBase& rhs)
+bool MicroFlakeX::MfxBaseExample_00::operator==(MfxBase& rhs)
 {
 	return 0;
 }
@@ -153,4 +166,19 @@ MfxReturn MicroFlakeX::MfxBaseExample_00::SetData(int set)
 	MfxCodeLock(this);
 	myData = set;
 	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxBaseExample_00::SSetData(int set)
+{
+	return MfxReturn();
+}
+
+MfxReturn MicroFlakeX::MfxBaseExample_00::SSSetData(int set)
+{
+	return MfxReturn();
+}
+
+MfxReturn MicroFlakeX::MfxBaseExample_00::SayTest(int a, int b, int c, int d)
+{
+	return MfxReturn();
 }

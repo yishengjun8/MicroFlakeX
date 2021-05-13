@@ -9,14 +9,3 @@ ClassHand <MfxImage> Is Register
 ClassHand <MfxWords> Is Register
 ClassHand <MfxGraph> Is Register
 ClassHand <MfxCanvas> Is Register
-ClassHand <MfxCanvas> Is Remove
-ClassHand <MfxGraph> Is Remove
-ClassHand <MfxWords> Is Remove
-ClassHand <MfxImage> Is Remove
-ClassHand <MfxMove> Is Remove
-ClassHand <MfxColor> Is Remove
-ClassHand <MfxPoint> Is Remove
-ClassHand <MfxRect> Is Remove
-ClassHand <MfxSize> Is Remove
-ClassHand <MfxType> Is Remove
-ClassHand <MfxBaseExample_00> Is Remove

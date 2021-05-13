@@ -57,11 +57,10 @@ BOOL APIENTRY DllMain(HMODULE hModule,
         if (FAILED(hr))
             throw MfxText("gDefTextFormat Failed");
 
-
     }break;
     case DLL_PROCESS_DETACH:
     {
-        /*
+        /**/
         Gdiplus::GdiplusShutdown(GdiPlus_Token);
 
         CoUninitialize();
