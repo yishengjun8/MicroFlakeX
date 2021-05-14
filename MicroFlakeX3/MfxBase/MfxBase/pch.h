@@ -20,7 +20,9 @@
 #include <map>
 #include <set>
 #include <deque>
+#include <queue>
 #include <mutex>
+#include <stack>
 #include <thread>
 #include <string>
 #include <vector>

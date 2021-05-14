@@ -7,6 +7,12 @@ MfxObject_Init_2(MfxFlake, MfxBase);
 
 void MicroFlakeX::MfxFlake::MfxRegMessages()
 {
+	/********************************************************************************
+	*
+	*
+	*
+	*
+	*********************************************************************************/
 	UI_ADD_FLOOR;
 
 	FLAKE_ADD_RECVMSG(UI_MSG_SetPaper, MfxFlake, __OnSetPaper, myCoverFloor);
@@ -49,13 +55,16 @@ void MicroFlakeX::MfxFlake::MfxRegMessages()
 	FLAKE_ADD_RECVMSG(FLAKE_MSG_SetWords, MfxFlake, __OnSetWords, myCoverFloor);
 	FLAKE_ADD_RECVMSG(FLAKE_MSG_SetBackImage, MfxFlake, __OnSetBackImage, myCoverFloor);
 	FLAKE_ADD_RECVMSG(FLAKE_MSG_SetMaskImage, MfxFlake, __OnSetMaskImage, myCoverFloor);
-
-
-
 }
 
 void MicroFlakeX::MfxFlake::MfxFlakeInitData()
 {
+	/********************************************************************************
+	*
+	*
+	*
+	*
+	*********************************************************************************/
 	myUnderFloor = 0;
 	myCoverFloor = 0;
 
@@ -112,6 +121,13 @@ MicroFlakeX::MfxFlake::~MfxFlake()
 	SafeDelete(myWords);
 }
 
+
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::GetType(MfxString* ret)
 {
 	*ret = myType;

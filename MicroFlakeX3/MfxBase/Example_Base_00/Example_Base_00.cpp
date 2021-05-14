@@ -2,6 +2,9 @@
 #include "MfxBase.h"
 using namespace MicroFlakeX;
 
+
+
+MfxThreadServer* myThreadServer = new MfxThreadServer;
 /*********************************************************
 *	UTF-8 - win - x86
 *
@@ -26,25 +29,26 @@ int main()
     *********************************************************/
     MfxFactory(MfxText("MfxBaseExample_00"), &temp);
 
-    /*********************************************************
-     *   AutoFunc可以根据字符串调用对应的方法
-     *
-     *   函数原型
-     *   MfxReturn AutoFunc(MfxString...);
-     *      注意：AutoFunc必须同时传入对应方法的对应参数，如果没有参数，运行时可能会访问到未知地址空间
-     *
-     *********************************************************/
-    strFuncName = MfxText("SayHello");
-    temp->AutoFunc(strFuncName, str);
 
     strFuncName = MfxText("SayGoodBy");
     temp->AutoFunc(strFuncName);
 
+    strFuncName = MfxText("SayHello");
+    temp->AutoFunc(strFuncName, str);
+
     strFuncName = MfxText("SetData");
-    temp->AutoFunc(strFuncName, 9999);
+    temp->AutoFunc(strFuncName, 1234);
 
     strFuncName = MfxText("SayGoodBy");
-    temp->AutoFunc(strFuncName, 66);
+    temp->AutoFunc(strFuncName);
+
+    strFuncName = MfxText("SayTest");
+    temp->AutoFunc(strFuncName, 878, 767, 656, 545);
+    
+    myThreadServer->BeginNewThread(temp, MfxText("TestThread"), 212, 323);
+
+    PTP_TIMER myTimer;
+    myThreadServer->BeginNewTimer(myTimer, temp, MfxText("TestTimer"), 434, 2000);
 
     /*********************************************************
     * 
@@ -52,8 +56,9 @@ int main()
     *   因为MfxFactory是new出来的对象，需要我们手动释放。
     * 
     *********************************************************/
-    delete temp;
-
+    //delete temp;
+    int a;
+    std::cin >> a;
     MfxCout << MfxText("main over\n") << std::endl;
     return 0;
 }

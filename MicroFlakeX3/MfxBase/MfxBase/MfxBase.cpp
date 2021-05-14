@@ -59,7 +59,7 @@ bool MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 	return 0;
 }
 
-MfxReturn MicroFlakeX::MfxBase::AutoFunc(MfxString func ...)
+MfxReturn MicroFlakeX::MfxBase::AutoFunc(MfxString recvFunc ...)
 {
 	return Mfx_Return_Fine;
 }
@@ -105,3 +105,4 @@ MicroFlakeX::MfxLock::~MfxLock()
 {
 	LeaveCriticalSection(myCriticalSection);
 }
+

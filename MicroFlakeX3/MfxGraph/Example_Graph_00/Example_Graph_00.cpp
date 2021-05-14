@@ -197,21 +197,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // TODO: 在此处添加使用 hdc 的任何绘图代码...
         EndPaint(hWnd, &ps);
 
-        LPARAM test = (LPARAM)&myImage[0];
-
         myCanvas.PaintBegin();
 
 
-        ((MfxImage*)test)->Paint();
+        myImage[0].Paint();
         myWords[0].Paint();
-        //myImage[0].Paint();
 
         myCanvas.PaintFinish();
 
-        //Gdiplus::Graphics tempG(GetDC(hWnd));
+        Gdiplus::Graphics tempG(GetDC(hWnd));
 
-        //const Gdiplus::Rect tRect(20, 20, 300, 300);
-        //tempG.DrawImage(myBitmap, tRect);
+        const Gdiplus::Rect tRect(20, 20, 300, 300);
+        tempG.DrawImage(myBitmap, tRect);
     }
     break;
     case WM_DESTROY:

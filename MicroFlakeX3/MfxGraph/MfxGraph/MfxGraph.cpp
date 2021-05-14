@@ -489,5 +489,3 @@ MfxReturn MicroFlakeX::MfxGraph::CollisionWith(MfxGraph* set, bool* ret)
 	tRect.IsEmpty(ret);
 	return Mfx_Return_Fine;
 }
-
-

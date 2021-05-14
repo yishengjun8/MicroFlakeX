@@ -205,7 +205,7 @@ MfxPoint& MicroFlakeX::MfxPoint::operator=(MfxPoint&& rhs)
 *
 *
 ***************************************************************/
-bool MicroFlakeX::MfxPoint::operator==(MfxBase& rhs)
+bool MicroFlakeX::MfxPoint::operator==(MfxBase& rhs) const
 {
 	LONG tX = 0, tY = 0;
 	LONG tRX = 0, tRY = 0;
@@ -223,7 +223,7 @@ bool MicroFlakeX::MfxPoint::operator==(MfxBase& rhs)
 	return false;
 }
 
-bool MicroFlakeX::MfxPoint::operator==(MfxPoint& rhs)
+bool MicroFlakeX::MfxPoint::operator==(MfxPoint& rhs) const
 {
 	LONG tX = 0, tY = 0;
 	LONG tRX = 0, tRY = 0;
@@ -237,7 +237,7 @@ bool MicroFlakeX::MfxPoint::operator==(MfxPoint& rhs)
 	return tX == tRX && tY == tRY;
 }
 
-bool MicroFlakeX::MfxPoint::operator==(MfxPoint&& rhs)
+bool MicroFlakeX::MfxPoint::operator==(MfxPoint&& rhs) const
 {
 	LONG tX = 0, tY = 0;
 	LONG tRX = 0, tRY = 0;
@@ -271,7 +271,7 @@ MfxReturn MicroFlakeX::MfxPoint::Reset(LONG setX, LONG setY)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxPoint::GetPoint(MfxPoint* ret)
+MfxReturn MicroFlakeX::MfxPoint::GetPoint(MfxPoint* ret) const
 {
 	return ret->Reset(myX, myY);
 }
@@ -282,7 +282,7 @@ MfxReturn MicroFlakeX::MfxPoint::GetPoint(MfxPoint* ret)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxPoint::GetPOINT(POINT* ret)
+MfxReturn MicroFlakeX::MfxPoint::GetPOINT(POINT* ret) const
 {
 	LONG tX = 0, tY = 0;
 
@@ -301,7 +301,7 @@ MfxReturn MicroFlakeX::MfxPoint::GetPOINT(POINT* ret)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxPoint::GetGdipPoint(Gdiplus::Point* ret)
+MfxReturn MicroFlakeX::MfxPoint::GetGdipPoint(Gdiplus::Point* ret) const
 {
 	LONG tX = 0, tY = 0;
 
@@ -314,7 +314,7 @@ MfxReturn MicroFlakeX::MfxPoint::GetGdipPoint(Gdiplus::Point* ret)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxPoint::GetGdipPointF(Gdiplus::PointF* ret)
+MfxReturn MicroFlakeX::MfxPoint::GetGdipPointF(Gdiplus::PointF* ret) const
 {
 	LONG tX = 0, tY = 0;
 
@@ -333,7 +333,7 @@ MfxReturn MicroFlakeX::MfxPoint::GetGdipPointF(Gdiplus::PointF* ret)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointU(D2D1_POINT_2U* ret)
+MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointU(D2D1_POINT_2U* ret) const
 {
 	LONG tX = 0, tY = 0;
 
@@ -346,7 +346,7 @@ MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointU(D2D1_POINT_2U* ret)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointF(D2D1_POINT_2F* ret)
+MfxReturn MicroFlakeX::MfxPoint::GetD2D1PointF(D2D1_POINT_2F* ret) const
 {
 	LONG tX = 0, tY = 0;
 
@@ -462,14 +462,14 @@ MfxReturn MicroFlakeX::MfxPoint::SetY(LONG set)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxPoint::GetX(LONG* ret)
+MfxReturn MicroFlakeX::MfxPoint::GetX(LONG* ret) const
 {
 	*ret = myX;
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxPoint::GetY(LONG* ret)
+MfxReturn MicroFlakeX::MfxPoint::GetY(LONG* ret) const
 {
 	*ret = myY;
 

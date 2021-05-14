@@ -115,6 +115,7 @@ namespace MicroFlakeX
 		virtual MfxReturn GetPoint(MfxPoint* ret);
 
 		virtual MfxReturn CollisionWith(MfxGraph* set, bool* ret);
+
 	protected:
 		MfxRect myRect;
 	};
@@ -170,6 +171,7 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
+	/* µÈ´ıÔö¼ÓÂÖÀªÅö×² */
 	class MfxImage
 		: public MfxGraph
 	{

@@ -48,7 +48,9 @@
 #include <map>
 #include <set>
 #include <deque>
+#include <queue>
 #include <mutex>
+#include <stack>
 #include <thread>
 #include <string>
 #include <vector>
@@ -79,19 +81,28 @@ namespace MicroFlakeX
 #define Mfx_Seccess(MR) (((MfxReturn)(MR)) >= 0)
 
 	/***************************************************************
-	*	字符集自动展开宏
+	*	MfxString 字符串
 	* 
-	*	MfxString str = MfxText("str")
+	*	MfxString自动扩展到适合当前编码的std::string或者std::wstring
 	* 
-	*	MfxString	和	MfxText()	均被自动展开到当前编码的字符集合
-	*	
 	****************************************************************/
-	typedef std::string MfxStringA;
-	typedef std::wstring MfxStringW;
-
 #define MfxString __MfxString
-#define MfxCout __MfxCout
+
+	/***************************************************************
+	*	字符集自动展开宏
+	*
+	*	MfxText() 内的字符串将会自动展开到适合当前的编码状态
+	*
+	****************************************************************/
 #define MfxText(str) __MfxText(str)
+
+	/***************************************************************
+	*	cout输出自动展开宏
+	*
+	*	cout自动扩展到适合当前编码的std::cout或者std::wcout
+	*
+	****************************************************************/
+#define MfxCout __MfxCout
 
 #ifdef UNICODE
 #define __MfxCout std::wcout
@@ -102,13 +113,16 @@ namespace MicroFlakeX
 #define __MfxText(str) str
 #define __MfxString MfxStringA;
 #endif
+
+	typedef std::string MfxStringA;
+	typedef std::wstring MfxStringW;
 }
 
 namespace MicroFlakeX
 {
+	class MFX_PORT MfxBase;
+
 	/***************************************************************
-	* 
-	*	MfxBase	的前置声明和导出标识，以及	MicroFlakeX	扩展功能
 	* 
 	*	MfxObject宏：
 	*		1、MfxBase	的子类需要在声明中添加	MfxObject宏	来声明	MicroFlakeX	的扩展功能
@@ -132,20 +146,8 @@ namespace MicroFlakeX
 	*
 	*	更加详细的MfxObject宏示例请参照	MfxBaseExample_00.h	
 	*	
-	*	MfxCodeLock宏：
-	*		1、MfxBase	支持线程安全，具体方案就是保证对象不会在同一时间被两个不同的线程
-	*		同时访问其有冲突的方法。
-	*		2、请在会造成线程冲突的对象方法开始的时候，添加	MfxCodeLock(this);	语句，以
-	*		保证访问唯一性。
-	* 
-	* 
 	****************************************************************/
-	class MFX_PORT MfxBase;
-	class MFX_PORT MfxLock;
-
 #define MfxObject __MfxObject
-
-#define MfxCodeLock(OBJ) __MfxCodeLock(OBJ)
 
 #define MfxObject_Init_0(OBJ) __MfxObject_Init_0(OBJ)
 #define MfxObject_Init_1(OBJ, GOTO_BEGIN) __MfxObject_Init_1(OBJ, GOTO_BEGIN)
@@ -170,12 +172,14 @@ namespace MicroFlakeX
 	*
 	****************************************************************/
 	typedef std::set<MfxBase*> MfxBase_Set;
+	typedef std::queue<MfxBase*> MfxBase_Queue;
 	typedef std::deque<MfxBase*> MfxBase_Deque;
+	typedef std::stack<MfxBase*> MfxBase_Stack;
 	typedef std::vector<MfxBase*> MfxBase_Vector;
 
 	/***************************************************************
 	*
-	*	MicroFlakeX	主工厂
+	*	MicroFlakeX 主工厂
 	* 
 	*	所有的	MfxBase	子类都可以通过这个工厂通过‘子类名称’生产。
 	*	即：通过字符串创建对象
@@ -189,33 +193,36 @@ namespace MicroFlakeX
 
 }
 
-namespace __MicroFlakeX
+namespace MicroFlakeX
 {
 	/***************************************************************
-	*	__MicroFlakeX内部函数	
-	*		>>	一般情况下这里的函数不需要额外的关注
 	*
-	*	MicroFlakeX辅助函数
-	*	
-	*		MicroFlakeX的子类通过 MfxFactoryHand 来注册工厂创建。
-	*		MfxRemoveObject - 移除注册
-	*		MfxRegisterObject - 注册工厂
+	*	MicroFlakeX	辅助框架
+	* 
+	*	MfxCodeLock宏：
+	*		1、MfxBase	支持线程安全，具体方案就是保证对象不会在同一时间被两个不同的线程
+	*		同时访问其有冲突的方法。
+	*		2、请在会造成线程冲突的对象方法开始的时候，添加	MfxCodeLock(this);	语句，以
+	*		保证访问唯一性。
+	* 
 	* 
 	****************************************************************/
-	using namespace MicroFlakeX;
+	class MFX_PORT MfxLock;
+	class MFX_PORT MfxThreadServer;
 
-	class MFX_PORT MfxFactoryHand
-	{
-	public:
-		MfxFactoryHand(MfxString object);
-		virtual MfxReturn Creat(MicroFlakeX::MfxBase** ret) = 0;
-		virtual ~MfxFactoryHand();
-	private:
-		MfxString myObjectName;
-	};
-
-	MFX_PORT MfxReturn MfxRemoveObject(MfxString object);
-	MFX_PORT MfxReturn MfxRegisterObject(MfxString object, MfxFactoryHand* hand);
+	template<class DataType>
+	class MfxDataFlag;
+	/***************************************************************
+	*
+	*	MfxCodeLock宏：
+	*		1、MfxBase	支持线程安全，具体方案就是保证对象不会在同一时间被两个不同的线程
+	*		同时访问其有冲突的方法。
+	*		2、请在会造成线程冲突的对象方法开始的时候，添加	MfxCodeLock(this);	语句，以
+	*		保证访问唯一性。
+	*
+	*
+	****************************************************************/
+#define MfxCodeLock(OBJ) __MfxCodeLock(OBJ)
 }
 
 namespace MicroFlakeX
@@ -239,6 +246,7 @@ namespace MicroFlakeX
 	class MfxBase
 	{
 		friend class MfxLock;
+		friend class MfxThreadServer;
 	public:
 		MfxBase();
 		virtual ~MfxBase();
@@ -247,7 +255,7 @@ namespace MicroFlakeX
 		virtual bool operator==(MfxBase& rhs);
 
 	public:
-		virtual MfxReturn AutoFunc(MfxString func...);
+		virtual MfxReturn AutoFunc(MfxString recvFunc...);
 		virtual MfxReturn FuncName(MfxString* ret);
 		virtual MfxReturn ObjectName(MfxString* ret);
 	private:
@@ -265,12 +273,85 @@ namespace MicroFlakeX
 	****************************************************************/
 	class MfxLock
 	{
-	private:
-		CRITICAL_SECTION* myCriticalSection;
 	public:
 		MfxLock(MfxBase* object);
 		~MfxLock();
+	private:
+		CRITICAL_SECTION* myCriticalSection;
 	};
+
+
+	/***************************************************************
+	*	MfxThreadServer
+	*	
+	*	MfxThreadServer 是 MicroFlakeX 的线程服务器，线程服务器依赖于 MfxBase 的
+	*	AutoFunc。
+	* 
+	*	需要添加到线程服务器内的回调函数，必须注册了 AutoFunc ，否则会调用失败。
+	*	
+	*	
+	****************************************************************/
+	class MfxThreadServer
+	{
+		friend class MfxLock;
+	public:
+		MfxThreadServer();
+		~MfxThreadServer();
+
+	public:
+		MfxReturn BeginNewThread(MfxBase* object, MfxString recvFunc, WPARAM wParam = NULL, LPARAM lParam = NULL);
+
+	public:
+		/***************************************************************
+		* 
+		* 参数一：返回一个计时器ID
+		* 参数二：回调对象指针
+		* 参数三：回调对象方法名字
+		* 参数四：传递给回调方法的lparam，回调方法的wparam是当前调用它的计时器id
+		* 参数五：计时器每个多长时间调用一次，单位为ms
+		* 参数六：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
+		* 参数七：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
+		* 
+		****************************************************************/
+		MfxReturn BeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, LPARAM lParam = NULL, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
+
+	private:
+		static VOID CALLBACK MfxWorkCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val);
+		static VOID CALLBACK MfxTimeCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
+
+	private:
+		CRITICAL_SECTION myCriticalSection;
+	};
+	
+}
+
+namespace __MicroFlakeX
+{
+	/***************************************************************
+	*	__MicroFlakeX内部函数
+	*		>>	一般情况下这里的函数不需要额外的关注
+	*
+	*	MicroFlakeX辅助函数
+	*
+	*		MicroFlakeX的子类通过 MfxFactoryHand 来注册工厂创建。
+	*		MfxRemoveObject - 移除注册
+	*		MfxRegisterObject - 注册工厂
+	*
+	****************************************************************/
+	using namespace MicroFlakeX;
+
+	class MFX_PORT MfxFactoryHand
+	{
+	public:
+		MfxFactoryHand(MfxString object);
+		virtual MfxReturn Creat(MicroFlakeX::MfxBase** ret) = 0;
+		virtual ~MfxFactoryHand();
+	private:
+		MfxString myObjectName;
+	};
+
+	MFX_PORT MfxReturn MfxRemoveObject(MfxString object);
+	MFX_PORT MfxReturn MfxRegisterObject(MfxString object, MfxFactoryHand* hand);
 }
 
 namespace MicroFlakeX
@@ -287,6 +368,12 @@ namespace MicroFlakeX
 	****************************************************************/
 	template<typename T>
 	struct MfxArgNum_;
+
+	template<typename R, class O, typename... Args>
+	struct MfxArgNum_<R(O::*)(Args...) const>
+	{
+		static const int Argc = sizeof...(Args);
+	};
 
 	template<typename R, class O, typename... Args>
 	struct MfxArgNum_<R(O::*)(Args...)>
@@ -307,6 +394,12 @@ namespace MicroFlakeX
 	};
 
 	template <class R, class O, class A1, class... Args>
+	A1 Mfx_GetFuncArgv_1(R(O::*)(A1, Args...) const)
+	{
+		return A1();
+	};
+
+	template <class R, class O, class A1, class... Args>
 	A1 Mfx_GetFuncArgv_1(R(O::*)(A1, Args...))
 	{
 		return A1();
@@ -316,6 +409,12 @@ namespace MicroFlakeX
 	A1 Mfx_GetFuncArgv_1(R(*)(A1, Args...))
 	{
 		return A1();
+	};
+
+	template <class R, class O, class A1, class A2, class... Args>
+	A2 Mfx_GetFuncArgv_2(R(O::*)(A1, A2, Args...) const)
+	{
+		return A2();
 	};
 
 	template <class R, class O, class A1, class A2, class... Args>
@@ -331,6 +430,12 @@ namespace MicroFlakeX
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class... Args>
+	A3 Mfx_GetFuncArgv_3(R(O::*)(A1, A2, A3, Args...) const)
+	{
+		return A3();
+	};
+
+	template <class R, class O, class A1, class A2, class A3, class... Args>
 	A3 Mfx_GetFuncArgv_3(R(O::*)(A1, A2, A3, Args...))
 	{
 		return A3();
@@ -340,6 +445,12 @@ namespace MicroFlakeX
 	A3 Mfx_GetFuncArgv_3(R(*)(A1, A2, A3, Args...))
 	{
 		return A3();
+	};
+
+	template <class R, class O, class A1, class A2, class A3, class A4, class... Args>
+	A4 Mfx_GetFuncArgv_4(R(O::*)(A1, A2, A3, A4, Args...) const)
+	{
+		return A4();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class... Args>
@@ -355,6 +466,12 @@ namespace MicroFlakeX
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class... Args>
+	A5 Mfx_GetFuncArgv_5(R(O::*)(A1, A2, A3, A4, A5, Args...) const)
+	{
+		return A5();
+	};
+
+	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class... Args>
 	A5 Mfx_GetFuncArgv_5(R(O::*)(A1, A2, A3, A4, A5, Args...))
 	{
 		return A5();
@@ -364,6 +481,12 @@ namespace MicroFlakeX
 	A5 Mfx_GetFuncArgv_5(R(*)(A1, A2, A3, A4, A5, Args...))
 	{
 		return A5();
+	};
+
+	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class... Args>
+	A6 Mfx_GetFuncArgv_6(R(O::*)(A1, A2, A3, A4, A5, A6, Args...) const)
+	{
+		return A6();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class... Args>
@@ -379,6 +502,12 @@ namespace MicroFlakeX
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class... Args>
+	A7 Mfx_GetFuncArgv_7(R(O::*)(A1, A2, A3, A4, A5, A6, A7, Args...) const)
+	{
+		return A7();
+	};
+
+	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class... Args>
 	A7 Mfx_GetFuncArgv_7(R(O::*)(A1, A2, A3, A4, A5, A6, A7, Args...))
 	{
 		return A7();
@@ -388,6 +517,12 @@ namespace MicroFlakeX
 	A7 Mfx_GetFuncArgv_7(R(*)(A1, A2, A3, A4, A5, A6, A7, Args...))
 	{
 		return A7();
+	};
+
+	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class... Args>
+	A8 Mfx_GetFuncArgv_8(R(O::*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...) const)
+	{
+		return A8();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class... Args>
@@ -550,7 +685,7 @@ namespace MicroFlakeX
 
 #define __MfxObject \
 public:\
-	MfxReturn AutoFunc(MfxString setFunc...);\
+	MfxReturn AutoFunc(MfxString recvFunc...);\
 	MfxReturn FuncName(MfxString* ret);\
 	MfxReturn ObjectName(MfxString* ret);
 
@@ -606,13 +741,13 @@ public:\
 };\
 OBJ##FactoryHand OBJ##Hand(MfxText(#OBJ));\
 bool OBJ##isFirst = true;\
-MfxReturn OBJ::AutoFunc(MfxString setFunc...)\
+MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 {\
 	MfxReturn ret = Mfx_Return_Fail;\
 	int countID = 0;\
 	int iterID = 0;\
 	va_list argc;\
-	va_start(argc, setFunc);\
+	va_start(argc, recvFunc);\
 	auto iter = Mfx##OBJ##FuncMap.end();\
 	if(OBJ##isFirst)\
 	{\
@@ -621,7 +756,7 @@ MfxReturn OBJ::AutoFunc(MfxString setFunc...)\
 	}\
 	\
 	BeginSwitch:\
-	iter = Mfx##OBJ##FuncMap.find(setFunc);\
+	iter = Mfx##OBJ##FuncMap.find(recvFunc);\
 	if (iter != Mfx##OBJ##FuncMap.end())\
 	{\
 		iterID = iter->second;\
@@ -636,7 +771,7 @@ MfxReturn OBJ::AutoFunc(MfxString setFunc...)\
 #define __MfxObject_Init_2(OBJ, FATHER_OBJ) \
 		if(iterID == countID++)\
 		{\
-			setFunc = va_arg(argc, MfxString);\
+			recvFunc = va_arg(argc, MfxString);\
 			argc = va_arg(argc, va_list);\
 			goto BeginSwitch;\
 			REG_END:\
@@ -646,7 +781,9 @@ MfxReturn OBJ::AutoFunc(MfxString setFunc...)\
 	}\
 	else\
 	{\
-		return FATHER_OBJ::AutoFunc(MfxText("AUTOFUNC_NOTFOUND"), setFunc, argc); \
+		ret = FATHER_OBJ::AutoFunc(MfxText("AUTOFUNC_NOTFOUND"), recvFunc, argc); \
+		va_end(argc);\
+		return ret;\
 	}\
 }
 
@@ -661,7 +798,9 @@ MfxReturn OBJ::AutoFunc(MfxString setFunc...)\
 if(iterID == countID++)\
 {\
 	{\
-		return AUTO_FUNC(); \
+		ret = AUTO_FUNC(); \
+		va_end(argc);\
+		return ret;\
 	}\
 	REG_##AUTO_FUNC:\
 		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), countID++));\
@@ -673,7 +812,9 @@ if(iterID == countID++)\
 {\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC))); \
-		return AUTO_FUNC(A1); \
+		ret = AUTO_FUNC(A1); \
+		va_end(argc);\
+		return ret;\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -687,7 +828,9 @@ if(iterID == countID++)\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
 		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
-		return AUTO_FUNC(A1, A2);\
+		ret = AUTO_FUNC(A1, A2);\
+		va_end(argc);\
+		return ret;\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -702,7 +845,9 @@ if(iterID == countID++)\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
 		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
 		auto A3 = va_arg(argc, decltype(Mfx_GetFuncArgv_3(&OBJ::AUTO_FUNC)));\
-		return AUTO_FUNC(A1, A2, A3);\
+		ret = AUTO_FUNC(A1, A2, A3);\
+		va_end(argc);\
+		return ret;\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -718,7 +863,9 @@ if(iterID == countID++)\
 		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
 		auto A3 = va_arg(argc, decltype(Mfx_GetFuncArgv_3(&OBJ::AUTO_FUNC)));\
 		auto A4 = va_arg(argc, decltype(Mfx_GetFuncArgv_4(&OBJ::AUTO_FUNC)));\
-		return AUTO_FUNC(A1, A2, A3, A4);\
+		ret = AUTO_FUNC(A1, A2, A3, A4);\
+		va_end(argc);\
+		return ret;\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -735,7 +882,9 @@ if(iterID == countID++)\
 		auto A3 = va_arg(argc, decltype(Mfx_GetFuncArgv_3(&OBJ::AUTO_FUNC)));\
 		auto A4 = va_arg(argc, decltype(Mfx_GetFuncArgv_4(&OBJ::AUTO_FUNC)));\
 		auto A5 = va_arg(argc, decltype(Mfx_GetFuncArgv_5(&OBJ::AUTO_FUNC)));\
-		return AUTO_FUNC(A1, A2, A3, A4, A5);\
+		ret = AUTO_FUNC(A1, A2, A3, A4, A5);\
+		va_end(argc);\
+		return ret;\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -753,7 +902,9 @@ if(iterID == countID++)\
 		auto A4 = va_arg(argc, decltype(Mfx_GetFuncArgv_4(&OBJ::AUTO_FUNC)));\
 		auto A5 = va_arg(argc, decltype(Mfx_GetFuncArgv_5(&OBJ::AUTO_FUNC)));\
 		auto A6 = va_arg(argc, decltype(Mfx_GetFuncArgv_6(&OBJ::AUTO_FUNC)));\
-		return AUTO_FUNC(A1, A2, A3, A4, A5, A6);\
+		ret = AUTO_FUNC(A1, A2, A3, A4, A5, A6);\
+		va_end(argc);\
+		return ret;\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -773,7 +924,9 @@ if(iterID == countID++)\
 		auto A5 = va_arg(argc, decltype(Mfx_GetFuncArgv_5(&OBJ::AUTO_FUNC)));\
 		auto A6 = va_arg(argc, decltype(Mfx_GetFuncArgv_6(&OBJ::AUTO_FUNC)));\
 		auto A7 = va_arg(argc, decltype(Mfx_GetFuncArgv_7(&OBJ::AUTO_FUNC)));\
-		return AUTO_FUNC(A1, A2, A3, A4, A5, A6, A7);\
+		ret = AUTO_FUNC(A1, A2, A3, A4, A5, A6, A7);\
+		va_end(argc);\
+		return ret;\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -793,7 +946,9 @@ if(iterID == countID++)\
 		auto A6 = va_arg(argc, decltype(Mfx_GetFuncArgv_6(&OBJ::AUTO_FUNC)));\
 		auto A7 = va_arg(argc, decltype(Mfx_GetFuncArgv_7(&OBJ::AUTO_FUNC)));\
 		auto A8 = va_arg(argc, decltype(Mfx_GetFuncArgv_8(&OBJ::AUTO_FUNC)));\
-		return AUTO_FUNC(A1, A2, A3, A4, A5, A6, A7, A8);\
+		ret = AUTO_FUNC(A1, A2, A3, A4, A5, A6, A7, A8);\
+		va_end(argc);\
+		return ret;\
 	}\
 	\
 	REG_##AUTO_FUNC:\
@@ -2038,4 +2193,3 @@ N113, N114, N115, N116, N117, N118, N119, N120, N121, N122, N123, N124, N125, N1
 #define MfxAutoFunc_AutoEnumBig_11(BEGIN, OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, FLAG, ...)\
     MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
     CCCCONNECT(CCCONNECT(MfxAutoFunc_AutoEnumBig_, CCONNECT(Mfx_AutoEnumBig_ForInc(BEGIN), FLAG))(BEGIN, OBJ, NUM_2, FUNC_2, FLAG, __VA_ARGS__))
-  
