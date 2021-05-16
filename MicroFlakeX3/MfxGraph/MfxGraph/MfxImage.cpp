@@ -2,7 +2,17 @@
 #include "MfxGraph.h"
 
 MfxObject_Init_0(MfxImage)
-MfxObject_Init_1(MfxImage, END)
+MfxObject_Init_1(MfxImage, SetRect)
+MfxAutoFunc_AutoEnumBig(MfxImage, \
+	1, SetRect, \
+	1, SetSize, \
+	1, SetPoint, \
+	\
+	1, GetRect, \
+	1, GetSize, \
+	1, GetPoint, \
+	\
+	END, END);
 MfxObject_Init_2(MfxImage, MfxGraph);
 
 MicroFlakeX::MfxImage::MfxImage()

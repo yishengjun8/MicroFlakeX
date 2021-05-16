@@ -101,24 +101,41 @@ MfxAutoFunc_AutoEnumBig(MfxBaseExample_00, \
 	2, TestThread, \
 	\
 	0, SayGoodBy, \
-	4, SayTest,\
+	3, SayTest,\
 	\
 	END, END);
 MfxObject_Init_2(MfxBaseExample_00, MfxBase);
 
+
+/***************************************************************
+*
+*
+*
+****************************************************************/
 MicroFlakeX::MfxBaseExample_00::MfxBaseExample_00()
 {
 	myData = 0;
-	MfxCout << MfxText(">> MfxBaseExample_00 Creat <<\n");
+
+	MfxCout << std::endl;
+	MfxCout << MfxText(">> MfxBaseExample_00 Creat <<");
+	MfxCout << std::endl;
 }
 
 MicroFlakeX::MfxBaseExample_00::~MfxBaseExample_00()
 {
 	MfxCodeLock(this);
-	MfxCout << MfxText(">> MfxBaseExample_00 Release <<\n");
-	MfxCout << MfxText(">> MfxBaseExample_00 myData = ") << myData << " <<\n";
+
+	MfxCout << std::endl;
+	MfxCout << MfxText(">> MfxBaseExample_00 Release <<");
+	MfxCout << std::endl;
 }
 
+
+/***************************************************************
+*
+*
+*
+****************************************************************/
 MfxReturn MicroFlakeX::MfxBaseExample_00::Clone(MfxBase** ret)
 {
 	MfxCodeLock(this);
@@ -129,43 +146,56 @@ MfxReturn MicroFlakeX::MfxBaseExample_00::Clone(MfxBase** ret)
 MfxBase& MicroFlakeX::MfxBaseExample_00::operator=(MfxBase& rhs)
 {
 	MfxCodeLock(this);
+
 	SetData(myData);
+
 	return *this;
 }
 
-bool MicroFlakeX::MfxBaseExample_00::operator==(MfxBase& rhs)
+bool MicroFlakeX::MfxBaseExample_00::operator==(MfxBase& rhs) const
 {
 	return 0;
+}
+
+
+/***************************************************************
+* 
+* 
+* 
+****************************************************************/
+MfxReturn MicroFlakeX::MfxBaseExample_00::SayGoodBy()
+{
+	MfxCodeLock(this);
+
+	MfxCout << std::endl;
+	MfxCout << MfxText("In MfxBaseExample_00::SayGoodBy") << std::endl;
+	MfxCout << std::endl;
+
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxBaseExample_00::SayHello(MfxString set)
 {
 	MfxCodeLock(this);
 
-	MfxCout << MfxText("In MfxBaseExample_00 SayHello Str = ") << set << std::endl;
+	MfxCout << std::endl;
+	MfxCout << MfxText("In MfxBaseExample_00::SayHello Str = ") << set;
+	MfxCout << std::endl;
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxBaseExample_00::SayGoodBy()
-{
-	MfxCodeLock(this);
 
-	MfxCout << MfxText("In MfxBaseExample_00 SayGoodBy") << std::endl;
-
-	return Mfx_Return_Fine;
-}
-
+/***************************************************************
+*	MfxCodeLock(this);
+*
+*	凡是写了MfxCodeLock(this);宏标识的方法，互相之间在同一时间仅能允许一个正在执行，
+*	其他的方法会被挂起等待。
+*
+*	即线程安全。
+****************************************************************/
 MfxReturn MicroFlakeX::MfxBaseExample_00::SetData(int set)
 {
-	/***************************************************************
-	*	MfxCodeLock(this);
-	*	
-	*	凡是写了MfxCodeLock(this);宏标识的方法，互相之间在同一时间仅能允许一个正在执行，
-	*	其他的方法会被挂起等待。
-	* 
-	*	即线程安全。
-	****************************************************************/
 	MfxCodeLock(this);
 
 	myData = set;
@@ -173,23 +203,36 @@ MfxReturn MicroFlakeX::MfxBaseExample_00::SetData(int set)
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxBaseExample_00::SayTest(int i, double f, char c)
+{
+	MfxCout << std::endl;
+	MfxCout << MfxText("In MfxBaseExample_00::SayTest [argv i: ") << i << MfxText(" ] [argv f: ") << f << MfxText(" ] [argv c: ") << c << MfxText(" ]");
+	MfxCout << std::endl;
+
+	return Mfx_Return_Fine;
+
+}
+
+
+/***************************************************************
+*
+*
+*
+****************************************************************/
 MfxReturn MicroFlakeX::MfxBaseExample_00::TestTimer(WPARAM wParam, LPARAM lParam)
 {
-	MfxCout << MfxText("In TestTimer wParam: ") << wParam << MfxText(" lParam: ") << lParam << std::endl;
+	MfxCout << std::endl;
+	MfxCout << MfxText("In MfxBaseExample_00::TestTimer wParam: ") << wParam << MfxText(" lParam: ") << lParam;
+	MfxCout << std::endl;
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxBaseExample_00::TestThread(WPARAM wParam, LPARAM lParam)
 {
-	MfxCout << MfxText("In TestThread wParam: ") << wParam << MfxText(" lParam: ") << lParam << std::endl;
+	MfxCout << std::endl;
+	MfxCout << MfxText("In MfxBaseExample_00::TestThread wParam: ") << wParam << MfxText(" lParam: ") << lParam;
+	MfxCout << std::endl;
 
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxBaseExample_00::SayTest(int a, int b, int c, int d)
-{
-	MfxCout << MfxText("In MfxBaseExample_00 SayTest argv a: ") << a << MfxText(" argv b: ") << b << MfxText(" argv c: ") << c << MfxText(" argv d: ") << d << std::endl;
-	
 	return Mfx_Return_Fine;
 }

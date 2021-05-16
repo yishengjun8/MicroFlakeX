@@ -9,8 +9,8 @@
 *
 *	MfxType.h	提供了	MicroFlakeX	的基础类型对象
 * 
-*   MfxType的子类，都重载了拷贝构造函数，力图要求拷贝时速度最快
-*       基于此，MfxType的子类可以在程序中当成基本类型使用，因为
+*   MfxType内的类，都重载了拷贝构造函数，力图要求拷贝时速度最快
+*       基于此，MfxType内的类可以在程序中当成基本类型使用，因为
 *       它们的拷贝开销实在是很小。
 * 
 **************************************************************/
@@ -55,48 +55,63 @@ namespace MicroFlakeX
     *
     *
     ***************************************************************/
-    class MFX_PORT MfxType;
-
     class MFX_PORT MfxRect;
     class MFX_PORT MfxSize;
     class MFX_PORT MfxPoint;
 
     class MFX_PORT MfxColor;
 
-    class MFX_PORT MfxMove;
-}
+    class MFX_PORT MfxGlide;
 
-namespace MicroFlakeX
-{
-    class MfxType :
-        public MfxBase
-    {
-        MfxObject;
-    public:
-        MfxReturn Clone(MfxBase** ret);
 
-        MfxBase& operator=(MfxBase& rhs);
+    /***************************************************************
+    *	MfxType	常用容器
+    ****************************************************************/
+    typedef std::set<MfxRect> MfxRect_Set;
+    typedef std::queue<MfxRect> MfxRect_Queue;
+    typedef std::deque<MfxRect> MfxRect_Deque;
+    typedef std::stack<MfxRect> MfxRect_Stack;
+    typedef std::vector<MfxRect> MfxRect_Vector;
 
-        bool operator==(MfxBase& rhs);
-    };
+    typedef std::set<MfxSize> MfxSize_Set;
+    typedef std::queue<MfxSize> MfxSize_Queue;
+    typedef std::deque<MfxSize> MfxSize_Deque;
+    typedef std::stack<MfxSize> MfxSize_Stack;
+    typedef std::vector<MfxSize> MfxSize_Vector;
+
+    typedef std::set<MfxPoint> MfxPoint_Set;
+    typedef std::queue<MfxPoint> MfxPoint_Queue;
+    typedef std::deque<MfxPoint> MfxPoint_Deque;
+    typedef std::stack<MfxPoint> MfxPoint_Stack;
+    typedef std::vector<MfxPoint> MfxPoint_Vector;
+
+    typedef std::set<MfxColor> MfxColor_Set;
+    typedef std::queue<MfxColor> MfxColor_Queue;
+    typedef std::deque<MfxColor> MfxColor_Deque;
+    typedef std::stack<MfxColor> MfxColor_Stack;
+    typedef std::vector<MfxColor> MfxColor_Vector;
+
 }
 
 namespace MicroFlakeX
 {
     class MfxRect :
-        public MfxType
+        public MfxBase
     {
         MfxObject;
     public:
         MfxRect();
         MfxRect(MfxBase& set);
 
+        MfxRect(MfxRect* set);
         MfxRect(MfxRect& set);
         MfxRect(MfxRect&& set);
 
+        MfxRect(MfxSize* set);
         MfxRect(MfxSize& set);
         MfxRect(MfxSize&& set);
 
+        MfxRect(MfxPoint* set);
         MfxRect(MfxPoint& set);
         MfxRect(MfxPoint&& set);
 
@@ -109,18 +124,22 @@ namespace MicroFlakeX
 
         MfxBase& operator=(MfxBase& rhs);
 
+        MfxRect& operator=(MfxRect* rhs);
         MfxRect& operator=(MfxRect& rhs);
         MfxRect& operator=(MfxRect&& rhs);
 
+        MfxRect& operator=(MfxSize* rhs);
         MfxRect& operator=(MfxSize& rhs);
         MfxRect& operator=(MfxSize&& rhs);
 
+        MfxRect& operator=(MfxPoint* rhs);
         MfxRect& operator=(MfxPoint& rhs);
         MfxRect& operator=(MfxPoint&& rhs);
 
     public:
         bool operator==(MfxBase& rhs) const;
 
+        bool operator==(MfxRect* rhs) const;
         bool operator==(MfxRect& rhs) const;
         bool operator==(MfxRect&& rhs) const;
 
@@ -239,16 +258,18 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
     class MfxSize
-        : public MfxType
+        : public MfxBase
     {
         MfxObject;
     public:
         MfxSize();
         MfxSize(MfxBase& set);
 
+        MfxSize(MfxRect* set);
         MfxSize(MfxRect& set);
         MfxSize(MfxRect&& set);
 
+        MfxSize(MfxSize* set);
         MfxSize(MfxSize& set);
         MfxSize(MfxSize&& set);
 
@@ -261,15 +282,18 @@ namespace MicroFlakeX
 
         MfxBase& operator=(MfxBase& rhs);
 
+        MfxSize& operator=(MfxRect* rhs);
         MfxSize& operator=(MfxRect& rhs);
         MfxSize& operator=(MfxRect&& rhs);
 
+        MfxSize& operator=(MfxSize* rhs);
         MfxSize& operator=(MfxSize& rhs);
         MfxSize& operator=(MfxSize&& rhs);
 
     public:
         bool operator==(MfxBase& rhs) const;
 
+        bool operator==(MfxSize* rhs) const;
         bool operator==(MfxSize& rhs) const;
         bool operator==(MfxSize&& rhs) const;
 
@@ -325,16 +349,18 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
     class MfxPoint
-        : public MfxType
+        : public MfxBase
     {
         MfxObject;
     public:
         MfxPoint();
         MfxPoint(MfxBase& set);
 
+        MfxPoint(MfxRect* set);
         MfxPoint(MfxRect& set);
         MfxPoint(MfxRect&& set);
 
+        MfxPoint(MfxPoint* set);
         MfxPoint(MfxPoint& set);
         MfxPoint(MfxPoint&& set);
 
@@ -347,15 +373,18 @@ namespace MicroFlakeX
 
         MfxBase& operator=(MfxBase& rhs);
 
+        MfxPoint& operator=(MfxRect* rhs);
         MfxPoint& operator=(MfxRect& rhs);
         MfxPoint& operator=(MfxRect&& rhs);
 
+        MfxPoint& operator=(MfxPoint* rhs);
         MfxPoint& operator=(MfxPoint& rhs);
         MfxPoint& operator=(MfxPoint&& rhs);
 
     public:
         bool operator==(MfxBase& rhs) const;
 
+        bool operator==(MfxPoint* rhs) const;
         bool operator==(MfxPoint& rhs) const;
         bool operator==(MfxPoint&& rhs) const;
 
@@ -405,7 +434,7 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
     class MfxColor
-        : public MfxType
+        : public MfxBase
     {
         MfxObject;
     public:
@@ -471,43 +500,150 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-    /* 等待补充 */
-    class MfxMove
-        : public MfxType
+    struct MfxGulid_Keyframe
+    {
+        MfxGulid_Keyframe(MfxBase* sKey, LONGLONG sTime)
+        {
+            key = sKey;
+            time = sTime;
+        }
+        MfxBase* key;
+        LONGLONG time;
+    };
+    struct MfxGulid_GetSet_FuncName
+    {
+        MfxGulid_GetSet_FuncName(MfxString get, MfxString set)
+        {
+            myGetFuncName = get;
+            mySetFuncName = set;
+        }
+        MfxGulid_GetSet_FuncName(MfxString type)
+        {
+            mySetFuncName = myGetFuncName = type;
+        }
+        MfxString myGetFuncName;
+        MfxString mySetFuncName;
+    };
+
+    typedef std::vector<MfxGulid_GetSet_FuncName> MfxGulid_GetSet_FuncName_Vector;
+
+    typedef std::queue<MfxGulid_Keyframe> MfxGulid_BindObjectType_Keyframe_Queue;
+
+    typedef std::map<MfxString, MfxGulid_BindObjectType_Keyframe_Queue> MfxGulid_BindObjectType_Keyframe_Queue_Map;
+    typedef MfxGulid_BindObjectType_Keyframe_Queue_Map::value_type MfxGulid_BindObjectType_Keyframe_Queue_Map_Pair;
+
+    struct MfxGulid_WidelyType
+    {
+        MfxGulid_WidelyType(MfxString getObjectName, MfxString setObjectName,
+            MfxString getObjectFuncName, MfxString setObjectFuncName)
+        {
+            myGetObject_Set = nullptr;
+            myGetObject_Begin = nullptr;
+            this->getObjectName = getObjectName;
+            this->setObjectName = setObjectName;
+            this->getObjectFuncName = getObjectFuncName;
+            this->setObjectFuncName = setObjectFuncName;
+            myBeginTime = 0;
+            myThroughTime = 0;
+        }
+        MfxGulid_WidelyType()
+        {
+            myGetObject_Set = nullptr;
+            myGetObject_Begin = nullptr;
+            myBeginTime = 0;
+            myThroughTime = 0;
+        }
+        MfxString getObjectName;
+        MfxString setObjectName;
+        MfxString getObjectFuncName;
+        MfxString setObjectFuncName;
+
+        LONGLONG myBeginTime;
+        LONGLONG myThroughTime;
+        MfxBase* myGetObject_Set;
+        MfxBase* myGetObject_Begin;
+        MfxGulid_GetSet_FuncName_Vector myGulidTypePair;
+
+    };
+
+    typedef std::map<MfxString, MfxGulid_WidelyType> MfxGulid_WidelyType_Map;
+    typedef MfxGulid_WidelyType_Map::value_type MfxGulid_WidelyType_Map_Pair;
+
+    /**************************************************************
+    *   MfxGlide 赖于 MfxBase 的 AutoFunc。
+    * 
+    *   MfxGlide 允许绑定一个 MfxBase 对象，每帧根据给定参数
+        自动调用 MfxBase::AutoFunc(MfxText("SetRect"), rect);
+    *   
+    *   如果对象未注册 AutoFunc 的 SetRect ，则会调用失败。
+    *
+    ***************************************************************/
+    class MfxGlide
+        : public MfxBase
     {
         MfxObject;
     public:
-        MfxMove();
+        MfxGlide();
 
-        MfxMove(MfxPoint* setBegin, MfxPoint* setEnd, time_t time_ms);
-        MfxMove(MfxPoint* setBegin, MfxPoint* setEnd, time_t timeBegin, time_t timeEnd);
-        
-        ~MfxMove();
+        ~MfxGlide();
 
         MfxReturn Clone(MfxBase** ret);
 
         MfxBase& operator=(MfxBase& rhs);
 
-        MfxMove& operator=(MfxMove& rhs);
+        MfxGlide& operator=(MfxGlide& rhs);
+        MfxGlide& operator=(MfxGlide&& rhs);
 
         bool operator==(MfxBase& rhs);
 
-        bool operator==(MfxMove& rhs);
+        bool operator==(MfxGlide& rhs);
+        bool operator==(MfxGlide&& rhs);
+
 
     public:
-        MfxReturn MoveTo(MfxPoint* setEnd);
+        MfxReturn GetFPS(UINT& ret);
+        MfxReturn GetBindObject(MfxBase** object, MfxString* ret);
 
-        MfxReturn EachFrame();
     public:
-        MfxReturn GetPoint(MfxPoint* ret);
+        MfxReturn SetFPS(UINT set);
+        MfxReturn BindObject(MfxBase* object);
 
-        MfxReturn GetD2D1PointU(D2D1_POINT_2U* ret);
-        MfxReturn GetD2D1PointF(D2D1_POINT_2F* ret);
-
-        MfxReturn GetX(LONG* ret);
-        MfxReturn GetY(LONG* ret);
     public:
-        time_t myTime_Begin, myTime_End, myTime_Now;
-        MfxPoint myPoint_Begin, myPoint_End, myPoint_Now;
+        MfxReturn BindObjectName(MfxString groupName, MfxGulid_WidelyType value);
+
+        MfxReturn Add_GetSetFuncName(MfxString groupName, MfxString getFuncName, MfxString setFuncName);
+
+        /**************************************************************
+        *   自动添加Get和Set
+        * 
+        * MxfR
+        ***************************************************************/
+    public:
+        MfxReturn Stop();
+        MfxReturn Begin();
+        MfxReturn Pause();
+        MfxReturn Clear();
+
+    public:
+        MfxReturn EachFrame(WPARAM wParam, LPARAM lParam);
+
+    public:
+        MfxReturn MfxAddKeyframe(MfxString bindObjectType, MfxBase* set, LONGLONG span);
+
+    private:
+        PTP_TIMER myPTP_TIMER;
+
+    private:
+        MfxBase* myBindObject;
+        MfxGulid_WidelyType_Map myWidelyTypeMap;
+
+    private:
+        MfxGulid_BindObjectType_Keyframe_Queue_Map myBindObjectType_Keyframe;
+
+    public:
+        UINT myFPS;
+
+    private:
+
     };
 }

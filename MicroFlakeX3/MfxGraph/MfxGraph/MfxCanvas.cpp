@@ -162,7 +162,7 @@ MfxReturn MicroFlakeX::MfxCanvas::GetRenderTarget(ID2D1RenderTarget** ret)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::SetRect(MfxRect set)
+MfxReturn MicroFlakeX::MfxCanvas::SetRect(MfxRect* set)
 {
 	myRect = set;
 	{
@@ -182,7 +182,7 @@ MfxReturn MicroFlakeX::MfxCanvas::SetRect(MfxRect set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize set)
+MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize* set)
 {
 	myRect = set;
 	{
@@ -202,7 +202,7 @@ MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::SetPoint(MfxPoint set)
+MfxReturn MicroFlakeX::MfxCanvas::SetPoint(MfxPoint* set)
 {
 	myRect = set;
 	{

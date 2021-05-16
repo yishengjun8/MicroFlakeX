@@ -26,16 +26,16 @@ namespace MicroFlakeX
 
         virtual MfxReturn Clone(MfxBase** ret);
 
-        virtual bool operator==(MfxBase& rhs);
-
         virtual MfxBase& operator=(MfxBase& rhs);
+
+        virtual bool operator==(MfxBase& rhs) const;
     public:        
         MfxReturn SayGoodBy();
 
         MfxReturn SayHello(MfxString set);
 
         MfxReturn SetData(int set);
-        MfxReturn SayTest(int a, int b, int c, int d);
+        MfxReturn SayTest(int i, double f, char c);
 
         MfxReturn TestTimer(WPARAM wParam, LPARAM lParam);
         MfxReturn TestThread(WPARAM wParam, LPARAM lParam);

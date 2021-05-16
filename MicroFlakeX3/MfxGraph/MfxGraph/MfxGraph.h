@@ -106,9 +106,9 @@ namespace MicroFlakeX
 		bool operator==(MfxBase& rhs);
 
 	public:
-		virtual MfxReturn SetRect(MfxRect set);
-		virtual MfxReturn SetSize(MfxSize set);
-		virtual MfxReturn SetPoint(MfxPoint set);
+		virtual MfxReturn SetRect(MfxRect* set);
+		virtual MfxReturn SetSize(MfxSize* set);
+		virtual MfxReturn SetPoint(MfxPoint* set);
 
 		virtual MfxReturn GetRect(MfxRect* ret);
 		virtual MfxReturn GetSize(MfxSize* ret);
@@ -156,9 +156,9 @@ namespace MicroFlakeX
 		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret);
 
 	public:
-		MfxReturn SetRect(MfxRect set);
-		MfxReturn SetSize(MfxSize set);
-		MfxReturn SetPoint(MfxPoint set);
+		MfxReturn SetRect(MfxRect* set);
+		MfxReturn SetSize(MfxSize* set);
+		MfxReturn SetPoint(MfxPoint* set);
 
 	protected:
 		HDC myDC;
@@ -273,8 +273,8 @@ namespace MicroFlakeX
 		MfxReturn SetTextColor(MfxColor set);
 		MfxReturn GetTextColor(MfxColor* set);
 	public:
-		MfxReturn SetRect(MfxRect set);
-		MfxReturn SetSize(MfxSize set);
+		MfxReturn SetRect(MfxRect* set);
+		MfxReturn SetSize(MfxSize* set);
 
 		MfxReturn SetTextAlignmentX(TextAlignmentX set);
 		MfxReturn GetTextAlignmentX(TextAlignmentX* ret);

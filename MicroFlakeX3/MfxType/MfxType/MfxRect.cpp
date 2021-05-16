@@ -59,6 +59,7 @@ MfxAutoFunc_AutoEnumBig(MfxRect, \
 	1, GetY, \
 	1, GetWidth, \
 	1, GetHeight, \
+	\
 	1, GetTop, \
 	1, GetLeft, \
 	1, GetRight, \
@@ -89,7 +90,7 @@ MfxAutoFunc_AutoEnumBig(MfxRect, \
 	2, IsPointInside, \
 	\
 	END, END);
-MfxObject_Init_2(MfxRect, MfxType);
+MfxObject_Init_2(MfxRect, MfxBase);
 
 
 /**************************************************************
@@ -118,6 +119,21 @@ MicroFlakeX::MfxRect::MfxRect(MfxBase& set)
 
 	SetY(tSY);
 	SetX(tSX);
+	SetWidth(tSW);
+	SetHeight(tSH);
+}
+
+MicroFlakeX::MfxRect::MfxRect(MfxRect* set)
+{
+	LONG tSX = 0, tSY = 0, tSW = 0, tSH = 0;
+
+	set->GetX(&tSX);
+	set->GetY(&tSY);
+	set->GetWidth(&tSW);
+	set->GetHeight(&tSH);
+
+	SetX(tSX);
+	SetY(tSY);
 	SetWidth(tSW);
 	SetHeight(tSH);
 }
@@ -152,6 +168,19 @@ MicroFlakeX::MfxRect::MfxRect(MfxRect&& set)
 	SetHeight(tSH);
 }
 
+MicroFlakeX::MfxRect::MfxRect(MfxSize* set)
+{
+	LONG tSX = 0, tSY = 0, tSW = 0, tSH = 0;
+
+	set->GetWidth(&tSW);
+	set->GetHeight(&tSH);
+
+	SetX(tSX);
+	SetY(tSY);
+	SetWidth(tSW);
+	SetHeight(tSH);
+}
+
 MicroFlakeX::MfxRect::MfxRect(MfxSize& set)
 {
 	LONG tSX = 0, tSY = 0, tSW = 0, tSH = 0;
@@ -171,6 +200,19 @@ MicroFlakeX::MfxRect::MfxRect(MfxSize&& set)
 
 	set.GetWidth(&tSW);
 	set.GetHeight(&tSH);
+
+	SetX(tSX);
+	SetY(tSY);
+	SetWidth(tSW);
+	SetHeight(tSH);
+}
+
+MicroFlakeX::MfxRect::MfxRect(MfxPoint* set)
+{
+	LONG tSX = 0, tSY = 0, tSW = 0, tSH = 0;
+
+	set->GetX(&tSX);
+	set->GetY(&tSY);
 
 	SetX(tSX);
 	SetY(tSY);
@@ -253,6 +295,23 @@ MfxBase& MicroFlakeX::MfxRect::operator=(MfxBase& rhs)
 	return *this;
 }
 
+MfxRect& MicroFlakeX::MfxRect::operator=(MfxRect* rhs)
+{
+	LONG tRX = 0, tRY = 0, tRW = 0, tRH = 0;
+
+	rhs->GetX(&tRX);
+	rhs->GetY(&tRY);
+	rhs->GetWidth(&tRW);
+	rhs->GetHeight(&tRH);
+
+	SetX(tRX);
+	SetY(tRY);
+	SetWidth(tRW);
+	SetHeight(tRH);
+
+	return *this;
+}
+
 MfxRect& MicroFlakeX::MfxRect::operator=(MfxRect& rhs)
 {
 	LONG tRX = 0, tRY = 0, tRW = 0, tRH = 0;
@@ -287,6 +346,19 @@ MfxRect& MicroFlakeX::MfxRect::operator=(MfxRect&& rhs)
 	return *this;
 }
 
+MfxRect& MicroFlakeX::MfxRect::operator=(MfxSize* rhs)
+{
+	LONG tRW = 0, tRH = 0;
+
+	rhs->GetWidth(&tRW);
+	rhs->GetHeight(&tRH);
+
+	SetWidth(tRW);
+	SetHeight(tRH);
+
+	return *this;
+}
+
 MfxRect& MicroFlakeX::MfxRect::operator=(MfxSize& rhs)
 {
 	LONG tRW = 0, tRH = 0;
@@ -309,6 +381,19 @@ MfxRect& MicroFlakeX::MfxRect::operator=(MfxSize&& rhs)
 
 	SetWidth(tRW);
 	SetHeight(tRH);
+
+	return *this;
+}
+
+MfxRect& MicroFlakeX::MfxRect::operator=(MfxPoint* rhs)
+{
+	LONG tRX = 0, tRY = 0;
+
+	rhs->GetX(&tRX);
+	rhs->GetY(&tRY);
+
+	SetX(tRX);
+	SetY(tRY);
 
 	return *this;
 }
@@ -365,6 +450,24 @@ bool MicroFlakeX::MfxRect::operator==(MfxBase& rhs) const
 	}
 
 	return false;
+}
+
+bool MicroFlakeX::MfxRect::operator==(MfxRect* rhs) const
+{
+	LONG tX = 0, tY = 0, tW = 0, tH = 0;
+	LONG tRX = 0, tRY = 0, tRW = 0, tRH = 0;
+
+	GetX(&tX);
+	GetY(&tY);
+	GetWidth(&tW);
+	GetHeight(&tH);
+
+	rhs->GetX(&tRX);
+	rhs->GetY(&tRY);
+	rhs->GetWidth(&tRW);
+	rhs->GetHeight(&tRH);
+
+	return tX == tRX && tY == tRY && tW == tRW && tH == tRH;
 }
 
 bool MicroFlakeX::MfxRect::operator==(MfxRect& rhs) const

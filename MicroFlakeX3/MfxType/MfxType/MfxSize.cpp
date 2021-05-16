@@ -40,7 +40,7 @@ MfxAutoFunc_AutoEnumBig(MfxSize, \
 	1, IsEmpty, \
 	\
 	END, END);
-MfxObject_Init_2(MfxSize, MfxType);
+MfxObject_Init_2(MfxSize, MfxBase);
 
 
 /**************************************************************
@@ -67,6 +67,17 @@ MicroFlakeX::MfxSize::MfxSize(MfxBase& set)
 	SetHeight(tSH);
 }
 
+MicroFlakeX::MfxSize::MfxSize(MfxRect* set)
+{
+	LONG tSW = 0, tSH = 0;
+
+	set->GetWidth(&tSW);
+	set->GetHeight(&tSH);
+
+	SetWidth(tSW);
+	SetHeight(tSH);
+}
+
 MicroFlakeX::MfxSize::MfxSize(MfxRect& set)
 {
 	LONG tSW = 0, tSH = 0;
@@ -84,6 +95,17 @@ MicroFlakeX::MfxSize::MfxSize(MfxRect&& set)
 
 	set.GetWidth(&tSW);
 	set.GetHeight(&tSH);
+
+	SetWidth(tSW);
+	SetHeight(tSH);
+}
+
+MicroFlakeX::MfxSize::MfxSize(MfxSize* set)
+{
+	LONG tSW = 0, tSH = 0;
+
+	set->GetWidth(&tSW);
+	set->GetHeight(&tSH);
 
 	SetWidth(tSW);
 	SetHeight(tSH);
@@ -149,6 +171,19 @@ MfxBase& MicroFlakeX::MfxSize::operator=(MfxBase& rhs)
 	return *this;
 }
 
+MfxSize& MicroFlakeX::MfxSize::operator=(MfxRect* rhs)
+{
+	LONG tRW = 0, tRH = 0;
+
+	rhs->GetWidth(&tRW);
+	rhs->GetHeight(&tRH);
+
+	SetWidth(tRW);
+	SetHeight(tRH);
+
+	return *this;
+}
+
 MfxSize& MicroFlakeX::MfxSize::operator=(MfxRect& rhs)
 {
 	LONG tRW = 0, tRH = 0;
@@ -168,6 +203,19 @@ MfxSize& MicroFlakeX::MfxSize::operator=(MfxRect&& rhs)
 
 	rhs.GetWidth(&tRW);
 	rhs.GetHeight(&tRH);
+
+	SetWidth(tRW);
+	SetHeight(tRH);
+
+	return *this;
+}
+
+MfxSize& MicroFlakeX::MfxSize::operator=(MfxSize* rhs)
+{
+	LONG tRW = 0, tRH = 0;
+
+	rhs->GetWidth(&tRW);
+	rhs->GetHeight(&tRH);
 
 	SetWidth(tRW);
 	SetHeight(tRH);
@@ -223,6 +271,20 @@ bool MicroFlakeX::MfxSize::operator==(MfxBase& rhs) const
 	}
 
 	return false;
+}
+
+bool MicroFlakeX::MfxSize::operator==(MfxSize* rhs) const
+{
+	LONG tW = 0, tH = 0;
+	LONG tRW = 0, tRH = 0;
+
+	GetWidth(&tW);
+	GetHeight(&tH);
+
+	rhs->GetWidth(&tRW);
+	rhs->GetHeight(&tRH);
+
+	return tW == tRW && tH == tRH;
 }
 
 bool MicroFlakeX::MfxSize::operator==(MfxSize& rhs) const

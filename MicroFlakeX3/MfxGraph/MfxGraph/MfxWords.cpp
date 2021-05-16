@@ -2,7 +2,17 @@
 #include "MfxGraph.h"
 
 MfxObject_Init_0(MfxWords)
-MfxObject_Init_1(MfxWords, END)
+MfxObject_Init_1(MfxWords, SetRect)
+MfxAutoFunc_AutoEnumBig(MfxWords, \
+	1, SetRect, \
+	1, SetSize, \
+	1, SetPoint, \
+		\
+	1, GetRect, \
+	1, GetSize, \
+	1, GetPoint, \
+	\
+	END, END);
 MfxObject_Init_2(MfxWords, MfxGraph);
 
 IDWriteTextFormat* MfxWords::gDefTextFormat = nullptr;
@@ -292,7 +302,7 @@ MfxReturn MicroFlakeX::MfxWords::GetTextColor(MfxColor* set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::SetRect(MfxRect set)
+MfxReturn MicroFlakeX::MfxWords::SetRect(MfxRect* set)
 {
 	myRect = set;
 	myTextLayout->SetMaxWidth(myRect.myWidth);
@@ -300,7 +310,7 @@ MfxReturn MicroFlakeX::MfxWords::SetRect(MfxRect set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::SetSize(MfxSize set)
+MfxReturn MicroFlakeX::MfxWords::SetSize(MfxSize* set)
 {
 	myRect = set;
 	myTextLayout->SetMaxWidth(myRect.myWidth);

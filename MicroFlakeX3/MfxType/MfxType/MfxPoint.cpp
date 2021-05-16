@@ -38,7 +38,7 @@ MfxAutoFunc_AutoEnumBig(MfxPoint, \
 	2, Offset, \
 	\
 	END, END);
-MfxObject_Init_2(MfxPoint, MfxType);
+MfxObject_Init_2(MfxPoint, MfxBase);
 
 
 /**************************************************************
@@ -65,6 +65,17 @@ MicroFlakeX::MfxPoint::MfxPoint(MfxBase& set)
 	SetX(tSX);
 }
 
+MicroFlakeX::MfxPoint::MfxPoint(MfxRect* set)
+{
+	LONG tSX = 0, tSY = 0;
+
+	set->GetX(&tSX);
+	set->GetY(&tSY);
+
+	SetX(tSX);
+	SetY(tSY);
+}
+
 MicroFlakeX::MfxPoint::MfxPoint(MfxRect& set)
 {
 	LONG tSX = 0, tSY = 0;
@@ -82,6 +93,17 @@ MicroFlakeX::MfxPoint::MfxPoint(MfxRect&& set)
 
 	set.GetX(&tSX);
 	set.GetY(&tSY);
+
+	SetX(tSX);
+	SetY(tSY);
+}
+
+MicroFlakeX::MfxPoint::MfxPoint(MfxPoint* set)
+{
+	LONG tSX = 0, tSY = 0;
+
+	set->GetX(&tSX);
+	set->GetY(&tSY);
 
 	SetX(tSX);
 	SetY(tSY);
@@ -147,6 +169,19 @@ MfxBase& MicroFlakeX::MfxPoint::operator=(MfxBase& rhs)
 	return *this;
 }
 
+MfxPoint& MicroFlakeX::MfxPoint::operator=(MfxRect* rhs)
+{
+	LONG tRX = 0, tRY = 0;
+
+	rhs->GetX(&tRX);
+	rhs->GetY(&tRY);
+
+	SetX(tRX);
+	SetY(tRY);
+
+	return *this;
+}
+
 MfxPoint& MicroFlakeX::MfxPoint::operator=(MfxRect& rhs)
 {
 	LONG tRX = 0, tRY = 0;
@@ -166,6 +201,19 @@ MfxPoint& MicroFlakeX::MfxPoint::operator=(MfxRect&& rhs)
 
 	rhs.GetX(&tRX);
 	rhs.GetY(&tRY);
+
+	SetX(tRX);
+	SetY(tRY);
+
+	return *this;
+}
+
+MfxPoint& MicroFlakeX::MfxPoint::operator=(MfxPoint* rhs)
+{
+	LONG tRX = 0, tRY = 0;
+
+	rhs->GetX(&tRX);
+	rhs->GetY(&tRY);
 
 	SetX(tRX);
 	SetY(tRY);
@@ -221,6 +269,20 @@ bool MicroFlakeX::MfxPoint::operator==(MfxBase& rhs) const
 	}
 
 	return false;
+}
+
+bool MicroFlakeX::MfxPoint::operator==(MfxPoint* rhs) const
+{
+	LONG tX = 0, tY = 0;
+	LONG tRX = 0, tRY = 0;
+
+	GetX(&tX);
+	GetY(&tY);
+
+	rhs->GetX(&tRX);
+	rhs->GetY(&tRY);
+
+	return tX == tRX && tY == tRY;
 }
 
 bool MicroFlakeX::MfxPoint::operator==(MfxPoint& rhs) const

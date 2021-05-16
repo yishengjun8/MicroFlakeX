@@ -3,8 +3,6 @@
 using namespace MicroFlakeX;
 
 
-
-MfxThreadServer* myThreadServer = new MfxThreadServer;
 /*********************************************************
 *	UTF-8 - win - x86
 *
@@ -42,13 +40,14 @@ int main()
     strFuncName = MfxText("SayGoodBy");
     temp->AutoFunc(strFuncName);
 
+    float fl = 0.6;
     strFuncName = MfxText("SayTest");
-    temp->AutoFunc(strFuncName, 878, 767, 656, 545);
+    temp->AutoFunc(strFuncName, 878, fl, 'M');
     
-    myThreadServer->BeginNewThread(temp, MfxText("TestThread"), 212, 323);
+    MfxBeginNewThread(temp, MfxText("TestThread"), 212, 323);
 
     PTP_TIMER myTimer;
-    myThreadServer->BeginNewTimer(myTimer, temp, MfxText("TestTimer"), 434, 2000);
+    MfxBeginNewTimer(myTimer, temp, MfxText("TestTimer"), 434, 2000);
 
     /*********************************************************
     * 

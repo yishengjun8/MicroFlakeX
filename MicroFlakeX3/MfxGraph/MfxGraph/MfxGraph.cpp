@@ -2,7 +2,17 @@
 #include "MfxGraph.h"
 
 MfxObject_Init_0(MfxGraph)
-MfxObject_Init_1(MfxGraph, END)
+MfxObject_Init_1(MfxGraph, SetRect)
+MfxAutoFunc_AutoEnumBig(MfxGraph, \
+	1, SetRect, \
+	1, SetSize, \
+	1, SetPoint, \
+		\
+	1, GetRect, \
+	1, GetSize, \
+	1, GetPoint, \
+	\
+	END, END);
 MfxObject_Init_2(MfxGraph, MfxBase);
 
 MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC set, MfxRect rect)
@@ -444,20 +454,24 @@ bool MicroFlakeX::MfxGraph::operator==(MfxBase& rhs)
 	return false;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::SetRect(MfxRect set)
+MfxReturn MicroFlakeX::MfxGraph::SetRect(MfxRect* set)
 {
-	SetSize(MfxSize(set));
-	SetPoint(MfxPoint(set));
+	MfxSize tSize(set);
+	MfxPoint tPoint(set);
+
+	SetSize(&tSize);
+	SetPoint(&tPoint);
+
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::SetSize(MfxSize set)
+MfxReturn MicroFlakeX::MfxGraph::SetSize(MfxSize* set)
 {
 	myRect = set;
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::SetPoint(MfxPoint set)
+MfxReturn MicroFlakeX::MfxGraph::SetPoint(MfxPoint* set)
 {
 	myRect = set;
 	return Mfx_Return_Fine;

@@ -4,6 +4,18 @@
 
 MfxObject_Init_0(MfxUI)
 MfxObject_Init_1(MfxUI, END)
+MfxAutoFunc_AutoEnumBig(MfxUI, \
+    1, GetRect, \
+    1, GetSize, \
+    1, GetPoint, \
+    \
+    1, SetRect, \
+    1, SetSize, \
+    1, SetPoint, \
+    \
+    2, __OnPaint,\
+    \
+    END, END);
 MfxObject_Init_2(MfxUI, MfxBase);
 
 void MicroFlakeX::MfxUI::MfxRegMessages()
@@ -87,6 +99,7 @@ void MicroFlakeX::MfxUI::MfxUIInitData()
     myCoverFloor = 0;
 
     myWnd = nullptr;
+    myFPS = 60;
 
     myBackImage = nullptr;
     myMaskImage = nullptr;
@@ -434,6 +447,12 @@ MfxReturn MicroFlakeX::MfxUI::GetCanvas(MfxCanvas** ret)
     return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxUI::SetFPS(LONG fps)
+{
+    myFPS = fps;
+    return Mfx_Return_Fine;
+}
+
 
 /********************************************************************************
 *
@@ -478,29 +497,29 @@ MfxReturn MicroFlakeX::MfxUI::GetMaskImage(MfxImage** ret)
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxUI::SetRect(MfxRect set)
+MfxReturn MicroFlakeX::MfxUI::SetRect(MfxRect* set)
 {
-    return SetWindowPos(myWnd, NULL, set.myX, set.myY, set.myWidth, set.myHeight, SWP_NOZORDER) ? Mfx_Return_Fine : Mfx_Return_Fail;;
+    return SetWindowPos(myWnd, NULL, set->myX, set->myY, set->myWidth, set->myHeight, SWP_NOZORDER) ? Mfx_Return_Fine : Mfx_Return_Fail;;
 }
 
-MfxReturn MicroFlakeX::MfxUI::SetSize(MfxSize set)
+MfxReturn MicroFlakeX::MfxUI::SetSize(MfxSize* set)
 {
-    return SetWindowPos(myWnd, NULL, 0, 0, set.myWidth, set.myHeight, SWP_NOMOVE | SWP_NOZORDER) ? Mfx_Return_Fine : Mfx_Return_Fail;;
+    return SetWindowPos(myWnd, NULL, 0, 0, set->myWidth, set->myHeight, SWP_NOMOVE | SWP_NOZORDER) ? Mfx_Return_Fine : Mfx_Return_Fail;;
 }
 
-MfxReturn MicroFlakeX::MfxUI::SetPoint(MfxPoint set)
+MfxReturn MicroFlakeX::MfxUI::SetPoint(MfxPoint* set)
 {
-    return SetWindowPos(myWnd, NULL, set.myX, set.myY, 0, 0, SWP_NOSIZE | SWP_NOZORDER) ? Mfx_Return_Fine : Mfx_Return_Fail;;
+    return SetWindowPos(myWnd, NULL, set->myX, set->myY, 0, 0, SWP_NOSIZE | SWP_NOZORDER) ? Mfx_Return_Fine : Mfx_Return_Fail;;
 }
 
-MfxReturn MicroFlakeX::MfxUI::SetBackColor(MfxColor set)
+MfxReturn MicroFlakeX::MfxUI::SetBackColor(MfxColor* set)
 {
-    return ProcMessage(UI_MSG_SetBackColor, NULL, (LPARAM)&set);
+    return ProcMessage(UI_MSG_SetBackColor, NULL, (LPARAM)set);
 }
 
-MfxReturn MicroFlakeX::MfxUI::SetMaskColor(MfxColor set)
+MfxReturn MicroFlakeX::MfxUI::SetMaskColor(MfxColor* set)
 {
-    return ProcMessage(UI_MSG_SetMaskColor, NULL, (LPARAM)&set);
+    return ProcMessage(UI_MSG_SetMaskColor, NULL, (LPARAM)set);
 }
 
 MfxReturn MicroFlakeX::MfxUI::SetBackImage(MfxImage* set)
@@ -573,12 +592,15 @@ MfxReturn MicroFlakeX::MfxUI::__OnCreate(WPARAM wParam, LPARAM lParam)
     myRect.Reset(t_Create->x, t_Create->y, t_Create->cx, t_Create->cy);
 
     //MfxSize t_Size(GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN));
-
-    myCanvas.SetSize(MfxSize(myRect.myWidth, myRect.myHeight));
+    MfxSize tSize(myRect.myWidth, myRect.myHeight);
+    myCanvas.SetSize(&tSize);
     myCanvas.SetWnd(myWnd);
 
     myBackImage = new MfxImage(MfxColor(255, 0, 255, 255), MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
     myBackImage->SetCanvas(&myCanvas);
+
+    UI_ADD_TIMER_MAP(10, (1000 / myFPS), MfxUI::__OnTimerPaint);
+    //MfxBeginNewTimer(myPTP_TIME, this, MfxText("__OnPaint"), 0, 1000 / myFPS);
     return Mfx_Return_Fine;
 }
 
@@ -610,14 +632,14 @@ MfxReturn MicroFlakeX::MfxUI::__OnSize(WPARAM wParam, LPARAM lParam)
     MfxSize tSize(LOWORD(lParam), HIWORD(lParam));
 
     myRect = tSize;
-    myCanvas.SetSize(tSize);
+    myCanvas.SetSize(&tSize);
     if (myBackImage)
     {
-        myBackImage->SetSize(tSize);
+        myBackImage->SetSize(&tSize);
     }
     if (myMaskImage)
     {
-        myMaskImage->SetSize(tSize);
+        myMaskImage->SetSize(&tSize);
     }
     return DefWindowProc(myWnd, WM_SIZE, wParam, lParam);
 }
@@ -640,6 +662,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnMove(WPARAM wParam, LPARAM lParam)
 MfxReturn MicroFlakeX::MfxUI::__OnPaint(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
+
     PAINTSTRUCT t_Paint{0};
     t_Paint.fErase = 1;
 
@@ -655,6 +678,13 @@ MfxReturn MicroFlakeX::MfxUI::__OnPaint(WPARAM wParam, LPARAM lParam)
 
     EndPaint(myWnd, &t_Paint);
 
+    return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxUI::__OnTimerPaint(WPARAM wParam, LPARAM lParam)
+{
+    MfxCodeLock(this);
+    PostMessage(myWnd, WM_PAINT, 0, 0);
     return Mfx_Return_Fine;
 }
 
@@ -882,7 +912,8 @@ MfxReturn MicroFlakeX::MfxUI::__OnSetBackImage(WPARAM wParam, LPARAM lParam)
     {
         SafeDelete(myBackImage);
         (t_Set)->Clone(&myBackImage);
-        myBackImage->SetRect(MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
+        MfxRect tRect(0, 0, myRect.myWidth, myRect.myHeight);
+        myBackImage->SetRect(&tRect);
         myBackImage->SetCanvas(&myCanvas);
     }
     return Mfx_Return_Fine;
@@ -896,7 +927,8 @@ MfxReturn MicroFlakeX::MfxUI::__OnSetMaskImage(WPARAM wParam, LPARAM lParam)
     {
         SafeDelete(myMaskImage);
         (t_Set)->Clone(&myMaskImage);
-        myMaskImage->SetRect(MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
+        MfxRect tRect(0, 0, myRect.myWidth, myRect.myHeight);
+        myMaskImage->SetRect(&tRect);
         myMaskImage->SetCanvas(&myCanvas);
     }
     return Mfx_Return_Fine;

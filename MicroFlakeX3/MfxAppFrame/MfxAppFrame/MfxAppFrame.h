@@ -560,11 +560,13 @@ namespace MicroFlakeX
 	*********************************************************************************/
 	private:
 		HWND myWnd;
+		LONG myFPS;
+		PTP_TIMER myPTP_TIME;
 		MfxCanvas myCanvas;
 	public:
 		MfxReturn GetWnd(HWND* ret);
 		MfxReturn GetCanvas(MfxCanvas** ret);
-
+		MfxReturn SetFPS(LONG fps);
 	/********************************************************************************
 	*
 	*
@@ -582,12 +584,12 @@ namespace MicroFlakeX
 		MfxReturn GetMaskImage(MfxImage** ret);
 
 	public:
-		MfxReturn SetRect(MfxRect set);
-		MfxReturn SetSize(MfxSize set);
-		MfxReturn SetPoint(MfxPoint set);
+		MfxReturn SetRect(MfxRect* set);
+		MfxReturn SetSize(MfxSize* set);
+		MfxReturn SetPoint(MfxPoint* set);
 
-		MfxReturn SetBackColor(MfxColor set);
-		MfxReturn SetMaskColor(MfxColor set);
+		MfxReturn SetBackColor(MfxColor* set);
+		MfxReturn SetMaskColor(MfxColor* set);
 
 		MfxReturn SetBackImage(MfxImage* set);
 		MfxReturn SetMaskImage(MfxImage* set);
@@ -612,8 +614,10 @@ namespace MicroFlakeX
 		MfxReturn __OnMove(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnPaint(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnTimerPaint(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnPaintBackDC(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnPaintMaskDC(WPARAM wParam, LPARAM lParam);
+
 
 		MfxReturn __OnFlakeInsert(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnFlakeRemove(WPARAM wParam, LPARAM lParam);
@@ -729,6 +733,7 @@ namespace MicroFlakeX
 		MfxReturn GetCanvas(MfxCanvas** ret);
 
 		MfxReturn SetFloor(MfxFloor floor);
+
 	/********************************************************************************
 	*
 	*
@@ -750,11 +755,11 @@ namespace MicroFlakeX
 	public:
 		MfxReturn SetTitle(MfxString set);
 		MfxReturn SetTitleSize(FLOAT set);
-		MfxReturn SetTitleColor(MfxColor set);
+		MfxReturn SetTitleColor(MfxColor* set);
 
-		MfxReturn SetRect(MfxRect set);
-		MfxReturn SetSize(MfxSize set);
-		MfxReturn SetPoint(MfxPoint set);
+		MfxReturn SetRect(MfxRect* set);
+		MfxReturn SetSize(MfxSize* set);
+		MfxReturn SetPoint(MfxPoint* set);
 
 	/********************************************************************************
 	*
@@ -788,6 +793,8 @@ namespace MicroFlakeX
 	*********************************************************************************/
 	private:
 		MfxWords* myWords;
+		MfxColor myBackColor;
+		MfxColor myMaskColor;
 		MfxImage* myBackImage;
 		MfxImage* myMaskImage;
 	public:
@@ -795,12 +802,15 @@ namespace MicroFlakeX
 		MfxReturn GetBackImage(MfxImage** ret);
 		MfxReturn GetMaskImage(MfxImage** ret);
 
+		MfxReturn GetBackColor(MfxColor* ret);
+		MfxReturn GetMaskColor(MfxColor* ret);
+
 		MfxReturn SetWords(MfxWords * set);
 		MfxReturn SetBackImage(MfxImage* set);
 		MfxReturn SetMaskImage(MfxImage* set);
 
-		MfxReturn SetBackColor(MfxColor set);
-		MfxReturn SetMaskColor(MfxColor set);
+		MfxReturn SetBackColor(MfxColor* set);
+		MfxReturn SetMaskColor(MfxColor* set);
 
 	/********************************************************************************
 	*

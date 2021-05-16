@@ -173,7 +173,7 @@
     <ClCompile Include="MfxRect.cpp" />
     <ClCompile Include="MfxPoint.cpp" />
     <ClCompile Include="MfxColor.cpp" />
-    <ClCompile Include="MfxMove.cpp" />
+    <ClCompile Include="MfxGlide.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

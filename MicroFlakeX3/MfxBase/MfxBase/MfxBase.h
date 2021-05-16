@@ -122,6 +122,7 @@ namespace MicroFlakeX
 {
 	class MFX_PORT MfxBase;
 
+
 	/***************************************************************
 	* 
 	*	MfxObject宏：
@@ -246,12 +247,15 @@ namespace MicroFlakeX
 	class MfxBase
 	{
 		friend class MfxLock;
-		friend class MfxThreadServer;
 	public:
 		MfxBase();
 		virtual ~MfxBase();
 		virtual MfxReturn Clone(MfxBase** ret);
+
+	public:
 		virtual MfxBase& operator=(MfxBase& rhs);
+
+	public:
 		virtual bool operator==(MfxBase& rhs);
 
 	public:
@@ -293,13 +297,20 @@ namespace MicroFlakeX
 	****************************************************************/
 	class MfxThreadServer
 	{
-		friend class MfxLock;
 	public:
 		MfxThreadServer();
 		~MfxThreadServer();
 
 	public:
-		MfxReturn BeginNewThread(MfxBase* object, MfxString recvFunc, WPARAM wParam = NULL, LPARAM lParam = NULL);
+		/***************************************************************
+		* 
+		* 异步线程请勿传入局部变量指针。
+		* 参数一：回调对象指针
+		* 参数二：回调对象方法名字
+		* 参数三、四：传递给回调方法的wparam、lparam。
+		* 
+		****************************************************************/
+		static MfxReturn BeginNewThread(MfxBase* object, MfxString recvFunc, WPARAM wParam = NULL, LPARAM lParam = NULL);
 
 	public:
 		/***************************************************************
@@ -313,16 +324,18 @@ namespace MicroFlakeX
 		* 参数七：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
 		* 
 		****************************************************************/
-		MfxReturn BeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, LPARAM lParam = NULL, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
-
+		static MfxReturn BeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, LPARAM lParam = NULL, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
+		static MfxReturn CloseTimer(PTP_TIMER& pTimer);
 	private:
 		static VOID CALLBACK MfxWorkCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val);
 		static VOID CALLBACK MfxTimeCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
-
-	private:
-		CRITICAL_SECTION myCriticalSection;
 	};
-	
+
+#define MfxCloseTimer MicroFlakeX::MfxThreadServer::CloseTimer
+#define MfxBeginNewTimer MicroFlakeX::MfxThreadServer::BeginNewTimer
+
+#define MfxBeginNewThread MicroFlakeX::MfxThreadServer::BeginNewThread
+
 }
 
 namespace __MicroFlakeX
@@ -689,6 +702,16 @@ public:\
 	MfxReturn FuncName(MfxString* ret);\
 	MfxReturn ObjectName(MfxString* ret);
 
+#define Pre_Mfx MfxText("Mfx") 
+#define Pre_Get MfxText("Get") 
+#define Pre_Set MfxText("Set") 
+
+#define MfxSafeDelete(OBJ)\
+	if(OBJ)\
+	{\
+		delete OBJ;\
+		OBJ = nullptr;\
+	}
 
 /***************************************************************
 *

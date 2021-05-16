@@ -27,7 +27,7 @@ MfxAutoFunc_AutoEnumBig(MfxColor, \
 	1, SetB, \
 	\
 	END, END);
-MfxObject_Init_2(MfxColor, MfxType)
+MfxObject_Init_2(MfxColor, MfxBase)
 
 
 /**************************************************************

@@ -4,6 +4,12 @@
 using namespace MicroFlakeX;
 using namespace __MicroFlakeX;
 
+
+/***************************************************************
+*
+*
+*
+****************************************************************/
 std::map<MfxString, MfxFactoryHand*> MfxFactoryMap;
 typedef std::map<MfxString, MfxFactoryHand*>::value_type MfxFactoryValue;
 
@@ -33,6 +39,12 @@ MfxReturn __MicroFlakeX::MfxRegisterObject(MfxString object, MfxFactoryHand* han
 	return ret.second ? Mfx_Return_Fine : Mfx_Return_Fail;
 }
 
+
+/***************************************************************
+*
+*
+*
+****************************************************************/
 MicroFlakeX::MfxBase::MfxBase()
 {
 	InitializeCriticalSection(&myCriticalSection);
@@ -49,16 +61,34 @@ MfxReturn MicroFlakeX::MfxBase::Clone(MfxBase** ret)
 	return Mfx_Return_Fine;
 }
 
+
+/***************************************************************
+*
+*
+*
+****************************************************************/
 MfxBase& MicroFlakeX::MfxBase::operator=(MfxBase& rhs)
 {
 	return *this;
 }
 
+
+/***************************************************************
+*
+*
+*
+****************************************************************/
 bool MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 {
 	return 0;
 }
 
+
+/***************************************************************
+*
+*
+*
+****************************************************************/
 MfxReturn MicroFlakeX::MfxBase::AutoFunc(MfxString recvFunc ...)
 {
 	return Mfx_Return_Fine;
@@ -76,6 +106,12 @@ MfxReturn MicroFlakeX::MfxBase::ObjectName(MfxString* ret)
 	return Mfx_Return_Fine;
 }
 
+
+/***************************************************************
+*
+*
+*
+****************************************************************/
 #include <fstream>
 std::wofstream mycout("DebugOut.txt");
 
@@ -95,6 +131,12 @@ __MicroFlakeX::MfxFactoryHand::~MfxFactoryHand()
 	mycout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Remove") << std::endl;
 }
 
+
+/***************************************************************
+*
+*
+*
+****************************************************************/
 MicroFlakeX::MfxLock::MfxLock(MfxBase* object)
 {
 	myCriticalSection = &object->myCriticalSection;
@@ -105,4 +147,3 @@ MicroFlakeX::MfxLock::~MfxLock()
 {
 	LeaveCriticalSection(myCriticalSection);
 }
-

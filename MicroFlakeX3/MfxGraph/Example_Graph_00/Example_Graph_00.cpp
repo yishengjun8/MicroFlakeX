@@ -134,6 +134,9 @@ MfxPoint myPoint[10];
 IWICBitmap* myIWICBitmap;
 Gdiplus::Bitmap* myBitmap;
 
+
+MfxGlide myGlide;
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
@@ -153,7 +156,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         myCanvas.SetWnd((hWnd));
 
         myRect[0].Reset(0, 0, 1000, 1000);
-        myImage[0].SetRect(myRect[0]);
+        myImage[0].SetRect(&myRect[0]);
        
         myImage[0].FromFile(&path, mySize[9]);
 
@@ -161,15 +164,73 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         myImage[0].FromFile(&path, mySize[9]);
 
+
+        {
+            myRect[0].Reset(0, 0, 10, 10);
+            myImage[1].SetRect(&myRect[0]);
+
+            myImage[1].FromFile(&path, mySize[9]);
+
+            myImage[1].SetCanvas(&myCanvas);
+
+
+
+            /**
+            myGlide.SetFPS(60);
+            myGlide.BindObject(&(myImage[1]));
+            myGlide.BindObjectType(MfxText("Rect"), MfxText("Rect"));
+
+            myGlide.AddGulidTypePair(MfxText("Rect"), MfxText("X"), MfxText("X"));
+            myGlide.AddGulidTypePair(MfxText("Rect"), MfxText("Y"), MfxText("Y"));
+            myGlide.AddGulidTypePair(MfxText("Rect"), MfxText("Width"), MfxText("Width"));
+            myGlide.AddGulidTypePair(MfxText("Rect"), MfxText("Height"), MfxText("Height"));
+
+            MfxRect* tRect = new MfxRect(200, 100, 200, 200);
+            myGlide.MfxAddKeyframe(MfxText("Rect"), tRect, 5000);
+
+            tRect = new MfxRect(100, 200, 10, 10);
+            myGlide.MfxAddKeyframe(MfxText("Rect"), tRect, 5000);
+            /**/
+
+
+            myGlide.SetFPS(60);
+            myGlide.BindObject(&(myImage[1]));
+
+            myGlide.BindObjectName(MfxText("group_1"),
+                MfxGulid_WidelyType(MfxText("MfxPoint"), MfxText("MfxPoint"), MfxText("GetPoint"), MfxText("SetPoint")));
+
+            myGlide.BindObjectName(MfxText("group_2"),
+                MfxGulid_WidelyType(MfxText("MfxSize"), MfxText("MfxSize"), MfxText("GetSize"), MfxText("SetSize")));
+
+            myGlide.Add_GetSetFuncName(MfxText("group_1"), MfxText("GetX"), MfxText("SetX"));
+            myGlide.Add_GetSetFuncName(MfxText("group_1"), MfxText("GetY"), MfxText("SetY"));
+
+            myGlide.Add_GetSetFuncName(MfxText("group_2"), MfxText("GetWidth"), MfxText("SetWidth"));
+            myGlide.Add_GetSetFuncName(MfxText("group_2"), MfxText("GetHeight"), MfxText("SetHeight"));
+
+            MfxSize* tSize = new MfxSize(200, 200);
+            myGlide.MfxAddKeyframe(MfxText("group_2"), tSize, 5000);
+
+            MfxPoint* tPoint = new MfxPoint(100, 200);
+            myGlide.MfxAddKeyframe(MfxText("group_1"), tPoint, 5000);
+
+            tPoint = new MfxPoint(0, 0);
+            myGlide.MfxAddKeyframe(MfxText("group_1"), tPoint, 5000);
+        }
+
+        MfxRect tRect(19, 18, 360, 120);
+        MfxPoint tPoint(19, 200);
+
         myWords[0].SetCanvas(&myCanvas);
-        myWords[0].SetRect(MfxRect(19, 18, 360, 120));
-        myWords[0].SetPoint(MfxPoint(19, 200));
+        myWords[0].SetRect(&tRect);
+        myWords[0].SetPoint(&tPoint);
         myWords[0].SetText(L"Welcome to MFX based on D2D");
     }
     case WM_SIZE:
     {
-        myCanvas.SetSize(MfxSize(LOWORD(lParam), HIWORD(lParam)));
-        myImage[0].SetSize(MfxSize(LOWORD(lParam), HIWORD(lParam)));
+        MfxSize tSize(LOWORD(lParam), HIWORD(lParam));
+        myCanvas.SetSize(&tSize);
+        myImage[0].SetSize(&tSize);
         break;
     }
     case WM_COMMAND:
@@ -179,7 +240,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         switch (wmId)
         {
         case IDM_ABOUT:
-            DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+        {
+            MfxSize* tSize = new MfxSize(200, 200);
+            myGlide.MfxAddKeyframe(MfxText("group_2"), tSize, 5000);
+
+            MfxPoint* tPoint = new MfxPoint(100, 200);
+            myGlide.MfxAddKeyframe(MfxText("group_1"), tPoint, 5000);
+
+            tPoint = new MfxPoint(0, 0);
+            myGlide.MfxAddKeyframe(MfxText("group_1"), tPoint, 5000);
+
+            myGlide.Begin();
+        }
+            //DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
             break;
         case IDM_EXIT:
             DestroyWindow(hWnd);
@@ -201,14 +274,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
         myImage[0].Paint();
+        myImage[1].Paint();
         myWords[0].Paint();
 
         myCanvas.PaintFinish();
 
-        Gdiplus::Graphics tempG(GetDC(hWnd));
+        //Gdiplus::Graphics tempG(GetDC(hWnd));
 
-        const Gdiplus::Rect tRect(20, 20, 300, 300);
-        tempG.DrawImage(myBitmap, tRect);
+        //const Gdiplus::Rect tRect(20, 20, 300, 300);
+        //tempG.DrawImage(myBitmap, tRect);
     }
     break;
     case WM_DESTROY:

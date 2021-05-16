@@ -44,7 +44,7 @@
     <ClCompile Include="MfxColor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MfxMove.cpp">
+    <ClCompile Include="MfxGlide.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
