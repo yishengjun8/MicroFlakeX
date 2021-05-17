@@ -42,39 +42,39 @@ void MicroFlakeX::MfxUI::MfxRegMessages()
     *********************************************************************************/
     UI_ADD_FLOOR;
 
-    UI_ADD_RECVMSG(WM_CREATE, MfxUI, __OnCreate, myCoverFloor);
-    UI_ADD_RECVMSG(WM_DESTROY, MfxUI, __OnDestroy, myCoverFloor);
+    UI_ADDRECV_UIMSG(WM_CREATE, MfxUI, __OnCreate, myCoverFloor);
+    UI_ADDRECV_UIMSG(WM_DESTROY, MfxUI, __OnDestroy, myCoverFloor);
 
-    UI_ADD_RECVMSG(WM_SIZE, MfxUI, __OnSize, myCoverFloor);
-    UI_ADD_RECVMSG(WM_MOVE, MfxUI, __OnMove, myCoverFloor);
+    UI_ADDRECV_UIMSG(WM_SIZE, MfxUI, __OnSize, myCoverFloor);
+    UI_ADDRECV_UIMSG(WM_MOVE, MfxUI, __OnMove, myCoverFloor);
 
-    UI_ADD_RECVMSG(WM_TIMER, MfxUI, __OnTimer, myCoverFloor);
+    UI_ADDRECV_UIMSG(WM_TIMER, MfxUI, __OnTimer, myCoverFloor);
 
-    UI_ADD_RECVMSG(WM_PAINT, MfxUI, __OnPaint, myCoverFloor);
-    UI_ADD_RECVMSG(WM_ERASEBKGND, MfxUI, __OnEraseBackGrand, myCoverFloor);
+    UI_ADDRECV_UIMSG(WM_PAINT, MfxUI, __OnPaint, myCoverFloor);
+    UI_ADDRECV_UIMSG(WM_ERASEBKGND, MfxUI, __OnEraseBackGrand, myCoverFloor);
 
-    UI_ADD_RECVMSG(UI_MSG_PaintBack, MfxUI, __OnPaintBackDC, myCoverFloor);
-    UI_ADD_RECVMSG(UI_MSG_PaintMask, MfxUI, __OnPaintMaskDC, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_PaintBack, MfxUI, __OnPaintBackDC, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_PaintMask, MfxUI, __OnPaintMaskDC, myCoverFloor);
 
-    UI_ADD_RECVMSG(UI_MSG_FlakeInsert, MfxUI, __OnFlakeInsert, myCoverFloor);
-    UI_ADD_RECVMSG(UI_MSG_FlakeRemove, MfxUI, __OnFlakeRemove, myCoverFloor);
-    UI_ADD_RECVMSG(UI_MSG_FlakeFloorChange, MfxUI, __OnFlakeFloorChange, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_FlakeInsert, MfxUI, __OnFlakeInsert, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_FlakeRemove, MfxUI, __OnFlakeRemove, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_FlakeFloorChange, MfxUI, __OnFlakeFloorChange, myCoverFloor);
 
-    UI_ADD_RECVMSG(UI_MSG_AddTimer, MfxUI, __OnAddTimer, myCoverFloor);
-    UI_ADD_RECVMSG(UI_MSG_RemoveTimer, MfxUI, __OnRemoveTimer, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_AddTimer, MfxUI, __OnAddTimer, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_RemoveTimer, MfxUI, __OnRemoveTimer, myCoverFloor);
 
-    UI_ADD_RECVMSG(UI_MSG_FlakeMessage, MfxUI, __OnFlakeMessage, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_FlakeMessage, MfxUI, __OnFlakeMessage, myCoverFloor);
 
-    UI_ADD_RECVMSG(UI_MSG_AddFlakeMessage, MfxUI, __OnAddFlakeMessage, myCoverFloor);
-    UI_ADD_RECVMSG(UI_MSG_RemoveFlakeMessage, MfxUI, __OnRemoveFlakeMessage, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_AddFlakeMessage, MfxUI, __OnAddFlakeMessage, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_RemoveFlakeMessage, MfxUI, __OnRemoveFlakeMessage, myCoverFloor);
 
-    UI_ADD_RECVMSG(UI_MSG_OpenPercentRect, MfxUI, __OnOpenPercentRect, myCoverFloor);
-    UI_ADD_RECVMSG(UI_MSG_ClosePercentRect, MfxUI, __OnClosePercentRect, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_OpenPercentRect, MfxUI, __OnOpenPercentRect, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_ClosePercentRect, MfxUI, __OnClosePercentRect, myCoverFloor);
 
-    UI_ADD_RECVMSG(UI_MSG_SetBackColor, MfxUI, __OnSetBackColor, myCoverFloor);
-    UI_ADD_RECVMSG(UI_MSG_SetMaskColor, MfxUI, __OnSetMaskColor, myCoverFloor);
-    UI_ADD_RECVMSG(UI_MSG_SetBackImage, MfxUI, __OnSetBackImage, myCoverFloor);
-    UI_ADD_RECVMSG(UI_MSG_SetMaskImage, MfxUI, __OnSetMaskImage, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_SetBackColor, MfxUI, __OnSetBackColor, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_SetMaskColor, MfxUI, __OnSetMaskColor, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_SetBackImage, MfxUI, __OnSetBackImage, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_SetMaskImage, MfxUI, __OnSetMaskImage, myCoverFloor);
 }
 
 void MicroFlakeX::MfxUI::MfxUIInitData()

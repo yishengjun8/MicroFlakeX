@@ -14,6 +14,28 @@ MicroFlakeX::MfxGlide::MfxGlide()
 {
 	myPTP_TIMER = nullptr;
 	myBindObject = nullptr;
+	myBegin = 0;
+}
+
+MicroFlakeX::MfxGlide::MfxGlide(MfxGlide* set)
+{
+	myPTP_TIMER = nullptr;
+	myBindObject = nullptr;
+	myBegin = 0;
+}
+
+MicroFlakeX::MfxGlide::MfxGlide(MfxGlide& set)
+{
+	myPTP_TIMER = nullptr;
+	myBindObject = nullptr;
+	myBegin = 0;
+}
+
+MicroFlakeX::MfxGlide::MfxGlide(MfxGlide&& set)
+{
+	myPTP_TIMER = nullptr;
+	myBindObject = nullptr;
+	myBegin = 0;
 }
 
 MicroFlakeX::MfxGlide::~MfxGlide()
@@ -44,6 +66,12 @@ MfxBase& MicroFlakeX::MfxGlide::operator=(MfxBase& rhs)
 	return *this;
 }
 
+MfxGlide& MicroFlakeX::MfxGlide::operator=(MfxGlide* rhs)
+{
+	// TODO: 在此处插入 return 语句
+	return *this;
+}
+
 MfxGlide& MicroFlakeX::MfxGlide::operator=(MfxGlide& rhs)
 {
 	// TODO: 在此处插入 return 语句
@@ -58,6 +86,11 @@ MfxGlide& MicroFlakeX::MfxGlide::operator=(MfxGlide&& rhs)
 bool MicroFlakeX::MfxGlide::operator==(MfxBase& rhs)
 {
 	return 0;
+}
+
+bool MicroFlakeX::MfxGlide::operator==(MfxGlide* rhs)
+{
+	return false;
 }
 
 bool MicroFlakeX::MfxGlide::operator==(MfxGlide& rhs)
@@ -75,7 +108,7 @@ MfxReturn MicroFlakeX::MfxGlide::GetFPS(UINT& ret)
 	return MfxReturn();
 }
 
-MfxReturn MicroFlakeX::MfxGlide::GetBindObject(MfxBase** object, MfxString* ret)
+MfxReturn MicroFlakeX::MfxGlide::GetBindObject(MfxBase** object)
 {
 	return MfxReturn();
 }
@@ -131,12 +164,16 @@ MfxReturn MicroFlakeX::MfxGlide::Begin()
 		return Mfx_Return_Fail;
 	}
 
-	for (auto& iter : myWidelyTypeMap)
+	if (!myBegin)
 	{
-		iter.second.myBeginTime = clock();
-		if (Mfx_Failed(myBindObject->AutoFunc(iter.second.getObjectFuncName, iter.second.myGetObject_Begin)))
+		myBegin = 1;
+		for (auto& iter : myWidelyTypeMap)
 		{
-			return Mfx_Return_Fail;
+			iter.second.myBeginTime = clock();
+			if (Mfx_Failed(myBindObject->AutoFunc(iter.second.getObjectFuncName, iter.second.myGetObject_Begin)))
+			{
+				return Mfx_Return_Fail;
+			}
 		}
 	}
 
@@ -147,7 +184,12 @@ MfxReturn MicroFlakeX::MfxGlide::Begin()
 
 MfxReturn MicroFlakeX::MfxGlide::Pause()
 {
-	return MfxReturn();
+	if (myPTP_TIMER)
+	{
+		MfxCloseTimer(myPTP_TIMER);
+		myPTP_TIMER = 0;
+	}
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::Clear()
@@ -176,6 +218,7 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(WPARAM wParam, LPARAM lParam)
 	{
 		if (myPTP_TIMER)
 		{
+			myBegin = 1;
 			MfxCloseTimer(myPTP_TIMER);
 			myPTP_TIMER = 0;
 		}
@@ -193,8 +236,8 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(WPARAM wParam, LPARAM lParam)
 
 		if (tFind != myWidelyTypeMap.end())
 		{
-
-			if (Mfx_Failed(myBindObject->AutoFunc(tFind->second.setObjectFuncName, tFind->second.myGetObject_Set)))
+			//检查写入区域是否为nulllptr
+			if (!tFind->second.myGetObject_Set || !tFind->second.myGetObject_Begin || !tKeyObjectType.second.front().key)
 			{
 				continue;
 			}
@@ -206,6 +249,7 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(WPARAM wParam, LPARAM lParam)
 			LONGLONG* tNow = new LONGLONG[tFind->second.myGulidTypePair.size()]{ 0 };
 
 			tFind->second.myThroughTime = clock() - tFind->second.myBeginTime;
+
 			for (int i = 0; i < tFind->second.myGulidTypePair.size(); i++)
 			{
 				tFind->second.myGetObject_Begin->AutoFunc(tFind->second.myGulidTypePair[i].myGetFuncName, &(tBg[i]));
@@ -229,8 +273,8 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(WPARAM wParam, LPARAM lParam)
 
 			if (tFind->second.myThroughTime > tKeyObjectType.second.front().time)
 			{
-				//myBindObject->AutoFunc(tFind->second.setObjectFuncName, tKeyObjectType.second.front().key);
-				myBindObject->AutoFunc(tFind->second.getObjectFuncName, (myWidelyTypeMap[tFind->first]).myGetObject_Begin);
+				myBindObject->AutoFunc(tFind->second.setObjectFuncName, tKeyObjectType.second.front().key);
+				myBindObject->AutoFunc(tFind->second.getObjectFuncName, tFind->second.myGetObject_Begin);
 
 				tFind->second.myBeginTime = clock();
 
@@ -250,6 +294,7 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(WPARAM wParam, LPARAM lParam)
 MfxReturn MicroFlakeX::MfxGlide::MfxAddKeyframe(MfxString bindObjectType, MfxBase* set, LONGLONG span)
 {
 	MfxCodeLock(this);
+
 	Begin:
 	auto tFind = myBindObjectType_Keyframe.find(bindObjectType);
 	if (tFind != myBindObjectType_Keyframe.end())

@@ -717,7 +717,6 @@ public:\
 #define __MfxObject_Init_0(OBJ)\
 using namespace MicroFlakeX;\
 using namespace __MicroFlakeX;\
-using MicroFlakeX::OBJ;\
 std::map<MfxString, int> Mfx##OBJ##FuncMap;\
 typedef std::map<MfxString,int>::value_type Mfx##OBJ##FuncMapValue;\
 MfxReturn OBJ::FuncName(MfxString* ret)\

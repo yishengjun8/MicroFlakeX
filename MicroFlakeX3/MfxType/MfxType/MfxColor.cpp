@@ -74,6 +74,21 @@ MicroFlakeX::MfxColor::MfxColor(MfxBase& set)
 	SetB(tSB);
 }
 
+MicroFlakeX::MfxColor::MfxColor(MfxColor* set)
+{
+	LONG tSA = 0, tSR = 0, tSG = 0, tSB = 0;
+
+	set->GetA(&tSA);
+	set->GetR(&tSR);
+	set->GetG(&tSG);
+	set->GetB(&tSB);
+
+	SetA(tSA);
+	SetR(tSR);
+	SetG(tSG);
+	SetB(tSB);
+}
+
 MicroFlakeX::MfxColor::MfxColor(MfxColor& set)
 {
 	LONG tSA = 0, tSR = 0, tSG = 0, tSB = 0;
@@ -153,6 +168,23 @@ MfxBase& MicroFlakeX::MfxColor::operator=(MfxBase& rhs)
 	return *this;
 }
 
+MfxColor& MicroFlakeX::MfxColor::operator=(MfxColor* rhs)
+{
+	LONG tRA = 0, tRR = 0, tRG = 0, tRB = 0;
+
+	rhs->GetA(&tRA);
+	rhs->GetR(&tRR);
+	rhs->GetG(&tRG);
+	rhs->GetB(&tRB);
+
+	SetA(tRA);
+	SetR(tRR);
+	SetG(tRG);
+	SetB(tRB);
+
+	return *this;
+}
+
 MfxColor& MicroFlakeX::MfxColor::operator=(MfxColor& rhs)
 {
 	LONG tRA = 0, tRR = 0, tRG = 0, tRB = 0;
@@ -215,6 +247,24 @@ bool MicroFlakeX::MfxColor::operator==(MfxBase& rhs) const
 	return false;
 }
 
+bool MicroFlakeX::MfxColor::operator==(MfxColor* rhs) const
+{
+	LONG tA = 0, tR = 0, tG = 0, tB = 0;
+	LONG tRA = 0, tRR = 0, tRG = 0, tRB = 0;
+
+	GetA(&tA);
+	GetR(&tR);
+	GetG(&tG);
+	GetB(&tB);
+
+	rhs->GetA(&tRA);
+	rhs->GetR(&tRR);
+	rhs->GetG(&tRG);
+	rhs->GetB(&tRB);
+
+	return tA == tRA && tR == tRR && tG == tRG && tB == tRB;
+}
+
 bool MicroFlakeX::MfxColor::operator==(MfxColor& rhs) const
 {
 	LONG tA = 0, tR = 0, tG = 0, tB = 0;
@@ -225,10 +275,10 @@ bool MicroFlakeX::MfxColor::operator==(MfxColor& rhs) const
 	GetG(&tG);
 	GetB(&tB);
 
-	GetA(&tRA);
-	GetR(&tRR);
-	GetG(&tRG);
-	GetB(&tRB);
+	rhs.GetA(&tRA);
+	rhs.GetR(&tRR);
+	rhs.GetG(&tRG);
+	rhs.GetB(&tRB);
 	
 	return tA == tRA && tR == tRR && tG == tRG && tB == tRB;
 }
@@ -243,10 +293,10 @@ bool MicroFlakeX::MfxColor::operator==(MfxColor&& rhs) const
 	GetG(&tG);
 	GetB(&tB);
 
-	GetA(&tRA);
-	GetR(&tRR);
-	GetG(&tRG);
-	GetB(&tRB);
+	rhs.GetA(&tRA);
+	rhs.GetR(&tRR);
+	rhs.GetG(&tRG);
+	rhs.GetB(&tRB);
 
 	return tA == tRA && tR == tRR && tG == tRG && tB == tRB;
 }

@@ -441,6 +441,7 @@ namespace MicroFlakeX
         MfxColor();
         MfxColor(MfxBase& set);
 
+        MfxColor(MfxColor* set);
         MfxColor(MfxColor& set);
         MfxColor(MfxColor&& set);
 
@@ -453,12 +454,14 @@ namespace MicroFlakeX
 
         MfxBase& operator=(MfxBase& rhs);
 
+        MfxColor& operator=(MfxColor* rhs);
         MfxColor& operator=(MfxColor& rhs);
         MfxColor& operator=(MfxColor&& rhs);
 
     public:
         bool operator==(MfxBase& rhs) const;
 
+        bool operator==(MfxColor* rhs) const;
         bool operator==(MfxColor& rhs) const;
         bool operator==(MfxColor&& rhs) const;
 
@@ -502,9 +505,9 @@ namespace MicroFlakeX
 {
     struct MfxGulid_Keyframe
     {
-        MfxGulid_Keyframe(MfxBase* sKey, LONGLONG sTime)
+        MfxGulid_Keyframe(MfxBase* setKey, LONGLONG sTime)
         {
-            key = sKey;
+            key = setKey;
             time = sTime;
         }
         MfxBase* key;
@@ -573,9 +576,9 @@ namespace MicroFlakeX
     *   MfxGlide 赖于 MfxBase 的 AutoFunc。
     * 
     *   MfxGlide 允许绑定一个 MfxBase 对象，每帧根据给定参数
-        自动调用 MfxBase::AutoFunc(MfxText("SetRect"), rect);
+        自动调用 MfxBase::AutoFunc(MfxText("BindObjec"), XXX);
     *   
-    *   如果对象未注册 AutoFunc 的 SetRect ，则会调用失败。
+    *   如果对象未注册 AutoFunc 的 BindObjec ，则会调用失败。
     *
     ***************************************************************/
     class MfxGlide
@@ -585,39 +588,36 @@ namespace MicroFlakeX
     public:
         MfxGlide();
 
+        MfxGlide(MfxGlide* set);
+        MfxGlide(MfxGlide& set);
+        MfxGlide(MfxGlide&& set);
+
         ~MfxGlide();
 
         MfxReturn Clone(MfxBase** ret);
 
         MfxBase& operator=(MfxBase& rhs);
 
+        MfxGlide& operator=(MfxGlide* rhs);
         MfxGlide& operator=(MfxGlide& rhs);
         MfxGlide& operator=(MfxGlide&& rhs);
 
         bool operator==(MfxBase& rhs);
 
+        bool operator==(MfxGlide* rhs);
         bool operator==(MfxGlide& rhs);
         bool operator==(MfxGlide&& rhs);
-
-
-    public:
-        MfxReturn GetFPS(UINT& ret);
-        MfxReturn GetBindObject(MfxBase** object, MfxString* ret);
 
     public:
         MfxReturn SetFPS(UINT set);
         MfxReturn BindObject(MfxBase* object);
-
-    public:
         MfxReturn BindObjectName(MfxString groupName, MfxGulid_WidelyType value);
-
         MfxReturn Add_GetSetFuncName(MfxString groupName, MfxString getFuncName, MfxString setFuncName);
 
-        /**************************************************************
-        *   自动添加Get和Set
-        * 
-        * MxfR
-        ***************************************************************/
+    public:
+        MfxReturn GetFPS(UINT& ret);
+        MfxReturn GetBindObject(MfxBase** object);
+
     public:
         MfxReturn Stop();
         MfxReturn Begin();
@@ -631,7 +631,9 @@ namespace MicroFlakeX
         MfxReturn MfxAddKeyframe(MfxString bindObjectType, MfxBase* set, LONGLONG span);
 
     private:
+        bool myBegin;
         PTP_TIMER myPTP_TIMER;
+
 
     private:
         MfxBase* myBindObject;

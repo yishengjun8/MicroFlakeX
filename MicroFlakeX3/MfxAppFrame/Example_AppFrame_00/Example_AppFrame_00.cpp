@@ -48,7 +48,7 @@ int main()
 
 
     MfxGlide myGlide;
-    myGlide.SetFPS(60);
+    myGlide.SetFPS(90);
     myGlide.BindObject(myFlake_01);
 
     myGlide.BindObjectName(MfxText("group_1"),
@@ -70,6 +70,8 @@ int main()
     myGlide.Add_GetSetFuncName(MfxText("group_3"), MfxText("GetR"), MfxText("SetR"));
     myGlide.Add_GetSetFuncName(MfxText("group_3"), MfxText("GetG"), MfxText("SetG"));
     myGlide.Add_GetSetFuncName(MfxText("group_3"), MfxText("GetB"), MfxText("SetB"));
+
+    myGlide.Add_GetSetFuncName(MfxText("group_3"), MfxText("GetDDDA"), MfxText("GetDDDA"));
 
     MfxSize* tpSize = new MfxSize(200, 200);
     myGlide.MfxAddKeyframe(MfxText("group_1"), tpSize, 5000);
