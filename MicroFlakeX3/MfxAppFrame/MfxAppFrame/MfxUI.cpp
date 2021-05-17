@@ -13,8 +13,6 @@ MfxAutoFunc_AutoEnumBig(MfxUI, \
     1, SetSize, \
     1, SetPoint, \
     \
-    2, __OnPaint,\
-    \
     END, END);
 MfxObject_Init_2(MfxUI, MfxBase);
 
@@ -26,19 +24,14 @@ void MicroFlakeX::MfxUI::MfxRegMessages()
     *
     *
     *********************************************************************************/
-    UI_ADD_FLAKE_RECVMSG(WM_DESTROY);
     UI_ADD_FLAKE_RECVMSG(WM_SIZE);
+    UI_ADD_FLAKE_RECVMSG(WM_DESTROY);
 
     UI_ADD_FLAKE_RECVMSG(WM_MOUSEMOVE);
     UI_ADD_FLAKE_RECVMSG(WM_LBUTTONDOWN);
     UI_ADD_FLAKE_RECVMSG(WM_LBUTTONUP);
     UI_ADD_FLAKE_RECVMSG(WM_RBUTTONDOWN);
     UI_ADD_FLAKE_RECVMSG(WM_RBUTTONUP);
-
-    UI_ADD_FLAKE_RECVMSG(UI_MSG_SetPaper);
-
-    UI_ADD_FLAKE_RECVMSG(UI_MSG_PaintBack);
-    UI_ADD_FLAKE_RECVMSG(UI_MSG_PaintMask);
 
 
     /********************************************************************************
@@ -55,37 +48,28 @@ void MicroFlakeX::MfxUI::MfxRegMessages()
     UI_ADD_RECVMSG(WM_SIZE, MfxUI, __OnSize, myCoverFloor);
     UI_ADD_RECVMSG(WM_MOVE, MfxUI, __OnMove, myCoverFloor);
 
-
+    UI_ADD_RECVMSG(WM_TIMER, MfxUI, __OnTimer, myCoverFloor);
 
     UI_ADD_RECVMSG(WM_PAINT, MfxUI, __OnPaint, myCoverFloor);
+    UI_ADD_RECVMSG(WM_ERASEBKGND, MfxUI, __OnEraseBackGrand, myCoverFloor);
+
     UI_ADD_RECVMSG(UI_MSG_PaintBack, MfxUI, __OnPaintBackDC, myCoverFloor);
     UI_ADD_RECVMSG(UI_MSG_PaintMask, MfxUI, __OnPaintMaskDC, myCoverFloor);
 
-
-
     UI_ADD_RECVMSG(UI_MSG_FlakeInsert, MfxUI, __OnFlakeInsert, myCoverFloor);
     UI_ADD_RECVMSG(UI_MSG_FlakeRemove, MfxUI, __OnFlakeRemove, myCoverFloor);
-    UI_ADD_RECVMSG(FLAKE_MSG_FlakeFloorChange, MfxUI, __OnFlakeFloorChange, myCoverFloor);
-
-    //ADD - 多线程处理Timer
-    UI_ADD_RECVMSG(WM_TIMER, MfxUI, __OnTimer, myCoverFloor);
+    UI_ADD_RECVMSG(UI_MSG_FlakeFloorChange, MfxUI, __OnFlakeFloorChange, myCoverFloor);
 
     UI_ADD_RECVMSG(UI_MSG_AddTimer, MfxUI, __OnAddTimer, myCoverFloor);
     UI_ADD_RECVMSG(UI_MSG_RemoveTimer, MfxUI, __OnRemoveTimer, myCoverFloor);
-
-
 
     UI_ADD_RECVMSG(UI_MSG_FlakeMessage, MfxUI, __OnFlakeMessage, myCoverFloor);
 
     UI_ADD_RECVMSG(UI_MSG_AddFlakeMessage, MfxUI, __OnAddFlakeMessage, myCoverFloor);
     UI_ADD_RECVMSG(UI_MSG_RemoveFlakeMessage, MfxUI, __OnRemoveFlakeMessage, myCoverFloor);
 
-
-
     UI_ADD_RECVMSG(UI_MSG_OpenPercentRect, MfxUI, __OnOpenPercentRect, myCoverFloor);
     UI_ADD_RECVMSG(UI_MSG_ClosePercentRect, MfxUI, __OnClosePercentRect, myCoverFloor);
-
-
 
     UI_ADD_RECVMSG(UI_MSG_SetBackColor, MfxUI, __OnSetBackColor, myCoverFloor);
     UI_ADD_RECVMSG(UI_MSG_SetMaskColor, MfxUI, __OnSetMaskColor, myCoverFloor);
@@ -99,7 +83,6 @@ void MicroFlakeX::MfxUI::MfxUIInitData()
     myCoverFloor = 0;
 
     myWnd = nullptr;
-    myFPS = 60;
 
     myBackImage = nullptr;
     myMaskImage = nullptr;
@@ -110,6 +93,7 @@ void MicroFlakeX::MfxUI::MfxUIInitData()
     myKeyboardFocusLockFlag = false;
 
     myPercentRectFlag = false;
+
 }
 
 
@@ -196,6 +180,8 @@ MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxMsg message, WPARAM wParam, LPARAM 
             return t_Ret;
         }
     }
+
+
     return DefWindowProc(myWnd, message, wParam, lParam);
 }
 
@@ -447,12 +433,6 @@ MfxReturn MicroFlakeX::MfxUI::GetCanvas(MfxCanvas** ret)
     return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxUI::SetFPS(LONG fps)
-{
-    myFPS = fps;
-    return Mfx_Return_Fine;
-}
-
 
 /********************************************************************************
 *
@@ -599,8 +579,6 @@ MfxReturn MicroFlakeX::MfxUI::__OnCreate(WPARAM wParam, LPARAM lParam)
     myBackImage = new MfxImage(MfxColor(255, 0, 255, 255), MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
     myBackImage->SetCanvas(&myCanvas);
 
-    UI_ADD_TIMER_MAP(10, (1000 / myFPS), MfxUI::__OnTimerPaint);
-    //MfxBeginNewTimer(myPTP_TIME, this, MfxText("__OnPaint"), 0, 1000 / myFPS);
     return Mfx_Return_Fine;
 }
 
@@ -647,8 +625,10 @@ MfxReturn MicroFlakeX::MfxUI::__OnSize(WPARAM wParam, LPARAM lParam)
 MfxReturn MicroFlakeX::MfxUI::__OnMove(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
+
     myRect.myX = LOWORD(lParam);
     myRect.myY = HIWORD(lParam);
+
     return DefWindowProc(myWnd, WM_MOVE, wParam, lParam);
 }
 
@@ -664,15 +644,14 @@ MfxReturn MicroFlakeX::MfxUI::__OnPaint(WPARAM wParam, LPARAM lParam)
     MfxCodeLock(this);
 
     PAINTSTRUCT t_Paint{0};
-    t_Paint.fErase = 1;
 
     HDC t_Dc = BeginPaint(myWnd, &t_Paint);
 
     myCanvas.PaintBegin();
 
-    __OnPaintBackDC(NULL, NULL);
+    ProcMessage(UI_MSG_PaintBack, NULL, NULL);
 
-    __OnPaintMaskDC(NULL, NULL);
+    ProcMessage(UI_MSG_PaintMask, NULL, NULL);
 
     myCanvas.PaintFinish();
 
@@ -681,11 +660,9 @@ MfxReturn MicroFlakeX::MfxUI::__OnPaint(WPARAM wParam, LPARAM lParam)
     return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxUI::__OnTimerPaint(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxUI::__OnEraseBackGrand(WPARAM wParam, LPARAM lParam)
 {
-    MfxCodeLock(this);
-    PostMessage(myWnd, WM_PAINT, 0, 0);
-    return Mfx_Return_Fine;
+    return 1;
 }
 
 MfxReturn MicroFlakeX::MfxUI::__OnPaintBackDC(WPARAM wParam, LPARAM lParam)
@@ -695,16 +672,19 @@ MfxReturn MicroFlakeX::MfxUI::__OnPaintBackDC(WPARAM wParam, LPARAM lParam)
     {
         myBackImage->Paint();
     }
+
     //这里绘制Main
-    SendMessageToFlakes(UI_MSG_PaintBack, wParam, lParam, true);
+    SendMessageToFlakes(FLAKE_MSG_PaintBack, wParam, lParam, true);
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::__OnPaintMaskDC(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
+
     //这里绘制Mask
-    SendMessageToFlakes(UI_MSG_PaintMask, wParam, lParam, true);
+    SendMessageToFlakes(FLAKE_MSG_PaintMask, wParam, lParam, true);
+
     if (myMaskImage)
     {
         myMaskImage->Paint();
@@ -728,10 +708,10 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeInsert(WPARAM wParam, LPARAM lParam)
         {
             myFlakeDeque.push_back(((MfxFlake*)wParam));
             MfxUI_Paper_Infor t_PaperValue(this, myWnd, &myCanvas);
-            ((MfxFlake*)wParam)->ProcMessage(UI_MSG_SetPaper, NULL, (LPARAM)&t_PaperValue);
+            ((MfxFlake*)wParam)->ProcMessage(FLAKE_MSG_SetPaper, NULL, (LPARAM)&t_PaperValue);
 
-            PostMessage(myWnd, FLAKE_MSG_FlakeFloorChange, NULL, NULL);
-            PostMessage(myWnd, WM_PAINT, NULL, NULL);
+            PostMessage(myWnd, UI_MSG_FlakeFloorChange, NULL, NULL);
+            InvalidateRect(myWnd, NULL, TRUE);
             return Mfx_Return_Fine;
         }
     }
@@ -748,12 +728,12 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeRemove(WPARAM wParam, LPARAM lParam)
             if (*delIt == (MfxFlake*)wParam)
             {
                 MfxUI_Paper_Infor t_PaperValue;
-                ((MfxFlake*)wParam)->ProcMessage(UI_MSG_SetPaper, NULL, (LPARAM)&t_PaperValue);
+                ((MfxFlake*)wParam)->ProcMessage(FLAKE_MSG_SetPaper, NULL, (LPARAM)&t_PaperValue);
                 myFlakeDeque.erase(delIt);
                 myFlakeSet.erase((MfxFlake*)wParam);
                 
-                PostMessage(myWnd, FLAKE_MSG_FlakeFloorChange, NULL, NULL);
-                PostMessage(myWnd, WM_PAINT, NULL, NULL);
+                PostMessage(myWnd, UI_MSG_FlakeFloorChange, NULL, NULL);
+                InvalidateRect(myWnd, NULL, TRUE);
                 return Mfx_Return_Fine;
             }
         }
@@ -847,14 +827,19 @@ MfxReturn MicroFlakeX::MfxUI::__OnRemoveFlakeMessage(WPARAM wParam, LPARAM lPara
 MfxReturn MicroFlakeX::MfxUI::__OnOpenPercentRect(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
+
     myPercentRectFlag = true;
+    SendMessageToFlakes(FLAKE_MSG_OpenPercentRect, NULL, NULL);
+
     return Mfx_Return_Fail;
 }
 
 MfxReturn MicroFlakeX::MfxUI::__OnClosePercentRect(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
+
     myPercentRectFlag = false;
+
     return Mfx_Return_Fine;
 }
 

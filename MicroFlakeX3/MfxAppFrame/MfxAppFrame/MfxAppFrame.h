@@ -290,8 +290,6 @@ namespace MicroFlakeX
 		UI_MSG(UI_MSG_FlakeInsert)
 		UI_MSG(UI_MSG_FlakeRemove)
 
-		UI_MSG(UI_MSG_SetPaper)
-
 		UI_MSG(UI_MSG_AddFlakeMessage)
 		UI_MSG(UI_MSG_RemoveFlakeMessage)
 
@@ -307,6 +305,8 @@ namespace MicroFlakeX
 		UI_MSG(UI_MSG_ClosePercentRect)
 
 		UI_MSG(UI_MSG_FlakeMessage)
+
+		UI_MSG(UI_MSG_FlakeFloorChange)
 	};
 
 
@@ -319,6 +319,11 @@ namespace MicroFlakeX
 #define FLAKE_MSG(MSG) MSG = FLAKE_MSG_BEGIN - MFX_COUNT(FLAKE_MSG_COUNT),
 	enum FLAKE_MSG
 	{
+		FLAKE_MSG(FLAKE_MSG_SetPaper)
+
+		FLAKE_MSG(FLAKE_MSG_PaintBack)
+		FLAKE_MSG(FLAKE_MSG_PaintMask)
+
 		FLAKE_MSG(FLAKE_MSG_Size)
 		FLAKE_MSG(FLAKE_MSG_Point)
 
@@ -333,8 +338,6 @@ namespace MicroFlakeX
 
 		FLAKE_MSG(FLAKE_MSG_LButtonClick)
 		FLAKE_MSG(FLAKE_MSG_RButtonClick)
-
-		FLAKE_MSG(FLAKE_MSG_FlakeFloorChange)
 
 		FLAKE_MSG(FLAKE_MSG_SetFloor)
 		FLAKE_MSG(FLAKE_MSG_SetTitle)
@@ -458,7 +461,7 @@ namespace MicroFlakeX
 		MfxReturn CreateSuccess();
 
 		MfxReturn ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam);
-		MfxReturn SendMessageToFlakes(MfxMsg message, WPARAM wParam, LPARAM lParam, bool sort);
+		MfxReturn SendMessageToFlakes(MfxMsg message, WPARAM wParam, LPARAM lParam, bool sort = false);
 
 	/********************************************************************************
 	*
@@ -560,13 +563,11 @@ namespace MicroFlakeX
 	*********************************************************************************/
 	private:
 		HWND myWnd;
-		LONG myFPS;
 		PTP_TIMER myPTP_TIME;
 		MfxCanvas myCanvas;
 	public:
 		MfxReturn GetWnd(HWND* ret);
 		MfxReturn GetCanvas(MfxCanvas** ret);
-		MfxReturn SetFPS(LONG fps);
 	/********************************************************************************
 	*
 	*
@@ -614,7 +615,8 @@ namespace MicroFlakeX
 		MfxReturn __OnMove(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnPaint(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnTimerPaint(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnEraseBackGrand(WPARAM wParam, LPARAM lParam);
+
 		MfxReturn __OnPaintBackDC(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnPaintMaskDC(WPARAM wParam, LPARAM lParam);
 

@@ -702,10 +702,6 @@ public:\
 	MfxReturn FuncName(MfxString* ret);\
 	MfxReturn ObjectName(MfxString* ret);
 
-#define Pre_Mfx MfxText("Mfx") 
-#define Pre_Get MfxText("Get") 
-#define Pre_Set MfxText("Set") 
-
 #define MfxSafeDelete(OBJ)\
 	if(OBJ)\
 	{\

@@ -1135,22 +1135,65 @@ MfxReturn MicroFlakeX::MfxRect::SetBottom(LONG set)
 ***************************************************************/
 MfxReturn MicroFlakeX::MfxRect::Union(MfxRect* set, MfxRect* ret) const
 {
-	return MfxReturn();
+	LONG tT = 0, tL = 0, tR = 0, tB = 0;
+	LONG tRT = 0, tRL = 0, tRR = 0, tRB = 0;
+
+	GetTop(&tT);
+	GetLeft(&tL);
+	GetRight(&tR);
+	GetBottom(&tB);
+
+	set->GetTop(&tRT);
+	set->GetLeft(&tRL);
+	set->GetRight(&tRR);
+	set->GetBottom(&tRB);
+
+	ret->SetTop(max(tT, tRT));
+	ret->SetLeft(min(tL, tRL));
+	ret->SetRight(max(tR, tRR));
+	ret->SetBottom(min(tB, tRB));
+
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::Union_Widely(MfxBase* set, MfxRect* ret) const
 {
-	return MfxReturn();
+	LONG tT = 0, tL = 0, tR = 0, tB = 0;
+	LONG tRT = 0, tRL = 0, tRR = 0, tRB = 0;
+
+	GetTop(&tT);
+	GetLeft(&tL);
+	GetRight(&tR);
+	GetBottom(&tB);
+
+	if (Mfx_Seccess(set->AutoFunc(MfxText("GetTop"), (&tRT))))
+	{
+		ret->SetTop(max(tT, tRT));
+	}
+	if (Mfx_Seccess(set->AutoFunc(MfxText("GetLeft"), (&tRL))))
+	{
+		ret->SetLeft(min(tL, tRL));
+	}
+	if (Mfx_Seccess(set->AutoFunc(MfxText("GetRight"), (&tRR))))
+	{
+		ret->SetRight(max(tR, tRR));
+	}
+	if (Mfx_Seccess(set->AutoFunc(MfxText("GetBottom"), (&tRB))))
+	{
+		ret->SetBottom(min(tB, tRB));
+	}
+
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::Except(MfxRect* set, MfxRect* ret) const
 {
-	return MfxReturn();
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::Except_Widely(MfxBase* set, MfxRect* ret) const
 {
-	return MfxReturn();
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::Intersect(MfxRect* set, MfxRect* ret) const
