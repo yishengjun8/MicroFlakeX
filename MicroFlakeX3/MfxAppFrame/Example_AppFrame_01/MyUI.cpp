@@ -6,7 +6,7 @@ MfxObject_Init_2(MyUI, MfxUI);
 
 MyUI::MyUI()
 {
-	AddFlake(&myFlake);
+	this->InsertFlake(&myFlake);
 
 
 	myFlake.OpenLButtonMove();

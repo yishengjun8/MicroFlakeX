@@ -2,18 +2,57 @@
 #include "MfxAppFrame.h"
 
 MfxObject_Init_0(MfxUI)
-MfxObject_Init_1(MfxUI, GetRect)
+MfxObject_Init_1(MfxUI, CreateSuccess)
 MfxAutoFunc_AutoEnumBig(MfxUI, \
+    \
+    0, CreateSuccess, \
+    \
+    2, UIThread, \
+    \
+    3, ProcMessage, \
+    4, SendMessageToFlakes, \
+    \
+    2, RemoveUIMessage, \
+    2, InsertUIMessage, \
+    \
+    0, OpenPercentRect, \
+    0, ClosePercentRect, \
+    0, ChickPercentRect, \
+    \
+    1, RemoveFlake, \
+    1, InsertFlake, \
+    \
+    2, RemoveFlakeMessage, \
+    2, InsertFlakeMessage, \
+    \
+    1, RemoveTimer, \
+    3, InsertTimer, \
+    \
+    1, LockMutexFocus, \
+    0, UnLockMutexFocus, \
+    \
+    1, SetMutexFocus, \
+    1, GetMutexFocus, \
+    1, SetKeyboardFocus, \
+    1, GetKeyboardFocus, \
+    \
+    1, GetWnd, \
+    1, GetCanvas, \
+    1, GetUIThreadID, \
     \
     1, GetRect, \
     1, GetSize, \
     1, GetPoint, \
+    1, GetBackImage, \
+    1, GetMaskImage, \
     \
     1, SetRect, \
     1, SetSize, \
     1, SetPoint, \
-    \
-    2, UIThread, \
+    1, SetBackColor, \
+    1, SetMaskColor, \
+    1, SetBackImage, \
+    1, SetMaskImage, \
     \
     END, END);
 MfxObject_Init_2(MfxUI, MfxBase);
@@ -292,14 +331,14 @@ MfxReturn MicroFlakeX::MfxUI::ChickPercentRect()
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxUI::AddFlake(MfxFlake* set)
-{
-    return ProcMessage(UI_MSG_FlakeInsert, (WPARAM)set, NULL);
-}
-
 MfxReturn MicroFlakeX::MfxUI::RemoveFlake(MfxFlake* set)
 {
     return ProcMessage(UI_MSG_FlakeRemove, (WPARAM)set, NULL);
+}
+
+MfxReturn MicroFlakeX::MfxUI::InsertFlake(MfxFlake* set)
+{
+    return ProcMessage(UI_MSG_FlakeInsert, (WPARAM)set, NULL);
 }
 
 

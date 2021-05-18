@@ -32,8 +32,8 @@ int main()
     tRect.Reset(19, 18 * 2 + 120, 360, 120);
     myFlake_01->SetRect(&tRect);
 
-    myUI_00->AddFlake(myFlake_00);
-    myUI_00->AddFlake(myFlake_01);
+    myUI_00->InsertFlake(myFlake_00);
+    myUI_00->InsertFlake(myFlake_01);
 
     tColor.Reset(255, 0, 0, 255);
     myFlake_00->SetBackColor(&tColor);

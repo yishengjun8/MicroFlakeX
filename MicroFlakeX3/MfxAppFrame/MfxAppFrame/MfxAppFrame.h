@@ -531,8 +531,8 @@ namespace MicroFlakeX
 		UI_FLAKEMSG_Map myFlakeMessageMap;
 
 	public:
-		MfxReturn AddFlake(MfxFlake* set);
 		MfxReturn RemoveFlake(MfxFlake* set);
+		MfxReturn InsertFlake(MfxFlake* set);
 
 		MfxReturn RemoveFlakeMessage(UI_FLAKEMSG_Infor message, MfxString recvFuncName);
 		MfxReturn InsertFlakeMessage(UI_FLAKEMSG_Infor message, UIMSG_RecvFunc_Infor msgValue);

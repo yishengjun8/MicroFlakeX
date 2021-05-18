@@ -2,18 +2,57 @@
 #include "MfxAppFrame.h"
 
 MfxObject_Init_0(MfxFlake)
-MfxObject_Init_1(MfxFlake, GetRect)
+MfxObject_Init_1(MfxFlake, ProcMessage)
 MfxAutoFunc_AutoEnumBig(MfxFlake, \
+	3, ProcMessage, \
+	\
+	2, RemoveUIMessage, \
+	2, InsertUIMessage, \
+	\
+	0, OpenPercentRect, \
+	0, ClosePercentRect, \
+	0, ChickPercentRect, \
+	\
+	1, GetUI, \
+	1, GetWnd, \
+	1, GetFloor, \
+	1, GetCanvas, \
+	\
+	1, SetFloor, \
+	\
 	1, GetRect, \
 	1, GetSize, \
 	1, GetPoint, \
+	\
+	1, GetTitle, \
+	1, GetTitleSize, \
+	\
+	1, GetBackColor, \
+	1, GetMaskColor, \
+	1, GetTitleColor, \
 	\
 	1, SetRect, \
 	1, SetSize, \
 	1, SetPoint, \
 	\
+	1, SetTitle, \
+	1, SetTitleSize, \
 	1, SetBackColor, \
-	1, GetBackColor, \
+	1, SetMaskColor, \
+	1, SetTitleColor, \
+	\
+	0, OpenLButtonMove, \
+	0, CloseLButtonMove, \
+	0, OpenRButtonMove, \
+	0, CloseRButtonMove, \
+	\
+	1, GetWords, \
+	1, GetBackImage, \
+	1, GetMaskImage, \
+	\
+	1, SetWords, \
+	1, SetBackImage, \
+	1, SetMaskImage, \
 	\
 	END, END);
 MfxObject_Init_2(MfxFlake, MfxBase);
