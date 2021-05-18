@@ -239,6 +239,7 @@ MfxReturn MicroFlakeX::MfxUI::RemoveUIMessage(MfxMsg message, MfxString recvFunc
             }
         }
     }
+
     return Mfx_Return_Fail;
 }
 

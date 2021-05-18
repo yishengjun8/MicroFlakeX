@@ -290,9 +290,9 @@ namespace MicroFlakeX
 		MfxFloor myFloor;
 		MfxString myFuncName;
 	};
-	typedef std::vector< MfxFlake_MsgMap_Infor*> MfxFlake_MsgMap_Vector;
+	typedef std::vector< MfxFlake_MsgMap_Infor> MfxFlake_MsgMap_Vector;
 
-	typedef std::map<MfxMsg, MfxFlake_MsgMap_Vector*> MfxFlake_MsgMap;
+	typedef std::map<MfxMsg, MfxFlake_MsgMap_Vector> MfxFlake_MsgMap;
 	typedef MfxFlake_MsgMap::value_type MfxFlake_MsgMap_elem;
 }
 
@@ -734,7 +734,7 @@ namespace MicroFlakeX
 		MfxFlake_MsgMap myMessageMap;
 	public:
 		MfxReturn RemoveUIMessage(MfxMsg message, MfxString name);
-		MfxReturn InsertUIMessage(MfxMsg message, MfxFlake_MsgMap_Infor* msgValue);
+		MfxReturn InsertUIMessage(MfxMsg message, MfxFlake_MsgMap_Infor msgValue);
 
 
 		/********************************************************************************
@@ -894,11 +894,11 @@ namespace MicroFlakeX
 	};
 
 /********************************************************************************
-* 为Flake添加一个来自控Flake的消息映射
+* 为Flake添加一个来自Flake的消息映射
 *********************************************************************************/
-#define FLAKE_ADDRECV_FLAKEMSG(Msg, myClass, FuncName, Floor)\
-	InsertUIMessage(Msg, new MfxFlake_MsgMap_Infor(\
-		(MfxFlake_MsgFunc)&myClass::FuncName, Floor, MfxText(#myClass#FuncName))\
+#define FLAKE_ADDRECV_FLAKEMSG(Msg, myClass, recvFunc, Floor)\
+	InsertUIMessage(Msg, MfxFlake_MsgMap_Infor(\
+		(MfxFlake_MsgFunc)&myClass::recvFunc, Floor, MfxText(#myClass#recvFunc))\
 		);
 
 
@@ -913,7 +913,7 @@ namespace MicroFlakeX
 
 
 /********************************************************************************
-* Send一个Flake消息到消息队列中
+* Send一个Flake消息到主线程消息队列中
 *********************************************************************************/
 #define FLAKE_SENDMSG_MAIN(Msg, wPara, lPara)\
 	myUI ? \

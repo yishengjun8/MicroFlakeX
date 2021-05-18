@@ -147,11 +147,11 @@ MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMsg message, WPARAM wParam, LPAR
 	auto t_Iter = myMessageMap.find(message);
 	if (t_Iter != myMessageMap.end())
 	{
-		if (!t_Iter->second->empty())
+		if (!t_Iter->second.empty())
 		{
-			for (auto i : *(t_Iter->second))
+			for (auto i : t_Iter->second)
 			{
-				t_Ret = (this->*i->recvFunc)(wParam, lParam);
+				t_Ret = (this->*i.recvFunc)(wParam, lParam);
 			}
 		}
 	}
@@ -184,35 +184,39 @@ MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMsg message, WPARAM wParam, LPAR
 MfxReturn MicroFlakeX::MfxFlake::RemoveUIMessage(MfxMsg message, MfxString name)
 {
 	MfxCodeLock(this);
+
 	auto t_Iter = myMessageMap.find(message);
 	if (t_Iter != myMessageMap.end())
 	{
-		for (auto i = t_Iter->second->begin(); i != t_Iter->second->end(); i++)
+		for (auto i = t_Iter->second.begin(); i != t_Iter->second.end(); i++)
 		{
-			if ((*i)->myFuncName == name)
+			if (i->myFuncName == name)
 			{
-				delete (*i);
-				t_Iter->second->erase(i);
+				t_Iter->second.erase(i);
 				return Mfx_Return_Fine;
 			}
 		}
 	}
+
 	return Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxFlake::InsertUIMessage(MfxMsg message, MfxFlake_MsgMap_Infor* msgValue)
+MfxReturn MicroFlakeX::MfxFlake::InsertUIMessage(MfxMsg message, MfxFlake_MsgMap_Infor msgValue)
 {
 	MfxCodeLock(this);
 
+	Begin:
 	auto t_Iter = myMessageMap.find(message);
 	if (t_Iter == myMessageMap.end())
 	{
-		auto t_AddVector = new MfxFlake_MsgMap_Vector;
-		t_Iter = myMessageMap.insert(MfxFlake_MsgMap_elem(message, t_AddVector)).first;
+		t_Iter = myMessageMap.insert(MfxFlake_MsgMap_elem(message, MfxFlake_MsgMap_Vector())).first;
+		goto Begin;
 	}
-
-	t_Iter->second->push_back(msgValue);
-	std::sort(t_Iter->second->begin(), t_Iter->second->end(), pFloorCompare<MfxFlake_MsgMap_Infor>);
+	else
+	{
+		t_Iter->second.push_back(msgValue);
+		std::sort(t_Iter->second.begin(), t_Iter->second.end(), FloorCompare<MfxFlake_MsgMap_Infor>);
+	}
 
 	return Mfx_Return_Fine;
 }
