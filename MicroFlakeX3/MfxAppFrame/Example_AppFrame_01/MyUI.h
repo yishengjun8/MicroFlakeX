@@ -12,6 +12,6 @@ public:
     MyUI();
     MfxReturn MfxCallBack(Test__000);
     
-
+    MfxFlake myFlake;
 };
 

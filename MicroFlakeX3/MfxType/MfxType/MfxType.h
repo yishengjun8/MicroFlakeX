@@ -631,9 +631,9 @@ namespace MicroFlakeX
         MfxReturn MfxAddKeyframe(MfxString bindObjectType, MfxBase* set, LONGLONG span);
 
     private:
+        UINT myFPS;
         bool myBegin;
         PTP_TIMER myPTP_TIMER;
-
 
     private:
         MfxBase* myBindObject;
@@ -641,11 +641,6 @@ namespace MicroFlakeX
 
     private:
         MfxGulid_BindObjectType_Keyframe_Queue_Map myBindObjectType_Keyframe;
-
-    public:
-        UINT myFPS;
-
-    private:
 
     };
 }

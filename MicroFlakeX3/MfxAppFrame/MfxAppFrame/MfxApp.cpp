@@ -81,30 +81,24 @@ HWND MicroFlakeX::MfxApp::MfxCreateUIEx(MfxUI* ui, MfxRect rect,
 
 MfxReturn MicroFlakeX::MfxApp::ForwardMessage(HWND hWnd, MfxMsg message, WPARAM wParam, LPARAM lParam)
 {
+ForwardMessageBegin:
 	auto t_Itera = myUIMap.find(hWnd);
 	if (t_Itera == myUIMap.end())
 	{
 		if (myBindingUI)
 		{
-			myUIMap.insert(MfxUI_Map_elem(hWnd, myBindingUI));
+			MfxBeginNewThread(myBindingUI, MfxText("UIThread"), NULL, NULL);
+
+			myUIMap.insert(MfxUI_Info_Map_elem(hWnd, MfxUI_Info(hWnd, myBindingUI, 0)));
 			myBindingUI->myWnd = hWnd;
 			myBindingUI = nullptr;
 
-			t_Itera = myUIMap.find(hWnd);
-			if (t_Itera != myUIMap.end())
-			{
-				auto ret = (t_Itera->second)->ProcMessage(message, wParam, lParam);
-				if (message == WM_DESTROY)
-				{
-					myUIMap.erase(t_Itera);
-				}
-				return ret;
-			}
+			goto ForwardMessageBegin;
 		}
 	}
 	else
 	{
-		auto ret = (t_Itera->second)->ProcMessage(message, wParam, lParam);
+		auto ret = t_Itera->second.myUI->ProcMessage(message, wParam, lParam);
 		if (message == WM_DESTROY)
 		{
 			myUIMap.erase(t_Itera);

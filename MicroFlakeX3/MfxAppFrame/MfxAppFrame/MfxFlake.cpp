@@ -79,6 +79,7 @@ void MicroFlakeX::MfxFlake::MfxFlakeInitData()
 	myWnd = NULL;
 	myUI = nullptr;
 	myCanvas = nullptr;
+	myUIThreadID = NULL;
 
 	myFloor = 66;
 	myPercentRectFlag = false;
@@ -123,7 +124,6 @@ MicroFlakeX::MfxFlake::~MfxFlake()
 	MfxCodeLock(this);
 	if (myUI)
 	{
-		//销毁时，仅父窗口可见
 		myUI->ProcMessage(UI_MSG_FlakeRemove, (WPARAM)this, NULL);
 	}
 
@@ -181,7 +181,7 @@ MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMsg message, WPARAM wParam, LPAR
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxFlake::RemoveMessage(MfxMsg message, MfxString name)
+MfxReturn MicroFlakeX::MfxFlake::RemoveUIMessage(MfxMsg message, MfxString name)
 {
 	MfxCodeLock(this);
 	auto t_Iter = myMessageMap.find(message);
@@ -200,7 +200,7 @@ MfxReturn MicroFlakeX::MfxFlake::RemoveMessage(MfxMsg message, MfxString name)
 	return Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxFlake::InsertMessage(MfxMsg message, MfxFlake_MsgMap_Infor* msgValue)
+MfxReturn MicroFlakeX::MfxFlake::InsertUIMessage(MfxMsg message, MfxFlake_MsgMap_Infor* msgValue)
 {
 	MfxCodeLock(this);
 
@@ -212,7 +212,7 @@ MfxReturn MicroFlakeX::MfxFlake::InsertMessage(MfxMsg message, MfxFlake_MsgMap_I
 	}
 
 	t_Iter->second->push_back(msgValue);
-	std::sort(t_Iter->second->begin(), t_Iter->second->end(), FloorCompare<MfxFlake_MsgMap_Infor>);
+	std::sort(t_Iter->second->begin(), t_Iter->second->end(), pFloorCompare<MfxFlake_MsgMap_Infor>);
 
 	return Mfx_Return_Fine;
 }
@@ -524,6 +524,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetPaper(WPARAM wParam, LPARAM lParam)
 	myUI = t_PaperValue->myUI;
 	myWnd = t_PaperValue->myWnd;
 	myCanvas = t_PaperValue->myCanvas;
+	myUIThreadID = t_PaperValue->myUIThreadID;
 
 	if (myBackImage)
 	{
@@ -633,6 +634,8 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSize(WPARAM wParam, LPARAM lParam)
 	RECT tRECT;
 	myRect.GetRECT(&tRECT);
 	InvalidateRect(myWnd, &tRECT, TRUE);
+
+	//FLAKE_POSTMSG_UITHREAD()
 
 	return Mfx_Return_Fine;
 }
@@ -904,7 +907,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(WPARAM wParam, LPARAM lParam)
 				myMouseFloat = true;
 				myLButtonPress = false;
 				myLButtonClickFlag = false;
-				FLAKE_POST_MSG(FLAKE_MSG_LButtonClick, wParam, lParam);
+				FLAKE_POSTMSG_UITHREAD(FLAKE_MSG_LButtonClick, wParam, lParam);
 			}
 			else
 			{
@@ -985,7 +988,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 				myMouseFloat = true;
 				myRButtonPress = false;
 				myRButtonClickFlag = false;
-				FLAKE_POST_MSG(FLAKE_MSG_RButtonClick, wParam, lParam);
+				FLAKE_POSTMSG_UITHREAD(FLAKE_MSG_RButtonClick, wParam, lParam);
 			}
 			else
 			{
