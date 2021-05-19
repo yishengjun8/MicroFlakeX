@@ -65,6 +65,8 @@ MfxAutoFunc_AutoEnumBig(MfxRect, \
 	1, GetRight, \
 	1, GetBottom, \
 	\
+	1, GetCenter, \
+	\
 	\
 	1, SetX, \
 	1, SetY, \
@@ -75,6 +77,8 @@ MfxAutoFunc_AutoEnumBig(MfxRect, \
 	1, SetLeft, \
 	1, SetRight, \
 	1, SetBottom, \
+	\
+	1, SetCenter, \
 	\
 	2, Union, \
 	2, Union_Widely, \
@@ -1059,6 +1063,22 @@ MfxReturn MicroFlakeX::MfxRect::GetBottom(LONG* ret) const
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxRect::GetCenter(MfxPoint* ret) const
+{
+	LONG tX = 0, tY = 0, tW = 0, tH = 0;
+
+	GetX(&tX);
+	GetY(&tY);
+	GetWidth(&tW);
+	GetHeight(&tH);
+
+	ret->SetX((tX + tW) / 2);
+	ret->SetY((tY + tH) / 2);
+
+	return Mfx_Return_Fine;
+}
+
+
 
 /**************************************************************
 *
@@ -1123,6 +1143,30 @@ MfxReturn MicroFlakeX::MfxRect::SetRight(LONG set)
 MfxReturn MicroFlakeX::MfxRect::SetBottom(LONG set)
 {
 	SetHeight(set - myY);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::SetCenter(MfxPoint* set)
+{
+	MfxPoint tCPoint;
+	LONG tX = 0, tY = 0;
+	LONG tCX = 0, tCY = 0;
+	LONG tSCX = 0, tSCY = 0;
+
+	GetCenter(&tCPoint);
+
+	tCPoint.GetX(&tCX);
+	tCPoint.GetY(&tCY);
+
+	GetX(&tX);
+	GetY(&tY);
+
+	set->GetX(&tSCX);
+	set->GetY(&tSCY);
+
+	SetX(tX + (tSCX - tCX));
+	SetY(tY + (tSCY - tCY));
 
 	return Mfx_Return_Fine;
 }

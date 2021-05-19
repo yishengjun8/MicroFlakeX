@@ -192,21 +192,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             myGlide.MfxAddKeyframe(MfxText("Rect"), tRect, 5000);
             /**/
 
+            MfxGlide tGulid;
+            tGulid.SetFPS(60);
+            //tGulid.BindObject(&(myImage[1]));
 
-            myGlide.SetFPS(60);
-            myGlide.BindObject(&(myImage[1]));
-
-            myGlide.BindObjectName(MfxText("group_1"),
+            tGulid.BindObjectName(MfxText("group_1"),
                 MfxGulid_WidelyType(MfxText("MfxPoint"), MfxText("MfxPoint"), MfxText("GetPoint"), MfxText("SetPoint")));
 
-            myGlide.BindObjectName(MfxText("group_2"),
+            tGulid.BindObjectName(MfxText("group_2"),
                 MfxGulid_WidelyType(MfxText("MfxSize"), MfxText("MfxSize"), MfxText("GetSize"), MfxText("SetSize")));
 
-            myGlide.Add_GetSetFuncName(MfxText("group_1"), MfxText("GetX"), MfxText("SetX"));
-            myGlide.Add_GetSetFuncName(MfxText("group_1"), MfxText("GetY"), MfxText("SetY"));
+            tGulid.Add_GetSetFuncName(MfxText("group_1"), MfxText("GetX"), MfxText("SetX"));
+            tGulid.Add_GetSetFuncName(MfxText("group_1"), MfxText("GetY"), MfxText("SetY"));
 
-            myGlide.Add_GetSetFuncName(MfxText("group_2"), MfxText("GetWidth"), MfxText("SetWidth"));
-            myGlide.Add_GetSetFuncName(MfxText("group_2"), MfxText("GetHeight"), MfxText("SetHeight"));
+            tGulid.Add_GetSetFuncName(MfxText("group_2"), MfxText("GetWidth"), MfxText("SetWidth"));
+            tGulid.Add_GetSetFuncName(MfxText("group_2"), MfxText("GetHeight"), MfxText("SetHeight"));
+
+
+            myGlide = tGulid;
+            myGlide.BindObject(&(myImage[1]));
 
             MfxSize* tSize = new MfxSize(200, 200);
             myGlide.MfxAddKeyframe(MfxText("group_2"), tSize, 5000);

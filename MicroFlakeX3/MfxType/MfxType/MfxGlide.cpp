@@ -12,30 +12,58 @@ MfxObject_Init_2(MfxGlide, MfxBase);
 
 MicroFlakeX::MfxGlide::MfxGlide()
 {
+	myFPS = 60;
+	myBegin = 0;
 	myPTP_TIMER = nullptr;
 	myBindObject = nullptr;
-	myBegin = 0;
 }
 
 MicroFlakeX::MfxGlide::MfxGlide(MfxGlide* set)
 {
+	myFPS = set->myFPS;
+	myBegin = 0;
 	myPTP_TIMER = nullptr;
 	myBindObject = nullptr;
-	myBegin = 0;
+
+	std::copy(set->myWidelyTypeMap.begin(), set->myWidelyTypeMap.end(), inserter(myWidelyTypeMap, myWidelyTypeMap.begin()));
+
+	for (auto iter : myWidelyTypeMap)
+	{
+		MfxFactory(myWidelyTypeMap[iter.first].setObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Set));
+		MfxFactory(myWidelyTypeMap[iter.first].getObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Begin));
+	}
 }
 
 MicroFlakeX::MfxGlide::MfxGlide(MfxGlide& set)
 {
+	myFPS = set.myFPS;
+	myBegin = 0;
 	myPTP_TIMER = nullptr;
 	myBindObject = nullptr;
-	myBegin = 0;
+
+	std::copy(set.myWidelyTypeMap.begin(), set.myWidelyTypeMap.end(), inserter(myWidelyTypeMap, myWidelyTypeMap.begin()));
+
+	for (auto iter : myWidelyTypeMap)
+	{
+		MfxFactory(myWidelyTypeMap[iter.first].setObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Set));
+		MfxFactory(myWidelyTypeMap[iter.first].getObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Begin));
+	}
 }
 
 MicroFlakeX::MfxGlide::MfxGlide(MfxGlide&& set)
 {
+	myFPS = set.myFPS;
+	myBegin = 0;
 	myPTP_TIMER = nullptr;
 	myBindObject = nullptr;
-	myBegin = 0;
+
+	std::copy(set.myWidelyTypeMap.begin(), set.myWidelyTypeMap.end(), inserter(myWidelyTypeMap, myWidelyTypeMap.begin()));
+
+	for (auto iter : myWidelyTypeMap)
+	{
+		MfxFactory(myWidelyTypeMap[iter.first].setObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Set));
+		MfxFactory(myWidelyTypeMap[iter.first].getObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Begin));
+	}
 }
 
 MicroFlakeX::MfxGlide::~MfxGlide()
@@ -68,18 +96,46 @@ MfxBase& MicroFlakeX::MfxGlide::operator=(MfxBase& rhs)
 
 MfxGlide& MicroFlakeX::MfxGlide::operator=(MfxGlide* rhs)
 {
-	// TODO: 在此处插入 return 语句
+	myFPS = rhs->myFPS;
+
+	std::copy(rhs->myWidelyTypeMap.begin(), rhs->myWidelyTypeMap.end(), inserter(myWidelyTypeMap, myWidelyTypeMap.begin()));
+
+	for (auto iter : myWidelyTypeMap)
+	{
+		MfxFactory(myWidelyTypeMap[iter.first].setObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Set));
+		MfxFactory(myWidelyTypeMap[iter.first].getObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Begin));
+	}
+
 	return *this;
 }
 
 MfxGlide& MicroFlakeX::MfxGlide::operator=(MfxGlide& rhs)
 {
-	// TODO: 在此处插入 return 语句
+	myFPS = rhs.myFPS;
+
+	std::copy(rhs.myWidelyTypeMap.begin(), rhs.myWidelyTypeMap.end(), inserter(myWidelyTypeMap, myWidelyTypeMap.begin()));
+
+	for (auto iter : myWidelyTypeMap)
+	{
+		MfxFactory(myWidelyTypeMap[iter.first].setObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Set));
+		MfxFactory(myWidelyTypeMap[iter.first].getObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Begin));
+	}
+
 	return *this;
 }
 
 MfxGlide& MicroFlakeX::MfxGlide::operator=(MfxGlide&& rhs)
 {
+	myFPS = rhs.myFPS;
+
+	std::copy(rhs.myWidelyTypeMap.begin(), rhs.myWidelyTypeMap.end(), inserter(myWidelyTypeMap, myWidelyTypeMap.begin()));
+
+	for (auto iter : myWidelyTypeMap)
+	{
+		MfxFactory(myWidelyTypeMap[iter.first].setObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Set));
+		MfxFactory(myWidelyTypeMap[iter.first].getObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Begin));
+	}
+
 	return *this;
 }
 
@@ -103,26 +159,32 @@ bool MicroFlakeX::MfxGlide::operator==(MfxGlide&& rhs)
 	return false;
 }
 
-MfxReturn MicroFlakeX::MfxGlide::GetFPS(UINT& ret)
+MfxReturn MicroFlakeX::MfxGlide::GetFPS(UINT* ret)
 {
-	return MfxReturn();
+	*ret = myFPS;
+
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::GetBindObject(MfxBase** object)
 {
-	return MfxReturn();
+	*object = myBindObject;
+
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::SetFPS(UINT set)
 {
 	myFPS = set;
-	return MfxReturn();
+
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::BindObject(MfxBase* object)
 {
 	myBindObject = object;
-	return MfxReturn();
+
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::BindObjectName(MfxString groupName, MfxGulid_WidelyType value)
@@ -134,17 +196,20 @@ MfxReturn MicroFlakeX::MfxGlide::BindObjectName(MfxString groupName, MfxGulid_Wi
 
 	MfxFactory(myWidelyTypeMap[groupName].setObjectName, &(myWidelyTypeMap[groupName].myGetObject_Set));
 	MfxFactory(myWidelyTypeMap[groupName].getObjectName, &(myWidelyTypeMap[groupName].myGetObject_Begin));
-	return MfxReturn();
+
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::Add_GetSetFuncName(MfxString groupName, MfxString getFuncName, MfxString setFuncName)
 {
 	auto tFind = myWidelyTypeMap.find(groupName);
+
 	if (tFind != myWidelyTypeMap.end())
 	{
 		tFind->second.myGulidTypePair.push_back(MfxGulid_GetSet_FuncName(getFuncName, setFuncName));
 	}
-	return MfxReturn();
+
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::Stop()
@@ -154,7 +219,8 @@ MfxReturn MicroFlakeX::MfxGlide::Stop()
 		MfxCloseTimer(myPTP_TIMER);
 		myPTP_TIMER = 0;
 	}
-	return MfxReturn();
+
+	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::Begin()

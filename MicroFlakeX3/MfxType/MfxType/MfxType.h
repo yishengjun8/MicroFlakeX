@@ -207,6 +207,8 @@ namespace MicroFlakeX
         MfxReturn GetRight(LONG* ret) const;
         MfxReturn GetBottom(LONG* ret) const;
 
+        MfxReturn GetCenter(MfxPoint* ret) const;
+
     public:
         MfxReturn SetX(LONG set);
         MfxReturn SetY(LONG set);
@@ -217,6 +219,8 @@ namespace MicroFlakeX
         MfxReturn SetLeft(LONG set);
         MfxReturn SetRight(LONG set);
         MfxReturn SetBottom(LONG set);
+
+        MfxReturn SetCenter(MfxPoint* set);
 
     public:
         /* ºÍ */
@@ -610,12 +614,13 @@ namespace MicroFlakeX
 
     public:
         MfxReturn SetFPS(UINT set);
+
         MfxReturn BindObject(MfxBase* object);
         MfxReturn BindObjectName(MfxString groupName, MfxGulid_WidelyType value);
         MfxReturn Add_GetSetFuncName(MfxString groupName, MfxString getFuncName, MfxString setFuncName);
 
     public:
-        MfxReturn GetFPS(UINT& ret);
+        MfxReturn GetFPS(UINT* ret);
         MfxReturn GetBindObject(MfxBase** object);
 
     public:

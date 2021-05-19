@@ -208,6 +208,7 @@ MfxReturn MicroFlakeX::MfxUI::CreateSuccess()
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam)
 {
+    /* 这里添加识别 - 耗时的全部移交到UI线程内处理 */
     MfxReturn t_Ret = Mfx_Return_Fail;
 
     auto t_Iter = myMessageMap.find(message);
@@ -282,7 +283,7 @@ MfxReturn MicroFlakeX::MfxUI::RemoveUIMessage(MfxMsg message, MfxString recvFunc
     return Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxUI::InsertUIMessage(MfxMsg message, UIMSG_RecvFunc_Infor msgValue)
+MfxReturn MicroFlakeX::MfxUI::InsertUIMessage(MfxMsg message, UI_UIMsg_RecvFunc_Infor msgValue)
 {
     MfxCodeLock(this);
 
@@ -290,13 +291,13 @@ MfxReturn MicroFlakeX::MfxUI::InsertUIMessage(MfxMsg message, UIMSG_RecvFunc_Inf
     auto t_Iter = myMessageMap.find(message);
     if (t_Iter == myMessageMap.end())
     {
-        t_Iter = myMessageMap.insert(UI_UIMSG_Map_Elem(message, UIMSG_RecvFunc_Infor_Vector())).first;
+        t_Iter = myMessageMap.insert(UI_UIMsg_Map_Elem(message, UI_UIMsg_RecvFunc_Infor_Vector())).first;
         goto Begin;
     }
     else
     {
         t_Iter->second.push_back(msgValue);
-        std::sort(t_Iter->second.begin(), t_Iter->second.end(), FloorCompare<UIMSG_RecvFunc_Infor>);
+        std::sort(t_Iter->second.begin(), t_Iter->second.end(), FloorCompare<UI_UIMsg_RecvFunc_Infor>);
     }
 
     return Mfx_Return_Fine;
@@ -348,12 +349,12 @@ MfxReturn MicroFlakeX::MfxUI::InsertFlake(MfxFlake* set)
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxUI::RemoveFlakeMessage(UI_FLAKEMSG_Infor message, MfxString recvFuncName)
+MfxReturn MicroFlakeX::MfxUI::RemoveFlakeMessage(UI_FlakeMsg_Infor message, MfxString recvFuncName)
 {
     return ProcMessage(UI_MSG_RemoveFlakeMessage, (WPARAM)&message, (LPARAM)&recvFuncName);
 }
 
-MfxReturn MicroFlakeX::MfxUI::InsertFlakeMessage(UI_FLAKEMSG_Infor message, UIMSG_RecvFunc_Infor msgValue)
+MfxReturn MicroFlakeX::MfxUI::InsertFlakeMessage(UI_FlakeMsg_Infor message, UI_UIMsg_RecvFunc_Infor msgValue)
 {
     return ProcMessage(UI_MSG_InsertFlakeMessage, (WPARAM)&message, (LPARAM)&msgValue);
 }
@@ -764,7 +765,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeInsert(WPARAM wParam, LPARAM lParam)
         if (myFlakeSet.insert((MfxFlake*)wParam).second)
         {
             myFlakeDeque.push_back(((MfxFlake*)wParam));
-            MfxUI_Paper_Infor t_PaperValue(this, myWnd, &myCanvas, myUIThreadID);
+            Paper_Infor t_PaperValue(this, myWnd, &myCanvas, myUIThreadID);
             ((MfxFlake*)wParam)->ProcMessage(FLAKE_MSG_SetPaper, NULL, (LPARAM)&t_PaperValue);
 
             PostMessage(myWnd, UI_MSG_FlakeFloorChange, NULL, NULL);
@@ -786,7 +787,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeRemove(WPARAM wParam, LPARAM lParam)
         {
             if (*delIt == (MfxFlake*)wParam)
             {
-                MfxUI_Paper_Infor t_PaperValue;
+                Paper_Infor t_PaperValue;
                 ((MfxFlake*)wParam)->ProcMessage(FLAKE_MSG_SetPaper, NULL, (LPARAM)&t_PaperValue);
                 myFlakeDeque.erase(delIt);
                 myFlakeSet.erase((MfxFlake*)wParam);
@@ -866,8 +867,8 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeMessage(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
 
-    UI_FLAKEMSG_Infor* tFlakeMsg_Infor = (UI_FLAKEMSG_Infor*)wParam;
-    UI_FLAKEMSG_Value* tFlakeMsg_Value = (UI_FLAKEMSG_Value*)lParam;
+    UI_FlakeMsg_Infor* tFlakeMsg_Infor = (UI_FlakeMsg_Infor*)wParam;
+    UI_FlakeMsg_Value* tFlakeMsg_Value = (UI_FlakeMsg_Value*)lParam;
 
     auto t_Ret = Mfx_Return_Fail;
     auto t_Iter = myFlakeMessageMap.find(*tFlakeMsg_Infor);
@@ -892,20 +893,20 @@ MfxReturn MicroFlakeX::MfxUI::__OnInsertFlakeMessage(WPARAM wParam, LPARAM lPara
 {
     MfxCodeLock(this);
 
-    UI_FLAKEMSG_Infor* tFlakeMsg_Infor = (UI_FLAKEMSG_Infor*)wParam;
-    UIMSG_RecvFunc_Infor* tRecvFunc_Infor = (UIMSG_RecvFunc_Infor*)lParam;
+    UI_FlakeMsg_Infor* tFlakeMsg_Infor = (UI_FlakeMsg_Infor*)wParam;
+    UI_UIMsg_RecvFunc_Infor* tRecvFunc_Infor = (UI_UIMsg_RecvFunc_Infor*)lParam;
 
     Begin:
     auto t_Iter = myFlakeMessageMap.find(*tFlakeMsg_Infor);
     if (t_Iter == myFlakeMessageMap.end())
     {
-        t_Iter = myFlakeMessageMap.insert(UI_FLAKEMSG_Map_Elem(*tFlakeMsg_Infor, UIMSG_RecvFunc_Infor_Vector())).first;
+        t_Iter = myFlakeMessageMap.insert(UI_FlakeMsg_Map_Elem(*tFlakeMsg_Infor, UI_UIMsg_RecvFunc_Infor_Vector())).first;
         goto Begin;
     }
     else
     {
         t_Iter->second.push_back(*tRecvFunc_Infor);
-        std::sort(t_Iter->second.begin(), t_Iter->second.end(), FloorCompare<UIMSG_RecvFunc_Infor>);
+        std::sort(t_Iter->second.begin(), t_Iter->second.end(), FloorCompare<UI_UIMsg_RecvFunc_Infor>);
     }
     
     return Mfx_Return_Fine;
@@ -915,7 +916,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnRemoveFlakeMessage(WPARAM wParam, LPARAM lPara
 {
     MfxCodeLock(this);
 
-    UI_FLAKEMSG_Infor* tFlakeMsg_Infor = (UI_FLAKEMSG_Infor*)wParam;
+    UI_FlakeMsg_Infor* tFlakeMsg_Infor = (UI_FlakeMsg_Infor*)wParam;
     MfxString* tRecvFuncName = (MfxString*)lParam;
 
     auto t_Iter = myFlakeMessageMap.find(*tFlakeMsg_Infor);

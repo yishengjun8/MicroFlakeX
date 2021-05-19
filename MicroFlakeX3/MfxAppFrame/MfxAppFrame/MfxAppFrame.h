@@ -102,21 +102,21 @@ namespace MicroFlakeX
 	*	pUIRecvFunc 是一个标准的接收消息的函数指针，为了兼容win32
 	*		原本的消息，所以与win32参数保持统一
 	*
-	*	UIMSG_RecvFunc_Infor 这里面存储了 "消息映射" 的具体信息
+	*	UI_UIMsg_RecvFunc_Infor 这里面存储了 "消息映射" 的具体信息
 	*		例如消息的接收函数，消息的接收函数的字符串编码，该接收函数处于消息接收链的第几层
 	*
-	*	UIMSG_RecvFunc_Infor_Vector 消息队列
+	*	UI_UIMsg_RecvFunc_Infor_Vector 消息队列
 	*		这里存储着对应消息的 "MfxFlake_MsgMap_Infor队列" ，内部按照层级顺序排序
 	*
-	*	UI_UIMSG_Map 消息映射
+	*	UI_UIMsg_Map 消息映射
 	*		这里负责存储 "消息 - 消息队列" 的映射，派送函数将按照消息队列的层级顺序，
 	*		依次发送消息给指定的函数。
 	*
 	***************************************************************/
 	typedef MfxReturn(MfxUI::* pUIRecvFunc)(WPARAM, LPARAM);
-	struct UIMSG_RecvFunc_Infor
+	struct UI_UIMsg_RecvFunc_Infor
 	{
-		UIMSG_RecvFunc_Infor(pUIRecvFunc pFunc, MfxFloor floor, MfxString funcName)
+		UI_UIMsg_RecvFunc_Infor(pUIRecvFunc pFunc, MfxFloor floor, MfxString funcName)
 		{
 			myFloor = floor;
 			recvFunc = pFunc;
@@ -126,51 +126,51 @@ namespace MicroFlakeX
 		MfxString myRecvFuncName;
 		pUIRecvFunc recvFunc;
 
-		bool operator< (const UIMSG_RecvFunc_Infor& rhs) const
+		bool operator< (const UI_UIMsg_RecvFunc_Infor& rhs) const
 		{
 			return myFloor < rhs.myFloor;
 		}
 
-		bool operator==(UIMSG_RecvFunc_Infor& rhs)
+		bool operator==(UI_UIMsg_RecvFunc_Infor& rhs)
 		{
 			return myFloor == rhs.myFloor &&
 				recvFunc == rhs.recvFunc &&
 				myRecvFuncName == rhs.myRecvFuncName;
 		}
 	};
-	typedef std::vector<UIMSG_RecvFunc_Infor> UIMSG_RecvFunc_Infor_Vector;
+	typedef std::vector<UI_UIMsg_RecvFunc_Infor> UI_UIMsg_RecvFunc_Infor_Vector;
 
-	typedef std::map<MfxMsg, UIMSG_RecvFunc_Infor_Vector> UI_UIMSG_Map;
-	typedef UI_UIMSG_Map::value_type UI_UIMSG_Map_Elem;
+	typedef std::map<MfxMsg, UI_UIMsg_RecvFunc_Infor_Vector> UI_UIMsg_Map;
+	typedef UI_UIMsg_Map::value_type UI_UIMsg_Map_Elem;
 
 
 	/**************************************************************
 	* 
 	*	UI_MSG_FlakeMessage 
-	*		这个消息的wParam为 UI_FLAKEMSG_Infor
-	*		这个消息的lParam为 UI_FLAKEMSG_Value
+	*		这个消息的wParam为 UI_FlakeMsg_Infor
+	*		这个消息的lParam为 UI_FlakeMsg_Value
 	* 
-	*	UI_FLAKEMSG_Infor 标识了来自哪个MfxFlake控件，以及MfxFlake控件发出了什么消息
+	*	UI_FlakeMsg_Infor 标识了来自哪个MfxFlake控件，以及MfxFlake控件发出了什么消息
 	*		同时MfxUI_FlakeMsg_Key重载了operator< 使其可以进行排序算法
 	* 
-	*	UI_FLAKEMSG_Value 标识了MfxFlake控件发出的具体消息，采用wParam和lParam两个消息，
+	*	UI_FlakeMsg_Value 标识了MfxFlake控件发出的具体消息，采用wParam和lParam两个消息，
 	*		保持跟win32兼容
 	* 
 	* 
-	*	UI_FLAKEMSG_Map 映射了从 UI_FLAKEMSG_Infor 到 pUIRecvFunc 
+	*	UI_FlakeMsg_Map 映射了从 UI_FlakeMsg_Infor 到 pUIRecvFunc 
 	*		在 MfxUI 处理消息的时候，就可以直接调用对应的 pUIRecvFunc
 	* 
 	***************************************************************/
-	struct UI_FLAKEMSG_Infor
+	struct UI_FlakeMsg_Infor
 	{
-		UI_FLAKEMSG_Infor(MfxFlake* set, MfxMsg msg)
+		UI_FlakeMsg_Infor(MfxFlake* set, MfxMsg msg)
 		{
 			Flake = set;
 			message = msg;
 		}
 		MfxFlake* Flake;
 		MfxMsg message;
-		bool operator< (const UI_FLAKEMSG_Infor& rhs) const
+		bool operator< (const UI_FlakeMsg_Infor& rhs) const
 		{
 			if (Flake != rhs.Flake)
 			{
@@ -183,14 +183,14 @@ namespace MicroFlakeX
 		}
 	};
 
-	struct UI_FLAKEMSG_Value
+	struct UI_FlakeMsg_Value
 	{
-		UI_FLAKEMSG_Value(WPARAM wPara, LPARAM lPara)
+		UI_FlakeMsg_Value(WPARAM wPara, LPARAM lPara)
 		{
 			wParam = wPara;
 			lParam = lPara;
 		}
-		bool operator < (const UI_FLAKEMSG_Value& get) const
+		bool operator < (const UI_FlakeMsg_Value& get) const
 		{
 			return true;
 		}
@@ -198,8 +198,8 @@ namespace MicroFlakeX
 		LPARAM lParam;
 	};
 
-	typedef std::map<UI_FLAKEMSG_Infor, UIMSG_RecvFunc_Infor_Vector> UI_FLAKEMSG_Map;
-	typedef UI_FLAKEMSG_Map::value_type UI_FLAKEMSG_Map_Elem;
+	typedef std::map<UI_FlakeMsg_Infor, UI_UIMsg_RecvFunc_Infor_Vector> UI_FlakeMsg_Map;
+	typedef UI_FlakeMsg_Map::value_type UI_FlakeMsg_Map_Elem;
 
 
 	/**************************************************************
@@ -230,21 +230,21 @@ namespace MicroFlakeX
 
 	/**************************************************************
 	*
-	*	MfxUI_Paper_Infor 标识了当前UI的状态
+	*	Paper_Infor 标识了当前UI的状态
 	*		MfxFlake添加到MfxUI的时候，发送一次
 	*		MfxFlake从MfxUI移除的时候，发送一次
 	*
 	***************************************************************/
-	struct MfxUI_Paper_Infor
+	struct Paper_Infor
 	{
-		MfxUI_Paper_Infor(MfxUI* setUI, HWND setWnd, MfxCanvas* setCanvas, DWORD setThreadID)
+		Paper_Infor(MfxUI* setUI, HWND setWnd, MfxCanvas* setCanvas, DWORD setThreadID)
 		{
 			myUI = setUI;
 			myWnd = setWnd;
 			myCanvas = setCanvas;
 			myUIThreadID = setThreadID;
 		}
-		MfxUI_Paper_Infor()
+		Paper_Infor()
 		{
 			myWnd = NULL;
 			myUI = nullptr;
@@ -263,37 +263,37 @@ namespace MicroFlakeX
 
 	/**************************************************************
 	* 
-	*	MfxFlake_MsgFunc 是一个标准的接收消息的函数指针，为了兼容win32
+	*	pFlakeRecvFunc 是一个标准的接收消息的函数指针，为了兼容win32
 	*		原本的消息，所以与win32参数保持统一
 	* 
-	*	MfxFlake_MsgMap_Infor 这里面存储了 "消息映射" 的具体信息
+	*	Flake_FlakeMsg_Infor 这里面存储了 "消息映射" 的具体信息
 	*		例如消息的接收函数，消息的接收函数的字符串编码，该接收函数处于消息接收链的第几层
 	*
-	*	MfxFlake_MsgMap_Vector 消息队列
+	*	Flake_FlakeMsg_Infor_Vector 消息队列
 	*		这里存储着对应消息的 "MfxFlake_MsgMap_Infor队列" ，内部按照层级顺序排序
 	*
-	*	MfxFlake_MsgMap 消息映射
+	*	Flake_FlakeMsg_Map 消息映射
 	*		这里负责存储 "消息 - 消息队列" 的映射，派送函数将按照消息队列的层级顺序，
 	*		依次发送消息给指定的函数。
 	* 
 	***************************************************************/
-	typedef MfxReturn(MfxFlake::* MfxFlake_MsgFunc)(WPARAM, LPARAM);
-	struct MfxFlake_MsgMap_Infor
+	typedef MfxReturn(MfxFlake::* pFlakeRecvFunc)(WPARAM, LPARAM);
+	struct Flake_FlakeMsg_Infor
 	{
-		MfxFlake_MsgMap_Infor(MfxFlake_MsgFunc pFunc, MfxFloor floor, MfxString funcName)
+		Flake_FlakeMsg_Infor(pFlakeRecvFunc pFunc, MfxFloor floor, MfxString funcName)
 		{
 			recvFunc = pFunc;
 			myFloor = floor;
 			myFuncName = funcName;
 		}
-		MfxFlake_MsgFunc recvFunc;
+		pFlakeRecvFunc recvFunc;
 		MfxFloor myFloor;
 		MfxString myFuncName;
 	};
-	typedef std::vector< MfxFlake_MsgMap_Infor> MfxFlake_MsgMap_Vector;
+	typedef std::vector< Flake_FlakeMsg_Infor> Flake_FlakeMsg_Infor_Vector;
 
-	typedef std::map<MfxMsg, MfxFlake_MsgMap_Vector> MfxFlake_MsgMap;
-	typedef MfxFlake_MsgMap::value_type MfxFlake_MsgMap_elem;
+	typedef std::map<MfxMsg, Flake_FlakeMsg_Infor_Vector> Flake_FlakeMsg_Map;
+	typedef Flake_FlakeMsg_Map::value_type Flake_FlakeMsg_Map_Elem;
 }
 
 namespace MicroFlakeX
@@ -498,10 +498,10 @@ namespace MicroFlakeX
 		MfxFloor myUnderFloor;
 		MfxFloor myCoverFloor;
 	private:
-		UI_UIMSG_Map myMessageMap;
+		UI_UIMsg_Map myMessageMap;
 	public:
 		MfxReturn RemoveUIMessage(MfxMsg message, MfxString recvFuncName);
-		MfxReturn InsertUIMessage(MfxMsg message, UIMSG_RecvFunc_Infor msgValue);
+		MfxReturn InsertUIMessage(MfxMsg message, UI_UIMsg_RecvFunc_Infor msgValue);
 		
 
 		/********************************************************************************
@@ -528,14 +528,14 @@ namespace MicroFlakeX
 		MfxFlake_Set myFlakeSet;
 		MfxFlake_Deque myFlakeDeque;
 
-		UI_FLAKEMSG_Map myFlakeMessageMap;
+		UI_FlakeMsg_Map myFlakeMessageMap;
 
 	public:
 		MfxReturn RemoveFlake(MfxFlake* set);
 		MfxReturn InsertFlake(MfxFlake* set);
 
-		MfxReturn RemoveFlakeMessage(UI_FLAKEMSG_Infor message, MfxString recvFuncName);
-		MfxReturn InsertFlakeMessage(UI_FLAKEMSG_Infor message, UIMSG_RecvFunc_Infor msgValue);
+		MfxReturn RemoveFlakeMessage(UI_FlakeMsg_Infor message, MfxString recvFuncName);
+		MfxReturn InsertFlakeMessage(UI_FlakeMsg_Infor message, UI_UIMsg_RecvFunc_Infor msgValue);
 
 
 		/********************************************************************************
@@ -669,13 +669,13 @@ namespace MicroFlakeX
 /********************************************************************************
 * 为UI添加一个来自控件的消息映射
 *********************************************************************************/
-#define UI_ADDRECV_FLAKEMSG(Flake, Msg, myClass, recvFunc, Floor) InsertFlakeMessage(UI_FLAKEMSG_Infor(Flake, Msg), UIMSG_RecvFunc_Infor((pUIRecvFunc)&myClass::recvFunc, Floor, MfxText(#recvFunc)));
+#define UI_ADDRECV_FLAKEMSG(Flake, Msg, myClass, recvFunc, Floor) InsertFlakeMessage(UI_FlakeMsg_Infor(Flake, Msg), UI_UIMsg_RecvFunc_Infor((pUIRecvFunc)&myClass::recvFunc, Floor, MfxText(#recvFunc)));
 
 
 /********************************************************************************
 * 为UI添加一个来自窗口的消息映射
 *********************************************************************************/
-#define UI_ADDRECV_UIMSG(Msg, myClass, recvFunc, Floor) InsertUIMessage(Msg, UIMSG_RecvFunc_Infor((pUIRecvFunc)&myClass::recvFunc, Floor, MfxText(#recvFunc)));
+#define UI_ADDRECV_UIMSG(Msg, myClass, recvFunc, Floor) InsertUIMessage(Msg, UI_UIMsg_RecvFunc_Infor((pUIRecvFunc)&myClass::recvFunc, Floor, MfxText(#recvFunc)));
 
 
 /********************************************************************************
@@ -731,10 +731,10 @@ namespace MicroFlakeX
 	private:
 		MfxFloor myUnderFloor;
 		MfxFloor myCoverFloor;
-		MfxFlake_MsgMap myMessageMap;
+		Flake_FlakeMsg_Map myMessageMap;
 	public:
 		MfxReturn RemoveUIMessage(MfxMsg message, MfxString name);
-		MfxReturn InsertUIMessage(MfxMsg message, MfxFlake_MsgMap_Infor msgValue);
+		MfxReturn InsertUIMessage(MfxMsg message, Flake_FlakeMsg_Infor msgValue);
 
 
 		/********************************************************************************
@@ -897,8 +897,8 @@ namespace MicroFlakeX
 * 为Flake添加一个来自Flake的消息映射
 *********************************************************************************/
 #define FLAKE_ADDRECV_FLAKEMSG(Msg, myClass, recvFunc, Floor)\
-	InsertUIMessage(Msg, MfxFlake_MsgMap_Infor(\
-		(MfxFlake_MsgFunc)&myClass::recvFunc, Floor, MfxText(#myClass#recvFunc))\
+	InsertUIMessage(Msg, Flake_FlakeMsg_Infor(\
+		(pFlakeRecvFunc)&myClass::recvFunc, Floor, MfxText(#myClass#recvFunc))\
 		);
 
 
@@ -908,8 +908,8 @@ namespace MicroFlakeX
 #define FLAKE_POSTMSG_MAIN(Msg, wPara, lPara)\
 	myUI ? \
 		PostMessage(myWnd, UI_MSG_FlakeMessage, \
-			(WPARAM)(new UI_FLAKEMSG_Infor(this, Msg)), \
-			(LPARAM)(new UI_FLAKEMSG_Value(wPara, lPara))) : Mfx_Return_Fail;
+			(WPARAM)(new UI_FlakeMsg_Infor(this, Msg)), \
+			(LPARAM)(new UI_FlakeMsg_Value(wPara, lPara))) : Mfx_Return_Fail;
 
 
 /********************************************************************************
@@ -918,8 +918,8 @@ namespace MicroFlakeX
 #define FLAKE_SENDMSG_MAIN(Msg, wPara, lPara)\
 	myUI ? \
 		SendMessage(myWnd, UI_MSG_FlakeMessage, \
-			(WPARAM)(new UI_FLAKEMSG_Infor(this, Msg)), \
-			(LPARAM)(new UI_FLAKEMSG_Value(wPara, lPara))) : Mfx_Return_Fail;
+			(WPARAM)(new UI_FlakeMsg_Infor(this, Msg)), \
+			(LPARAM)(new UI_FlakeMsg_Value(wPara, lPara))) : Mfx_Return_Fail;
 
 
 /********************************************************************************
@@ -928,8 +928,8 @@ namespace MicroFlakeX
 #define FLAKE_POSTMSG_UITHREAD(Msg, wPara, lPara)\
 	myUI ? \
 		PostThreadMessage(myUIThreadID, UI_MSG_FlakeMessage, \
-			(WPARAM)(new UI_FLAKEMSG_Infor(this, Msg)), \
-			(LPARAM)(new UI_FLAKEMSG_Value(wPara, lPara))) : Mfx_Return_Fail;
+			(WPARAM)(new UI_FlakeMsg_Infor(this, Msg)), \
+			(LPARAM)(new UI_FlakeMsg_Value(wPara, lPara))) : Mfx_Return_Fail;
 
 
 }

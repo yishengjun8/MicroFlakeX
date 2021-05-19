@@ -240,7 +240,7 @@ MfxReturn MicroFlakeX::MfxFlake::RemoveUIMessage(MfxMsg message, MfxString name)
 	return Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxFlake::InsertUIMessage(MfxMsg message, MfxFlake_MsgMap_Infor msgValue)
+MfxReturn MicroFlakeX::MfxFlake::InsertUIMessage(MfxMsg message, Flake_FlakeMsg_Infor msgValue)
 {
 	MfxCodeLock(this);
 
@@ -248,13 +248,13 @@ MfxReturn MicroFlakeX::MfxFlake::InsertUIMessage(MfxMsg message, MfxFlake_MsgMap
 	auto t_Iter = myMessageMap.find(message);
 	if (t_Iter == myMessageMap.end())
 	{
-		t_Iter = myMessageMap.insert(MfxFlake_MsgMap_elem(message, MfxFlake_MsgMap_Vector())).first;
+		t_Iter = myMessageMap.insert(Flake_FlakeMsg_Map_Elem(message, Flake_FlakeMsg_Infor_Vector())).first;
 		goto Begin;
 	}
 	else
 	{
 		t_Iter->second.push_back(msgValue);
-		std::sort(t_Iter->second.begin(), t_Iter->second.end(), FloorCompare<MfxFlake_MsgMap_Infor>);
+		std::sort(t_Iter->second.begin(), t_Iter->second.end(), FloorCompare<Flake_FlakeMsg_Infor>);
 	}
 
 	return Mfx_Return_Fine;
@@ -562,7 +562,7 @@ MfxReturn MicroFlakeX::MfxFlake::SetMaskImage(MfxImage* set)
 MfxReturn MicroFlakeX::MfxFlake::__OnSetPaper(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
-	MfxUI_Paper_Infor* t_PaperValue = (MfxUI_Paper_Infor*)lParam;
+	Paper_Infor* t_PaperValue = (Paper_Infor*)lParam;
 
 	myUI = t_PaperValue->myUI;
 	myWnd = t_PaperValue->myWnd;
