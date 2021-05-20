@@ -50,11 +50,13 @@ int main()
 
     //PTP_TIMER myTimer;
     //MfxBeginNewTimer(myTimer, temp, MfxText("TestTimer"), 434, 2000);
+
+
     MfxSignal<int, double, char> myOneSignal;
     MfxSignal<> myTwoSignal;
 
-    myTwoSignal.PushBackReceiver(temp, MfxText("SayGoodBy"));
     myOneSignal.PushBackReceiver(temp, MfxText("SayTest"));
+    myTwoSignal.PushBackReceiver(temp, MfxText("SayGoodBy"));
 
     myOneSignal.SendSignal(878, 85.5, 'A');
     myTwoSignal.SendSignal();
