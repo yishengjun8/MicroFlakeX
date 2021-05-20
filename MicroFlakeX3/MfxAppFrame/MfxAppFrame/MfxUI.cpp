@@ -13,7 +13,8 @@ MfxAutoFunc_AutoEnumBig(MfxUI, \
     4, SendMessageToFlakes, \
     \
     2, RemoveUIMessage, \
-    2, InsertUIMessage, \
+    2, PushBackUIMessage, \
+    2, PushFrontUIMessage, \
     \
     0, OpenPercentRect, \
     0, ClosePercentRect, \
@@ -23,7 +24,8 @@ MfxAutoFunc_AutoEnumBig(MfxUI, \
     1, InsertFlake, \
     \
     2, RemoveFlakeMessage, \
-    2, InsertFlakeMessage, \
+    2, PushBackFlakeMessage, \
+    2, PushFrontFlakeMessage, \
     \
     1, RemoveTimer, \
     3, InsertTimer, \
@@ -49,6 +51,7 @@ MfxAutoFunc_AutoEnumBig(MfxUI, \
     1, SetRect, \
     1, SetSize, \
     1, SetPoint, \
+    \
     1, SetBackColor, \
     1, SetMaskColor, \
     1, SetBackImage, \
@@ -68,48 +71,45 @@ void MicroFlakeX::MfxUI::MfxRegMessages()
     *
     *
     *********************************************************************************/
-    UI_ADD_FLOOR;
+    UI_ADDRECV_UIMSG(WM_CREATE, MfxUI, __OnCreate);
+    UI_ADDRECV_UIMSG(WM_DESTROY, MfxUI, __OnDestroy);
 
-    UI_ADDRECV_UIMSG(WM_CREATE, MfxUI, __OnCreate, myCoverFloor);
-    UI_ADDRECV_UIMSG(WM_DESTROY, MfxUI, __OnDestroy, myCoverFloor);
+    UI_ADDRECV_UIMSG(WM_SIZE, MfxUI, __OnSize);
+    UI_ADDRECV_UIMSG(WM_MOVE, MfxUI, __OnMove);
 
-    UI_ADDRECV_UIMSG(WM_SIZE, MfxUI, __OnSize, myCoverFloor);
-    UI_ADDRECV_UIMSG(WM_MOVE, MfxUI, __OnMove, myCoverFloor);
+    UI_ADDRECV_UIMSG(WM_TIMER, MfxUI, __OnTimer);
 
-    UI_ADDRECV_UIMSG(WM_TIMER, MfxUI, __OnTimer, myCoverFloor);
+    UI_ADDRECV_UIMSG(WM_PAINT, MfxUI, __OnPaint);
+    UI_ADDRECV_UIMSG(WM_ERASEBKGND, MfxUI, __OnEraseBackGrand);
 
-    UI_ADDRECV_UIMSG(WM_PAINT, MfxUI, __OnPaint, myCoverFloor);
-    UI_ADDRECV_UIMSG(WM_ERASEBKGND, MfxUI, __OnEraseBackGrand, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_PaintBack, MfxUI, __OnPaintBackDC);
+    UI_ADDRECV_UIMSG(UI_MSG_PaintMask, MfxUI, __OnPaintMaskDC);
 
-    UI_ADDRECV_UIMSG(UI_MSG_PaintBack, MfxUI, __OnPaintBackDC, myCoverFloor);
-    UI_ADDRECV_UIMSG(UI_MSG_PaintMask, MfxUI, __OnPaintMaskDC, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_FlakeInsert, MfxUI, __OnFlakeInsert);
+    UI_ADDRECV_UIMSG(UI_MSG_FlakeRemove, MfxUI, __OnFlakeRemove);
+    UI_ADDRECV_UIMSG(UI_MSG_FlakeFloorChange, MfxUI, __OnFlakeFloorChange);
 
-    UI_ADDRECV_UIMSG(UI_MSG_FlakeInsert, MfxUI, __OnFlakeInsert, myCoverFloor);
-    UI_ADDRECV_UIMSG(UI_MSG_FlakeRemove, MfxUI, __OnFlakeRemove, myCoverFloor);
-    UI_ADDRECV_UIMSG(UI_MSG_FlakeFloorChange, MfxUI, __OnFlakeFloorChange, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_AddTimer, MfxUI, __OnAddTimer);
+    UI_ADDRECV_UIMSG(UI_MSG_RemoveTimer, MfxUI, __OnRemoveTimer);
 
-    UI_ADDRECV_UIMSG(UI_MSG_AddTimer, MfxUI, __OnAddTimer, myCoverFloor);
-    UI_ADDRECV_UIMSG(UI_MSG_RemoveTimer, MfxUI, __OnRemoveTimer, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_FlakeMessage, MfxUI, __OnFlakeMessage);
 
-    UI_ADDRECV_UIMSG(UI_MSG_FlakeMessage, MfxUI, __OnFlakeMessage, myCoverFloor);
+   
+    UI_ADDRECV_UIMSG(UI_MSG_RemoveFlakeMessage, MfxUI, __OnRemoveFlakeMessage);
+    UI_ADDRECV_UIMSG(UI_MSG_PushBackFlakeMessage, MfxUI, __OnPushBackFlakeMessage);
+    UI_ADDRECV_UIMSG(UI_MSG_PushFrontFlakeMessage, MfxUI, __OnPushFrontFlakeMessage);
 
-    UI_ADDRECV_UIMSG(UI_MSG_InsertFlakeMessage, MfxUI, __OnInsertFlakeMessage, myCoverFloor);
-    UI_ADDRECV_UIMSG(UI_MSG_RemoveFlakeMessage, MfxUI, __OnRemoveFlakeMessage, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_OpenPercentRect, MfxUI, __OnOpenPercentRect);
+    UI_ADDRECV_UIMSG(UI_MSG_ClosePercentRect, MfxUI, __OnClosePercentRect);
 
-    UI_ADDRECV_UIMSG(UI_MSG_OpenPercentRect, MfxUI, __OnOpenPercentRect, myCoverFloor);
-    UI_ADDRECV_UIMSG(UI_MSG_ClosePercentRect, MfxUI, __OnClosePercentRect, myCoverFloor);
-
-    UI_ADDRECV_UIMSG(UI_MSG_SetBackColor, MfxUI, __OnSetBackColor, myCoverFloor);
-    UI_ADDRECV_UIMSG(UI_MSG_SetMaskColor, MfxUI, __OnSetMaskColor, myCoverFloor);
-    UI_ADDRECV_UIMSG(UI_MSG_SetBackImage, MfxUI, __OnSetBackImage, myCoverFloor);
-    UI_ADDRECV_UIMSG(UI_MSG_SetMaskImage, MfxUI, __OnSetMaskImage, myCoverFloor);
+    UI_ADDRECV_UIMSG(UI_MSG_SetBackColor, MfxUI, __OnSetBackColor);
+    UI_ADDRECV_UIMSG(UI_MSG_SetMaskColor, MfxUI, __OnSetMaskColor);
+    UI_ADDRECV_UIMSG(UI_MSG_SetBackImage, MfxUI, __OnSetBackImage);
+    UI_ADDRECV_UIMSG(UI_MSG_SetMaskImage, MfxUI, __OnSetMaskImage);
 }
 
 void MicroFlakeX::MfxUI::MfxUIInitData()
 {
-    myUnderFloor = 0;
-    myCoverFloor = 0;
-
     myWnd = nullptr;
     myUIThreadID = 0;
 
@@ -218,7 +218,7 @@ MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxMsg message, WPARAM wParam, LPARAM 
         {
             for (auto i : (t_Iter->second))
             {
-                t_Ret = (this->*i.recvFunc)(wParam, lParam);
+                t_Ret = (this->*i->recvFunc)(wParam, lParam);
             }
             return t_Ret;
         }
@@ -272,8 +272,9 @@ MfxReturn MicroFlakeX::MfxUI::RemoveUIMessage(MfxMsg message, MfxString recvFunc
     {
         for (auto i = t_Iter->second.begin(); i != t_Iter->second.end(); i++)
         {
-            if (i->myRecvFuncName == recvFuncName)
+            if ((*i)->myRecvFuncName == recvFuncName)
             {
+                delete* i;
                 t_Iter->second.erase(i);
                 return Mfx_Return_Fine;
             }
@@ -283,21 +284,39 @@ MfxReturn MicroFlakeX::MfxUI::RemoveUIMessage(MfxMsg message, MfxString recvFunc
     return Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxUI::InsertUIMessage(MfxMsg message, UI_UIMsg_RecvFunc_Infor msgValue)
+MfxReturn MicroFlakeX::MfxUI::PushBackUIMessage(MfxMsg message, UI_UIMsg_RecvFunc_Infor* msgValue)
 {
     MfxCodeLock(this);
 
-    Begin:
+Begin:
     auto t_Iter = myMessageMap.find(message);
     if (t_Iter == myMessageMap.end())
     {
-        t_Iter = myMessageMap.insert(UI_UIMsg_Map_Elem(message, UI_UIMsg_RecvFunc_Infor_Vector())).first;
+        t_Iter = myMessageMap.insert(UI_UIMsg_Map_Elem(message, UI_UIMsg_RecvFunc_Infor_Deque())).first;
         goto Begin;
     }
     else
     {
         t_Iter->second.push_back(msgValue);
-        std::sort(t_Iter->second.begin(), t_Iter->second.end(), FloorCompare<UI_UIMsg_RecvFunc_Infor>);
+    }
+
+    return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxUI::PushFrontUIMessage(MfxMsg message, UI_UIMsg_RecvFunc_Infor* msgValue)
+{
+    MfxCodeLock(this);
+
+Begin:
+    auto t_Iter = myMessageMap.find(message);
+    if (t_Iter == myMessageMap.end())
+    {
+        t_Iter = myMessageMap.insert(UI_UIMsg_Map_Elem(message, UI_UIMsg_RecvFunc_Infor_Deque())).first;
+        goto Begin;
+    }
+    else
+    {
+        t_Iter->second.push_front(msgValue);
     }
 
     return Mfx_Return_Fine;
@@ -354,10 +373,16 @@ MfxReturn MicroFlakeX::MfxUI::RemoveFlakeMessage(UI_FlakeMsg_Infor message, MfxS
     return ProcMessage(UI_MSG_RemoveFlakeMessage, (WPARAM)&message, (LPARAM)&recvFuncName);
 }
 
-MfxReturn MicroFlakeX::MfxUI::InsertFlakeMessage(UI_FlakeMsg_Infor message, UI_UIMsg_RecvFunc_Infor msgValue)
+MfxReturn MicroFlakeX::MfxUI::PushBackFlakeMessage(UI_FlakeMsg_Infor message, UI_UIMsg_RecvFunc_Infor* msgValue)
 {
-    return ProcMessage(UI_MSG_InsertFlakeMessage, (WPARAM)&message, (LPARAM)&msgValue);
+    return ProcMessage(UI_MSG_PushBackFlakeMessage, (WPARAM)&message, (LPARAM)msgValue);
 }
+
+MfxReturn MicroFlakeX::MfxUI::PushFrontFlakeMessage(UI_FlakeMsg_Infor message, UI_UIMsg_RecvFunc_Infor* msgValue)
+{
+    return ProcMessage(UI_MSG_PushFrontFlakeMessage, (WPARAM)&message, (LPARAM)msgValue);
+}
+
 
 
 /********************************************************************************
@@ -878,7 +903,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeMessage(WPARAM wParam, LPARAM lParam)
         {
             for (auto i : (t_Iter->second))
             {
-                t_Ret = (this->*i.recvFunc)(wParam, lParam);
+                t_Ret = (this->*i->recvFunc)(wParam, lParam);
             }
         }
     }
@@ -886,29 +911,6 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeMessage(WPARAM wParam, LPARAM lParam)
     delete tFlakeMsg_Infor;
     delete tFlakeMsg_Value;
 
-    return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxUI::__OnInsertFlakeMessage(WPARAM wParam, LPARAM lParam)
-{
-    MfxCodeLock(this);
-
-    UI_FlakeMsg_Infor* tFlakeMsg_Infor = (UI_FlakeMsg_Infor*)wParam;
-    UI_UIMsg_RecvFunc_Infor* tRecvFunc_Infor = (UI_UIMsg_RecvFunc_Infor*)lParam;
-
-    Begin:
-    auto t_Iter = myFlakeMessageMap.find(*tFlakeMsg_Infor);
-    if (t_Iter == myFlakeMessageMap.end())
-    {
-        t_Iter = myFlakeMessageMap.insert(UI_FlakeMsg_Map_Elem(*tFlakeMsg_Infor, UI_UIMsg_RecvFunc_Infor_Vector())).first;
-        goto Begin;
-    }
-    else
-    {
-        t_Iter->second.push_back(*tRecvFunc_Infor);
-        std::sort(t_Iter->second.begin(), t_Iter->second.end(), FloorCompare<UI_UIMsg_RecvFunc_Infor>);
-    }
-    
     return Mfx_Return_Fine;
 }
 
@@ -924,8 +926,9 @@ MfxReturn MicroFlakeX::MfxUI::__OnRemoveFlakeMessage(WPARAM wParam, LPARAM lPara
     {
         for (auto i = t_Iter->second.begin(); i != t_Iter->second.end(); i++)
         {
-            if (i->myRecvFuncName == *tRecvFuncName)
+            if ((*i)->myRecvFuncName == *tRecvFuncName)
             {
+                delete* i;
                 t_Iter->second.erase(i);
                 return Mfx_Return_Fine;
             }
@@ -935,6 +938,49 @@ MfxReturn MicroFlakeX::MfxUI::__OnRemoveFlakeMessage(WPARAM wParam, LPARAM lPara
     return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxUI::__OnPushBackFlakeMessage(WPARAM wParam, LPARAM lParam)
+{
+    MfxCodeLock(this);
+
+    UI_FlakeMsg_Infor* tFlakeMsg_Infor = (UI_FlakeMsg_Infor*)wParam;
+    UI_UIMsg_RecvFunc_Infor* tRecvFunc_Infor = (UI_UIMsg_RecvFunc_Infor*)lParam;
+
+Begin:
+    auto t_Iter = myFlakeMessageMap.find(*tFlakeMsg_Infor);
+    if (t_Iter == myFlakeMessageMap.end())
+    {
+        t_Iter = myFlakeMessageMap.insert(UI_FlakeMsg_Map_Elem(*tFlakeMsg_Infor, UI_UIMsg_RecvFunc_Infor_Deque())).first;
+        goto Begin;
+    }
+    else
+    {
+        t_Iter->second.push_back(tRecvFunc_Infor);
+    }
+
+    return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxUI::__OnPushFrontFlakeMessage(WPARAM wParam, LPARAM lParam)
+{
+    MfxCodeLock(this);
+
+    UI_FlakeMsg_Infor* tFlakeMsg_Infor = (UI_FlakeMsg_Infor*)wParam;
+    UI_UIMsg_RecvFunc_Infor* tRecvFunc_Infor = (UI_UIMsg_RecvFunc_Infor*)lParam;
+
+Begin:
+    auto t_Iter = myFlakeMessageMap.find(*tFlakeMsg_Infor);
+    if (t_Iter == myFlakeMessageMap.end())
+    {
+        t_Iter = myFlakeMessageMap.insert(UI_FlakeMsg_Map_Elem(*tFlakeMsg_Infor, UI_UIMsg_RecvFunc_Infor_Deque())).first;
+        goto Begin;
+    }
+    else
+    {
+        t_Iter->second.push_front(tRecvFunc_Infor);
+    }
+
+    return Mfx_Return_Fine;
+}
 
 /********************************************************************************
 *

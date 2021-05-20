@@ -80,6 +80,7 @@ namespace MicroFlakeX
 #define Mfx_Failed(MR) (((MfxReturn)(MR)) < 0)
 #define Mfx_Seccess(MR) (((MfxReturn)(MR)) >= 0)
 
+
 	/***************************************************************
 	*	MfxString 字符串
 	* 
@@ -88,6 +89,7 @@ namespace MicroFlakeX
 	****************************************************************/
 #define MfxString __MfxString
 
+
 	/***************************************************************
 	*	字符集自动展开宏
 	*
@@ -95,6 +97,7 @@ namespace MicroFlakeX
 	*
 	****************************************************************/
 #define MfxText(str) __MfxText(str)
+
 
 	/***************************************************************
 	*	cout输出自动展开宏
@@ -116,6 +119,28 @@ namespace MicroFlakeX
 
 	typedef std::string MfxStringA;
 	typedef std::wstring MfxStringW;
+
+
+
+	typedef long long MfxFloor;
+
+	template<class lhsT, class rhsT = lhsT>
+	bool pFloorCompare(lhsT* lhs, rhsT* rhs)
+	{
+		return lhs->myFloor < rhs->myFloor;
+	}
+
+	template<class lhsT, class rhsT = lhsT>
+	bool FloorCompare(lhsT& lhs, rhsT& rhs)
+	{
+		return lhs.myFloor < rhs.myFloor;
+	}
+
+#define MFX_FloorCompare_Enable\
+	template<class lhsT, class rhsT>\
+	friend bool pFloorCompare(lhsT* lhs, rhsT* rhs);\
+	template<class lhsT, class rhsT>\
+	friend bool FloorCompare(lhsT& lhs, rhsT& rhs);
 }
 
 namespace MicroFlakeX
@@ -302,36 +327,20 @@ namespace MicroFlakeX
 		~MfxThreadServer();
 
 	public:
-		/***************************************************************
-		* 
-		* 异步线程请勿传入局部变量指针。
-		* 参数一：回调对象指针
-		* 参数二：回调对象方法名字
-		* 参数三、四：传递给回调方法的wparam、lparam。
-		* 
-		****************************************************************/
 		static MfxReturn BeginNewThread(MfxBase* object, MfxString recvFunc, WPARAM wParam = NULL, LPARAM lParam = NULL);
 
 	public:
-		/***************************************************************
-		* 
-		* 参数一：返回一个计时器ID
-		* 参数二：回调对象指针
-		* 参数三：回调对象方法名字
-		* 参数四：传递给回调方法的lparam，回调方法的wparam是当前调用它的计时器id
-		* 参数五：计时器每个多长时间调用一次，单位为ms
-		* 参数六：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
-		* 参数七：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
-		* 
-		****************************************************************/
 		static MfxReturn BeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, LPARAM lParam = NULL, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
 		static MfxReturn CloseTimer(PTP_TIMER& pTimer);
+	
 	private:
 		static VOID CALLBACK MfxWorkCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val);
 		static VOID CALLBACK MfxTimeCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
 	};
 
 #define MfxCloseTimer MicroFlakeX::MfxThreadServer::CloseTimer
+
+
 /***************************************************************
 *
 * 参数一：返回一个计时器ID
@@ -570,6 +579,7 @@ namespace MicroFlakeX
 		return A8();
 	};
 
+
 	/***************************************************************
 	*	MicroFlakeX辅助模板 - MfxDataFlag
 	*
@@ -704,6 +714,42 @@ namespace MicroFlakeX
 		bool operator|| (MfxDataFlag<DataType>&& rhs) { return myData || rhs.GetData(); };
 	};
 
+
+
+	struct MfxReceiver_Info
+	{
+		MfxReceiver_Info(MfxBase* recvObject, MfxString recvFunc)
+		{
+			this->recvFunc = recvFunc;
+			this->recvObject = recvObject;
+		}
+		MfxString recvFunc;
+		MfxBase* recvObject;
+	};
+
+	template<class ...>
+	class MfxObserver;
+
+	template<>
+	class MfxObserver<>
+	{
+	public:
+		MfxObserver()
+		{
+			
+		}
+		void PushBackReceiver(MfxBase* recvObject, MfxString recvFunc)
+		{
+			myReceiver.push_back(new MfxReceiver_Info(recvObject, recvFunc));
+		}
+
+		void PushFrontReceiver(MfxBase* recvObject, MfxString recvFunc)
+		{
+			myReceiver.push_front(new MfxReceiver_Info(recvObject, recvFunc));
+		}
+	private:
+		std::deque<MfxReceiver_Info*> myReceiver;
+	};
 }
 
 

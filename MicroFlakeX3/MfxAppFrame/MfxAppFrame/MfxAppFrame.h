@@ -54,26 +54,9 @@ namespace MicroFlakeX
 	*		请使用MFX_FloorCompare_Enable宏
 	**************************************************************/
 	typedef unsigned int MfxMsg;
-	typedef long long MfxFloor;
+
 	typedef MfxDataFlag<bool> MfxDataFlag_bool;
 
-	template<class lhsT, class rhsT = lhsT>
-	bool pFloorCompare(lhsT* lhs, rhsT* rhs)
-	{
-		return lhs->myFloor < rhs->myFloor;
-	}
-
-	template<class lhsT, class rhsT = lhsT>
-	bool FloorCompare(lhsT& lhs, rhsT& rhs)
-	{
-		return lhs.myFloor < rhs.myFloor;
-	}
-
-#define MFX_FloorCompare_Enable\
-	template<class lhsT, class rhsT>\
-	friend bool pFloorCompare(lhsT* lhs, rhsT* rhs);\
-	template<class lhsT, class rhsT>\
-	friend bool FloorCompare(lhsT& lhs, rhsT& rhs);
 
 	/**************************************************************
 	*
@@ -105,7 +88,7 @@ namespace MicroFlakeX
 	*	UI_UIMsg_RecvFunc_Infor 这里面存储了 "消息映射" 的具体信息
 	*		例如消息的接收函数，消息的接收函数的字符串编码，该接收函数处于消息接收链的第几层
 	*
-	*	UI_UIMsg_RecvFunc_Infor_Vector 消息队列
+	*	UI_UIMsg_RecvFunc_Infor_Deque 消息队列
 	*		这里存储着对应消息的 "MfxFlake_MsgMap_Infor队列" ，内部按照层级顺序排序
 	*
 	*	UI_UIMsg_Map 消息映射
@@ -116,31 +99,17 @@ namespace MicroFlakeX
 	typedef MfxReturn(MfxUI::* pUIRecvFunc)(WPARAM, LPARAM);
 	struct UI_UIMsg_RecvFunc_Infor
 	{
-		UI_UIMsg_RecvFunc_Infor(pUIRecvFunc pFunc, MfxFloor floor, MfxString funcName)
+		UI_UIMsg_RecvFunc_Infor(pUIRecvFunc pFunc, MfxString funcName)
 		{
-			myFloor = floor;
 			recvFunc = pFunc;
 			myRecvFuncName = funcName;
 		}
-		MfxFloor myFloor;
 		MfxString myRecvFuncName;
 		pUIRecvFunc recvFunc;
-
-		bool operator< (const UI_UIMsg_RecvFunc_Infor& rhs) const
-		{
-			return myFloor < rhs.myFloor;
-		}
-
-		bool operator==(UI_UIMsg_RecvFunc_Infor& rhs)
-		{
-			return myFloor == rhs.myFloor &&
-				recvFunc == rhs.recvFunc &&
-				myRecvFuncName == rhs.myRecvFuncName;
-		}
 	};
-	typedef std::vector<UI_UIMsg_RecvFunc_Infor> UI_UIMsg_RecvFunc_Infor_Vector;
+	typedef std::deque<UI_UIMsg_RecvFunc_Infor*> UI_UIMsg_RecvFunc_Infor_Deque;
 
-	typedef std::map<MfxMsg, UI_UIMsg_RecvFunc_Infor_Vector> UI_UIMsg_Map;
+	typedef std::map<MfxMsg, UI_UIMsg_RecvFunc_Infor_Deque> UI_UIMsg_Map;
 	typedef UI_UIMsg_Map::value_type UI_UIMsg_Map_Elem;
 
 
@@ -198,7 +167,7 @@ namespace MicroFlakeX
 		LPARAM lParam;
 	};
 
-	typedef std::map<UI_FlakeMsg_Infor, UI_UIMsg_RecvFunc_Infor_Vector> UI_FlakeMsg_Map;
+	typedef std::map<UI_FlakeMsg_Infor, UI_UIMsg_RecvFunc_Infor_Deque> UI_FlakeMsg_Map;
 	typedef UI_FlakeMsg_Map::value_type UI_FlakeMsg_Map_Elem;
 
 
@@ -280,17 +249,15 @@ namespace MicroFlakeX
 	typedef MfxReturn(MfxFlake::* pFlakeRecvFunc)(WPARAM, LPARAM);
 	struct Flake_FlakeMsg_Infor
 	{
-		Flake_FlakeMsg_Infor(pFlakeRecvFunc pFunc, MfxFloor floor, MfxString funcName)
+		Flake_FlakeMsg_Infor(pFlakeRecvFunc pFunc, MfxString funcName)
 		{
 			recvFunc = pFunc;
-			myFloor = floor;
 			myFuncName = funcName;
 		}
 		pFlakeRecvFunc recvFunc;
-		MfxFloor myFloor;
 		MfxString myFuncName;
 	};
-	typedef std::vector< Flake_FlakeMsg_Infor> Flake_FlakeMsg_Infor_Vector;
+	typedef std::deque<Flake_FlakeMsg_Infor*> Flake_FlakeMsg_Infor_Vector;
 
 	typedef std::map<MfxMsg, Flake_FlakeMsg_Infor_Vector> Flake_FlakeMsg_Map;
 	typedef Flake_FlakeMsg_Map::value_type Flake_FlakeMsg_Map_Elem;
@@ -328,8 +295,9 @@ namespace MicroFlakeX
 		UI_MSG_(UI_MSG_FlakeInsert)
 		UI_MSG_(UI_MSG_FlakeRemove)
 
-		UI_MSG_(UI_MSG_InsertFlakeMessage)
 		UI_MSG_(UI_MSG_RemoveFlakeMessage)
+		UI_MSG_(UI_MSG_PushBackFlakeMessage)
+		UI_MSG_(UI_MSG_PushFrontFlakeMessage)
 
 		UI_MSG_(UI_MSG_AddTimer)
 		UI_MSG_(UI_MSG_RemoveTimer)
@@ -494,14 +462,12 @@ namespace MicroFlakeX
 		*
 		*
 		*********************************************************************************/
-	protected:
-		MfxFloor myUnderFloor;
-		MfxFloor myCoverFloor;
 	private:
 		UI_UIMsg_Map myMessageMap;
 	public:
 		MfxReturn RemoveUIMessage(MfxMsg message, MfxString recvFuncName);
-		MfxReturn InsertUIMessage(MfxMsg message, UI_UIMsg_RecvFunc_Infor msgValue);
+		MfxReturn PushBackUIMessage(MfxMsg message, UI_UIMsg_RecvFunc_Infor* msgValue);
+		MfxReturn PushFrontUIMessage(MfxMsg message, UI_UIMsg_RecvFunc_Infor* msgValue);
 		
 
 		/********************************************************************************
@@ -535,7 +501,8 @@ namespace MicroFlakeX
 		MfxReturn InsertFlake(MfxFlake* set);
 
 		MfxReturn RemoveFlakeMessage(UI_FlakeMsg_Infor message, MfxString recvFuncName);
-		MfxReturn InsertFlakeMessage(UI_FlakeMsg_Infor message, UI_UIMsg_RecvFunc_Infor msgValue);
+		MfxReturn PushBackFlakeMessage(UI_FlakeMsg_Infor message, UI_UIMsg_RecvFunc_Infor* msgValue);
+		MfxReturn PushFrontFlakeMessage(UI_FlakeMsg_Infor message, UI_UIMsg_RecvFunc_Infor* msgValue);
 
 
 		/********************************************************************************
@@ -654,8 +621,10 @@ namespace MicroFlakeX
 		MfxReturn __OnRemoveTimer(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnFlakeMessage(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnInsertFlakeMessage(WPARAM wParam, LPARAM lParam);
+
 		MfxReturn __OnRemoveFlakeMessage(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnPushBackFlakeMessage(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnPushFrontFlakeMessage(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnOpenPercentRect(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnClosePercentRect(WPARAM wParam, LPARAM lParam);
@@ -669,25 +638,19 @@ namespace MicroFlakeX
 /********************************************************************************
 * 为UI添加一个来自控件的消息映射
 *********************************************************************************/
-#define UI_ADDRECV_FLAKEMSG(Flake, Msg, myClass, recvFunc, Floor) InsertFlakeMessage(UI_FlakeMsg_Infor(Flake, Msg), UI_UIMsg_RecvFunc_Infor((pUIRecvFunc)&myClass::recvFunc, Floor, MfxText(#recvFunc)));
+#define UI_ADDRECV_FLAKEMSG(Flake, Msg, myClass, recvFunc) PushBackFlakeMessage(UI_FlakeMsg_Infor(Flake, Msg), new UI_UIMsg_RecvFunc_Infor((pUIRecvFunc)&myClass::recvFunc, MfxText(#recvFunc)));
 
 
 /********************************************************************************
 * 为UI添加一个来自窗口的消息映射
 *********************************************************************************/
-#define UI_ADDRECV_UIMSG(Msg, myClass, recvFunc, Floor) InsertUIMessage(Msg, UI_UIMsg_RecvFunc_Infor((pUIRecvFunc)&myClass::recvFunc, Floor, MfxText(#recvFunc)));
+#define UI_ADDRECV_UIMSG(Msg, myClass, recvFunc) PushBackUIMessage(Msg, new UI_UIMsg_RecvFunc_Infor((pUIRecvFunc)&myClass::recvFunc, MfxText(#recvFunc)));
 
 
 /********************************************************************************
 * 为UI添加一个来自定时器的消息映射
 *********************************************************************************/
 #define UI_ADDRECV_TIMER(timerID, delay, recvFunc) InsertTimer(timerID, delay, (pUIRecvFunc)&recvFunc)
-
-
-/********************************************************************************
-* 为UI添加一个消息阶梯等级
-*********************************************************************************/
-#define UI_ADD_FLOOR myUnderFloor--; myCoverFloor++;
 
 
 /********************************************************************************
@@ -729,12 +692,11 @@ namespace MicroFlakeX
 		*
 		*********************************************************************************/
 	private:
-		MfxFloor myUnderFloor;
-		MfxFloor myCoverFloor;
 		Flake_FlakeMsg_Map myMessageMap;
 	public:
-		MfxReturn RemoveUIMessage(MfxMsg message, MfxString name);
-		MfxReturn InsertUIMessage(MfxMsg message, Flake_FlakeMsg_Infor msgValue);
+		MfxReturn RemoveFlakeMessage(MfxMsg message, MfxString name);
+		MfxReturn PushBackFlakeMessage(MfxMsg message, Flake_FlakeMsg_Infor* msgValue);
+		MfxReturn PushFrontFlakeMessage(MfxMsg message, Flake_FlakeMsg_Infor* msgValue);
 
 
 		/********************************************************************************
@@ -896,9 +858,9 @@ namespace MicroFlakeX
 /********************************************************************************
 * 为Flake添加一个来自Flake的消息映射
 *********************************************************************************/
-#define FLAKE_ADDRECV_FLAKEMSG(Msg, myClass, recvFunc, Floor)\
-	InsertUIMessage(Msg, Flake_FlakeMsg_Infor(\
-		(pFlakeRecvFunc)&myClass::recvFunc, Floor, MfxText(#myClass#recvFunc))\
+#define FLAKE_ADDRECV_FLAKEMSG(Msg, myClass, recvFunc) \
+	PushBackFlakeMessage(Msg, new Flake_FlakeMsg_Infor(\
+		(pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc))\
 		);
 
 

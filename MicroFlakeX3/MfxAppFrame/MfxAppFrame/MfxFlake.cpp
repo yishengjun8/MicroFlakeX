@@ -6,8 +6,9 @@ MfxObject_Init_1(MfxFlake, ProcMessage)
 MfxAutoFunc_AutoEnumBig(MfxFlake, \
 	3, ProcMessage, \
 	\
-	2, RemoveUIMessage, \
-	2, InsertUIMessage, \
+	2, RemoveFlakeMessage, \
+	2, PushBackFlakeMessage, \
+	2, PushFrontFlakeMessage, \
 	\
 	0, OpenPercentRect, \
 	0, ClosePercentRect, \
@@ -65,43 +66,41 @@ void MicroFlakeX::MfxFlake::MfxRegMessages()
 	*
 	*
 	*********************************************************************************/
-	UI_ADD_FLOOR;
+	FLAKE_ADDRECV_FLAKEMSG(WM_SIZE, MfxFlake, __OnUISize);
 
-	FLAKE_ADDRECV_FLAKEMSG(WM_SIZE, MfxFlake, __OnUISize, myCoverFloor);
+	FLAKE_ADDRECV_FLAKEMSG(WM_MOUSEMOVE, MfxFlake, __OnMouseMove);
 
-	FLAKE_ADDRECV_FLAKEMSG(WM_MOUSEMOVE, MfxFlake, __OnMouseMove, myCoverFloor);
-
-	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONUP, MfxFlake, __OnLButtonUp, myCoverFloor);
-	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONUP, MfxFlake, __OnRButtonUp, myCoverFloor);
-	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONDOWN, MfxFlake, __OnLButtonDown, myCoverFloor);
-	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONDOWN, MfxFlake, __OnRButtonDown, myCoverFloor);
+	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONUP, MfxFlake, __OnLButtonUp);
+	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONUP, MfxFlake, __OnRButtonUp);
+	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONDOWN, MfxFlake, __OnLButtonDown);
+	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONDOWN, MfxFlake, __OnRButtonDown);
 
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetPaper, MfxFlake, __OnSetPaper, myCoverFloor);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetFloor, MfxFlake, __OnSetFloor, myCoverFloor);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetPaper, MfxFlake, __OnSetPaper);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetFloor, MfxFlake, __OnSetFloor);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PaintBack, MfxFlake, __OnPaintBackDC, myCoverFloor);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PaintMask, MfxFlake, __OnPaintMaskDC, myCoverFloor);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PaintBack, MfxFlake, __OnPaintBackDC);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PaintMask, MfxFlake, __OnPaintMaskDC);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_Size, MfxFlake, __OnSize, myCoverFloor);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_Point, MfxFlake, __OnPoint, myCoverFloor);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_Size, MfxFlake, __OnSize);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_Point, MfxFlake, __OnPoint);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PercentSize, MfxFlake, __OnPercentSize, myCoverFloor);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PercentPoint, MfxFlake, __OnPercentPoint, myCoverFloor);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PercentSize, MfxFlake, __OnPercentSize);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PercentPoint, MfxFlake, __OnPercentPoint);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_ResetRect, MfxFlake, __OnResetRect, myCoverFloor);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_ResetPercentRect, MfxFlake, __OnResetPercentRect, myCoverFloor);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_ResetRect, MfxFlake, __OnResetRect);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_ResetPercentRect, MfxFlake, __OnResetPercentRect);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_OpenPercentRect, MfxFlake, __OnOpenPercentRect, myCoverFloor);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_ClosePercentRect, MfxFlake, __OnClosePercentRect, myCoverFloor);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_OpenPercentRect, MfxFlake, __OnOpenPercentRect);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_ClosePercentRect, MfxFlake, __OnClosePercentRect);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetTitle, MfxFlake, __OnSetTitle, myCoverFloor);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetBackColor, MfxFlake, __OnSetBackColor, myCoverFloor);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetMaskColor, MfxFlake, __OnSetMaskColor, myCoverFloor);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetTitle, MfxFlake, __OnSetTitle);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetBackColor, MfxFlake, __OnSetBackColor);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetMaskColor, MfxFlake, __OnSetMaskColor);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetWords, MfxFlake, __OnSetWords, myCoverFloor);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetBackImage, MfxFlake, __OnSetBackImage, myCoverFloor);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetMaskImage, MfxFlake, __OnSetMaskImage, myCoverFloor);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetWords, MfxFlake, __OnSetWords);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetBackImage, MfxFlake, __OnSetBackImage);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetMaskImage, MfxFlake, __OnSetMaskImage);
 }
 
 void MicroFlakeX::MfxFlake::MfxFlakeInitData()
@@ -112,9 +111,6 @@ void MicroFlakeX::MfxFlake::MfxFlakeInitData()
 	*
 	*
 	*********************************************************************************/
-	myUnderFloor = 0;
-	myCoverFloor = 0;
-
 	myWnd = NULL;
 	myUI = nullptr;
 	myCanvas = nullptr;
@@ -190,7 +186,7 @@ MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMsg message, WPARAM wParam, LPAR
 		{
 			for (auto i : t_Iter->second)
 			{
-				t_Ret = (this->*i.recvFunc)(wParam, lParam);
+				t_Ret = (this->*i->recvFunc)(wParam, lParam);
 			}
 		}
 	}
@@ -220,7 +216,7 @@ MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMsg message, WPARAM wParam, LPAR
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxFlake::RemoveUIMessage(MfxMsg message, MfxString name)
+MfxReturn MicroFlakeX::MfxFlake::RemoveFlakeMessage(MfxMsg message, MfxString name)
 {
 	MfxCodeLock(this);
 
@@ -229,8 +225,9 @@ MfxReturn MicroFlakeX::MfxFlake::RemoveUIMessage(MfxMsg message, MfxString name)
 	{
 		for (auto i = t_Iter->second.begin(); i != t_Iter->second.end(); i++)
 		{
-			if (i->myFuncName == name)
+			if ((*i)->myFuncName == name)
 			{
+				delete* i;
 				t_Iter->second.erase(i);
 				return Mfx_Return_Fine;
 			}
@@ -240,7 +237,7 @@ MfxReturn MicroFlakeX::MfxFlake::RemoveUIMessage(MfxMsg message, MfxString name)
 	return Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxFlake::InsertUIMessage(MfxMsg message, Flake_FlakeMsg_Infor msgValue)
+MfxReturn MicroFlakeX::MfxFlake::PushBackFlakeMessage(MfxMsg message, Flake_FlakeMsg_Infor* msgValue)
 {
 	MfxCodeLock(this);
 
@@ -254,7 +251,25 @@ MfxReturn MicroFlakeX::MfxFlake::InsertUIMessage(MfxMsg message, Flake_FlakeMsg_
 	else
 	{
 		t_Iter->second.push_back(msgValue);
-		std::sort(t_Iter->second.begin(), t_Iter->second.end(), FloorCompare<Flake_FlakeMsg_Infor>);
+	}
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxFlake::PushFrontFlakeMessage(MfxMsg message, Flake_FlakeMsg_Infor* msgValue)
+{
+	MfxCodeLock(this);
+
+Begin:
+	auto t_Iter = myMessageMap.find(message);
+	if (t_Iter == myMessageMap.end())
+	{
+		t_Iter = myMessageMap.insert(Flake_FlakeMsg_Map_Elem(message, Flake_FlakeMsg_Infor_Vector())).first;
+		goto Begin;
+	}
+	else
+	{
+		t_Iter->second.push_front(msgValue);
 	}
 
 	return Mfx_Return_Fine;
