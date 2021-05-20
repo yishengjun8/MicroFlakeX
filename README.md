@@ -9,11 +9,11 @@
 [MicroFlakeX3](README.md#MicroFlakeX3简介)  
 ___
 # MicroFlakeX3简介  
-`MicroFlakeX3`在MFX2的基础上，重写了MfxGraph，重构了MfxBase以及其反射框架。拥有更好的扩展性和阅读性。同时顶层框架支持更多的特性，因为其操作进一步通过宏函数简化  
+`MicroFlakeX3`在MFX2的基础上，重写了MfxGraph，重构了MfxBase基类。拥有更好的扩展性和阅读性。同时顶层App框架支持更多的特性，其操作也进一步通过宏简化  
 
-* MFX3为Direct2D绘制，更快的刷新和图片支持(也就是说可以做游戏了！60帧很轻松！)  
-* MfxFlake(原MfxControl)支持线性插值动画，支持：变速滑动、曲线移动等。暂不支持旋转  
-* MfxBase是反射基类框架支持：全能工厂、反射调用、继承反射、优先初始化    
+* MfxBase基类支持：工厂、反射、信号槽、线程池、改动标志   
+* MfxGraph为Direct2D绘制，更快的刷新和图片支持(60帧很轻松)  
+* MfxFlake(原MfxControl)支持线性动画。暂不支持旋转  
 
 
 ___
