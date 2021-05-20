@@ -147,3 +147,4 @@ MicroFlakeX::MfxLock::~MfxLock()
 {
 	LeaveCriticalSection(myCriticalSection);
 }
+

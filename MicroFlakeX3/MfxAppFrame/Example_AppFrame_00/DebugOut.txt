@@ -8,6 +8,5 @@ ClassHand <MfxImage> Is Register
 ClassHand <MfxWords> Is Register
 ClassHand <MfxGraph> Is Register
 ClassHand <MfxCanvas> Is Register
-ClassHand <MfxApp> Is Register
 ClassHand <MfxFlake> Is Register
 ClassHand <MfxUI> Is Register

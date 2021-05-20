@@ -174,7 +174,7 @@ MicroFlakeX::MfxFlake::~MfxFlake()
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMessage message, WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 	MfxReturn t_Ret = Mfx_Return_Fail;
@@ -216,7 +216,7 @@ MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMsg message, WPARAM wParam, LPAR
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxFlake::RemoveFlakeMessage(MfxMsg message, MfxString name)
+MfxReturn MicroFlakeX::MfxFlake::RemoveFlakeMessage(MfxMessage message, MfxString name)
 {
 	MfxCodeLock(this);
 
@@ -237,7 +237,7 @@ MfxReturn MicroFlakeX::MfxFlake::RemoveFlakeMessage(MfxMsg message, MfxString na
 	return Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxFlake::PushBackFlakeMessage(MfxMsg message, Flake_FlakeMsg_Infor* msgValue)
+MfxReturn MicroFlakeX::MfxFlake::PushBackFlakeMessage(MfxMessage message, Flake_FlakeMsg_Infor* msgValue)
 {
 	MfxCodeLock(this);
 
@@ -256,7 +256,7 @@ MfxReturn MicroFlakeX::MfxFlake::PushBackFlakeMessage(MfxMsg message, Flake_Flak
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxFlake::PushFrontFlakeMessage(MfxMsg message, Flake_FlakeMsg_Infor* msgValue)
+MfxReturn MicroFlakeX::MfxFlake::PushFrontFlakeMessage(MfxMessage message, Flake_FlakeMsg_Infor* msgValue)
 {
 	MfxCodeLock(this);
 

@@ -310,6 +310,8 @@ namespace MicroFlakeX
 	};
 
 
+
+	typedef MfxReturn(*pThreadFunc)(WPARAM, LPARAM);
 	/***************************************************************
 	*	MfxThreadServer
 	*	
@@ -328,13 +330,14 @@ namespace MicroFlakeX
 
 	public:
 		static MfxReturn BeginNewThread(MfxBase* object, MfxString recvFunc, WPARAM wParam = NULL, LPARAM lParam = NULL);
-
+		static MfxReturn BeginNewThread_Widely(pThreadFunc pThreadFunc, WPARAM wParam = NULL, LPARAM lParam = NULL);
 	public:
 		static MfxReturn BeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, LPARAM lParam = NULL, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
 		static MfxReturn CloseTimer(PTP_TIMER& pTimer);
 	
 	private:
 		static VOID CALLBACK MfxWorkCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val);
+		static VOID CALLBACK MfxWorkCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val);
 		static VOID CALLBACK MfxTimeCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
 	};
 
@@ -347,7 +350,7 @@ namespace MicroFlakeX
 * 参数二：回调对象指针
 * 参数三：回调对象方法名字
 * 参数四：传递给回调方法的lparam，回调方法的wparam是当前调用它的计时器id
-* 参数五：计时器每个多长时间调用一次，单位为ms
+* 参数五：计时器每个多长时间调用一次，单位为ms，若为0，则调用一次结束
 * 参数六：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
 * 参数七：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
 *
@@ -364,6 +367,15 @@ namespace MicroFlakeX
 *
 ****************************************************************/
 #define MfxBeginNewThread MicroFlakeX::MfxThreadServer::BeginNewThread
+
+/***************************************************************
+*
+* 异步线程请勿传入局部变量指针。
+* 参数一：回调对象指针
+* 参数二、三：传递给回调方法的wparam、lparam。
+*
+****************************************************************/
+#define MfxBeginNewThread_Widely MicroFlakeX::MfxThreadServer::BeginNewThread_Widely
 
 }
 
@@ -715,6 +727,58 @@ namespace MicroFlakeX
 	};
 
 
+	/*public:
+		void RemoveReceiver(MfxBase* recvObject, MfxString recvFunc)
+		{
+			for (auto iter = myReceiver.begin(); iter != myReceiver.end(); iter++)
+			{
+				if ((*iter)->recvObject == recvObject && (*iter)->recvFunc == recvFunc)
+				{
+					myReceiver.erase(iter);
+					return;
+				}
+			}
+		}
+
+		void PushBackReceiver(MfxBase* recvObject, MfxString recvFunc)
+		{
+			myReceiver.push_back(new MfxReceiver_Info(recvObject, recvFunc));
+		}
+
+		void PushFrontReceiver(MfxBase* recvObject, MfxString recvFunc)
+		{
+			myReceiver.push_front(new MfxReceiver_Info(recvObject, recvFunc));
+		}
+
+		void SendSignal()
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc);
+			}
+		}
+
+		void PostSignal()
+		{
+			MfxBeginNewThread_Widely(&(MfxSignal<>::ThreadSignal), NULL, (LPARAM)this);
+		}
+
+	private:
+		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		{
+			MfxSignal<>* tThis = (MfxSignal<>*)lParam;
+			for (auto& iter : tThis->myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc);
+			}
+
+			return Mfx_Return_Fine;
+		}
+
+	private:
+		std::deque<MfxReceiver_Info*> myReceiver;
+	*/
+
 
 	struct MfxReceiver_Info
 	{
@@ -727,28 +791,490 @@ namespace MicroFlakeX
 		MfxBase* recvObject;
 	};
 
-	template<class ...>
-	class MfxObserver;
 
-	template<>
-	class MfxObserver<>
+	class MFX_PORT MfxSignal_Base
 	{
 	public:
-		MfxObserver()
+		void RemoveReceiver(MfxBase* recvObject, MfxString recvFunc);
+		void PushBackReceiver(MfxBase* recvObject, MfxString recvFunc);
+		void PushFrontReceiver(MfxBase* recvObject, MfxString recvFunc);
+	protected:
+		std::deque<MfxReceiver_Info*> myReceiver;
+	};
+
+	template<class ...>
+	class MfxSignal;
+
+	template<>
+	class MFX_PORT MfxSignal<>
+		: public MfxSignal_Base
+	{
+	public:
+		void SendSignal()
 		{
-			
-		}
-		void PushBackReceiver(MfxBase* recvObject, MfxString recvFunc)
-		{
-			myReceiver.push_back(new MfxReceiver_Info(recvObject, recvFunc));
+			for (auto& iter : myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc);
+			}
 		}
 
-		void PushFrontReceiver(MfxBase* recvObject, MfxString recvFunc)
+		void PostSignal()
 		{
-			myReceiver.push_front(new MfxReceiver_Info(recvObject, recvFunc));
+			MfxBeginNewThread_Widely(&(MfxSignal<>::ThreadSignal), NULL, (LPARAM)this);
 		}
+
 	private:
-		std::deque<MfxReceiver_Info*> myReceiver;
+		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		{
+			MfxSignal<>* tThis = (MfxSignal<>*)lParam;
+			for (auto& iter : tThis->myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc);
+			}
+
+			return Mfx_Return_Fine;
+		}
+	};
+
+	template<class T1>
+	class MFX_PORT MfxSignal<T1>
+		: public MfxSignal_Base
+	{
+	private:
+		T1 myA1;
+	public:
+		MfxSignal()
+		{
+			myA1 = NULL;
+		}
+
+		void SendSignal(T1 A1)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, A1);
+			}
+		}
+
+		void PostSignal(T1 A1)
+		{
+			while (myA1);
+			myA1 = A1;
+			MfxBeginNewThread_Widely(&(MfxSignal<T1>::ThreadSignal), NULL, (LPARAM)this);
+		}
+
+	private:
+		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		{
+			MfxSignal<T1>* tThis = (MfxSignal<T1>*)lParam;
+			for (auto& iter : tThis->myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1);
+			}
+
+			tThis->myA1 = NULL;
+			return Mfx_Return_Fine;
+		}
+	};
+
+	template<class T1, class T2>
+	class MFX_PORT MfxSignal<T1, T2>
+		: public MfxSignal_Base
+	{
+	private:
+		T1 myA1;
+		T2 myA2;
+	public:
+		MfxSignal()
+		{
+			myA1 = NULL;
+			myA2 = NULL;
+		}
+
+		void SendSignal(T1 A1, T2 A2)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2);
+			}
+		}
+
+		void PostSignal(T1 A1, T2 A2)
+		{
+			while (myA1 || myA2);
+			myA1 = A1;
+			myA2 = A2;
+			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2>::ThreadSignal), NULL, (LPARAM)this);
+		}
+
+	private:
+		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		{
+			MfxSignal<T1, T2>* tThis = (MfxSignal<T1, T2>*)lParam;
+			for (auto& iter : tThis->myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2);
+			}
+
+			tThis->myA1 = NULL;
+			tThis->myA2 = NULL;
+			return Mfx_Return_Fine;
+		}
+	};
+
+	template<class T1, class T2, class T3>
+	class MFX_PORT MfxSignal<T1, T2, T3>
+		: public MfxSignal_Base
+	{
+	private:
+		T1 myA1;
+		T2 myA2;
+		T3 myA3;
+	public:
+		MfxSignal()
+		{
+			myA1 = NULL;
+			myA2 = NULL;
+			myA3 = NULL;
+		}
+
+		void SendSignal(T1 A1, T2 A2, T3 A3)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2, A3);
+			}
+		}
+
+		void PostSignal(T1 A1, T2 A2, T3 A3)
+		{
+			while (myA1 || myA2 || myA3);
+			myA1 = A1;
+			myA2 = A2;
+			myA3 = A3;
+			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2, T3>::ThreadSignal), NULL, (LPARAM)this);
+		}
+
+	private:
+		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		{
+			MfxSignal<T1, T2, T3>* tThis = (MfxSignal<T1, T2, T3>*)lParam;
+			for (auto& iter : tThis->myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2, tThis->myA3);
+			}
+
+			tThis->myA1 = NULL;
+			tThis->myA2 = NULL;
+			tThis->myA3 = NULL;
+			return Mfx_Return_Fine;
+		}
+	};
+
+	template<class T1, class T2, class T3, class T4>
+	class MFX_PORT MfxSignal<T1, T2, T3, T4>
+		: public MfxSignal_Base
+	{
+	private:
+		T1 myA1;
+		T2 myA2;
+		T3 myA3;
+		T4 myA4;
+	public:
+		MfxSignal()
+		{
+			myA1 = NULL;
+			myA2 = NULL;
+			myA3 = NULL;
+			myA4 = NULL;
+		}
+
+		void SendSignal(T1 A1, T2 A2, T3 A3, T4 A4)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2, A3, A4);
+			}
+		}
+
+		void PostSignal(T1 A1, T2 A2, T3 A3, T4 A4)
+		{
+			while (myA1 || myA2 || myA3 || myA4);
+			myA1 = A1;
+			myA2 = A2;
+			myA3 = A3;
+			myA4 = A4;
+			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2, T3, T4>::ThreadSignal), NULL, (LPARAM)this);
+		}
+
+	private:
+		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		{
+			MfxSignal<T1, T2, T3, T4>* tThis = (MfxSignal<T1, T2, T3, T4>*)lParam;
+			for (auto& iter : tThis->myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2, tThis->myA3, tThis->myA4);
+			}
+
+			tThis->myA1 = NULL;
+			tThis->myA2 = NULL;
+			tThis->myA3 = NULL;
+			tThis->myA4 = NULL;
+			return Mfx_Return_Fine;
+		}
+	};
+
+
+	template<class T1, class T2, class T3, class T4, class T5>
+	class MFX_PORT MfxSignal<T1, T2, T3, T4, T5>
+		: public MfxSignal_Base
+	{
+	private:
+		T1 myA1;
+		T2 myA2;
+		T3 myA3;
+		T4 myA4;
+		T5 myA5;
+	public:
+		MfxSignal()
+		{
+			myA1 = NULL;
+			myA2 = NULL;
+			myA3 = NULL;
+			myA4 = NULL;
+			myA5 = NULL;
+		}
+
+		void SendSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2, A3, A4, A5);
+			}
+		}
+
+		void PostSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5)
+		{
+			while (myA1 || myA2 || myA3 || myA4 || myA5);
+			myA1 = A1;
+			myA2 = A2;
+			myA3 = A3;
+			myA4 = A4;
+			myA5 = A5;
+			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2, T3, T4, T5>::ThreadSignal), NULL, (LPARAM)this);
+		}
+
+	private:
+		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		{
+			MfxSignal<T1, T2, T3, T4, T5>* tThis = (MfxSignal<T1, T2, T3, T4, T5>*)lParam;
+			for (auto& iter : tThis->myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2, tThis->myA3, tThis->myA4, tThis->myA5);
+			}
+
+			tThis->myA1 = NULL;
+			tThis->myA2 = NULL;
+			tThis->myA3 = NULL;
+			tThis->myA4 = NULL;
+			tThis->myA5 = NULL;
+			return Mfx_Return_Fine;
+		}
+	};
+
+	template<class T1, class T2, class T3, class T4, class T5, class T6>
+	class MFX_PORT MfxSignal<T1, T2, T3, T4, T5, T6>
+		: public MfxSignal_Base
+	{
+	private:
+		T1 myA1;
+		T2 myA2;
+		T3 myA3;
+		T4 myA4;
+		T5 myA5;
+		T6 myA6;
+	public:
+		MfxSignal()
+		{
+			myA1 = NULL;
+			myA2 = NULL;
+			myA3 = NULL;
+			myA4 = NULL;
+			myA5 = NULL;
+			myA6 = NULL;
+		}
+
+		void SendSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5, T6 A6)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2, A3, A4, A5, A6);
+			}
+		}
+
+		void PostSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5, T6 A6)
+		{
+			while (myA1 || myA2 || myA3 || myA4 || myA5 || myA6);
+			myA1 = A1;
+			myA2 = A2;
+			myA3 = A3;
+			myA4 = A4;
+			myA5 = A5;
+			myA6 = A6;
+			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2, T3, T4, T5, T6>::ThreadSignal), NULL, (LPARAM)this);
+		}
+
+	private:
+		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		{
+			MfxSignal<T1, T2, T3, T4, T5, T6>* tThis = (MfxSignal<T1, T2, T3, T4, T5, T6>*)lParam;
+			for (auto& iter : tThis->myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2, tThis->myA3, tThis->myA4, tThis->myA5, tThis->myA6);
+			}
+
+			tThis->myA1 = NULL;
+			tThis->myA2 = NULL;
+			tThis->myA3 = NULL;
+			tThis->myA4 = NULL;
+			tThis->myA5 = NULL;
+			tThis->myA6 = NULL;
+			return Mfx_Return_Fine;
+		}
+	};
+
+	template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
+	class MFX_PORT MfxSignal<T1, T2, T3, T4, T5, T6, T7>
+		: public MfxSignal_Base
+	{
+	private:
+		T1 myA1;
+		T2 myA2;
+		T3 myA3;
+		T4 myA4;
+		T5 myA5;
+		T6 myA6;
+		T7 myA7;
+	public:
+		MfxSignal()
+		{
+			myA1 = NULL;
+			myA2 = NULL;
+			myA3 = NULL;
+			myA4 = NULL;
+			myA5 = NULL;
+			myA6 = NULL;
+			myA7 = NULL;
+		}
+
+		void SendSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5, T6 A6, T7 A7)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2, A3, A4, A5, A6, A7);
+			}
+		}
+
+		void PostSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5, T6 A6, T7 A7)
+		{
+			while (myA1 || myA2 || myA3 || myA4 || myA5 || myA6 || myA7);
+			myA1 = A1;
+			myA2 = A2;
+			myA3 = A3;
+			myA4 = A4;
+			myA5 = A5;
+			myA6 = A6;
+			myA7 = A7;
+			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2, T3, T4, T5, T6, T7>::ThreadSignal), NULL, (LPARAM)this);
+		}
+
+	private:
+		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		{
+			MfxSignal<T1, T2, T3, T4, T5, T6, T7>* tThis = (MfxSignal<T1, T2, T3, T4, T5, T6, T7>*)lParam;
+			for (auto& iter : tThis->myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2, tThis->myA3, tThis->myA4, tThis->myA5, tThis->myA6, tThis->myA7);
+			}
+
+			tThis->myA1 = NULL;
+			tThis->myA2 = NULL;
+			tThis->myA3 = NULL;
+			tThis->myA4 = NULL;
+			tThis->myA5 = NULL;
+			tThis->myA6 = NULL;
+			tThis->myA7 = NULL;
+			return Mfx_Return_Fine;
+		}
+	};
+
+	template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
+	class MFX_PORT MfxSignal<T1, T2, T3, T4, T5, T6, T7, T8>
+		: public MfxSignal_Base
+	{
+	private:
+		T1 myA1;
+		T2 myA2;
+		T3 myA3;
+		T4 myA4;
+		T5 myA5;
+		T6 myA6;
+		T7 myA7;
+		T8 myA8;
+	public:
+		MfxSignal()
+		{
+			myA1 = NULL;
+			myA2 = NULL;
+			myA3 = NULL;
+			myA4 = NULL;
+			myA5 = NULL;
+			myA6 = NULL;
+			myA7 = NULL;
+			myA8;
+		}
+
+		void SendSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5, T6 A6, T7 A7, T8 A8)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2, A3, A4, A5, A6, A7, A8);
+			}
+		}
+
+		void PostSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5, T6 A6, T7 A7, T8 A8)
+		{
+			while (myA1 || myA2 || myA3 || myA4 || myA5 || myA6 || myA7 || myA8);
+			myA1 = A1;
+			myA2 = A2;
+			myA3 = A3;
+			myA4 = A4;
+			myA5 = A5;
+			myA6 = A6;
+			myA7 = A7;
+			myA8 = A8;
+			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2, T3, T4, T5, T6, T7, T8>::ThreadSignal), NULL, (LPARAM)this);
+		}
+
+	private:
+		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		{
+			MfxSignal<T1, T2, T3, T4, T5, T6, T7, T8>* tThis = (MfxSignal<T1, T2, T3, T4, T5, T6, T7, T8>*)lParam;
+			for (auto& iter : tThis->myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2, tThis->myA3, tThis->myA4, tThis->myA5, tThis->myA6, tThis->myA7, tThis->myA8);
+			}
+
+			tThis->myA1 = NULL;
+			tThis->myA2 = NULL;
+			tThis->myA3 = NULL;
+			tThis->myA4 = NULL;
+			tThis->myA5 = NULL;
+			tThis->myA6 = NULL;
+			tThis->myA7 = NULL;
+			tThis->myA8 = NULL;
+			return Mfx_Return_Fine;
+		}
 	};
 }
 

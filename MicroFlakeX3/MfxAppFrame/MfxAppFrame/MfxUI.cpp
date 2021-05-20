@@ -89,8 +89,8 @@ void MicroFlakeX::MfxUI::MfxRegMessages()
     UI_ADDRECV_UIMSG(UI_MSG_FlakeRemove, MfxUI, __OnFlakeRemove);
     UI_ADDRECV_UIMSG(UI_MSG_FlakeFloorChange, MfxUI, __OnFlakeFloorChange);
 
-    UI_ADDRECV_UIMSG(UI_MSG_AddTimer, MfxUI, __OnAddTimer);
     UI_ADDRECV_UIMSG(UI_MSG_RemoveTimer, MfxUI, __OnRemoveTimer);
+    UI_ADDRECV_UIMSG(UI_MSG_InsertTimer, MfxUI, __OnInsertTimer);
 
     UI_ADDRECV_UIMSG(UI_MSG_FlakeMessage, MfxUI, __OnFlakeMessage);
 
@@ -206,7 +206,7 @@ MfxReturn MicroFlakeX::MfxUI::CreateSuccess()
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxMsg message, WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxMessage message, WPARAM wParam, LPARAM lParam)
 {
     /* 这里添加识别 - 耗时的全部移交到UI线程内处理 */
     MfxReturn t_Ret = Mfx_Return_Fail;
@@ -229,7 +229,7 @@ MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxMsg message, WPARAM wParam, LPARAM 
     return DefWindowProc(myWnd, message, wParam, lParam);
 }
 
-MfxReturn MicroFlakeX::MfxUI::SendMessageToFlakes(MfxMsg message, WPARAM wParam, LPARAM lParam, bool sort)
+MfxReturn MicroFlakeX::MfxUI::SendMessageToFlakes(MfxMessage message, WPARAM wParam, LPARAM lParam, bool sort)
 {
     //True 从后往前
     //False 从前往后
@@ -263,7 +263,7 @@ MfxReturn MicroFlakeX::MfxUI::SendMessageToFlakes(MfxMsg message, WPARAM wParam,
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxUI::RemoveUIMessage(MfxMsg message, MfxString recvFuncName)
+MfxReturn MicroFlakeX::MfxUI::RemoveUIMessage(MfxMessage message, MfxString recvFuncName)
 {
     MfxCodeLock(this);
 
@@ -284,7 +284,7 @@ MfxReturn MicroFlakeX::MfxUI::RemoveUIMessage(MfxMsg message, MfxString recvFunc
     return Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxUI::PushBackUIMessage(MfxMsg message, UI_UIMsg_RecvFunc_Infor* msgValue)
+MfxReturn MicroFlakeX::MfxUI::PushBackUIMessage(MfxMessage message, UI_UIMsg_RecvFunc_Infor* msgValue)
 {
     MfxCodeLock(this);
 
@@ -303,7 +303,7 @@ Begin:
     return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxUI::PushFrontUIMessage(MfxMsg message, UI_UIMsg_RecvFunc_Infor* msgValue)
+MfxReturn MicroFlakeX::MfxUI::PushFrontUIMessage(MfxMessage message, UI_UIMsg_RecvFunc_Infor* msgValue)
 {
     MfxCodeLock(this);
 
@@ -391,14 +391,14 @@ MfxReturn MicroFlakeX::MfxUI::PushFrontFlakeMessage(UI_FlakeMsg_Infor message, U
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxUI::RemoveTimer(WPARAM cid)
+MfxReturn MicroFlakeX::MfxUI::RemoveTimer(WPARAM setID)
 {
-    return ProcMessage(UI_MSG_RemoveTimer, cid, NULL);
+    return ProcMessage(UI_MSG_RemoveTimer, setID, NULL);
 }
 
-MfxReturn MicroFlakeX::MfxUI::InsertTimer(WPARAM timerID, clock_t delay, pUIRecvFunc recv)
+MfxReturn MicroFlakeX::MfxUI::InsertTimer(WPARAM setID, clock_t delay, pUIRecvFunc recv)
 {
-    return ProcMessage(UI_MSG_AddTimer, timerID, (LPARAM)(new MfxUI_Timer_Infor(delay, clock(), recv)));
+    return ProcMessage(UI_MSG_InsertTimer, setID, (LPARAM)(new UI_UITimer_Infor(delay, clock(), recv)));
 }
 
 
@@ -850,35 +850,45 @@ MfxReturn MicroFlakeX::MfxUI::__OnTimer(WPARAM wParam, LPARAM lParam)
     auto t_Iter = myTimerMap.find(wParam);
     if (t_Iter != myTimerMap.end())
     {
-        (this->*t_Iter->second->recvFunc)((*t_Iter).second->delayTime, clock() - (*t_Iter).second->passTime);
-        (*t_Iter).second->passTime = clock();
+        (this->*t_Iter->second->recvFunc)(NULL, (LPARAM)t_Iter->second);
+
         return Mfx_Return_Fine;
     }
 
     return Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxUI::__OnAddTimer(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxUI::__OnInsertTimer(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
 
-    if (myTimerMap.insert(MfxUI_Timer_Map_elem(wParam, (MfxUI_Timer_Infor*)lParam)).second)
+    if (myTimerMap.insert(UI_UITimer_Infor_Map_Elem(wParam, (UI_UITimer_Infor*)lParam)).second)
     {
-        SetTimer(myWnd, wParam, ((MfxUI_Timer_Infor*)lParam)->delayTime, (TIMERPROC)NULL);
+        SetTimer(myWnd, wParam, ((UI_UITimer_Infor*)lParam)->delayTime, (TIMERPROC)NULL);
+
+        return Mfx_Return_Fine;
     }
 
-    return Mfx_Return_Fine;
+    return Mfx_Return_Fail;
 }
 
 MfxReturn MicroFlakeX::MfxUI::__OnRemoveTimer(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
 
-    delete (myTimerMap[wParam]);
-    myTimerMap.erase(wParam);
-    KillTimer(myWnd, wParam);
+    auto iter = myTimerMap.find(wParam);
+    if (iter != myTimerMap.end())
+    {
+        KillTimer(myWnd, wParam);
 
-    return Mfx_Return_Fine;
+        delete iter->second;
+
+        myTimerMap.erase(wParam);
+
+        return Mfx_Return_Fine;
+    }
+
+    return Mfx_Return_Fail;
 }
 
 

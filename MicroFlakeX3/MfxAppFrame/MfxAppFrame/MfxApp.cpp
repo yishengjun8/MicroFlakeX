@@ -1,28 +1,19 @@
 #include "pch.h"
 #include "MfxAppFrame.h"
 
-MicroFlakeX::MfxApp* __theApp = nullptr;
-HINSTANCE __theInstance = nullptr;
+using namespace MicroFlakeX;
 
-MfxObject_Init_0(MfxApp)
-{
-	__theApp = new MfxApp;
-	__theInstance = GetModuleHandle(NULL);
-}
-MfxObject_Init_1(MfxApp, END)
-MfxObject_Init_2(MfxApp, MfxBase);
 
-MfxApp*& MfxApp::theApp = __theApp;
-const HINSTANCE& MfxApp::theInstance = __theInstance;
+MfxApp* const MfxApp::g_pApp = new MfxApp;
+HINSTANCE const MfxApp::g_hInstance = GetModuleHandle(NULL);
 
 MicroFlakeX::MfxApp::MfxApp()
 {
-	if (__theApp)
+	if (g_pApp)
 	{
 		throw MfxText("MfxApp Object Exceeds One");
 	}
 
-	overParam = 0;
 	myBindingUI = nullptr;
 
 	WNDCLASSEX tempWC{ 0 };
@@ -33,7 +24,7 @@ MicroFlakeX::MfxApp::MfxApp()
 	tempWC.lpfnWndProc = AppProc;
 	tempWC.cbClsExtra = 0;               // no extra class memory 
 	tempWC.cbWndExtra = 0;                // no extra window memory
-	tempWC.hInstance = __theInstance;		//获取程序实例句柄
+	tempWC.hInstance = g_hInstance;		//获取程序实例句柄
 
 	tempWC.hIcon = LoadIcon(NULL, IDI_APPLICATION);             // predefined app. icon 
 	tempWC.hCursor = LoadCursor(NULL, IDC_ARROW);                // predefined arrow 
@@ -62,24 +53,24 @@ WPARAM MicroFlakeX::MfxApp::Run()
 		TranslateMessage(&tMsg);
 		DispatchMessage(&tMsg);
 	}
-	overParam = tMsg.wParam;
+
 	return tMsg.wParam;
 }
 
 HWND MicroFlakeX::MfxApp::MfxCreateUIEx(MfxUI* ui, MfxRect rect,
-	DWORD dwExStyle, DWORD dwStyle,
-	MfxString className, MfxString windowsName)
+	DWORD dwExStyle, DWORD dwStyle, MfxString className, MfxString windowsName)
 {
 	while (myBindingUI);
+
 	myBindingUI = ui;
-	return CreateWindowEx(
-		dwExStyle, className.c_str(), windowsName.c_str(), dwStyle,
-		rect.myX, rect.myY, rect.myWidth, rect.myHeight, NULL, NULL, __theInstance, NULL
+
+	return CreateWindowEx(dwExStyle, className.c_str(), windowsName.c_str(), dwStyle,
+		rect.myX, rect.myY, rect.myWidth, rect.myHeight, NULL, NULL, g_hInstance, NULL
 	);
 }
 
 
-MfxReturn MicroFlakeX::MfxApp::ForwardMessage(HWND hWnd, MfxMsg message, WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxApp::ForwardMessage(HWND hWnd, MfxMessage message, WPARAM wParam, LPARAM lParam)
 {
 ForwardMessageBegin:
 	auto t_Itera = myUIMap.find(hWnd);
@@ -89,7 +80,7 @@ ForwardMessageBegin:
 		{
 			MfxBeginNewThread(myBindingUI, MfxText("UIThread"), NULL, NULL);
 
-			myUIMap.insert(MfxUI_Info_Map_elem(hWnd, MfxUI_Info(hWnd, myBindingUI, 0)));
+			myUIMap.insert(App_UI_Info_Map_Elem(hWnd, new App_UI_Info(hWnd, myBindingUI, 0)));
 			myBindingUI->myWnd = hWnd;
 			myBindingUI = nullptr;
 
@@ -98,9 +89,10 @@ ForwardMessageBegin:
 	}
 	else
 	{
-		auto ret = t_Itera->second.myUI->ProcMessage(message, wParam, lParam);
+		auto ret = t_Itera->second->myUI->ProcMessage(message, wParam, lParam);
 		if (message == WM_DESTROY)
 		{
+			delete t_Itera->second;
 			myUIMap.erase(t_Itera);
 		}
 		return ret;
@@ -108,7 +100,7 @@ ForwardMessageBegin:
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-LRESULT MicroFlakeX::MfxApp::AppProc(HWND hWnd, MfxMsg msg, WPARAM wParam, LPARAM lParam)
+LRESULT MicroFlakeX::MfxApp::AppProc(HWND hWnd, MfxMessage msg, WPARAM wParam, LPARAM lParam)
 {
-	return __theApp->ForwardMessage(hWnd, msg, wParam, lParam);
+	return g_pApp->ForwardMessage(hWnd, msg, wParam, lParam);
 }

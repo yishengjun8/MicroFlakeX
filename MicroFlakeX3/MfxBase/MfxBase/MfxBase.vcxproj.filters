@@ -41,6 +41,9 @@
     <ClCompile Include="MfxThreadServer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MfxSignal_Base.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
