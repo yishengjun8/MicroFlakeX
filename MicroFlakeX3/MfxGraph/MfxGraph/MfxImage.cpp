@@ -1,19 +1,25 @@
 #include "pch.h"
 #include "MfxGraph.h"
 
-MfxObject_Init_0(MfxImage)
-MfxObject_Init_1(MfxImage, SetRect)
-MfxAutoFunc_AutoEnumBig(MfxImage, \
-	1, SetRect, \
-	1, SetSize, \
-	1, SetPoint, \
+MfxObject_Init(MfxImage)
+MfxObject_EndInit(MfxImage, MfxGraph, \
+	0, Paint, \
 	\
-	1, GetRect, \
-	1, GetSize, \
-	1, GetPoint, \
+	1, SetCanvas, \
+	1, GetCanvas, \
 	\
-	END, END);
-MfxObject_Init_2(MfxImage, MfxGraph);
+	2, FromFile, \
+	2, FromColor, \
+	\
+	1, GetIWICBitmap, \
+	1, GetID2D1Bitmap, \
+	1, GetGdipBitmap, \
+	\
+	1, SetIWICBitmap, \
+	\
+	0, ResetID2D1Bitmap, \
+	2, ResetIWICBitmapFromFile, \
+	2, ResetIWICBitmapFromColor);
 
 MicroFlakeX::MfxImage::MfxImage()
 {
@@ -23,36 +29,41 @@ MicroFlakeX::MfxImage::MfxImage()
 	myID2D1Bitmap = nullptr;
 }
 
-MicroFlakeX::MfxImage::MfxImage(MfxString* path, MfxRect set)
+MicroFlakeX::MfxImage::MfxImage(MfxString* path, MfxRect* set)
 {
 	myCanvas = nullptr;
 	myRenderTarget = nullptr;
 	myIWICBitmap = nullptr;
 	myID2D1Bitmap = nullptr;
 
-	myRect = set;
-	ResetIWICBitmapFromFile(path, MfxSize(set));
+	set->GetRect(&myRect);
+
+	MfxSize tSize(set);
+	ResetIWICBitmapFromFile(path, &tSize);
 }
 
-MicroFlakeX::MfxImage::MfxImage(MfxColor color, MfxRect set)
+MicroFlakeX::MfxImage::MfxImage(MfxColor* color, MfxRect* set)
 {
 	myCanvas = nullptr;
 	myRenderTarget = nullptr;
 	myIWICBitmap = nullptr;
 	myID2D1Bitmap = nullptr;
 
-	myRect = set;
-	ResetIWICBitmapFromColor(color, MfxSize(set));
+	set->GetRect(&myRect);
+
+	MfxSize tSize(set);
+	ResetIWICBitmapFromColor(color, &tSize);
 }
 
-MicroFlakeX::MfxImage::MfxImage(IWICBitmap* tIWICBitmap, MfxRect set)
+MicroFlakeX::MfxImage::MfxImage(IWICBitmap* tIWICBitmap, MfxRect* set)
 {
 	myCanvas = nullptr;
 	myRenderTarget = nullptr;
 	myIWICBitmap = nullptr;
 	myID2D1Bitmap = nullptr;
 
-	myRect = set;
+	set->GetRect(&myRect);
+
 	CopyIWICBitmap(&myIWICBitmap, tIWICBitmap);
 }
 
@@ -62,36 +73,26 @@ MicroFlakeX::MfxImage::~MfxImage()
 	SafeRelease(myID2D1Bitmap);
 }
 
-MfxReturn MicroFlakeX::MfxImage::Clone(MfxBase** ret)
-{
-	*ret = new MfxImage(myIWICBitmap, myRect);
-	return Mfx_Return_Fine;
-}
-
 MfxReturn MicroFlakeX::MfxImage::Clone(MfxImage** ret)
 {
-	*ret = new MfxImage(myIWICBitmap, myRect);
+	*ret = new MfxImage(myIWICBitmap, &myRect);
+
 	return Mfx_Return_Fine;
 }
 
-MfxBase& MicroFlakeX::MfxImage::operator=(MfxBase& rhs)
-{
-	// TODO: 在此处插入 return 语句
-	return *this;
-}
 
-bool MicroFlakeX::MfxImage::operator==(MfxBase& rhs)
-{
-	// TODO: 在此处插入 return 语句
-	return false;
-}
-
+/**************************************************************
+*
+*
+*
+***************************************************************/
 MfxReturn MicroFlakeX::MfxImage::Paint()
 {
 	if (myCanvas)
 	{
 		ID2D1RenderTarget* tRenderTarget = nullptr;
 		myCanvas->GetRenderTarget(&tRenderTarget);
+
 		if (myRenderTarget != tRenderTarget)
 		{
 			myRenderTarget = tRenderTarget;
@@ -107,50 +108,94 @@ MfxReturn MicroFlakeX::MfxImage::Paint()
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxImage::FromFile(MfxString* path, MfxSize* set)
+{
+	ResetIWICBitmapFromFile(path, set);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxImage::FromColor(MfxColor* color, MfxSize* set)
+{
+	ResetIWICBitmapFromColor(color, set);
+
+	return Mfx_Return_Fine;
+}
+
+
+/**************************************************************
+*
+*
+*
+***************************************************************/
+MfxReturn MicroFlakeX::MfxImage::GetCanvas(MfxCanvas** ret) const
+{
+	*ret = myCanvas;
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxImage::GetIWICBitmap(IWICBitmap** ret) const
+{
+	CopyIWICBitmap(ret, myIWICBitmap);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxImage::GetID2D1Bitmap(ID2D1Bitmap** ret) const
+{
+	*ret = myID2D1Bitmap;
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxImage::GetGdipBitmap(Gdiplus::Bitmap** ret) const
+{
+	return GdipBitmapFromIWICBitmap(ret, myIWICBitmap, MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
+}
+
+
+/**************************************************************
+*
+*
+*
+***************************************************************/
 MfxReturn MicroFlakeX::MfxImage::SetCanvas(MfxCanvas* set)
 {
 	myCanvas = set;
-	if (!myCanvas)
+
+	if (myCanvas)
 	{
-		return Mfx_Return_Fine;
+		ResetID2D1Bitmap();
 	}
-	ResetID2D1Bitmap();
+
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxImage::GetCanvas(MfxCanvas** ret)
+MfxReturn MicroFlakeX::MfxImage::SetIWICBitmap(IWICBitmap* set)
 {
-	*ret = myCanvas;
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromFile(MfxString* path, MfxSize set)
-{
-	/**/
 	SafeRelease(myIWICBitmap);
-	IWICBitmapFromFile(&myIWICBitmap, *path, set);
+
+	myIWICBitmap = set;
+
 	ResetID2D1Bitmap();
-	/**/
+
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromColor(MfxColor color, MfxSize set)
-{
-	/**/
-	SafeRelease(myIWICBitmap);
-	IWICBitmapFromColor(&myIWICBitmap, color, set);
-	ResetID2D1Bitmap();
-	/**/
-	return Mfx_Return_Fine;
-}
 
+/**************************************************************
+*
+*
+*
+***************************************************************/
 MfxReturn MicroFlakeX::MfxImage::ResetID2D1Bitmap()
 {
 	if (myIWICBitmap && myCanvas)
 	{
 		SafeRelease(myID2D1Bitmap);
-		myRenderTarget = nullptr;
 		myCanvas->GetRenderTarget(&myRenderTarget);
+
 		if (myRenderTarget)
 		{
 			ID2D1BitmapFromIWICBitmap(&myID2D1Bitmap, myRenderTarget,
@@ -161,42 +206,28 @@ MfxReturn MicroFlakeX::MfxImage::ResetID2D1Bitmap()
 	{
 		SafeRelease(myID2D1Bitmap);
 	}
+
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxImage::FromFile(MfxString* path, MfxSize set)
-{
-	ResetIWICBitmapFromFile(path, set);
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxImage::FromColor(MfxColor color, MfxSize set)
-{
-	ResetIWICBitmapFromColor(color, set);
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxImage::GetIWICBitmap(IWICBitmap** ret)
-{
-	CopyIWICBitmap(ret, myIWICBitmap);
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxImage::GetID2D1Bitmap(ID2D1Bitmap** ret)
-{
-	*ret = myID2D1Bitmap;
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxImage::GetGdipBitmap(Gdiplus::Bitmap** ret)
-{
-	return GdipBitmapFromIWICBitmap(ret, myIWICBitmap, MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
-}
-
-MfxReturn MicroFlakeX::MfxImage::SetIWICBitmap(IWICBitmap* set)
+MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromFile(MfxString* path, MfxSize* set)
 {
 	SafeRelease(myIWICBitmap);
-	myIWICBitmap = set;
+
+	IWICBitmapFromFile(&myIWICBitmap, *path, set);
+
 	ResetID2D1Bitmap();
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromColor(MfxColor* color, MfxSize* set)
+{
+	SafeRelease(myIWICBitmap);
+
+	IWICBitmapFromColor(&myIWICBitmap, color, set);
+
+	ResetID2D1Bitmap();
+
 	return Mfx_Return_Fine;
 }

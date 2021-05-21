@@ -1,9 +1,8 @@
 #include "pch.h"
 #include "MfxAppFrame.h"
 
-MfxObject_Init_0(MfxFlake)
-MfxObject_Init_1(MfxFlake, ProcMessage)
-MfxAutoFunc_AutoEnumBig(MfxFlake, \
+MfxObject_Init(MfxFlake)
+MfxObject_EndInit(MfxFlake, MfxBase, \
 	3, ProcMessage, \
 	\
 	2, RemoveFlakeMessage, \
@@ -53,10 +52,7 @@ MfxAutoFunc_AutoEnumBig(MfxFlake, \
 	\
 	1, SetWords, \
 	1, SetBackImage, \
-	1, SetMaskImage, \
-	\
-	END, END);
-MfxObject_Init_2(MfxFlake, MfxBase);
+	1, SetMaskImage);
 
 void MicroFlakeX::MfxFlake::MfxRegMessages()
 {

@@ -1,9 +1,8 @@
 #include "pch.h"
 #include "MfxType.h"
 
-MfxObject_Init_0(MfxColor)
-MfxObject_Init_1(MfxColor, Reset)
-MfxAutoFunc_AutoEnumBig(MfxColor, \
+MfxObject_Init(MfxColor)
+MfxObject_EndInit(MfxColor, MfxBase, \
 	4, Reset, \
 	\
 	1, GetPRGB, \
@@ -24,10 +23,7 @@ MfxAutoFunc_AutoEnumBig(MfxColor, \
 	1, SetA, \
 	1, SetR, \
 	1, SetG, \
-	1, SetB, \
-	\
-	END, END);
-MfxObject_Init_2(MfxColor, MfxBase)
+	1, SetB);
 
 
 /**************************************************************
@@ -317,6 +313,23 @@ MfxReturn MicroFlakeX::MfxColor::Reset(LONG setA, LONG setR, LONG setG, LONG set
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxColor::GetColor(MfxColor* ret) const
+{
+	LONG tA = 0, tR = 0, tG = 0, tB = 0;
+
+	GetA(&tA);
+	GetR(&tR);
+	GetG(&tG);
+	GetB(&tB);
+
+	ret->SetA(tA);
+	ret->SetR(tR);
+	ret->SetG(tG);
+	ret->SetB(tB);
+
+	return Mfx_Return_Fine;
+}
+
 
 /**************************************************************
 *
@@ -379,6 +392,24 @@ MfxReturn MicroFlakeX::MfxColor::GetD2D1ColorF(D2D1_COLOR_F* ret) const
 *
 *
 ***************************************************************/
+MfxReturn MicroFlakeX::MfxColor::SetColor(MfxColor* set)
+{
+	LONG tSA = 0, tSR = 0, tSG = 0, tSB = 0;
+
+	set->GetA(&tSA);
+	set->GetR(&tSR);
+	set->GetG(&tSG);
+	set->GetB(&tSB);
+
+	SetA(tSA);
+	SetR(tSR);
+	SetG(tSG);
+	SetB(tSB);
+
+	return Mfx_Return_Fine;
+}
+
+
 MfxReturn MicroFlakeX::MfxColor::SetPRGB(UINT32 set)
 {
 	LONG tA = 0, tR = 0, tG = 0, tB = 0;

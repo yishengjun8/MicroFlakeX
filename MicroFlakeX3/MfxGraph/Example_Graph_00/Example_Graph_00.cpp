@@ -158,18 +158,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         myRect[0].Reset(0, 0, 1000, 1000);
         myImage[0].SetRect(&myRect[0]);
        
-        myImage[0].FromFile(&path, mySize[9]);
+        myImage[0].FromFile(&path, &mySize[9]);
 
         myImage[0].SetCanvas(&myCanvas);
 
-        myImage[0].FromFile(&path, mySize[9]);
+        myImage[0].FromFile(&path, &mySize[9]);
 
 
         {
             myRect[0].Reset(0, 0, 10, 10);
             myImage[1].SetRect(&myRect[0]);
 
-            myImage[1].FromFile(&path, mySize[9]);
+            myImage[1].FromFile(&path, &mySize[9]);
 
             myImage[1].SetCanvas(&myCanvas);
 
@@ -274,7 +274,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // TODO: 在此处添加使用 hdc 的任何绘图代码...
         EndPaint(hWnd, &ps);
 
-        myCanvas.PaintBegin();
+        MfxRect tRect(10, 10, 200, 200);
+        //myCanvas.GetRect(&tRect);
+        myCanvas.PaintBegin(&tRect);
 
 
         myImage[0].Paint();

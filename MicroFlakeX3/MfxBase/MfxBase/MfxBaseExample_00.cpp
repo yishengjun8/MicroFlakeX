@@ -88,6 +88,7 @@
 * MfxAutoFunc_AutoEnum(MfxBaseExample_00, 1, SayHello, 0, SayGoodBy, 1, SetData)
 ****************************************************************/
 
+/**
 MfxObject_Init_0(MfxBaseExample_00)
 {
 	//执行一些语句，这些语句将在程序从入口函数开始执行之前执行
@@ -105,6 +106,20 @@ MfxAutoFunc_AutoEnumBig(MfxBaseExample_00, \
 	\
 	END, END);
 MfxObject_Init_2(MfxBaseExample_00, MfxBase);
+/**/
+
+MfxObject_Init(MfxBaseExample_00)
+MfxObject_EndInit(MfxBaseExample_00, MfxBase, \
+	1, SetData, \
+	1, SayHello, \
+	\
+	2, TestTimer, \
+	2, TestThread, \
+	\
+	0, SayGoodBy, \
+	3, SayTest);
+
+
 
 
 /***************************************************************

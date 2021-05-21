@@ -97,24 +97,26 @@ namespace MicroFlakeX
 		static IDWriteFactory*& myIDWriteFactory;
 		static IWICImagingFactory*& myIWICImagingFactory;
 
+
+		/**************************************************************
+		*
+		*
+		*
+		***************************************************************/
 		MfxObject;
+
 	public:
-		MfxGraph();
-		virtual ~MfxGraph();
-		MfxReturn Clone(MfxBase** ret);
-		MfxBase& operator=(MfxBase& rhs);
-		bool operator==(MfxBase& rhs);
+		virtual MfxReturn GetRect(MfxRect* ret) const;
+		virtual MfxReturn GetSize(MfxSize* ret) const;
+		virtual MfxReturn GetPoint(MfxPoint* ret) const;
 
 	public:
 		virtual MfxReturn SetRect(MfxRect* set);
 		virtual MfxReturn SetSize(MfxSize* set);
 		virtual MfxReturn SetPoint(MfxPoint* set);
 
-		virtual MfxReturn GetRect(MfxRect* ret);
-		virtual MfxReturn GetSize(MfxSize* ret);
-		virtual MfxReturn GetPoint(MfxPoint* ret);
-
-		virtual MfxReturn CollisionWith(MfxGraph* set, bool* ret);
+	public:
+		virtual MfxReturn IntersectWith(MfxGraph* set, MfxRect* ret);
 
 	protected:
 		MfxRect myRect;
@@ -129,31 +131,32 @@ namespace MicroFlakeX
 		MfxObject;
 	public:
 		MfxCanvas();
-		MfxCanvas(MfxRect sRect);
-		MfxCanvas(HDC sDC, MfxRect sRect);
-		MfxCanvas(HWND sWnd, MfxRect sRect);
+		MfxCanvas(MfxRect set);
+		MfxCanvas(HDC setDC, MfxRect setRect);
+		MfxCanvas(HWND setWnd, MfxRect setRect);
 
 		virtual ~MfxCanvas();
-		MfxReturn Clone(MfxBase** ret);
-		MfxBase& operator=(MfxBase& rhs);
-		MfxCanvas& operator=(MfxCanvas& rhs);
-		bool operator==(MfxBase& rhs);
-		BOOL operator==(MfxCanvas& rhs);
+
+
+	public:
+		MfxReturn GetDC(HDC* ret) const;
+		MfxReturn GetWnd(HWND* ret) const;
+		MfxReturn GetBackColor(MfxColor* ret) const;
 
 	public:
 		MfxReturn SetDC(HDC set);
-		MfxReturn GetDC(HDC* ret);
-
 		MfxReturn SetWnd(HWND set);
-		MfxReturn GetWnd(HWND* ret);
+		MfxReturn SetBackColor(MfxColor* set);
 
 	public:
-		MfxReturn PaintBegin();
+		MfxReturn PaintBegin(MfxRect* clip);
 		MfxReturn PaintFinish();
 
-		MfxReturn PaintCheck(bool* ret);
 	public:
-		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret);
+		MfxReturn PaintCheck(bool* ret);
+
+	public:
+		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret) const;
 
 	public:
 		MfxReturn SetRect(MfxRect* set);
@@ -163,8 +166,11 @@ namespace MicroFlakeX
 	protected:
 		HDC myDC;
 		HWND myWnd;
-		BOOL myPaintFlag;
+
 		MfxColor myColor;
+		MfxRect myClipRect;
+
+		bool myPaintFlag;
 		ID2D1RenderTarget* myRenderTarget;
 	};
 }
@@ -178,14 +184,13 @@ namespace MicroFlakeX
 		MfxObject;
 	public:
 		MfxImage();
-		MfxImage(MfxString* path, MfxRect set);
-		MfxImage(MfxColor color, MfxRect set);
-		MfxImage(IWICBitmap* tIWICBitmap, MfxRect set);
+		MfxImage(MfxColor* color, MfxRect* set);
+		MfxImage(MfxString* path, MfxRect* set);
+		MfxImage(IWICBitmap* tIWICBitmap, MfxRect* set);
+
 		virtual ~MfxImage();
-		MfxReturn Clone(MfxBase** ret);
+
 		MfxReturn Clone(MfxImage** ret);
-		MfxBase& operator=(MfxBase& rhs);
-		bool operator==(MfxBase& rhs);
 
 	protected:
 		MfxCanvas* myCanvas;
@@ -198,24 +203,24 @@ namespace MicroFlakeX
 		MfxReturn Paint();
 
 		MfxReturn SetCanvas(MfxCanvas* set);
-		MfxReturn GetCanvas(MfxCanvas** ret);
+		MfxReturn GetCanvas(MfxCanvas** ret) const;
+
+		MfxReturn FromFile(MfxString* path, MfxSize* set);
+		MfxReturn FromColor(MfxColor* color, MfxSize* set);
 
 	public:
-		MfxReturn ResetIWICBitmapFromFile(MfxString* path, MfxSize set);
-		MfxReturn ResetIWICBitmapFromColor(MfxColor color, MfxSize set);
+		MfxReturn GetIWICBitmap(IWICBitmap** ret) const;
+		MfxReturn GetID2D1Bitmap(ID2D1Bitmap** ret) const;
+		MfxReturn GetGdipBitmap(Gdiplus::Bitmap** ret) const;
 
+	public:
+		MfxReturn SetIWICBitmap(IWICBitmap* set);
+
+	public:
 		MfxReturn ResetID2D1Bitmap();
 
-	public:
-		MfxReturn FromFile(MfxString* path, MfxSize set);
-		MfxReturn FromColor(MfxColor color, MfxSize set);
-
-	public:
-		MfxReturn GetIWICBitmap(IWICBitmap** ret);
-		MfxReturn GetID2D1Bitmap(ID2D1Bitmap** ret);
-		MfxReturn GetGdipBitmap(Gdiplus::Bitmap** ret);
-
-		MfxReturn SetIWICBitmap(IWICBitmap* set);
+		MfxReturn ResetIWICBitmapFromFile(MfxString* path, MfxSize* set);
+		MfxReturn ResetIWICBitmapFromColor(MfxColor* color, MfxSize *set);
 	};
 }
 
@@ -230,16 +235,16 @@ namespace MicroFlakeX
 		MfxObject;
 	public:
 		MfxWords();
-		MfxWords(MfxString str, MfxRect set);
-		MfxWords(MfxString str, MfxRect set, FLOAT size);
-		MfxWords(MfxString str, MfxRect set, FLOAT size, IDWriteTextFormat* format);
+		MfxWords(MfxString str, MfxRect* set);
+		MfxWords(MfxString str, MfxRect* set, FLOAT size);
+		MfxWords(MfxString str, MfxRect* set, FLOAT size, IDWriteTextFormat* format);
+
 		virtual ~MfxWords();
-		MfxReturn Clone(MfxBase** ret);
+
 		MfxReturn Clone(MfxWords** ret);
-		MfxBase& operator=(MfxBase& rhs);
-		bool operator==(MfxBase& rhs);
 
 		static IDWriteTextFormat* gDefTextFormat;
+
 	protected:
 		MfxString myText;
 		MfxColor myColor;
@@ -249,38 +254,42 @@ namespace MicroFlakeX
 
 		MfxCanvas* myCanvas;
 		ID2D1RenderTarget* myRenderTarget;
+
 	public:
 		MfxReturn Paint();
 
 		MfxReturn SetCanvas(MfxCanvas* set);
-		MfxReturn GetCanvas(MfxCanvas** ret);
+		MfxReturn GetCanvas(MfxCanvas** ret) const;
 
 	public:
-		MfxReturn ResetTextLayout();
-	public:
-		MfxReturn SetText(MfxString set);
-		MfxReturn GetText(MfxString* ret);
+		MfxReturn GetText(MfxString* ret) const;
+		MfxReturn GetTextSize(FLOAT* ret) const;
 
-		MfxReturn SetTextSize(FLOAT set);
-		MfxReturn GetTextSize(FLOAT* ret);
+		MfxReturn GetFontName(MfxString* ret) const;
+		MfxReturn GetTextColor(MfxColor* ret) const;
 
-		MfxReturn SetFontName(MfxString set);
-		MfxReturn GetFontName(MfxString* ret);
+		MfxReturn GetTextFormat(IDWriteTextFormat** ret) const;
 
-		MfxReturn SetTextFormat(IDWriteTextFormat* set);
-		MfxReturn GetTextFormat(IDWriteTextFormat** ret);
+		MfxReturn GetTextAlignmentX(TextAlignmentX* ret) const;
+		MfxReturn GetTextAlignmentY(TextAlignmentY* ret) const;
 
-		MfxReturn SetTextColor(MfxColor set);
-		MfxReturn GetTextColor(MfxColor* set);
 	public:
 		MfxReturn SetRect(MfxRect* set);
 		MfxReturn SetSize(MfxSize* set);
 
-		MfxReturn SetTextAlignmentX(TextAlignmentX set);
-		MfxReturn GetTextAlignmentX(TextAlignmentX* ret);
+		MfxReturn SetText(MfxString set);
+		MfxReturn SetTextSize(FLOAT set);
 
+		MfxReturn SetFontName(MfxString set);
+		MfxReturn SetTextColor(MfxColor* set);
+
+		MfxReturn SetTextFormat(IDWriteTextFormat* set);
+
+		MfxReturn SetTextAlignmentX(TextAlignmentX set);
 		MfxReturn SetTextAlignmentY(TextAlignmentY set);
-		MfxReturn GetTextAlignmentY(TextAlignmentY* ret);
+
+	public:
+		MfxReturn ResetTextLayout();
 	};
 }
 

@@ -1,9 +1,8 @@
 #include "pch.h"
 #include "MfxType.h"
 
-MfxObject_Init_0(MfxRect)
-MfxObject_Init_1(MfxRect, Reset)
-MfxAutoFunc_AutoEnumBig(MfxRect, \
+MfxObject_Init(MfxRect)
+MfxObject_EndInit(MfxRect, MfxBase, \
 	4, Reset, \
 	\
 	1, GetRect, \
@@ -91,10 +90,7 @@ MfxAutoFunc_AutoEnumBig(MfxRect, \
 	2, Inflate, \
 	\
 	1, IsEmpty, \
-	2, IsPointInside, \
-	\
-	END, END);
-MfxObject_Init_2(MfxRect, MfxBase);
+	2, IsPointInside);
 
 
 /**************************************************************

@@ -473,12 +473,16 @@ namespace MicroFlakeX
         MfxReturn Reset(LONG setA, LONG setR, LONG setG, LONG setB);
 
     public:
+        MfxReturn GetColor(MfxColor* ret) const;
+
         MfxReturn GetPRGB(UINT32* ret) const;
         MfxReturn GetRGB(LONG* retA, UINT32* ret) const;
 
         MfxReturn GetD2D1ColorF(D2D1_COLOR_F* ret) const;
 
     public:
+        MfxReturn SetColor(MfxColor* set);
+
         MfxReturn SetPRGB(UINT32 set);
         MfxReturn SetRGB(LONG setA, UINT32 set);
 

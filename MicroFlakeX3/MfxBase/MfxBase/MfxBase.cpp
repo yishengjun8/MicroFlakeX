@@ -4,6 +4,30 @@
 using namespace MicroFlakeX;
 using namespace __MicroFlakeX;
 
+/***************************************************************
+*
+*
+*
+****************************************************************/
+#include <fstream>
+std::wofstream mycout("DebugOut.txt");
+
+__MicroFlakeX::MfxFactoryHand::MfxFactoryHand(MfxString object)
+{
+	myObjectName = object;
+	MfxRegisterObject(myObjectName, this);
+	std::wcout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Register") << std::endl;
+	mycout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Register") << std::endl;
+}
+
+
+__MicroFlakeX::MfxFactoryHand::~MfxFactoryHand()
+{
+	MfxRemoveObject(myObjectName);
+	std::wcout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Remove") << std::endl;
+	mycout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Remove") << std::endl;
+}
+
 
 /***************************************************************
 *
@@ -20,7 +44,8 @@ MfxReturn MicroFlakeX::MfxFactory(MfxString object, MfxBase** ret)
 	{
 		return iter->second->Creat(ret);
 	}
-	return Mfx_Return_Fine;
+
+	return Mfx_Return_Fail;
 }
 
 MfxReturn __MicroFlakeX::MfxRemoveObject(MfxString object)
@@ -57,8 +82,9 @@ MicroFlakeX::MfxBase::~MfxBase()
 
 MfxReturn MicroFlakeX::MfxBase::Clone(MfxBase** ret)
 {
-	*ret = new MfxBase;
-	return Mfx_Return_Fine;
+	*ret = nullptr;
+
+	return Mfx_Return_Fail;
 }
 
 
@@ -80,7 +106,7 @@ MfxBase& MicroFlakeX::MfxBase::operator=(MfxBase& rhs)
 ****************************************************************/
 bool MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 {
-	return 0;
+	return false;
 }
 
 
@@ -91,7 +117,7 @@ bool MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 ****************************************************************/
 MfxReturn MicroFlakeX::MfxBase::AutoFunc(MfxString recvFunc ...)
 {
-	return Mfx_Return_Fine;
+	return Mfx_Return_Fail;
 }
 
 MfxReturn MicroFlakeX::MfxBase::FuncName(MfxString* ret)
@@ -104,31 +130,6 @@ MfxReturn MicroFlakeX::MfxBase::ObjectName(MfxString* ret)
 {
 	*ret = MfxText("MfxBase");
 	return Mfx_Return_Fine;
-}
-
-
-/***************************************************************
-*
-*
-*
-****************************************************************/
-#include <fstream>
-std::wofstream mycout("DebugOut.txt");
-
-__MicroFlakeX::MfxFactoryHand::MfxFactoryHand(MfxString object)
-{
-	myObjectName = object;
-	MfxRegisterObject(myObjectName, this);
-	std::wcout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Register") << std::endl;
-	mycout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Register") << std::endl;
-}
-
-
-__MicroFlakeX::MfxFactoryHand::~MfxFactoryHand()
-{
-	MfxRemoveObject(myObjectName);
-	std::wcout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Remove") << std::endl;
-	mycout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Remove") << std::endl;
 }
 
 

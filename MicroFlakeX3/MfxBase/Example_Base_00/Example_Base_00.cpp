@@ -13,11 +13,13 @@ using namespace MicroFlakeX;
 int main()
 {
     MfxCout << MfxText("\nmain begin") <<  std::endl;
-    MfxBase* temp = nullptr;
+    //MfxBase* temp = nullptr;
     MfxString str = MfxText("Example_Base_00.cpp");
     MfxString strFuncName;
 
 
+    MfxBase* temp = nullptr;
+    MfxFactory(MfxText("MfxBaseExample_00"), &temp);
 
     /*********************************************************
     *   MfxFactory工厂可以根据字符串直接生成对象
@@ -27,11 +29,11 @@ int main()
     * 
     *   原理 - new一个新对象返回
     *********************************************************/
-    MfxFactory(MfxText("MfxBaseExample_00"), &temp);
 
 
-    //strFuncName = MfxText("SayGoodBy");
-    //temp->AutoFunc(strFuncName);
+
+    strFuncName = MfxText("SayGoodBy");
+    temp->AutoFunc(strFuncName);
 
     //strFuncName = MfxText("SayHello");
     //temp->AutoFunc(strFuncName, str);
@@ -42,14 +44,15 @@ int main()
    // strFuncName = MfxText("SayGoodBy");
     //temp->AutoFunc(strFuncName);
 
-    //float fl = 0.6;
-    //strFuncName = MfxText("SayTest");
-    //temp->AutoFunc(strFuncName, 878, fl, 'M');
+    strFuncName = MfxText("SayTest");
+    temp->AutoFunc(strFuncName, 878, 88.5, 'M');
     
     //MfxBeginNewThread(temp, MfxText("TestThread"), 212, 323);
 
     //PTP_TIMER myTimer;
     //MfxBeginNewTimer(myTimer, temp, MfxText("TestTimer"), 434, 2000);
+    
+    
 
 
     MfxSignal<int, double, char> myOneSignal;
@@ -62,12 +65,11 @@ int main()
     myTwoSignal.SendSignal();
 
     MfxCout << std::endl;
-    MfxCout << std::endl;
-    MfxCout << std::endl;
 
     myTwoSignal.PostSignal();
     myOneSignal.PostSignal(868, 86.5, 'B');
     myOneSignal.PostSignal(858, 87.5, 'C');
+    myOneSignal.RemoveReceiver(temp, MfxText("SayTest"));
     myOneSignal.PostSignal(848, 88.5, 'D');
 
     /*********************************************************

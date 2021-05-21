@@ -1,20 +1,24 @@
 #include "pch.h"
 #include "MfxGraph.h"
 
-MfxObject_Init_0(MfxGraph)
-MfxObject_Init_1(MfxGraph, SetRect)
-MfxAutoFunc_AutoEnumBig(MfxGraph, \
+MfxObject_Init(MfxGraph)
+MfxObject_EndInit(MfxGraph, MfxBase, \
 	1, SetRect, \
 	1, SetSize, \
 	1, SetPoint, \
-		\
+	\
 	1, GetRect, \
 	1, GetSize, \
 	1, GetPoint, \
 	\
-	END, END);
-MfxObject_Init_2(MfxGraph, MfxBase);
+	2, IntersectWith);
 
+
+/**************************************************************
+*
+*
+*
+***************************************************************/
 MfxReturn MicroFlakeX::MfxGraph::GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC set, MfxRect rect)
 {
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
@@ -430,76 +434,68 @@ MfxReturn MicroFlakeX::MfxGraph::CopyTextFormat(IDWriteTextFormat** ret, IDWrite
 }
 
 
-MicroFlakeX::MfxGraph::MfxGraph()
+/**************************************************************
+*
+*
+*
+***************************************************************/
+MfxReturn MicroFlakeX::MfxGraph::GetRect(MfxRect* set) const
 {
-}
+	myRect.GetRect(set);
 
-MicroFlakeX::MfxGraph::~MfxGraph()
-{
-}
-
-MfxReturn MicroFlakeX::MfxGraph::Clone(MfxBase** ret)
-{
 	return Mfx_Return_Fine;
 }
 
-MfxBase& MicroFlakeX::MfxGraph::operator=(MfxBase& rhs)
+MfxReturn MicroFlakeX::MfxGraph::GetSize(MfxSize* set) const
 {
-	return *this;
+	myRect.GetSize(set);
+
+	return Mfx_Return_Fine;
 }
 
-bool MicroFlakeX::MfxGraph::operator==(MfxBase& rhs)
+MfxReturn MicroFlakeX::MfxGraph::GetPoint(MfxPoint* set) const
 {
-	// TODO: 在此处插入 return 语句
-	return false;
+	myRect.GetPoint(set);
+
+	return Mfx_Return_Fine;
 }
 
+
+/**************************************************************
+*
+*
+*
+***************************************************************/
 MfxReturn MicroFlakeX::MfxGraph::SetRect(MfxRect* set)
 {
-	MfxSize tSize(set);
-	MfxPoint tPoint(set);
-
-	SetSize(&tSize);
-	SetPoint(&tPoint);
+	myRect.SetRect(set);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::SetSize(MfxSize* set)
 {
-	myRect = set;
+	myRect.SetSize(set);
+
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxGraph::SetPoint(MfxPoint* set)
 {
-	myRect = set;
+	myRect.SetPoint(set);
+
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::GetRect(MfxRect* set)
-{
-	*set = myRect;
-	return Mfx_Return_Fine;
-}
 
-MfxReturn MicroFlakeX::MfxGraph::GetSize(MfxSize* set)
+/**************************************************************
+*
+*
+*
+***************************************************************/
+MfxReturn MicroFlakeX::MfxGraph::IntersectWith(MfxGraph* set, MfxRect* ret)
 {
-	*set = myRect;
-	return Mfx_Return_Fine;
-}
+	myRect.Intersect_Widely(set, ret);
 
-MfxReturn MicroFlakeX::MfxGraph::GetPoint(MfxPoint* set)
-{
-	*set = myRect;
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxGraph::CollisionWith(MfxGraph* set, bool* ret)
-{
-	MfxRect tRect;
-	myRect.Intersect_Widely(set, &tRect);
-
-	tRect.IsEmpty(ret);
 	return Mfx_Return_Fine;
 }

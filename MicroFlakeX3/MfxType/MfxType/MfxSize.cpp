@@ -1,9 +1,8 @@
 #include "pch.h"
 #include "MfxType.h"
 
-MfxObject_Init_0(MfxSize)
-MfxObject_Init_1(MfxSize, Reset)
-MfxAutoFunc_AutoEnumBig(MfxSize, \
+MfxObject_Init(MfxSize)
+MfxObject_EndInit(MfxSize, MfxBase, \
 	2, Reset, \
 	\
 	1, GetSize,\
@@ -37,10 +36,7 @@ MfxAutoFunc_AutoEnumBig(MfxSize, \
 	\
 	2, Inflate, \
 	\
-	1, IsEmpty, \
-	\
-	END, END);
-MfxObject_Init_2(MfxSize, MfxBase);
+	1, IsEmpty);
 
 
 /**************************************************************

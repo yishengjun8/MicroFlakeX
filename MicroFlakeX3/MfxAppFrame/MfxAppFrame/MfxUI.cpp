@@ -1,9 +1,8 @@
 #include "pch.h"
 #include "MfxAppFrame.h"
 
-MfxObject_Init_0(MfxUI)
-MfxObject_Init_1(MfxUI, CreateSuccess)
-MfxAutoFunc_AutoEnumBig(MfxUI, \
+MfxObject_Init(MfxUI)
+MfxObject_EndInit(MfxUI, MfxBase, \
     \
     0, CreateSuccess, \
     \
@@ -55,10 +54,7 @@ MfxAutoFunc_AutoEnumBig(MfxUI, \
     1, SetBackColor, \
     1, SetMaskColor, \
     1, SetBackImage, \
-    1, SetMaskImage, \
-    \
-    END, END);
-MfxObject_Init_2(MfxUI, MfxBase);
+    1, SetMaskImage);
 
 
 /********************************************************************************

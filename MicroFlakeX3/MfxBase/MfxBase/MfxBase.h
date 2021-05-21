@@ -175,12 +175,21 @@ namespace MicroFlakeX
 	****************************************************************/
 #define MfxObject __MfxObject
 
+#define MfxObject_Init(OBJ) __MfxObject_Init_0(OBJ)
+#define MfxObject_EndInit(OBJ, FATHER_OBJ, ...) \
+		 CONNECT(__MfxObject_EndInit, (OBJ, FATHER_OBJ, __VA_ARGS__, END, END))
+
+#define __MfxObject_EndInit(OBJ, FATHER_OBJ, NUM1, BEGIN, ...) \
+	MfxObject_Init_1(OBJ, BEGIN)\
+	CONNECT(MfxAutoFunc_AutoEnumBig, (OBJ, NUM1, BEGIN, __VA_ARGS__);)\
+	MfxObject_Init_2(OBJ, FATHER_OBJ);
+
 #define MfxObject_Init_0(OBJ) __MfxObject_Init_0(OBJ)
 #define MfxObject_Init_1(OBJ, GOTO_BEGIN) __MfxObject_Init_1(OBJ, GOTO_BEGIN)
 #define MfxObject_Init_2(OBJ, FATHER_OBJ) __MfxObject_Init_2(OBJ, FATHER_OBJ)
 
 #define MfxAutoFunc_AutoEnum(...) CONNECT(__MfxAutoFunc_AutoEnum, (__VA_ARGS__))
-#define MfxAutoFunc_AutoEnumBig(...) CONNECT(MfxAutoFunc_Enum_126, (__VA_ARGS__))
+#define MfxAutoFunc_AutoEnumBig(...) CONNECT(MfxAutoFunc_Enum_120, (__VA_ARGS__))
 
 #define MfxAutoFunc_0(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_0(OBJ, AUTO_FUNC, GOTO_NEXT) 
 #define MfxAutoFunc_1(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_1(OBJ, AUTO_FUNC, GOTO_NEXT) 
@@ -726,60 +735,6 @@ namespace MicroFlakeX
 		bool operator|| (MfxDataFlag<DataType>&& rhs) { return myData || rhs.GetData(); };
 	};
 
-
-	/*public:
-		void RemoveReceiver(MfxBase* recvObject, MfxString recvFunc)
-		{
-			for (auto iter = myReceiver.begin(); iter != myReceiver.end(); iter++)
-			{
-				if ((*iter)->recvObject == recvObject && (*iter)->recvFunc == recvFunc)
-				{
-					myReceiver.erase(iter);
-					return;
-				}
-			}
-		}
-
-		void PushBackReceiver(MfxBase* recvObject, MfxString recvFunc)
-		{
-			myReceiver.push_back(new MfxReceiver_Info(recvObject, recvFunc));
-		}
-
-		void PushFrontReceiver(MfxBase* recvObject, MfxString recvFunc)
-		{
-			myReceiver.push_front(new MfxReceiver_Info(recvObject, recvFunc));
-		}
-
-		void SendSignal()
-		{
-			for (auto& iter : myReceiver)
-			{
-				iter->recvObject->AutoFunc(iter->recvFunc);
-			}
-		}
-
-		void PostSignal()
-		{
-			MfxBeginNewThread_Widely(&(MfxSignal<>::ThreadSignal), NULL, (LPARAM)this);
-		}
-
-	private:
-		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
-		{
-			MfxSignal<>* tThis = (MfxSignal<>*)lParam;
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter->recvObject->AutoFunc(iter->recvFunc);
-			}
-
-			return Mfx_Return_Fine;
-		}
-
-	private:
-		std::deque<MfxReceiver_Info*> myReceiver;
-	*/
-
-
 	struct MfxReceiver_Info
 	{
 		MfxReceiver_Info(MfxBase* recvObject, MfxString recvFunc)
@@ -1279,6 +1234,19 @@ namespace MicroFlakeX
 }
 
 
+typedef std::uint64_t MfxHash;
+
+//BKDRHash
+constexpr MfxHash MfxGetHash_StrA(char const* str)
+{
+	MfxHash hash = 0;
+	while (MfxHash ch = *str++)
+	{
+		hash = hash * 131 + ch;   // 也可以乘以31、131、1313、13131、131313..    
+	}
+	return hash;
+}
+
 /***************************************************************
 *	MicroFlakeX辅助宏
 *	
@@ -1310,8 +1278,8 @@ public:\
 #define __MfxObject_Init_0(OBJ)\
 using namespace MicroFlakeX;\
 using namespace __MicroFlakeX;\
-std::map<MfxString, int> Mfx##OBJ##FuncMap;\
-typedef std::map<MfxString,int>::value_type Mfx##OBJ##FuncMapValue;\
+std::map<MfxString, MfxHash> Mfx##OBJ##FuncMap;\
+typedef std::map<MfxString, MfxHash>::value_type Mfx##OBJ##FuncMapValue;\
 MfxReturn OBJ::FuncName(MfxString* ret)\
 {\
 	*ret = MfxText("");\
@@ -1355,8 +1323,6 @@ bool OBJ##isFirst = true;\
 MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 {\
 	MfxReturn ret = Mfx_Return_Fail;\
-	int countID = 0;\
-	int iterID = 0;\
 	va_list argc;\
 	va_start(argc, recvFunc);\
 	auto iter = Mfx##OBJ##FuncMap.end();\
@@ -1368,10 +1334,10 @@ MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 	\
 	BeginSwitch:\
 	iter = Mfx##OBJ##FuncMap.find(recvFunc);\
-	if (iter != Mfx##OBJ##FuncMap.end())\
+	if(iter != Mfx##OBJ##FuncMap.end())\
 	{\
-		iterID = iter->second;\
-		countID = 0;
+		switch (iter->second)\
+		{
 
 
 /***************************************************************
@@ -1380,14 +1346,15 @@ MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 *
 ****************************************************************/
 #define __MfxObject_Init_2(OBJ, FATHER_OBJ) \
-		if(iterID == countID++)\
+		case MfxGetHash_StrA("AUTOFUNC_NOTFOUND"):\
 		{\
 			recvFunc = va_arg(argc, MfxString);\
 			argc = va_arg(argc, va_list);\
 			goto BeginSwitch;\
 			REG_END:\
-				Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText("AUTOFUNC_NOTFOUND"), countID++));\
+				Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText("AUTOFUNC_NOTFOUND"), MfxGetHash_StrA("AUTOFUNC_NOTFOUND")));\
 			goto BeginSwitch;\
+		}\
 		}\
 	}\
 	else\
@@ -1406,7 +1373,7 @@ MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 ****************************************************************/
 
 #define __MfxAutoFunc_0(OBJ, AUTO_FUNC, GOTO_NEXT) \
-if(iterID == countID++)\
+case MfxGetHash_StrA(#AUTO_FUNC):\
 {\
 	{\
 		ret = AUTO_FUNC(); \
@@ -1414,12 +1381,12 @@ if(iterID == countID++)\
 		return ret;\
 	}\
 	REG_##AUTO_FUNC:\
-		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), countID++));\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrA(#AUTO_FUNC)));\
 	goto REG_##GOTO_NEXT;\
 }\
 
 #define __MfxAutoFunc_1(OBJ, AUTO_FUNC, GOTO_NEXT) \
-if(iterID == countID++)\
+case MfxGetHash_StrA(#AUTO_FUNC):\
 {\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC))); \
@@ -1429,12 +1396,12 @@ if(iterID == countID++)\
 	}\
 	\
 	REG_##AUTO_FUNC:\
-		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), countID++));\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrA(#AUTO_FUNC)));\
 	goto REG_##GOTO_NEXT;\
 }\
 
 #define __MfxAutoFunc_2(OBJ, AUTO_FUNC, GOTO_NEXT) \
-if(iterID == countID++)\
+case MfxGetHash_StrA(#AUTO_FUNC):\
 {\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
@@ -1445,12 +1412,12 @@ if(iterID == countID++)\
 	}\
 	\
 	REG_##AUTO_FUNC:\
-		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), countID++));\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrA(#AUTO_FUNC)));\
 	goto REG_##GOTO_NEXT;\
 }\
 
 #define __MfxAutoFunc_3(OBJ, AUTO_FUNC, GOTO_NEXT) \
-if(iterID == countID++)\
+case MfxGetHash_StrA(#AUTO_FUNC):\
 {\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
@@ -1462,12 +1429,12 @@ if(iterID == countID++)\
 	}\
 	\
 	REG_##AUTO_FUNC:\
-		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), countID++));\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrA(#AUTO_FUNC)));\
 	goto REG_##GOTO_NEXT;\
 }\
 
 #define __MfxAutoFunc_4(OBJ, AUTO_FUNC, GOTO_NEXT) \
-if(iterID == countID++)\
+case MfxGetHash_StrA(#AUTO_FUNC):\
 {\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
@@ -1480,12 +1447,12 @@ if(iterID == countID++)\
 	}\
 	\
 	REG_##AUTO_FUNC:\
-		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), countID++));\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrA(#AUTO_FUNC)));\
 	goto REG_##GOTO_NEXT;\
 }\
 
 #define __MfxAutoFunc_5(OBJ, AUTO_FUNC, GOTO_NEXT) \
-if(iterID == countID++)\
+case MfxGetHash_StrA(#AUTO_FUNC):\
 {\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
@@ -1499,12 +1466,12 @@ if(iterID == countID++)\
 	}\
 	\
 	REG_##AUTO_FUNC:\
-		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), countID++));\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrA(#AUTO_FUNC)));\
 	goto REG_##GOTO_NEXT;\
 }\
 
 #define __MfxAutoFunc_6(OBJ, AUTO_FUNC, GOTO_NEXT) \
-if(iterID == countID++)\
+case MfxGetHash_StrA(#AUTO_FUNC):\
 {\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
@@ -1519,13 +1486,13 @@ if(iterID == countID++)\
 	}\
 	\
 	REG_##AUTO_FUNC:\
-		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), countID++));\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrA(#AUTO_FUNC)));\
 	goto REG_##GOTO_NEXT;\
 }\
 
 
 #define __MfxAutoFunc_7(OBJ, AUTO_FUNC, GOTO_NEXT) \
-if(iterID == countID++)\
+case MfxGetHash_StrA(#AUTO_FUNC):\
 {\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
@@ -1541,12 +1508,12 @@ if(iterID == countID++)\
 	}\
 	\
 	REG_##AUTO_FUNC:\
-		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), countID++));\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrA(#AUTO_FUNC)));\
 	goto REG_##GOTO_NEXT;\
 }\
 
 #define __MfxAutoFunc_8(OBJ, AUTO_FUNC, GOTO_NEXT) \
-if(iterID == countID++)\
+case MfxGetHash_StrA(#AUTO_FUNC):\
 {\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
@@ -1563,7 +1530,7 @@ if(iterID == countID++)\
 	}\
 	\
 	REG_##AUTO_FUNC:\
-		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), countID++));\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrA(#AUTO_FUNC)));\
 	goto REG_##GOTO_NEXT;\
 }
 
@@ -2250,14 +2217,6 @@ N113, N114, N115, N116, N117, N118, N119, N120, N121, N122, N123, N124, N125, N1
 #define MfxAutoFunc_Enum_126(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
     MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
     CONNECT(MfxAutoFunc_Enum_125(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
-
-#define MfxAutoFunc_Enum_127(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
-    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
-    CONNECT(MfxAutoFunc_Enum_126(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
-
-#define MfxAutoFunc_Enum_128(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
-    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
-    CONNECT(MfxAutoFunc_Enum_127(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
 
 
 

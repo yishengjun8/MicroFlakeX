@@ -1,14 +1,23 @@
 #include "pch.h"
 #include "MfxType.h"
 
-MfxObject_Init_0(MfxGlide)
-MfxObject_Init_1(MfxGlide, BindObject)
-MfxAutoFunc_AutoEnumBig(MfxGlide, \
+MfxObject_Init(MfxGlide)
+MfxObject_EndInit(MfxGlide, MfxBase, \
+	1, SetFPS, \
 	1, BindObject, \
-	2, EachFrame, \
+	2, BindObjectName, \
+	3, Add_GetSetFuncName, \
 	\
-	END, END);
-MfxObject_Init_2(MfxGlide, MfxBase);
+	1, GetFPS, \
+	1, GetBindObject, \
+	\
+	0, Stop, \
+	0, Begin, \
+	0, Pause, \
+	0, Clear, \
+	\
+	2, EachFrame, \
+	3, MfxAddKeyframe);
 
 MicroFlakeX::MfxGlide::MfxGlide()
 {
@@ -85,7 +94,9 @@ MicroFlakeX::MfxGlide::~MfxGlide()
 
 MfxReturn MicroFlakeX::MfxGlide::Clone(MfxBase** ret)
 {
-	return MfxReturn();
+	*ret = new MfxGlide(this);
+
+	return Mfx_Return_Fine;
 }
 
 MfxBase& MicroFlakeX::MfxGlide::operator=(MfxBase& rhs)
@@ -141,7 +152,7 @@ MfxGlide& MicroFlakeX::MfxGlide::operator=(MfxGlide&& rhs)
 
 bool MicroFlakeX::MfxGlide::operator==(MfxBase& rhs)
 {
-	return 0;
+	return false;
 }
 
 bool MicroFlakeX::MfxGlide::operator==(MfxGlide* rhs)
@@ -151,7 +162,7 @@ bool MicroFlakeX::MfxGlide::operator==(MfxGlide* rhs)
 
 bool MicroFlakeX::MfxGlide::operator==(MfxGlide& rhs)
 {
-	return 0;
+	return false;
 }
 
 bool MicroFlakeX::MfxGlide::operator==(MfxGlide&& rhs)

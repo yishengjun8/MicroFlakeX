@@ -1,9 +1,8 @@
 #include "pch.h"
 #include "MfxType.h"
 
-MfxObject_Init_0(MfxPoint)
-MfxObject_Init_1(MfxPoint, Reset)
-MfxAutoFunc_AutoEnumBig(MfxPoint, \
+MfxObject_Init(MfxPoint)
+MfxObject_EndInit(MfxPoint, MfxBase, \
 	2, Reset, \
 	\
 	1, GetPoint, \
@@ -35,10 +34,7 @@ MfxAutoFunc_AutoEnumBig(MfxPoint, \
 	1, SetY, \
 	\
 	\
-	2, Offset, \
-	\
-	END, END);
-MfxObject_Init_2(MfxPoint, MfxBase);
+	2, Offset);
 
 
 /**************************************************************
