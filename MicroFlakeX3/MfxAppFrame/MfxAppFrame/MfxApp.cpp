@@ -30,7 +30,7 @@ MicroFlakeX::MfxApp::MfxApp()
 	tempWC.hCursor = LoadCursor(NULL, IDC_ARROW);                // predefined arrow 
 	tempWC.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
 
-	//tempWC.lpszMenuName = MfxTextMainMenu";    // name of menu resource
+	tempWC.lpszMenuName = 0;     // name of menu resource
 	tempWC.lpszClassName = MfxText("MfxNormalUI");  // name of window class
 	tempWC.hIconSm = LoadIcon(NULL, IDI_APPLICATION);  // small class icon 
 

@@ -211,7 +211,11 @@ namespace MicroFlakeX
 	public:
 		MfxReturn GetIWICBitmap(IWICBitmap** ret) const;
 		MfxReturn GetID2D1Bitmap(ID2D1Bitmap** ret) const;
+
 		MfxReturn GetGdipBitmap(Gdiplus::Bitmap** ret) const;
+
+		MfxReturn GetHICON(HICON* ret) const;
+		MfxReturn GetHBITMAP(MfxColor* set, HBITMAP* ret) const;
 
 	public:
 		MfxReturn SetIWICBitmap(IWICBitmap* set);

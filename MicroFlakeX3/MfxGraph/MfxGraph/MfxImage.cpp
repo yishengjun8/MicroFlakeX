@@ -154,6 +154,37 @@ MfxReturn MicroFlakeX::MfxImage::GetGdipBitmap(Gdiplus::Bitmap** ret) const
 	return GdipBitmapFromIWICBitmap(ret, myIWICBitmap, MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
 }
 
+MfxReturn MicroFlakeX::MfxImage::GetHICON(HICON* ret) const
+{
+	Gdiplus::Bitmap* tBitmap = nullptr;
+
+	if (Mfx_Failed(GetGdipBitmap(&tBitmap)))
+	{
+		return Mfx_Return_Fail;
+	}
+
+	tBitmap->GetHICON(ret);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxImage::GetHBITMAP(MfxColor* set, HBITMAP* ret) const
+{
+	Gdiplus::Bitmap* tBitmap = nullptr;
+
+	if (Mfx_Failed(GetGdipBitmap(&tBitmap)))
+	{
+		return Mfx_Return_Fail;
+	}
+	
+	Gdiplus::Color tColor;
+	set->GetGdipColor(&tColor);
+
+	tBitmap->GetHBITMAP(tColor, ret);
+
+	return Mfx_Return_Fine;
+}
+
 
 /**************************************************************
 *

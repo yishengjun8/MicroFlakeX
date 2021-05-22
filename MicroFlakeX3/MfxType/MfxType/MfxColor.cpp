@@ -330,6 +330,20 @@ MfxReturn MicroFlakeX::MfxColor::GetColor(MfxColor* ret) const
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxColor::GetGdipColor(Gdiplus::Color* ret) const
+{
+	LONG tA = 0, tR = 0, tG = 0, tB = 0;
+
+	GetA(&tA);
+	GetR(&tR);
+	GetG(&tG);
+	GetB(&tB);
+
+	ret->SetValue(Gdiplus::Color::MakeARGB(tA, tR, tG, tB));
+
+	return Mfx_Return_Fine;
+}
+
 
 /**************************************************************
 *
@@ -409,6 +423,22 @@ MfxReturn MicroFlakeX::MfxColor::SetColor(MfxColor* set)
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxColor::SetGdipColor(Gdiplus::Color* set)
+{
+	LONG tSA = 0, tSR = 0, tSG = 0, tSB = 0;
+
+	tSA = set->GetA();
+	tSR = set->GetR();
+	tSG = set->GetG();
+	tSB = set->GetB();
+
+	SetA(tSA);
+	SetR(tSR);
+	SetG(tSG);
+	SetB(tSB);
+
+	return Mfx_Return_Fine;
+}
 
 MfxReturn MicroFlakeX::MfxColor::SetPRGB(UINT32 set)
 {

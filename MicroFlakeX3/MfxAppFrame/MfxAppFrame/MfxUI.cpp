@@ -67,6 +67,36 @@ void MicroFlakeX::MfxUI::MfxRegMessages()
     *
     *
     *********************************************************************************/
+
+    //UI_ADDRECV_UIMSG(WM_NCCREATE, MfxUI, __OnNCCreat);
+
+    UI_ADDRECV_UIMSG(WM_NCMOUSEMOVE, MfxUI, __OnNCMouseMove);
+    UI_ADDRECV_UIMSG(WM_NCMOUSEHOVER, MfxUI, __OnNCMouseHover);
+
+    UI_ADDRECV_UIMSG(WM_NCLBUTTONUP, MfxUI, __OnNCLButtonUp);
+    UI_ADDRECV_UIMSG(WM_NCLBUTTONDOWN, MfxUI, __OnNCLButtonDown);
+    UI_ADDRECV_UIMSG(WM_NCLBUTTONDBLCLK, MfxUI, __OnNCLButtonDblClk);
+
+    UI_ADDRECV_UIMSG(WM_NCRBUTTONUP, MfxUI, __OnNCRButtonUp);
+    UI_ADDRECV_UIMSG(WM_NCRBUTTONDOWN, MfxUI, __OnNCRButtonDown);
+    UI_ADDRECV_UIMSG(WM_NCRBUTTONDBLCLK, MfxUI, __OnNCRButtonDblClk);
+
+
+    
+
+    UI_ADDRECV_UIMSG(WM_NCACTIVATE, MfxUI, __OnNCActivate);
+    UI_ADDRECV_UIMSG(WM_NCPAINT, MfxUI, __OnNCPaint);
+    UI_ADDRECV_UIMSG(WM_NCHITTEST, MfxUI, __OnNCHitTest);
+    
+    //UI_ADDRECV_UIMSG(WM_SYSCOMMAND, MfxUI, __OnSysCommand);
+
+    //UI_ADDRECV_UIMSG(WM_ENTERMENULOOP, MfxUI, __OnINITMENUPOPUP);
+
+
+
+
+
+
     UI_ADDRECV_UIMSG(WM_CREATE, MfxUI, __OnCreate);
     UI_ADDRECV_UIMSG(WM_DESTROY, MfxUI, __OnDestroy);
 
@@ -118,6 +148,8 @@ void MicroFlakeX::MfxUI::MfxUIInitData()
     myKeyboardFocusLockFlag = false;
 
     myPercentRectFlag = false;
+
+    myBackColor.Reset(255, 0, 255, 255);
 }
 
 /**/
@@ -126,13 +158,15 @@ MfxReturn MicroFlakeX::MfxUI::UIThread(WPARAM wParam, LPARAM lParam)
     myUIThreadID = GetCurrentThreadId();
 
     MSG tMsg;
+
     while (GetMessage(&tMsg, NULL, 0, 0) > 0)
     {
         TranslateMessage(&tMsg);
         ProcMessage(tMsg.message, tMsg.wParam, tMsg.lParam);
     }
 
-    MessageBox(NULL, L"Close", L"Close", 0);
+    MessageBox(NULL, L"One UIThread Is Close", L"Close", 0);
+
     return tMsg.wParam;
 }
 /**/
@@ -207,6 +241,8 @@ MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxMessage message, WPARAM wParam, LPA
     /* 这里添加识别 - 耗时的全部移交到UI线程内处理 */
     MfxReturn t_Ret = Mfx_Return_Fail;
 
+    SendMessageToFlakes(message, wParam, lParam);
+
     auto t_Iter = myMessageMap.find(message);
     if (t_Iter != myMessageMap.end())
     {
@@ -216,11 +252,10 @@ MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxMessage message, WPARAM wParam, LPA
             {
                 t_Ret = (this->*i->recvFunc)(wParam, lParam);
             }
+;
             return t_Ret;
         }
     }
-
-    SendMessageToFlakes(message, wParam, lParam);
 
     return DefWindowProc(myWnd, message, wParam, lParam);
 }
@@ -229,6 +264,7 @@ MfxReturn MicroFlakeX::MfxUI::SendMessageToFlakes(MfxMessage message, WPARAM wPa
 {
     //True 从后往前
     //False 从前往后
+    MfxReturn t_Ret = Mfx_Return_Fail;
     MfxFlake* t_FloatFocus = myMutexFocus;
     myMutexFocus = myMutexFocusLockFlag ? myMutexFocus : nullptr;
 
@@ -236,20 +272,19 @@ MfxReturn MicroFlakeX::MfxUI::SendMessageToFlakes(MfxMessage message, WPARAM wPa
     {
         for (int i = myFlakeDeque.size() - 1; i >= 0; i--)
         {
-            myFlakeDeque[i]->ProcMessage(message, wParam, lParam);
+            t_Ret = myFlakeDeque[i]->ProcMessage(message, wParam, lParam);
         }
     }
     else
     {
         for (auto t_Iter : myFlakeDeque)
         {
-            t_Iter->ProcMessage(message, wParam, lParam);
+            t_Ret = t_Iter->ProcMessage(message, wParam, lParam);
         }
     }
 
-    myMutexFocus = (myMutexFocus ? myMutexFocus : t_FloatFocus);
-
-    return Mfx_Return_Fine;
+    //myMutexFocus = (myMutexFocus ? myMutexFocus : t_FloatFocus);
+    return t_Ret;
 }
 
 
@@ -475,6 +510,18 @@ MfxReturn MicroFlakeX::MfxUI::GetKeyboardFocus(MfxFlake** ret)
     return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxUI::UnionInvalidateRect(MfxRect* set)
+{
+    RECT tRECT;
+    set->GetRECT(&tRECT);
+
+    InvalidateRect(myWnd, &tRECT, TRUE);
+
+    myInvalidateRect.Union(set, &myInvalidateRect);
+
+    return Mfx_Return_Fine;
+}
+
 
 /********************************************************************************
 * 
@@ -509,34 +556,46 @@ MfxReturn MicroFlakeX::MfxUI::GetCanvas(MfxCanvas** ret)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::GetRect(MfxRect* ret)
 {
-    *ret = myRect;
+    myRect.GetRect(ret);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::GetSize(MfxSize* ret)
 {
-    *ret = myRect;
+    myRect.GetSize(ret);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::GetPoint(MfxPoint* ret)
 {
-    *ret = myRect;
+    myRect.GetPoint(ret);
+
+    return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxUI::GetBackColor(MfxColor* ret)
+{
+    myBackColor.GetColor(ret);
+
+    return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxUI::GetMaskColor(MfxColor* ret)
+{
+    myMaskColor.GetColor(ret);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::GetBackImage(MfxImage** ret)
 {
-    MfxCodeLock(this);
     return myBackImage ? myBackImage->Clone(ret) : Mfx_Return_Fail;
 }
 
 MfxReturn MicroFlakeX::MfxUI::GetMaskImage(MfxImage** ret)
 {
-    MfxCodeLock(this);
     return myMaskImage ? myMaskImage->Clone(ret) : Mfx_Return_Fail;
 }
 
@@ -637,6 +696,229 @@ MfxReturn MicroFlakeX::MfxUI::__OnTest01(WPARAM wParam, LPARAM lParam)
     return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxUI::__OnNCMouseMove(WPARAM wParam, LPARAM lParam)
+{
+    if (myMutexFocus)
+    {
+        return 0;
+    }
+    return DefWindowProc(myWnd, WM_NCMOUSEMOVE, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxUI::__OnNCMouseHover(WPARAM wParam, LPARAM lParam)
+{
+    if (myMutexFocus)
+    {
+        return 0;
+    }
+    return DefWindowProc(myWnd, WM_NCMOUSEHOVER, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxUI::__OnNCLButtonUp(WPARAM wParam, LPARAM lParam)
+{
+    if (myMutexFocus)
+    {
+        return 0;
+    }
+    return DefWindowProc(myWnd, WM_NCLBUTTONUP, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxUI::__OnNCLButtonDown(WPARAM wParam, LPARAM lParam)
+{
+    if (myMutexFocus)
+    {
+        return 0;
+    }
+    return DefWindowProc(myWnd, WM_NCLBUTTONDOWN, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxUI::__OnNCLButtonDblClk(WPARAM wParam, LPARAM lParam)
+{
+    if (myMutexFocus)
+    {
+        return 0;
+    }
+    return DefWindowProc(myWnd, WM_NCLBUTTONDBLCLK, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxUI::__OnNCRButtonUp(WPARAM wParam, LPARAM lParam)
+{
+    if (myMutexFocus)
+    {
+        return 0;
+    }
+    return DefWindowProc(myWnd, WM_NCRBUTTONUP, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxUI::__OnNCRButtonDown(WPARAM wParam, LPARAM lParam)
+{
+    if (myMutexFocus)
+    {
+        return 0;
+    }
+    return DefWindowProc(myWnd, WM_NCRBUTTONDOWN, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxUI::__OnNCRButtonDblClk(WPARAM wParam, LPARAM lParam)
+{
+    if (myMutexFocus)
+    {
+        return 0;
+    }
+    return DefWindowProc(myWnd, WM_NCRBUTTONDBLCLK, wParam, lParam);
+}
+
+
+
+MfxReturn MicroFlakeX::MfxUI::__OnNCActivate(WPARAM wParam, LPARAM lParam)
+{
+    return wParam ? 0 : 1;
+}
+
+
+MfxReturn MicroFlakeX::MfxUI::__OnNCPaint(WPARAM wParam, LPARAM lParam)
+{
+    //HDC hdc = GetWindowDC(myWnd);
+
+    //RECT rcWin;
+    //GetWindowRect(myWnd, &rcWin);
+    //OffsetRect(&rcWin, -rcWin.left, -rcWin.top);
+
+    //hdc = GetDCEx(myWnd, (HRGN)wParam, DCX_WINDOW | DCX_INTERSECTRGN);
+
+    //RECT rcWin;
+    //GetWindowRect(myWnd, &rcWin);
+    //HICON m_hIcon;
+    //myBackImage->GetHICON(&m_hIcon);
+    //MfxRect tRect;
+    //tRect.SetRECT(&rcWin);
+    //DrawIconEx(hdc, tRect.myX, tRect.myY, m_hIcon, tRect.myWidth, tRect.myHeight, 0, 0, DI_IMAGE);
+
+    //DeleteObject(m_hIcon);
+    //ReleaseDC(myWnd, hdc);
+    /**
+    HICON m_hIcon;
+    myBackImage->GetHICON(&m_hIcon);
+
+
+    MfxRect tRect;
+
+
+    SIZE sizeButton{ GetSystemMetrics(SM_CXSIZE), GetSystemMetrics(SM_CYSIZE) };// 27,27
+
+    HDC pWinDC = GetWindowDC(myWnd);
+    RECT rcWin;
+    GetWindowRect(myWnd, &rcWin);
+    OffsetRect(&rcWin, -rcWin.left, -rcWin.top);
+    // 3 pixel
+    HBRUSH hbr = CreateSolidBrush(RGB(255, 0, 0));
+    hbr = (HBRUSH)SelectObject(pWinDC, hbr);
+
+    rcWin.top -= 3;
+    rcWin.left -= 3;
+    rcWin.right -= 3;
+    rcWin.bottom -= 3;
+
+    rcWin.bottom = GetSystemMetrics(SM_CYCAPTION) + rcWin.top;
+
+    SetBkMode(pWinDC, TRANSPARENT);
+    SetTextColor(pWinDC, RGB(255, 255, 255));
+    TextOut(pWinDC, 40, 6, L"SelfDraw Cap", 12);
+
+    //    m_hIcon DrawIcon
+    LONG style = GetWindowLong(myWnd, GWL_STYLE);
+
+    if (style & WS_SYSMENU) // 0x00080000L
+    {
+      
+
+        DrawIconEx(pWinDC, 6, 6, m_hIcon, 16, 16, 0, 0, DI_IMAGE);
+        //
+        RECT rc;
+        rc.right = rcWin.right - rcWin.left;
+        rc.left = rc.right - sizeButton.cx + 2;
+        rc.top = rcWin.top + 3;
+        rc.bottom = sizeButton.cy + 3;
+        //
+        DrawFrameControl(pWinDC, &rc, DFC_CAPTION, DFCS_CAPTIONCLOSE);
+
+        if ((style & WS_MAXIMIZEBOX) || (style & WS_MINIMIZEBOX))
+        {
+            rc.left += -sizeButton.cx;
+            rc.right += -sizeButton.cx;
+
+            if (style & WS_MAXIMIZEBOX)
+            {
+                if (IsZoomed(myWnd))
+                {
+                    tRect.SetRECT(&rc);
+                    DrawIconEx(pWinDC, tRect.myX, tRect.myY, m_hIcon, tRect.myWidth, tRect.myHeight, 0, 0, DI_IMAGE);
+                }
+                //DrawFrameControl(pWinDC, &rc, DFC_CAPTION, DFCS_CAPTIONRESTORE);
+                else
+                {
+                    tRect.SetRECT(&rc);
+                    DrawIconEx(pWinDC, tRect.myX, tRect.myY, m_hIcon, tRect.myWidth, tRect.myHeight, 0, 0, DI_IMAGE);
+                }
+                //DrawFrameControl(pWinDC, &rc, DFC_CAPTION, DFCS_CAPTIONMAX);
+            }
+            else
+            {
+                tRect.SetRECT(&rc);
+                DrawIconEx(pWinDC, tRect.myX, tRect.myY, m_hIcon, tRect.myWidth, tRect.myHeight, 0, 0, DI_IMAGE);
+            }
+               // DrawFrameControl(pWinDC, &rc, DFC_CAPTION, DFCS_CAPTIONMAX | DFCS_INACTIVE);
+
+            rc.left += -sizeButton.cx + 2;
+            rc.right += -sizeButton.cx + 2;
+
+            if (style & WS_MINIMIZEBOX)
+            {
+                tRect.SetRECT(&rc);
+                DrawIconEx(pWinDC, tRect.myX, tRect.myY, m_hIcon, tRect.myWidth, tRect.myHeight, 0, 0, DI_IMAGE);
+            }
+                //DrawFrameControl(pWinDC, &rc, DFC_CAPTION, DFCS_CAPTIONMIN);
+            else
+            {
+                tRect.SetRECT(&rc);
+                DrawIconEx(pWinDC, tRect.myX, tRect.myY, m_hIcon, tRect.myWidth, tRect.myHeight, 0, 0, DI_IMAGE);
+            }
+                //DrawFrameControl(pWinDC, &rc, DFC_CAPTION, DFCS_CAPTIONMIN | DFCS_INACTIVE);
+        }
+    }
+    //
+    ReleaseDC(myWnd, pWinDC);
+    /**/
+    return 1;
+}
+
+MfxReturn MicroFlakeX::MfxUI::__OnNCHitTest(WPARAM wParam, LPARAM lParam)
+{
+    auto a = DefWindowProcW(myWnd, WM_NCHITTEST, wParam, lParam);
+
+    if (a == HTMINBUTTON
+        || a == HTMAXBUTTON
+        || a == HTHELP
+        || a == HTCLOSE
+        )
+    {
+        return HTCAPTION;
+    }
+
+    return a;
+}
+
+MfxReturn MicroFlakeX::MfxUI::__OnSysCommand(WPARAM wParam, LPARAM lParam)
+{
+
+    return DefWindowProc(myWnd, WM_SYSCOMMAND, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxUI::__OnINITMENUPOPUP(WPARAM wParam, LPARAM lParam)
+{
+    return 0;
+}
+
 
 /********************************************************************************
 *
@@ -647,19 +929,28 @@ MfxReturn MicroFlakeX::MfxUI::__OnTest01(WPARAM wParam, LPARAM lParam)
 MfxReturn MicroFlakeX::MfxUI::__OnCreate(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
-    CREATESTRUCTA* t_Create = (CREATESTRUCTA*)lParam;
+    //CREATESTRUCTA* t_Create = (CREATESTRUCTA*)lParam;
+    //myRect.Reset(t_Create->x, t_Create->y, t_Create->cx, t_Create->cy);
 
-    myRect.Reset(t_Create->x, t_Create->y, t_Create->cx, t_Create->cy);
+    RECT rcWin;
+    GetWindowRect(myWnd, &rcWin);
+    myRect.SetRECT(&rcWin);
+   
 
-    //MfxSize t_Size(GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN));
     MfxSize tSize(myRect.myWidth, myRect.myHeight);
-    myCanvas.SetWnd(myWnd);
+    MfxRect tRect(0, 0, myRect.myWidth, myRect.myHeight);
+
+    myCanvas.SetDC(GetWindowDC(myWnd));
     myCanvas.SetSize(&tSize);
 
-    myBackImage = new MfxImage(MfxColor(255, 0, 255, 255), MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
+    myBackImage = new MfxImage(&myBackColor, &tRect);
     myBackImage->SetCanvas(&myCanvas);
 
     while (!myUIThreadID);
+
+    HRGN tRNG = CreateRectRgn(0, 0, rcWin.right - rcWin.left, rcWin.bottom - rcWin.top);
+
+    SetWindowRgn(myWnd, tRNG, TRUE);
 
     return Mfx_Return_Fine;
 }
@@ -684,10 +975,17 @@ MfxReturn MicroFlakeX::MfxUI::__OnDestroy(WPARAM wParam, LPARAM lParam)
 MfxReturn MicroFlakeX::MfxUI::__OnSize(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
-    MfxSize tSize(LOWORD(lParam), HIWORD(lParam));
+    //MfxSize tSize(LOWORD(lParam), HIWORD(lParam));
 
-    myRect = tSize;
+    RECT rcWin;
+    GetWindowRect(myWnd, &rcWin);
+    myRect.SetRECT(&rcWin);
+
+    MfxSize tSize;
+    myRect.GetSize(&tSize);
+
     myCanvas.SetSize(&tSize);
+
     if (myBackImage)
     {
         myBackImage->SetSize(&tSize);
@@ -697,6 +995,12 @@ MfxReturn MicroFlakeX::MfxUI::__OnSize(WPARAM wParam, LPARAM lParam)
         myMaskImage->SetSize(&tSize);
     }
 
+    HRGN tRNG = CreateRectRgn(0, 0, rcWin.right - rcWin.left, rcWin.bottom - rcWin.top);
+
+    SetWindowRgn(myWnd, tRNG, TRUE);
+
+    UnionInvalidateRect(&myRect);
+
     return DefWindowProc(myWnd, WM_SIZE, wParam, lParam);
 }
 
@@ -704,8 +1008,14 @@ MfxReturn MicroFlakeX::MfxUI::__OnMove(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
 
-    myRect.myX = LOWORD(lParam);
-    myRect.myY = HIWORD(lParam);
+    //myRect.myX = LOWORD(lParam);
+   // myRect.myY = HIWORD(lParam);
+
+    RECT rcWin;
+    GetWindowRect(myWnd, &rcWin);
+    myRect.SetRECT(&rcWin);
+
+    UnionInvalidateRect(&myRect);
 
     return DefWindowProc(myWnd, WM_MOVE, wParam, lParam);
 }
@@ -725,13 +1035,20 @@ MfxReturn MicroFlakeX::MfxUI::__OnPaint(WPARAM wParam, LPARAM lParam)
 
     HDC t_Dc = BeginPaint(myWnd, &t_Paint);
 
-    myCanvas.PaintBegin();
+    bool isEmpty = true;
+    myInvalidateRect.IsEmpty(&isEmpty);
+    if (!isEmpty)
+    {
+        myCanvas.PaintBegin(&myInvalidateRect);
 
-    ProcMessage(UI_MSG_PaintBack, NULL, NULL);
+        ProcMessage(UI_MSG_PaintBack, NULL, NULL);
 
-    ProcMessage(UI_MSG_PaintMask, NULL, NULL);
+        ProcMessage(UI_MSG_PaintMask, NULL, NULL);
 
-    myCanvas.PaintFinish();
+        myCanvas.PaintFinish();
+
+        myInvalidateRect.Reset(0, 0, 0, 0);
+    }
 
     EndPaint(myWnd, &t_Paint);
 
@@ -999,6 +1316,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnOpenPercentRect(WPARAM wParam, LPARAM lParam)
     MfxCodeLock(this);
 
     myPercentRectFlag = true;
+
     SendMessageToFlakes(FLAKE_MSG_OpenPercentRect, NULL, NULL);
 
     return Mfx_Return_Fail;
@@ -1024,14 +1342,20 @@ MfxReturn MicroFlakeX::MfxUI::__OnSetBackColor(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
 
-    MfxColor* t_Set = (MfxColor*)lParam;
+    myBackColor = (MfxColor*)lParam;
+
     if (myBackImage)
     {
-        myBackImage->FromColor(*t_Set, MfxSize(myRect));
+        MfxSize tSize(myRect);
+
+        myBackImage->FromColor(&myBackColor, &tSize);
     }
     else
     {
-        myBackImage = new MfxImage(*t_Set, MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
+        MfxRect tRect(0, 0, myRect.myWidth, myRect.myHeight);
+
+        myBackImage = new MfxImage(&myBackColor, &tRect);
+
         myBackImage->SetCanvas(&myCanvas);
     }
 
@@ -1042,14 +1366,19 @@ MfxReturn MicroFlakeX::MfxUI::__OnSetMaskColor(WPARAM wParam, LPARAM lParam)
 {
     MfxCodeLock(this);
 
-    MfxColor* t_Set = (MfxColor*)lParam;
+    myMaskColor = (MfxColor*)lParam;
+
     if (myMaskImage)
     {
-        myMaskImage->FromColor(*t_Set, MfxSize(myRect));
+        MfxSize tSize(myRect);
+        myMaskImage->FromColor(&myMaskColor, &tSize);
     }
     else
     {
-        myMaskImage = new MfxImage(*t_Set, MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
+        MfxRect tRect(0, 0, myRect.myWidth, myRect.myHeight);
+
+        myMaskImage = new MfxImage(&myMaskColor, &tRect);
+
         myMaskImage->SetCanvas(&myCanvas);
     }
 

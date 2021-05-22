@@ -56,6 +56,17 @@ MfxObject_EndInit(MfxFlake, MfxBase, \
 
 void MicroFlakeX::MfxFlake::MfxRegMessages()
 {
+	FLAKE_ADDRECV_FLAKEMSG(WM_NCMOUSEMOVE, MfxFlake, __OnNCMouseMove);
+	FLAKE_ADDRECV_FLAKEMSG(WM_NCMOUSEHOVER, MfxFlake, __OnNCMouseHover);
+
+	FLAKE_ADDRECV_FLAKEMSG(WM_NCLBUTTONUP, MfxFlake, __OnNCLButtonUp);
+	FLAKE_ADDRECV_FLAKEMSG(WM_NCLBUTTONDOWN, MfxFlake, __OnNCLButtonDown);
+	FLAKE_ADDRECV_FLAKEMSG(WM_NCLBUTTONDBLCLK, MfxFlake, __OnNCLButtonDblClk);
+
+	FLAKE_ADDRECV_FLAKEMSG(WM_NCRBUTTONUP, MfxFlake, __OnNCRButtonUp);
+	FLAKE_ADDRECV_FLAKEMSG(WM_NCRBUTTONDOWN, MfxFlake, __OnNCRButtonDown);
+	FLAKE_ADDRECV_FLAKEMSG(WM_NCRBUTTONDBLCLK, MfxFlake, __OnNCRButtonDblClk);
+
 	/********************************************************************************
 	*
 	*
@@ -67,8 +78,9 @@ void MicroFlakeX::MfxFlake::MfxRegMessages()
 	FLAKE_ADDRECV_FLAKEMSG(WM_MOUSEMOVE, MfxFlake, __OnMouseMove);
 
 	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONUP, MfxFlake, __OnLButtonUp);
-	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONUP, MfxFlake, __OnRButtonUp);
 	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONDOWN, MfxFlake, __OnLButtonDown);
+
+	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONUP, MfxFlake, __OnRButtonUp);
 	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONDOWN, MfxFlake, __OnRButtonDown);
 
 
@@ -128,10 +140,10 @@ void MicroFlakeX::MfxFlake::MfxFlakeInitData()
 
 	myBackColor.Reset(255, 255, 0, 0);
 	myMaskColor.Reset(0, 255, 0, 0);
-	myBackImage = new MfxImage(myBackColor, myRect);
+	myBackImage = new MfxImage(&myBackColor, &myRect);
 	myMaskImage = nullptr;
 
-	myWords = new MfxWords(myTitle, myRect);
+	myWords = new MfxWords(myTitle, &myRect);
 	myWords->SetTextAlignmentX(TextAlignmentX::DWRITE_TEXT_ALIGNMENT_CENTER);
 	myWords->SetTextAlignmentY(TextAlignmentY::DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 }
@@ -199,7 +211,7 @@ MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMessage message, WPARAM wParam, 
 
 		//RECT tRECT;
 		//myRect.GetRECT(&tRECT);
-		//InvalidateRect(myWnd, &tRECT, TRUE);
+		//myUI->UnionInvalidateRect(myWnd, &tRECT, TRUE);
 	}
 	/**/
 	return t_Ret;
@@ -656,7 +668,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnUISize(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 
-	if (myPercentRectFlag || (myPercentRectFlag && myUI->ChickPercentRect()))
+	if (myPercentRectFlag || (myPercentRectFlag && myUI && myUI->ChickPercentRect()))
 	{
 		ProcMessage(FLAKE_MSG_ResetRect, wParam, lParam);
 	}
@@ -682,14 +694,18 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSize(WPARAM wParam, LPARAM lParam)
 		myWords->SetSize(t_Size);
 	}
 
+	if (myUI)
+	{
+		myUI->UnionInvalidateRect(&myRect);
+	}
+
 	myRect.myWidth = t_Size->myWidth;
 	myRect.myHeight = t_Size->myHeight;
 
-	RECT tRECT;
-	myRect.GetRECT(&tRECT);
-	InvalidateRect(myWnd, &tRECT, TRUE);
-
-	//FLAKE_POSTMSG_UITHREAD()
+	if (myUI)
+	{
+		myUI->UnionInvalidateRect(&myRect);
+	}
 
 	return Mfx_Return_Fine;
 }
@@ -711,12 +727,20 @@ MfxReturn MicroFlakeX::MfxFlake::__OnPoint(WPARAM wParam, LPARAM lParam)
 	{
 		myWords->SetPoint(t_Point);
 	}
+
+	if (myUI)
+	{
+		myUI->UnionInvalidateRect(&myRect);
+	}
+
+
 	myRect.myX = t_Point->myX;
 	myRect.myY = t_Point->myY;
 
-	RECT tRECT;
-	myRect.GetRECT(&tRECT);
-	InvalidateRect(myWnd, &tRECT, TRUE);
+	if (myUI)
+	{
+		myUI->UnionInvalidateRect(&myRect);
+	}
 
 	return Mfx_Return_Fine;
 }
@@ -838,8 +862,62 @@ MfxReturn MicroFlakeX::MfxFlake::__OnClosePercentRect(WPARAM wParam, LPARAM lPar
 *
 *
 *********************************************************************************/
+MfxReturn MicroFlakeX::MfxFlake::__OnNCMouseMove(WPARAM wParam, LPARAM lParam)
+{
+	MfxCodeLock(this);
+
+	return ProcMessage(WM_MOUSEMOVE, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxFlake::__OnNCMouseHover(WPARAM wParam, LPARAM lParam)
+{
+	MfxCodeLock(this);
+
+	return ProcMessage(WM_MOUSEHOVER, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxFlake::__OnNCLButtonUp(WPARAM wParam, LPARAM lParam)
+{
+	MfxCodeLock(this);
+
+	return ProcMessage(WM_LBUTTONUP, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxFlake::__OnNCLButtonDown(WPARAM wParam, LPARAM lParam)
+{
+	MfxCodeLock(this);
+
+	return ProcMessage(WM_LBUTTONDOWN, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxFlake::__OnNCLButtonDblClk(WPARAM wParam, LPARAM lParam)
+{
+	MfxCodeLock(this);
+
+	return ProcMessage(WM_LBUTTONDBLCLK, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxFlake::__OnNCRButtonUp(WPARAM wParam, LPARAM lParam)
+{
+	MfxCodeLock(this);
+
+	return ProcMessage(WM_RBUTTONUP, wParam, lParam);
+}
 
 
+MfxReturn MicroFlakeX::MfxFlake::__OnNCRButtonDown(WPARAM wParam, LPARAM lParam)
+{
+	MfxCodeLock(this);
+
+	return ProcMessage(WM_RBUTTONDOWN, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxFlake::__OnNCRButtonDblClk(WPARAM wParam, LPARAM lParam)
+{
+	MfxCodeLock(this);
+
+	return ProcMessage(WM_RBUTTONDBLCLK, wParam, lParam);
+}
 
 /********************************************************************************
 *
@@ -849,8 +927,21 @@ MfxReturn MicroFlakeX::MfxFlake::__OnClosePercentRect(WPARAM wParam, LPARAM lPar
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 {
+	if (!myUI)
+	{
+		return Mfx_Return_Fine;
+	}
+
 	MfxCodeLock(this);
-	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+	//MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+
+	POINT tPOINT;
+	GetCursorPos(&tPOINT);
+
+	MfxPoint tPoint;
+	myUI->GetPoint(&tPoint);
+
+	MfxPoint mousePos(tPOINT.x - tPoint.myX, tPOINT.y - tPoint.myY);
 
 	bool tInside = false;
 	myRect.IsPointInside(&mousePos, &tInside);
@@ -880,62 +971,19 @@ MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 	if ((myLButtonPress && myLButtonMoveFlag) ||
 		(myRButtonPress && myRButtonMoveFlag))
 	{
-		if (myUI)
-		{
-			myUI->LockMutexFocus(this);
-		}
-		MfxPoint nowPos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		myUI->LockMutexFocus(this);
+		MfxPoint nowPos(mousePos);
 		MfxRect t_Rect = myRect;
 		t_Rect.Offset(nowPos.myX - myButtonMoveBegin.myX, nowPos.myY - myButtonMoveBegin.myY);
 
 		MfxPoint t_Point(t_Rect.myX, t_Rect.myY);
 		SetPoint(&t_Point);
 		myButtonMoveBegin = nowPos;
+
 	}
 	else
 	{
-		if (myUI)
-		{
-			myUI->UnLockMutexFocus();
-		}
-	}
-
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDown(WPARAM wParam, LPARAM lParam)
-{
-	MfxCodeLock(this);
-	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-
-	bool tInside = false;
-	myRect.IsPointInside(&mousePos, &tInside);
-	if (tInside)
-	{
-		MfxFlake* t_Conctrol = nullptr;
-		myUI->SetMutexFocus(this);
-		myUI->GetMutexFocus(&t_Conctrol);
-
-		if (t_Conctrol == this) //获取互斥焦点成功
-		{
-			myButtonMoveBegin = mousePos;
-			myUI->SetKeyboardFocus(this); //设置键盘焦点
-			myMouseFloat = true;
-			myLButtonPress = true;
-			myLButtonClickFlag = true;
-		}
-		else
-		{
-			goto myFailed;
-		}
-	}
-	else
-	{
-	myFailed:
-		myMouseFloat = false;
-		myLButtonPress = false;
-		myLButtonClickFlag = false;
-		myRButtonClickFlag = false;
+		myUI->UnLockMutexFocus();
 	}
 
 	return Mfx_Return_Fine;
@@ -943,8 +991,21 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDown(WPARAM wParam, LPARAM lParam)
 
 MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(WPARAM wParam, LPARAM lParam)
 {
+	if (!myUI)
+	{
+		return Mfx_Return_Fine;
+	}
+
 	MfxCodeLock(this);
-	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+	//MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+
+	POINT tPOINT;
+	GetCursorPos(&tPOINT);
+
+	MfxPoint tPoint;
+	myUI->GetPoint(&tPoint);
+
+	MfxPoint mousePos(tPOINT.x - tPoint.myX, tPOINT.y - tPoint.myY);
 
 	bool tInside = false;
 	myRect.IsPointInside(&mousePos, &tInside);
@@ -985,13 +1046,28 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(WPARAM wParam, LPARAM lParam)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDown(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDown(WPARAM wParam, LPARAM lParam)
 {
+	if (!myUI)
+	{
+		return Mfx_Return_Fine;
+	}
+
 	MfxCodeLock(this);
-	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+	//MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+
+	POINT tPOINT;
+	GetCursorPos(&tPOINT);
+
+	MfxPoint tPoint;
+	myUI->GetPoint(&tPoint);
+
+	MfxPoint mousePos(tPOINT.x - tPoint.myX, tPOINT.y - tPoint.myY);
 
 	bool tInside = false;
 	myRect.IsPointInside(&mousePos, &tInside);
+
+	
 	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
@@ -1001,9 +1077,10 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDown(WPARAM wParam, LPARAM lParam)
 		if (t_Conctrol == this) //获取互斥焦点成功
 		{
 			myButtonMoveBegin = mousePos;
+			myUI->SetKeyboardFocus(this); //设置键盘焦点
 			myMouseFloat = true;
-			myRButtonPress = true;
-			myRButtonClickFlag = true;
+			myLButtonPress = true;
+			myLButtonClickFlag = true;
 		}
 		else
 		{
@@ -1014,18 +1091,32 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDown(WPARAM wParam, LPARAM lParam)
 	{
 	myFailed:
 		myMouseFloat = false;
-		myRButtonPress = false;
-		myRButtonClickFlag = false;
+		myLButtonPress = false;
 		myLButtonClickFlag = false;
+		myRButtonClickFlag = false;
 	}
 
 	return Mfx_Return_Fine;
 }
 
+
 MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 {
+	if (!myUI)
+	{
+		return Mfx_Return_Fine;
+	}
+
 	MfxCodeLock(this);
-	MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+	//MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+
+	POINT tPOINT;
+	GetCursorPos(&tPOINT);
+
+	MfxPoint tPoint;
+	myUI->GetPoint(&tPoint);
+
+	MfxPoint mousePos(tPOINT.x - tPoint.myX, tPOINT.y - tPoint.myY);
 
 	bool tInside = false;
 	myRect.IsPointInside(&mousePos, &tInside);
@@ -1066,6 +1157,57 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDown(WPARAM wParam, LPARAM lParam)
+{
+	if (!myUI)
+	{
+		return Mfx_Return_Fine;
+	}
+
+	MfxCodeLock(this);
+	//MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+
+	POINT tPOINT;
+	GetCursorPos(&tPOINT);
+
+	MfxPoint tPoint;
+	myUI->GetPoint(&tPoint);
+
+	MfxPoint mousePos(tPOINT.x - tPoint.myX, tPOINT.y - tPoint.myY);
+
+	bool tInside = false;
+	myRect.IsPointInside(&mousePos, &tInside);
+	if (tInside)
+	{
+		MfxFlake* t_Conctrol = nullptr;
+		myUI->SetMutexFocus(this);
+		myUI->GetMutexFocus(&t_Conctrol);
+
+		if (t_Conctrol == this) //获取互斥焦点成功
+		{
+			myButtonMoveBegin = mousePos;
+			myMouseFloat = true;
+			myRButtonPress = true;
+			myRButtonClickFlag = true;
+		}
+		else
+		{
+			goto myFailed;
+		}
+	}
+	else
+	{
+	myFailed:
+		myMouseFloat = false;
+		myRButtonPress = false;
+		myRButtonClickFlag = false;
+		myLButtonClickFlag = false;
+	}
+
+	return Mfx_Return_Fine;
+}
+
+
 
 /********************************************************************************
 *
@@ -1089,15 +1231,21 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetTitle(WPARAM wParam, LPARAM lParam)
 MfxReturn MicroFlakeX::MfxFlake::__OnSetBackColor(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
-	myBackColor = *(MfxColor*)lParam;
+
+	myBackColor = (MfxColor*)lParam;
 
 	if (myBackImage)
 	{
-		myBackImage->FromColor(myBackColor, MfxSize(myRect));
+		MfxSize tSize(myRect);
+
+		myBackImage->FromColor(&myBackColor, &tSize);
 	}
 	else
 	{
-		myBackImage = new MfxImage(myBackColor, MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
+		MfxRect tRect(0, 0, myRect.myWidth, myRect.myHeight);
+
+		myBackImage = new MfxImage(&myBackColor, &tRect);
+
 		myBackImage->SetCanvas(myCanvas);
 	}
 
@@ -1107,15 +1255,21 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetBackColor(WPARAM wParam, LPARAM lParam)
 MfxReturn MicroFlakeX::MfxFlake::__OnSetMaskColor(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
-	myMaskColor = *(MfxColor*)lParam;
+
+	myMaskColor = (MfxColor*)lParam;
 
 	if (myMaskImage)
 	{
-		myMaskImage->FromColor(myMaskColor, MfxSize(myRect));
+		MfxSize tSize(myRect);
+
+		myMaskImage->FromColor(&myMaskColor, &tSize);
 	}
 	else
 	{
-		myMaskImage = new MfxImage(myMaskColor, MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
+		MfxRect tRect(0, 0, myRect.myWidth, myRect.myHeight);
+
+		myMaskImage = new MfxImage(&myMaskColor, &tRect);
+
 		myMaskImage->SetCanvas(myCanvas);
 	}
 

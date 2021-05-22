@@ -191,7 +191,8 @@ MfxReturn MicroFlakeX::MfxWords::Paint()
 			myRenderTarget->DrawTextLayout(
 				tPoint,
 				myTextLayout,
-				myTextBrush);
+				myTextBrush,
+				D2D1_DRAW_TEXT_OPTIONS_CLIP);
 		}
 	}
 

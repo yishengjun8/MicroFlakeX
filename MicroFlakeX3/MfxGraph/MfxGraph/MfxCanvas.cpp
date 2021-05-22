@@ -2,7 +2,27 @@
 #include "MfxGraph.h"
 
 MfxObject_Init(MfxCanvas)
-MfxObject_EndInit(MfxCanvas, MfxGraph)
+{
+	//添加一些需要提前初始化的代码
+}
+MfxObject_EndInit(MfxCanvas, MfxGraph, \
+	1, GetDC, \
+	1, GetWnd, \
+	1, GetBackColor, \
+	\
+	1, SetDC, \
+	1, SetWnd, \
+	1, SetBackColor, \
+	\
+	1, PaintBegin, \
+	0, PaintFinish, \
+	1, PaintCheck, \
+	\
+	1, GetRenderTarget, \
+	\
+	1, SetRect, \
+	1, SetSize, \
+	1, SetPoint);
 
 MicroFlakeX::MfxCanvas::MfxCanvas()
 {

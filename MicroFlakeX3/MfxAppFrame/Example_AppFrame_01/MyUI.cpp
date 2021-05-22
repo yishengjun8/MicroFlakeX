@@ -22,5 +22,7 @@ MfxReturn MyUI::MfxCallBack(Test__000)
 	MessageBox(NULL, MfxText("Hello"), MfxText("Test__000"), 0);
 
 	MyUI myUI;
+
+
 	return MfxReturn();
 }

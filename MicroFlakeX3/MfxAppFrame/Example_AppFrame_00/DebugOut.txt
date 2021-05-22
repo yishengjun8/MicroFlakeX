@@ -10,3 +10,15 @@ ClassHand <MfxGraph> Is Register
 ClassHand <MfxCanvas> Is Register
 ClassHand <MfxFlake> Is Register
 ClassHand <MfxUI> Is Register
+ClassHand <MfxUI> Is Remove
+ClassHand <MfxFlake> Is Remove
+ClassHand <MfxCanvas> Is Remove
+ClassHand <MfxGraph> Is Remove
+ClassHand <MfxWords> Is Remove
+ClassHand <MfxImage> Is Remove
+ClassHand <MfxGlide> Is Remove
+ClassHand <MfxColor> Is Remove
+ClassHand <MfxPoint> Is Remove
+ClassHand <MfxRect> Is Remove
+ClassHand <MfxSize> Is Remove
+ClassHand <MfxBaseExample_00> Is Remove

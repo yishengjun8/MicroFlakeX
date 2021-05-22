@@ -474,6 +474,7 @@ namespace MicroFlakeX
 
     public:
         MfxReturn GetColor(MfxColor* ret) const;
+        MfxReturn GetGdipColor(Gdiplus::Color* ret) const;
 
         MfxReturn GetPRGB(UINT32* ret) const;
         MfxReturn GetRGB(LONG* retA, UINT32* ret) const;
@@ -482,6 +483,7 @@ namespace MicroFlakeX
 
     public:
         MfxReturn SetColor(MfxColor* set);
+        MfxReturn SetGdipColor(Gdiplus::Color* set);
 
         MfxReturn SetPRGB(UINT32 set);
         MfxReturn SetRGB(LONG setA, UINT32 set);

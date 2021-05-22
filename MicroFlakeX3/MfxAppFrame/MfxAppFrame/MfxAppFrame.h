@@ -351,8 +351,8 @@ namespace MicroFlakeX
 	enum UI_WINDOWS_STYLE
 	{
 		UI_WINDOWS_STYLE_AntiFlicker = WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
-		UI_WINDOWS_STYLE_Normal = WS_OVERLAPPEDWINDOW | WS_VISIBLE | UI_WINDOWS_STYLE_AntiFlicker,
-		UI_WINDOWS_STYLE_Pop = WS_POPUP | WS_VISIBLE | UI_WINDOWS_STYLE_AntiFlicker,
+		UI_WINDOWS_STYLE_Normal = WS_OVERLAPPED | WS_CAPTION | WS_THICKFRAME | WS_VISIBLE,
+		UI_WINDOWS_STYLE_Pop = WS_POPUP | WS_VISIBLE | UI_WINDOWS_STYLE_AntiFlicker & ~WS_SYSMENU,
 	};
 }
 
@@ -492,6 +492,8 @@ namespace MicroFlakeX
 		*
 		*********************************************************************************/
 	private:
+		MfxRect myInvalidateRect;
+
 		MfxFlake* myMutexFocus;
 		MfxFlake *myKeyboardFocus;
 
@@ -507,6 +509,9 @@ namespace MicroFlakeX
 		MfxReturn SetKeyboardFocus(MfxFlake* set);
 		MfxReturn GetKeyboardFocus(MfxFlake** ret);
 
+
+
+		MfxReturn UnionInvalidateRect(MfxRect* set);
 
 		/********************************************************************************
 		*
@@ -534,11 +539,19 @@ namespace MicroFlakeX
 		*********************************************************************************/
 	private:
 		MfxRect myRect;
-		MfxImage* myBackImage, * myMaskImage;
+		MfxImage* myBackImage;
+		MfxImage* myMaskImage;
+
+		MfxColor myBackColor;
+		MfxColor myMaskColor;
 	public:
 		MfxReturn GetRect(MfxRect* ret);
 		MfxReturn GetSize(MfxSize* ret);
 		MfxReturn GetPoint(MfxPoint* ret);
+
+		MfxReturn GetBackColor(MfxColor* ret);
+		MfxReturn GetMaskColor(MfxColor* ret);
+
 		MfxReturn GetBackImage(MfxImage** ret);
 		MfxReturn GetMaskImage(MfxImage** ret);
 
@@ -565,6 +578,28 @@ namespace MicroFlakeX
 		MfxReturn __OnTest00(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnTest01(WPARAM wParam, LPARAM lParam);
 	private:
+		MfxReturn __OnNCMouseMove(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCMouseHover(WPARAM wParam, LPARAM lParam);
+
+		MfxReturn __OnNCLButtonUp(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCLButtonDown(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCLButtonDblClk(WPARAM wParam, LPARAM lParam);
+
+		MfxReturn __OnNCRButtonUp(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCRButtonDown(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCRButtonDblClk(WPARAM wParam, LPARAM lParam);
+
+		MfxReturn __OnNCActivate(WPARAM wParam, LPARAM lParam);
+
+		MfxReturn __OnNCPaint(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCHitTest(WPARAM wParam, LPARAM lParam);
+
+		MfxReturn __OnSysCommand(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnINITMENUPOPUP(WPARAM wParam, LPARAM lParam);
+
+
+
+
 		MfxReturn __OnCreate(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnDestroy(WPARAM wParam, LPARAM lParam);
 
@@ -806,11 +841,25 @@ namespace MicroFlakeX
 		MfxReturn __OnOpenPercentRect(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnClosePercentRect(WPARAM wParam, LPARAM lParam);
 
+		//
+		MfxReturn __OnNCMouseMove(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCMouseHover(WPARAM wParam, LPARAM lParam);
+
+		MfxReturn __OnNCLButtonUp(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCLButtonDown(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCLButtonDblClk(WPARAM wParam, LPARAM lParam);
+
+		MfxReturn __OnNCRButtonUp(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCRButtonDown(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCRButtonDblClk(WPARAM wParam, LPARAM lParam);
+		//
+
 		MfxReturn __OnMouseMove(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnLButtonUp(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnRButtonUp(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnLButtonDown(WPARAM wParam, LPARAM lParam);
+
+		MfxReturn __OnRButtonUp(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnRButtonDown(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnSetTitle(WPARAM wParam, LPARAM lParam);
