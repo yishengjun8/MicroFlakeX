@@ -55,9 +55,12 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <unordered_map>
+#include <unordered_set>
 #include <iostream>
 #include <algorithm>
 /**/
+
 #endif
 
 namespace MicroFlakeX
@@ -580,23 +583,28 @@ namespace MicroFlakeX
 	****************************************************************/
 	class MfxMutexLock
 	{
+	protected:
+		std::unordered_map<void*, CRITICAL_SECTION> myMutexResour;
+		typedef std::unordered_map<void*, CRITICAL_SECTION>::value_type myResour;
 	public:
-		MfxMutexLock()
+		void Add_Resour(void* resour)
 		{
-			InitializeCriticalSection(&myCriticalSection);
+			myMutexResour.insert(myResour(resour, CRITICAL_SECTION()));
+
+			InitializeCriticalSection(&myMutexResour[resour]);
 		}
 		virtual ~MfxMutexLock()
 		{
-			EnterCriticalSection(&myCriticalSection);
-			DeleteCriticalSection(&myCriticalSection);
+			for (auto iter : myMutexResour)
+			{
+				DeleteCriticalSection(&iter.second);
+			}
 		}
 	public:
 		template<typename ...Args>
 		void UnLock(void* first, Args... rest)
 		{
-			EnterCriticalSection(&myCriticalSection);
-			myMutexSet.erase(first);
-			LeaveCriticalSection(&myCriticalSection);
+			LeaveCriticalSection(&myMutexResour[first]);
 
 			UnLock(rest...);
 		}
@@ -614,9 +622,18 @@ namespace MicroFlakeX
 		template<typename ...Args>
 		bool TryLock(void* first, Args... rest)
 		{
-			EnterCriticalSection(&myCriticalSection);
-			bool ret = myMutexSet.insert(first).second;
-			LeaveCriticalSection(&myCriticalSection);
+			bool ret = false;
+			auto tFind = myMutexResour.find(first);
+			if (tFind == myMutexResour.end())
+			{
+				Add_Resour(first);
+				ret = TryEnterCriticalSection(&myMutexResour[first]);
+			}
+			else
+			{
+				ret = TryEnterCriticalSection(&tFind->second);
+			}
+			
 
 			if (ret == true)
 			{
@@ -628,9 +645,7 @@ namespace MicroFlakeX
 				}
 				else
 				{
-					EnterCriticalSection(&myCriticalSection);
-					myMutexSet.erase(first);
-					LeaveCriticalSection(&myCriticalSection);
+					LeaveCriticalSection(&myMutexResour[first]);
 
 					return false;
 				}
@@ -643,27 +658,26 @@ namespace MicroFlakeX
 
 		void UnLock(void* first)
 		{
-			//std::cout << "UnLock" << endl;
-
-			EnterCriticalSection(&myCriticalSection);
-			myMutexSet.erase(first);
-			LeaveCriticalSection(&myCriticalSection);
+			LeaveCriticalSection(&myMutexResour[first]);
 		}
 
 		bool TryLock(void* first)
 		{
-			//std::cout << "Lock" << endl;
-
-			EnterCriticalSection(&myCriticalSection);
-			bool ret = myMutexSet.insert(first).second;
-			LeaveCriticalSection(&myCriticalSection);
+			bool ret = false;
+			auto tFind = myMutexResour.find(first);
+			if (tFind == myMutexResour.end())
+			{
+				Add_Resour(first);
+				ret = TryEnterCriticalSection(&myMutexResour[first]);
+			}
+			else
+			{
+				ret = TryEnterCriticalSection(&tFind->second);
+			}
 
 			return ret;
 		}
 
-	protected:
-		std::set<void*> myMutexSet;
-		CRITICAL_SECTION myCriticalSection;
 	};
 }
 

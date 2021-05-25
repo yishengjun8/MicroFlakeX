@@ -33,7 +33,7 @@ namespace MicroFlakeX
 	class MFX_PORT MfxFlake;
 
 
-	typedef std::set<MfxFlake*> MfxFlake_Set;
+	typedef std::unordered_set<MfxFlake*> MfxFlake_Set;
 	typedef std::deque<MfxFlake*> MfxFlake_Deque;
 	typedef std::vector<MfxFlake*> MfxFlake_Vector;
 
@@ -69,7 +69,7 @@ namespace MicroFlakeX
 	};
 
 
-	typedef std::map<HWND, App_UI_Info*> App_UI_Info_Map;
+	typedef std::unordered_map<HWND, App_UI_Info*> App_UI_Info_Map;
 	typedef App_UI_Info_Map::value_type App_UI_Info_Map_Elem;
 
 
@@ -100,7 +100,7 @@ namespace MicroFlakeX
 
 	typedef std::deque<UI_UIRecvFunc_Info*> UI_UIRecvFunc_Infor_Deque;
 
-	typedef std::map<MfxMessage, UI_UIRecvFunc_Infor_Deque> UI_UIMessage_Map;
+	typedef std::unordered_map<MfxMessage, UI_UIRecvFunc_Infor_Deque> UI_UIMessage_Map;
 	typedef UI_UIMessage_Map::value_type UI_UIMessage_Map_Elem;
 
 
@@ -112,27 +112,42 @@ namespace MicroFlakeX
 	class UI_FlakeEvent_Info
 	{
 	public:
-		UI_FlakeEvent_Info(MfxFlake* set, MfxMessage msg)
+		UI_FlakeEvent_Info()
 		{
-			Flake = set;
-			message = msg;
+			myFlake = nullptr;
+			myEvent = 0;
 		}
-		MfxFlake* Flake;
-		MfxMessage message;
+		UI_FlakeEvent_Info(MfxFlake* setFlake, MfxMessage setEvent)
+		{
+			myFlake = setFlake;
+			myEvent = setEvent;
+		}
+		MfxFlake* myFlake;
+		MfxMessage myEvent;
 		MfxString recvFuncName;
 
 		bool operator< (const UI_FlakeEvent_Info& rhs) const
 		{
-			if (Flake != rhs.Flake)
+			if (myFlake != rhs.myFlake)
 			{
-				return (Flake < rhs.Flake);
+				return (myFlake < rhs.myFlake);
 			}
 			else
 			{
-				return (Flake < rhs.Flake) || (message < rhs.message);
+				return (myFlake < rhs.myFlake) || (myEvent < rhs.myEvent);
 			}
 		}
+		bool operator==(const UI_FlakeEvent_Info& rhs) const
+		{
+			return (myFlake != rhs.myFlake) && (myEvent != rhs.myEvent);
+		}
+
+		std::size_t operator()(const UI_FlakeEvent_Info& key) const
+		{
+			return std::hash<int>()((int)key.myFlake);
+		}
 	};
+
 
 	/**************************************************************
 	*	Win32Msg_Value 标识了win32的具体消息，采用
@@ -150,7 +165,7 @@ namespace MicroFlakeX
 	};
 
 
-	typedef std::map<UI_FlakeEvent_Info, UI_UIRecvFunc_Infor_Deque> UI_FlakeEvent_Map;
+	typedef std::unordered_map<UI_FlakeEvent_Info, UI_UIRecvFunc_Infor_Deque, UI_FlakeEvent_Info> UI_FlakeEvent_Map;
 	typedef UI_FlakeEvent_Map::value_type UI_FlakeMsg_Map_Elem;
 
 
@@ -172,7 +187,7 @@ namespace MicroFlakeX
 	};
 
 
-	typedef std::map<MfxMessage, UI_UITimer_Info*> UI_UITimer_Map;
+	typedef std::unordered_map<MfxMessage, UI_UITimer_Info*> UI_UITimer_Map;
 	typedef UI_UITimer_Map::value_type UI_UITimer_Map_Elem;
 
 
@@ -237,7 +252,7 @@ namespace MicroFlakeX
 
 	typedef std::deque<Flake_RecvFunc_Infor*> Flake_RecvFunc_Infor_Deque;
 
-	typedef std::map<MfxMessage, Flake_RecvFunc_Infor_Deque> Flake_FlakeMessage_Map;
+	typedef std::unordered_map<MfxMessage, Flake_RecvFunc_Infor_Deque> Flake_FlakeMessage_Map;
 	typedef Flake_FlakeMessage_Map::value_type Flake_FlakeMessage_Map_Elem;
 }
 
@@ -425,7 +440,12 @@ namespace MicroFlakeX
 
 		MfxReturn ProcMessage(MfxMessage message, WPARAM wParam, LPARAM lParam);
 		MfxReturn SendMessageToFlakes(MfxMessage message, WPARAM wParam, LPARAM lParam, bool sort = false);
-		
+	protected:
+		MfxReturn myUIMessageReturnKeep;
+		MfxReturn myFlakeEventReturnKeep;
+
+
+
 		
 		/********************************************************************************
 		*
@@ -469,11 +489,10 @@ namespace MicroFlakeX
 		/********************************************************************************
 		*
 		*********************************************************************************/
-	protected:
-		MfxReturn myUIReturnKeep;
+
 	private:
-		std::vector<void*> myDeleteVector_pVoid;
-		std::vector<MfxBase*> myDeleteVector_pMfxBase;
+		std::set<void*> myDeleteSet_pVoid;
+		std::set<MfxBase*> myDeleteSet_pMfxBase;
 	protected:
 		MfxReturn ClearDeleteVctor();
 		MfxReturn AddDelete_pVoid(void* set);
@@ -637,7 +656,7 @@ namespace MicroFlakeX
 /********************************************************************************
 * 为UI添加一个来自控件的消息映射
 *********************************************************************************/
-#define UI_ADDRECV_FLAKEMSG(Flake, Msg, myClass, recvFunc) PushBackFlakeEvent(UI_FlakeEvent_Info(Flake, Msg), new UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#recvFunc)));
+#define UI_ADDRECV_FLAKEMSG(Flake, Event, myClass, recvFunc) PushBackFlakeEvent(UI_FlakeEvent_Info(Flake, Event), new UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#recvFunc)));
 
 
 /********************************************************************************
@@ -706,10 +725,21 @@ namespace MicroFlakeX
 		MfxReturn PushFrontFlakeEvent(MfxMessage message, Flake_RecvFunc_Infor* msgValue);
 
 
+
 		/********************************************************************************
 		*
-		*
-		*
+		*********************************************************************************/
+
+	protected:
+		MfxReturn myFlakeReturnKeep;
+	private:
+		std::set<void*> myDeleteSet_pVoid;
+		std::set<MfxBase*> myDeleteSet_pMfxBase;
+	protected:
+		MfxReturn ClearDeleteVctor();
+		MfxReturn AddDelete_pVoid(void* set);
+		MfxReturn AddDelete_pMfxBase(MfxBase* set);
+		/********************************************************************************
 		*
 		*********************************************************************************/
 	private:
@@ -898,30 +928,30 @@ private:
 /********************************************************************************
 * Post一个Flake消息到主线程消息队列中
 *********************************************************************************/
-#define FLAKE_POSTMSG_MAIN(Msg, wPara, lPara)\
+#define FLAKE_POSTMSG_MAIN(Event, wPara, lPara)\
 	myUI ? \
 		PostMessage(myWnd, UI_MSG_FlakeEvent, \
-			(WPARAM)(new UI_FlakeEvent_Info(this, Msg)), \
+			(WPARAM)(new UI_FlakeEvent_Info(this, Event)), \
 			(LPARAM)(new Win32Msg_Value(wPara, lPara))) : Mfx_Return_Fail;
 
 
 /********************************************************************************
 * Send一个Flake消息到主线程消息队列中
 *********************************************************************************/
-#define FLAKE_SENDMSG_MAIN(Msg, wPara, lPara)\
+#define FLAKE_SENDMSG_MAIN(Event, wPara, lPara)\
 	myUI ? \
 		SendMessage(myWnd, UI_MSG_FlakeEvent, \
-			(WPARAM)(new UI_FlakeEvent_Info(this, Msg)), \
+			(WPARAM)(new UI_FlakeEvent_Info(this, Event)), \
 			(LPARAM)(new Win32Msg_Value(wPara, lPara))) : Mfx_Return_Fail;
 
 
 /********************************************************************************
 * Post一个Flake消息到UI线程消息队列中
 *********************************************************************************/
-#define FLAKE_POSTMSG_UITHREAD(Msg, wPara, lPara)\
+#define FLAKE_POSTMSG_UITHREAD(Event, wPara, lPara)\
 	myUI ? \
 		PostThreadMessage(myUIThreadID, UI_MSG_FlakeEvent, \
-			(WPARAM)(new UI_FlakeEvent_Info(this, Msg)), \
+			(WPARAM)(new UI_FlakeEvent_Info(this, Event)), \
 			(LPARAM)(new Win32Msg_Value(wPara, lPara))) : Mfx_Return_Fail;
 
 

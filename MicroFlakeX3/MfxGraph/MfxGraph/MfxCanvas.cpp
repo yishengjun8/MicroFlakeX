@@ -34,7 +34,7 @@ MicroFlakeX::MfxCanvas::MfxCanvas()
 	myRect.Reset(0, 0, 300, 300);
 }
 
-MicroFlakeX::MfxCanvas::MfxCanvas(MfxRect set)
+MicroFlakeX::MfxCanvas::MfxCanvas(MfxRect* set)
 {
 	myDC = nullptr;
 	myWnd = nullptr;
@@ -44,7 +44,17 @@ MicroFlakeX::MfxCanvas::MfxCanvas(MfxRect set)
 	myRect = set;
 }
 
-MicroFlakeX::MfxCanvas::MfxCanvas(HDC setDC, MfxRect setRect)
+MicroFlakeX::MfxCanvas::MfxCanvas(MfxSize* size)
+{
+	myDC = nullptr;
+	myWnd = nullptr;
+	myPaintFlag = false;
+	myRenderTarget = nullptr;
+
+	myRect = size;
+}
+
+MicroFlakeX::MfxCanvas::MfxCanvas(HDC setDC, MfxRect* setRect)
 {
 	myDC = nullptr;
 	myWnd = nullptr;
@@ -57,7 +67,7 @@ MicroFlakeX::MfxCanvas::MfxCanvas(HDC setDC, MfxRect setRect)
 	GetID2D1DCRenderTarget(&myRenderTarget, myDC, myRect);
 }
 
-MicroFlakeX::MfxCanvas::MfxCanvas(HWND setWnd, MfxRect setRect)
+MicroFlakeX::MfxCanvas::MfxCanvas(HWND setWnd, MfxRect* setRect)
 {
 	myDC = nullptr;
 	myWnd = nullptr;
@@ -69,6 +79,33 @@ MicroFlakeX::MfxCanvas::MfxCanvas(HWND setWnd, MfxRect setRect)
 
 	GetID2D1HwndRenderTarget(&myRenderTarget, myWnd, MfxSize(myRect));
 }
+
+MicroFlakeX::MfxCanvas::MfxCanvas(HDC setDC, MfxSize* setSize)
+{
+	myDC = nullptr;
+	myWnd = nullptr;
+	myPaintFlag = false;
+	myRenderTarget = nullptr;
+
+	myDC = setDC;
+	myRect = setSize;
+
+	GetID2D1DCRenderTarget(&myRenderTarget, myDC, myRect);
+}
+
+MicroFlakeX::MfxCanvas::MfxCanvas(HWND setWnd, MfxSize* setSize)
+{
+	myDC = nullptr;
+	myWnd = nullptr;
+	myPaintFlag = false;
+	myRenderTarget = nullptr;
+
+	myWnd = setWnd;
+	myRect = setSize;
+
+	GetID2D1HwndRenderTarget(&myRenderTarget, myWnd, MfxSize(myRect));
+}
+
 
 MicroFlakeX::MfxCanvas::~MfxCanvas()
 {
@@ -97,7 +134,9 @@ MfxReturn MicroFlakeX::MfxCanvas::GetWnd(HWND* ret) const
 
 MfxReturn MicroFlakeX::MfxCanvas::GetBackColor(MfxColor* ret) const
 {
-	return MfxReturn();
+	myBackColor.GetColor(ret);
+	
+	return Mfx_Return_Fine;
 }
 
 
@@ -136,7 +175,9 @@ MfxReturn MicroFlakeX::MfxCanvas::SetWnd(HWND set)
 
 MfxReturn MicroFlakeX::MfxCanvas::SetBackColor(MfxColor* set)
 {
-	return MfxReturn();
+	myBackColor = set;
+
+	return Mfx_Return_Fine;
 }
 
 
@@ -150,8 +191,6 @@ MfxReturn MicroFlakeX::MfxCanvas::PaintBegin(MfxRect* clip)
 	if (!myPaintFlag)
 	{
 		myRenderTarget->BeginDraw();
-
-
 		clip->GetRect(&myClipRect);
 		bool tEmpty = false;
 		myClipRect.IsEmpty(&tEmpty);
@@ -163,7 +202,11 @@ MfxReturn MicroFlakeX::MfxCanvas::PaintBegin(MfxRect* clip)
 			myRenderTarget->PushAxisAlignedClip(tRectF, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 		}
 
-		myRenderTarget->Clear();
+		D2D1_COLOR_F tColor;
+		myBackColor.GetD2D1ColorF(&tColor);
+
+		myRenderTarget->Clear(tColor);
+
 		myPaintFlag = true;
 
 		return Mfx_Return_Fine;

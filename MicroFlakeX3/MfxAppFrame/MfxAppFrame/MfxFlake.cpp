@@ -168,10 +168,11 @@ MicroFlakeX::MfxFlake::MfxFlake(MfxRect set)
 MicroFlakeX::MfxFlake::~MfxFlake()
 {
 	MfxCodeLock(this);
-	if (myUI)
-	{
-		myUI->ProcMessage(UI_MSG_FlakeRemove, (WPARAM)this, NULL);
-	}
+
+	myMutexLock.WaitLock(&myUI);
+	myUI ? myUI->ProcMessage(UI_MSG_FlakeRemove, (WPARAM)this, NULL) : 0;
+	myMutexLock.UnLock(&myUI);
+
 
 	SafeDelete(myBackImage);
 	SafeDelete(myMaskImage);
@@ -201,6 +202,8 @@ MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMessage message, WPARAM wParam, 
 			}
 		}
 	}
+
+	ClearDeleteVctor();
 
 	return t_Ret;
 }
@@ -271,6 +274,43 @@ Begin:
 	return Mfx_Return_Fine;
 }
 
+/********************************************************************************
+*
+*
+*
+*
+*********************************************************************************/
+
+MfxReturn MicroFlakeX::MfxFlake::ClearDeleteVctor()
+{
+	for (auto iter : myDeleteSet_pVoid)
+	{
+		delete iter;
+	}
+	for (auto iter : myDeleteSet_pMfxBase)
+	{
+		delete iter;
+	}
+
+
+	myDeleteSet_pVoid.clear();
+	myDeleteSet_pMfxBase.clear();
+
+	return Mfx_Return_Fine;
+}
+MfxReturn MicroFlakeX::MfxFlake::AddDelete_pVoid(void* set)
+{
+	myDeleteSet_pVoid.insert(set);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxFlake::AddDelete_pMfxBase(MfxBase* set)
+{
+	myDeleteSet_pMfxBase.insert(set);
+
+	return Mfx_Return_Fine;
+}
 
 /********************************************************************************
 *
@@ -401,12 +441,18 @@ MfxReturn MicroFlakeX::MfxFlake::GetTitleColor(MfxColor* ret)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::SetRect(MfxRect* set)
 {
-
 	MfxSize* t_Size = new MfxSize(set);
+	AddDelete_pMfxBase(t_Size);
+
 	ProcMessage(FLAKE_MSG_Size, (WPARAM)this, (LPARAM)t_Size);
 
+
+
 	MfxPoint* t_Point = new MfxPoint(set);
+	AddDelete_pMfxBase(t_Point);
+
 	ProcMessage(FLAKE_MSG_Point, (WPARAM)this, (LPARAM)t_Point);
+
 
 	if (myUI)
 	{
@@ -419,7 +465,7 @@ MfxReturn MicroFlakeX::MfxFlake::SetRect(MfxRect* set)
 MfxReturn MicroFlakeX::MfxFlake::SetSize(MfxSize* set)
 {
 	MfxSize* t_Size = new MfxSize(set);
-
+	AddDelete_pMfxBase(t_Size);
 	ProcMessage(FLAKE_MSG_Size, (WPARAM)this, (LPARAM)t_Size);
 
 	if (myUI)

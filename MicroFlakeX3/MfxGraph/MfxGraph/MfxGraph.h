@@ -98,12 +98,32 @@ namespace MicroFlakeX
 		MfxObject;
 	public:
 		MfxCanvas();
-		MfxCanvas(MfxRect set);
-		MfxCanvas(HDC setDC, MfxRect setRect);
-		MfxCanvas(HWND setWnd, MfxRect setRect);
+
+		MfxCanvas(MfxRect* set);
+		MfxCanvas(MfxRect& set) :MfxCanvas(&set) {};
+		MfxCanvas(MfxRect&& set) :MfxCanvas(set) {};
+
+		MfxCanvas(MfxSize* size);
+		MfxCanvas(MfxSize& size) :MfxCanvas(&size) {};
+		MfxCanvas(MfxSize&& size) :MfxCanvas(size) {};
+
+		MfxCanvas(HDC setDC, MfxRect* setRect);
+		MfxCanvas(HDC setDC, MfxRect& setRect) :MfxCanvas(setDC, &setRect) {};
+		MfxCanvas(HDC setDC, MfxRect&& setRect) :MfxCanvas(setDC, setRect) {};
+
+		MfxCanvas(HWND setWnd, MfxRect* setRect);
+		MfxCanvas(HWND setWnd, MfxRect& setRect) :MfxCanvas(setWnd, &setRect) {};
+		MfxCanvas(HWND setWnd, MfxRect&& setRect) :MfxCanvas(setWnd, setRect) {};
+
+		MfxCanvas(HDC setDC, MfxSize* setSize);
+		MfxCanvas(HDC setDC, MfxSize& setSize) :MfxCanvas(setDC, &setSize) {};
+		MfxCanvas(HDC setDC, MfxSize&& setSize) :MfxCanvas(setDC, setSize) {};
+
+		MfxCanvas(HWND setWnd, MfxSize* setSize);
+		MfxCanvas(HWND setWnd, MfxSize& setSize) :MfxCanvas(setWnd, &setSize) {};
+		MfxCanvas(HWND setWnd, MfxSize&& setSize) :MfxCanvas(setWnd, setSize) {};
 
 		virtual ~MfxCanvas();
-
 
 	public:
 		MfxReturn GetDC(HDC* ret) const;
@@ -134,8 +154,8 @@ namespace MicroFlakeX
 		HDC myDC;
 		HWND myWnd;
 
-		MfxColor myColor;
 		MfxRect myClipRect;
+		MfxColor myBackColor;
 
 		bool myPaintFlag;
 		ID2D1RenderTarget* myRenderTarget;
