@@ -8,11 +8,6 @@ int main()
 {
     cout << "Hello MicroFlakeX!\n";
 
-    {
-        //MfxUI myUI_02(MfxRect(10, 10, 600, 600), MfxText("myUI_02"));
-    }
-
-    //MfxUI* myUI_01 = new MfxUI(MfxRect(10,10,600,600), MfxText("myUI_01"));
 
     MfxUI* myUI_00 = nullptr;
     MfxFlake* myFlake_00 = nullptr;
