@@ -524,30 +524,46 @@ MfxReturn MicroFlakeX::MfxColor::GetB(LONG* ret) const
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxColor::SetA(LONG ret)
+MfxReturn MicroFlakeX::MfxColor::SetA(LONG set)
 {
-	myA = ret;
+	myMutexLock.WaitLock(&myA);
+
+	myA = set;
+	
+	myMutexLock.UnLock(&myA);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxColor::SetR(LONG ret)
+MfxReturn MicroFlakeX::MfxColor::SetR(LONG set)
 {
-	myR = ret;
+	myMutexLock.WaitLock(&myR);
+
+	myR = set;
+
+	myMutexLock.UnLock(&myR);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxColor::SetG(LONG ret)
+MfxReturn MicroFlakeX::MfxColor::SetG(LONG set)
 {
-	myG = ret;
+	myMutexLock.WaitLock(&myG);
+
+	myG = set;
+
+	myMutexLock.UnLock(&myG);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxColor::SetB(LONG ret)
+MfxReturn MicroFlakeX::MfxColor::SetB(LONG set)
 {
-	myB = ret;
+	myMutexLock.WaitLock(&myB);
+
+	myB = set;
+
+	myMutexLock.UnLock(&myB);
 
 	return Mfx_Return_Fine;
 }

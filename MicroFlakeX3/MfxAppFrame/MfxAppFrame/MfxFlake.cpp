@@ -5,9 +5,9 @@ MfxObject_Init(MfxFlake)
 MfxObject_EndInit(MfxFlake, MfxBase, \
 	3, ProcMessage, \
 	\
-	2, RemoveFlakeMessage, \
-	2, PushBackFlakeMessage, \
-	2, PushFrontFlakeMessage, \
+	2, RemoveFlakeEvent, \
+	2, PushBackFlakeEvent, \
+	2, PushFrontFlakeEvent, \
 	\
 	0, OpenPercentRect, \
 	0, ClosePercentRect, \
@@ -61,30 +61,35 @@ void MicroFlakeX::MfxFlake::MfxRegMessages()
 
 	FLAKE_ADDRECV_FLAKEMSG(WM_NCLBUTTONUP, MfxFlake, __OnNCLButtonUp);
 	FLAKE_ADDRECV_FLAKEMSG(WM_NCLBUTTONDOWN, MfxFlake, __OnNCLButtonDown);
-	FLAKE_ADDRECV_FLAKEMSG(WM_NCLBUTTONDBLCLK, MfxFlake, __OnNCLButtonDblClk);
+	FLAKE_ADDRECV_FLAKEMSG(WM_NCLBUTTONDBLCLK, MfxFlake, __OnNCLButtonDouble);
 
 	FLAKE_ADDRECV_FLAKEMSG(WM_NCRBUTTONUP, MfxFlake, __OnNCRButtonUp);
 	FLAKE_ADDRECV_FLAKEMSG(WM_NCRBUTTONDOWN, MfxFlake, __OnNCRButtonDown);
-	FLAKE_ADDRECV_FLAKEMSG(WM_NCRBUTTONDBLCLK, MfxFlake, __OnNCRButtonDblClk);
+	FLAKE_ADDRECV_FLAKEMSG(WM_NCRBUTTONDBLCLK, MfxFlake, __OnNCRButtonDouble);
 
 	/********************************************************************************
 	*
-	*
+	*********************************************************************************/
+	FLAKE_ADDRECV_FLAKEMSG(WM_MOUSEMOVE, MfxFlake, __OnMouseMove);
+	FLAKE_ADDRECV_FLAKEMSG(WM_MOUSEHOVER, MfxFlake, __OnMouseHover);
+
+	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONUP, MfxFlake, __OnLButtonUp);
+	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONDOWN, MfxFlake, __OnLButtonDown);
+	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONDBLCLK, MfxFlake, __OnLButtonDouble);
+
+	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONUP, MfxFlake, __OnRButtonUp);
+	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONDOWN, MfxFlake, __OnRButtonDown);
+	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONDBLCLK, MfxFlake, __OnRButtonDouble);
+
+	/********************************************************************************
 	*
 	*
 	*********************************************************************************/
 	FLAKE_ADDRECV_FLAKEMSG(WM_SIZE, MfxFlake, __OnUISize);
 
-	FLAKE_ADDRECV_FLAKEMSG(WM_MOUSEMOVE, MfxFlake, __OnMouseMove);
-
-	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONUP, MfxFlake, __OnLButtonUp);
-	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONDOWN, MfxFlake, __OnLButtonDown);
-
-	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONUP, MfxFlake, __OnRButtonUp);
-	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONDOWN, MfxFlake, __OnRButtonDown);
-
-
 	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetPaper, MfxFlake, __OnSetPaper);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_RemovePaper, MfxFlake, __OnRemovePaper);
+
 	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetFloor, MfxFlake, __OnSetFloor);
 
 	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PaintBack, MfxFlake, __OnPaintBackDC);
@@ -114,12 +119,10 @@ void MicroFlakeX::MfxFlake::MfxRegMessages()
 void MicroFlakeX::MfxFlake::MfxFlakeInitData()
 {
 	/********************************************************************************
-	*
-	*
-	*
-	*
+	* 
 	*********************************************************************************/
 	myWnd = NULL;
+
 	myUI = nullptr;
 	myCanvas = nullptr;
 	myUIThreadID = NULL;
@@ -199,21 +202,6 @@ MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMessage message, WPARAM wParam, 
 		}
 	}
 
-	/**
-	if (myUI && (
-		myMouseFloat.CheckChangeFlag() || 
-		myLButtonPress.CheckChangeFlag() || 
-		myRButtonPress.CheckChangeFlag()))
-	{
-		myMouseFloat.CleanChangeFlag();
-		myLButtonPress.CleanChangeFlag();
-		myRButtonPress.CleanChangeFlag();
-
-		//RECT tRECT;
-		//myRect.GetRECT(&tRECT);
-		//myUI->UnionInvalidateRect(myWnd, &tRECT, TRUE);
-	}
-	/**/
 	return t_Ret;
 }
 
@@ -224,7 +212,7 @@ MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMessage message, WPARAM wParam, 
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxFlake::RemoveFlakeMessage(MfxMessage message, MfxString name)
+MfxReturn MicroFlakeX::MfxFlake::RemoveFlakeEvent(MfxMessage message, MfxString name)
 {
 	MfxCodeLock(this);
 
@@ -245,7 +233,7 @@ MfxReturn MicroFlakeX::MfxFlake::RemoveFlakeMessage(MfxMessage message, MfxStrin
 	return Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxFlake::PushBackFlakeMessage(MfxMessage message, Flake_FlakeMsg_Infor* msgValue)
+MfxReturn MicroFlakeX::MfxFlake::PushBackFlakeEvent(MfxMessage message, Flake_RecvFunc_Infor* msgValue)
 {
 	MfxCodeLock(this);
 
@@ -253,7 +241,7 @@ MfxReturn MicroFlakeX::MfxFlake::PushBackFlakeMessage(MfxMessage message, Flake_
 	auto t_Iter = myMessageMap.find(message);
 	if (t_Iter == myMessageMap.end())
 	{
-		t_Iter = myMessageMap.insert(Flake_FlakeMsg_Map_Elem(message, Flake_FlakeMsg_Infor_Vector())).first;
+		t_Iter = myMessageMap.insert(Flake_FlakeMessage_Map_Elem(message, Flake_RecvFunc_Infor_Deque())).first;
 		goto Begin;
 	}
 	else
@@ -264,7 +252,7 @@ MfxReturn MicroFlakeX::MfxFlake::PushBackFlakeMessage(MfxMessage message, Flake_
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxFlake::PushFrontFlakeMessage(MfxMessage message, Flake_FlakeMsg_Infor* msgValue)
+MfxReturn MicroFlakeX::MfxFlake::PushFrontFlakeEvent(MfxMessage message, Flake_RecvFunc_Infor* msgValue)
 {
 	MfxCodeLock(this);
 
@@ -272,7 +260,7 @@ Begin:
 	auto t_Iter = myMessageMap.find(message);
 	if (t_Iter == myMessageMap.end())
 	{
-		t_Iter = myMessageMap.insert(Flake_FlakeMsg_Map_Elem(message, Flake_FlakeMsg_Infor_Vector())).first;
+		t_Iter = myMessageMap.insert(Flake_FlakeMessage_Map_Elem(message, Flake_RecvFunc_Infor_Deque())).first;
 		goto Begin;
 	}
 	else
@@ -292,12 +280,12 @@ Begin:
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::OpenPercentRect()
 {
-	return ProcMessage(FLAKE_MSG_OpenPercentRect, NULL, NULL);
+	return ProcMessage(FLAKE_MSG_OpenPercentRect, (WPARAM)this, NULL);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::ClosePercentRect()
 {
-	return ProcMessage(FLAKE_MSG_ClosePercentRect, NULL, NULL);
+	return ProcMessage(FLAKE_MSG_ClosePercentRect, (WPARAM)this, NULL);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::ChickPercentRect()
@@ -342,7 +330,7 @@ MfxReturn MicroFlakeX::MfxFlake::GetCanvas(MfxCanvas** ret)
 
 MfxReturn MicroFlakeX::MfxFlake::SetFloor(MfxFloor floor)
 {
-	return ProcMessage(FLAKE_MSG_SetFloor, NULL, floor);
+	return ProcMessage(FLAKE_MSG_SetFloor, (WPARAM)this, floor);
 }
 
 
@@ -380,7 +368,7 @@ MfxReturn MicroFlakeX::MfxFlake::GetTitle(MfxString* ret)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxFlake::GetTitleSize(FLOAT* ret)
+MfxReturn MicroFlakeX::MfxFlake::GetTitleSize(DOUBLE* ret)
 {
 	return MfxReturn();
 }
@@ -413,26 +401,30 @@ MfxReturn MicroFlakeX::MfxFlake::GetTitleColor(MfxColor* ret)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::SetRect(MfxRect* set)
 {
-	MfxSize t_Size(set);
-	MfxPoint t_Point(set);
 
-	ProcMessage(FLAKE_MSG_Size, NULL, (LPARAM)&t_Size);
-	ProcMessage(FLAKE_MSG_Point, NULL, (LPARAM)&t_Point);
+	MfxSize* t_Size = new MfxSize(set);
+	ProcMessage(FLAKE_MSG_Size, (WPARAM)this, (LPARAM)t_Size);
+
+	MfxPoint* t_Point = new MfxPoint(set);
+	ProcMessage(FLAKE_MSG_Point, (WPARAM)this, (LPARAM)t_Point);
+
+	if (myUI)
+	{
+		ProcMessage(FLAKE_MSG_ResetPercentRect, (WPARAM)this, NULL);
+	}
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::SetSize(MfxSize* set)
 {
-	MfxSize t_Size(set);
+	MfxSize* t_Size = new MfxSize(set);
 
-	ProcMessage(FLAKE_MSG_Size, NULL, (LPARAM)&t_Size);
+	ProcMessage(FLAKE_MSG_Size, (WPARAM)this, (LPARAM)t_Size);
 
 	if (myUI)
 	{
-		MfxSize t_UISize;
-		myUI->GetSize(&t_UISize);
-		ProcMessage(FLAKE_MSG_ResetPercentRect, NULL, MAKELONG(t_UISize.myWidth, t_UISize.myHeight));
+		ProcMessage(FLAKE_MSG_ResetPercentRect, (WPARAM)this, NULL);
 	}
 
 	return Mfx_Return_Fine;
@@ -440,15 +432,13 @@ MfxReturn MicroFlakeX::MfxFlake::SetSize(MfxSize* set)
 
 MfxReturn MicroFlakeX::MfxFlake::SetPoint(MfxPoint* set)
 {
-	MfxPoint t_Point(set);
+	MfxPoint* t_Point = new MfxPoint(set);
 
-	ProcMessage(FLAKE_MSG_Point, NULL, (LPARAM)&t_Point);
+	ProcMessage(FLAKE_MSG_Point, (WPARAM)this, (LPARAM)t_Point);
 
 	if (myUI)
 	{
-		MfxSize t_UISize;
-		myUI->GetSize(&t_UISize);
-		ProcMessage(FLAKE_MSG_ResetPercentRect, NULL, MAKELONG(t_UISize.myWidth, t_UISize.myHeight));
+		ProcMessage(FLAKE_MSG_ResetPercentRect, (WPARAM)this, NULL);
 	}
 
 	return Mfx_Return_Fine;
@@ -456,33 +446,33 @@ MfxReturn MicroFlakeX::MfxFlake::SetPoint(MfxPoint* set)
 
 MfxReturn MicroFlakeX::MfxFlake::SetTitle(MfxString set)
 {
-	return ProcMessage(FLAKE_MSG_SetTitle, NULL, (LPARAM)&set);
+	return ProcMessage(FLAKE_MSG_SetTitle, (WPARAM)this, (LPARAM)&set);
 }
 
-MfxReturn MicroFlakeX::MfxFlake::SetTitleSize(FLOAT set)
+MfxReturn MicroFlakeX::MfxFlake::SetTitleSize(DOUBLE set)
 {
-	return ProcMessage(FLAKE_MSG_SetTitleSize, NULL, (LPARAM)&set);
+	return ProcMessage(FLAKE_MSG_SetTitleSize, (WPARAM)this, (LPARAM)&set);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::SetBackColor(MfxColor* set)
 {
-	MfxColor tColor = *set;
+	MfxColor* tColor = new MfxColor(set);
 
-	return ProcMessage(FLAKE_MSG_SetBackColor, NULL, (LPARAM)&tColor);
+	return ProcMessage(FLAKE_MSG_SetBackColor, (WPARAM)this, (LPARAM)tColor);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::SetMaskColor(MfxColor* set)
 {
-	MfxColor tColor = *set;
+	MfxColor* tColor = new MfxColor(set);
 
-	return ProcMessage(FLAKE_MSG_SetMaskColor, NULL, (LPARAM)&tColor);
+	return ProcMessage(FLAKE_MSG_SetMaskColor, (WPARAM)this, (LPARAM)tColor);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::SetTitleColor(MfxColor* set)
 {
-	MfxColor tColor = *set;
+	MfxColor* tColor = new MfxColor(set);
 
-	return ProcMessage(FLAKE_MSG_SetTitleColor, NULL, (LPARAM)&tColor);
+	return ProcMessage(FLAKE_MSG_SetTitleColor, (WPARAM)this, (LPARAM)tColor);
 }
 
 
@@ -561,20 +551,26 @@ MfxReturn MicroFlakeX::MfxFlake::GetMaskImage(MfxImage** ret)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::SetWords(MfxWords* set)
 {
-	return ProcMessage(FLAKE_MSG_SetWords, NULL, (LPARAM)set);
+	return ProcMessage(FLAKE_MSG_SetWords, (WPARAM)this, (LPARAM)set);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::SetBackImage(MfxImage* set)
 {
-	return ProcMessage(FLAKE_MSG_SetBackImage, NULL, (LPARAM)set);
+	return ProcMessage(FLAKE_MSG_SetBackImage, (WPARAM)this, (LPARAM)set);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::SetMaskImage(MfxImage* set)
 {
-	return ProcMessage(FLAKE_MSG_SetMaskImage, NULL, (LPARAM)set);
+	return ProcMessage(FLAKE_MSG_SetMaskImage, (WPARAM)this, (LPARAM)set);
 }
 
 
+
+MfxReturn MicroFlakeX::MfxFlake::__OnTest001(WPARAM wParam, LPARAM lParam)
+{
+	MessageBox(myWnd, L"__OnTest001", L"__OnTest001", 0);
+	return Mfx_Return_Fine;
+}
 
 /********************************************************************************
 *
@@ -605,7 +601,32 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetPaper(WPARAM wParam, LPARAM lParam)
 		myMaskImage->SetCanvas(myCanvas);
 	}
 
-	ProcMessage(FLAKE_MSG_ResetPercentRect, 0, 0);
+	ProcMessage(FLAKE_MSG_ResetPercentRect, (WPARAM)this, 0);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxFlake::__OnRemovePaper(WPARAM wParam, LPARAM lParam)
+{
+	MfxCodeLock(this);
+
+	myUI = nullptr;
+	myWnd = nullptr;
+	myCanvas = nullptr;
+	myUIThreadID = 0;
+
+	if (myBackImage)
+	{
+		myBackImage->SetCanvas(nullptr);
+	}
+	if (myWords)
+	{
+		myWords->SetCanvas(nullptr);
+	}
+	if (myMaskImage)
+	{
+		myMaskImage->SetCanvas(nullptr);
+	}
 
 	return Mfx_Return_Fine;
 }
@@ -617,7 +638,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetFloor(WPARAM wParam, LPARAM lParam)
 	myFloor = lParam;
 	if (myUI)
 	{
-		myUI->ProcMessage(UI_MSG_FlakeFloorChange, NULL, NULL);
+		myUI->ProcMessage(UI_MSG_FlakeFloorChange, (WPARAM)this, NULL);
 	}
 
 	return Mfx_Return_Fine;
@@ -668,9 +689,12 @@ MfxReturn MicroFlakeX::MfxFlake::__OnUISize(WPARAM wParam, LPARAM lParam)
 {
 	MfxCodeLock(this);
 
-	if (myPercentRectFlag || (myPercentRectFlag && myUI && myUI->ChickPercentRect()))
+	bool tChick = false;
+	myUI->ChickPercentRect(&tChick);
+
+	if (myPercentRectFlag || tChick)
 	{
-		ProcMessage(FLAKE_MSG_ResetRect, wParam, lParam);
+		ProcMessage(FLAKE_MSG_ResetRect, (WPARAM)this, NULL);
 	}
 
 	return Mfx_Return_Fine;
@@ -678,21 +702,28 @@ MfxReturn MicroFlakeX::MfxFlake::__OnUISize(WPARAM wParam, LPARAM lParam)
 
 MfxReturn MicroFlakeX::MfxFlake::__OnSize(WPARAM wParam, LPARAM lParam)
 {
-	MfxCodeLock(this);
 	MfxSize* t_Size = (MfxSize*)lParam;
 
 	if (myBackImage)
 	{
+		myMutexLock.WaitLock(&myBackImage);
 		myBackImage->SetSize(t_Size);
+		myMutexLock.UnLock(&myBackImage);
 	}
 	if (myMaskImage)
 	{
+		myMutexLock.WaitLock(&myMaskImage);
 		myMaskImage->SetSize(t_Size);
+		myMutexLock.UnLock(&myMaskImage);
 	}
 	if (myWords)
 	{
+		myMutexLock.WaitLock(&myWords);
 		myWords->SetSize(t_Size);
+		myMutexLock.UnLock(&myWords);
 	}
+
+	myMutexLock.WaitLock(&myRect);
 
 	if (myUI)
 	{
@@ -707,32 +738,40 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSize(WPARAM wParam, LPARAM lParam)
 		myUI->UnionInvalidateRect(&myRect);
 	}
 
+	myMutexLock.UnLock(&myRect);
+
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::__OnPoint(WPARAM wParam, LPARAM lParam)
 {
-	MfxCodeLock(this);
 	MfxPoint* t_Point = (MfxPoint*)lParam;
 
 	if (myBackImage)
 	{
+		myMutexLock.WaitLock(&myBackImage);
 		myBackImage->SetPoint(t_Point);
+		myMutexLock.UnLock(&myBackImage);
 	}
 	if (myMaskImage)
 	{
+		myMutexLock.WaitLock(&myMaskImage);
 		myMaskImage->SetPoint(t_Point);
+		myMutexLock.UnLock(&myMaskImage);
 	}
 	if (myWords)
 	{
+		myMutexLock.WaitLock(&myWords);
 		myWords->SetPoint(t_Point);
+		myMutexLock.UnLock(&myWords);
 	}
+
+	myMutexLock.WaitLock(&myRect);
 
 	if (myUI)
 	{
 		myUI->UnionInvalidateRect(&myRect);
 	}
-
 
 	myRect.myX = t_Point->myX;
 	myRect.myY = t_Point->myY;
@@ -741,6 +780,8 @@ MfxReturn MicroFlakeX::MfxFlake::__OnPoint(WPARAM wParam, LPARAM lParam)
 	{
 		myUI->UnionInvalidateRect(&myRect);
 	}
+
+	myMutexLock.UnLock(&myRect);
 
 	return Mfx_Return_Fine;
 }
@@ -794,8 +835,8 @@ MfxReturn MicroFlakeX::MfxFlake::__OnResetRect(WPARAM wParam, LPARAM lParam)
 	MfxSize t_RestSize(t_RestRect.myWidth, t_RestRect.myHeight);
 	MfxPoint t_RestPoint(t_RestRect.myX, t_RestRect.myY);
 
-	ProcMessage(FLAKE_MSG_Size, NULL, (LPARAM)&t_RestSize);
-	ProcMessage(FLAKE_MSG_Point, NULL, (LPARAM)&t_RestPoint);
+	ProcMessage(FLAKE_MSG_Size, (WPARAM)this, (LPARAM)&t_RestSize);
+	ProcMessage(FLAKE_MSG_Point, (WPARAM)this, (LPARAM)&t_RestPoint);
 
 	return Mfx_Return_Fine;
 }
@@ -837,9 +878,10 @@ MfxReturn MicroFlakeX::MfxFlake::__OnOpenPercentRect(WPARAM wParam, LPARAM lPara
 {
 	MfxCodeLock(this);
 
-	if (Mfx_Seccess(ProcMessage(FLAKE_MSG_ResetPercentRect, 0, 0)))
+	if (Mfx_Seccess(ProcMessage(FLAKE_MSG_ResetPercentRect, (WPARAM)this, 0)))
 	{
 		myPercentRectFlag = true;
+
 		return Mfx_Return_Fine;
 	}
 
@@ -864,63 +906,58 @@ MfxReturn MicroFlakeX::MfxFlake::__OnClosePercentRect(WPARAM wParam, LPARAM lPar
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::__OnNCMouseMove(WPARAM wParam, LPARAM lParam)
 {
-	MfxCodeLock(this);
-
 	return ProcMessage(WM_MOUSEMOVE, wParam, lParam);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::__OnNCMouseHover(WPARAM wParam, LPARAM lParam)
 {
-	MfxCodeLock(this);
-
 	return ProcMessage(WM_MOUSEHOVER, wParam, lParam);
 }
 
+
+/********************************************************************************
+*
+*
+*
+*********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::__OnNCLButtonUp(WPARAM wParam, LPARAM lParam)
 {
-	MfxCodeLock(this);
-
 	return ProcMessage(WM_LBUTTONUP, wParam, lParam);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::__OnNCLButtonDown(WPARAM wParam, LPARAM lParam)
 {
-	MfxCodeLock(this);
-
 	return ProcMessage(WM_LBUTTONDOWN, wParam, lParam);
 }
 
-MfxReturn MicroFlakeX::MfxFlake::__OnNCLButtonDblClk(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxFlake::__OnNCLButtonDouble(WPARAM wParam, LPARAM lParam)
 {
-	MfxCodeLock(this);
-
 	return ProcMessage(WM_LBUTTONDBLCLK, wParam, lParam);
 }
 
-MfxReturn MicroFlakeX::MfxFlake::__OnNCRButtonUp(WPARAM wParam, LPARAM lParam)
-{
-	MfxCodeLock(this);
-
-	return ProcMessage(WM_RBUTTONUP, wParam, lParam);
-}
-
-
-MfxReturn MicroFlakeX::MfxFlake::__OnNCRButtonDown(WPARAM wParam, LPARAM lParam)
-{
-	MfxCodeLock(this);
-
-	return ProcMessage(WM_RBUTTONDOWN, wParam, lParam);
-}
-
-MfxReturn MicroFlakeX::MfxFlake::__OnNCRButtonDblClk(WPARAM wParam, LPARAM lParam)
-{
-	MfxCodeLock(this);
-
-	return ProcMessage(WM_RBUTTONDBLCLK, wParam, lParam);
-}
 
 /********************************************************************************
 *
+*
+*
+*********************************************************************************/
+MfxReturn MicroFlakeX::MfxFlake::__OnNCRButtonUp(WPARAM wParam, LPARAM lParam)
+{
+	return ProcMessage(WM_RBUTTONUP, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxFlake::__OnNCRButtonDown(WPARAM wParam, LPARAM lParam)
+{
+	return ProcMessage(WM_RBUTTONDOWN, wParam, lParam);
+}
+
+MfxReturn MicroFlakeX::MfxFlake::__OnNCRButtonDouble(WPARAM wParam, LPARAM lParam)
+{
+	return ProcMessage(WM_RBUTTONDBLCLK, wParam, lParam);
+}
+
+
+/********************************************************************************
 *
 *
 *
@@ -933,18 +970,13 @@ MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 	}
 
 	MfxCodeLock(this);
-	//MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 
-	POINT tPOINT;
-	GetCursorPos(&tPOINT);
-
-	MfxPoint tPoint;
-	myUI->GetPoint(&tPoint);
-
-	MfxPoint mousePos(tPOINT.x - tPoint.myX, tPOINT.y - tPoint.myY);
+	MfxPoint mousePos;
+	myUI->GetLocalMousePos(&mousePos);
 
 	bool tInside = false;
 	myRect.IsPointInside(&mousePos, &tInside);
+
 	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
@@ -968,24 +1000,31 @@ MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(WPARAM wParam, LPARAM lParam)
 		myRButtonClickFlag = false;
 	}
 
+	//¿ªÊ¼ÒÆ¶¯
 	if ((myLButtonPress && myLButtonMoveFlag) ||
 		(myRButtonPress && myRButtonMoveFlag))
 	{
-		myUI->LockMutexFocus(this);
-		MfxPoint nowPos(mousePos);
-		MfxRect t_Rect = myRect;
-		t_Rect.Offset(nowPos.myX - myButtonMoveBegin.myX, nowPos.myY - myButtonMoveBegin.myY);
+		if (Mfx_Seccess(myUI->LockMutexFocus(this)))
+		{
+			MfxRect t_Rect = myRect;
+			t_Rect.Offset(mousePos.myX - myButtonMoveBegin.myX, mousePos.myY - myButtonMoveBegin.myY);
 
-		MfxPoint t_Point(t_Rect.myX, t_Rect.myY);
-		SetPoint(&t_Point);
-		myButtonMoveBegin = nowPos;
+			MfxPoint t_Point(t_Rect.myX, t_Rect.myY);
+			SetPoint(&t_Point);
 
+			myButtonMoveBegin = mousePos;
+		}
 	}
 	else
 	{
 		myUI->UnLockMutexFocus();
 	}
 
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxFlake::__OnMouseHover(WPARAM wParam, LPARAM lParam)
+{
 	return Mfx_Return_Fine;
 }
 
@@ -997,18 +1036,13 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(WPARAM wParam, LPARAM lParam)
 	}
 
 	MfxCodeLock(this);
-	//MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 
-	POINT tPOINT;
-	GetCursorPos(&tPOINT);
-
-	MfxPoint tPoint;
-	myUI->GetPoint(&tPoint);
-
-	MfxPoint mousePos(tPOINT.x - tPoint.myX, tPOINT.y - tPoint.myY);
+	MfxPoint mousePos;
+	myUI->GetLocalMousePos(&mousePos);
 
 	bool tInside = false;
 	myRect.IsPointInside(&mousePos, &tInside);
+
 	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
@@ -1054,20 +1088,13 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDown(WPARAM wParam, LPARAM lParam)
 	}
 
 	MfxCodeLock(this);
-	//MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 
-	POINT tPOINT;
-	GetCursorPos(&tPOINT);
-
-	MfxPoint tPoint;
-	myUI->GetPoint(&tPoint);
-
-	MfxPoint mousePos(tPOINT.x - tPoint.myX, tPOINT.y - tPoint.myY);
+	MfxPoint mousePos;
+	myUI->GetLocalMousePos(&mousePos);
 
 	bool tInside = false;
 	myRect.IsPointInside(&mousePos, &tInside);
 
-	
 	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
@@ -1099,6 +1126,11 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDown(WPARAM wParam, LPARAM lParam)
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDouble(WPARAM wParam, LPARAM lParam)
+{
+	return MfxReturn();
+}
+
 
 MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 {
@@ -1108,18 +1140,13 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(WPARAM wParam, LPARAM lParam)
 	}
 
 	MfxCodeLock(this);
-	//MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 
-	POINT tPOINT;
-	GetCursorPos(&tPOINT);
-
-	MfxPoint tPoint;
-	myUI->GetPoint(&tPoint);
-
-	MfxPoint mousePos(tPOINT.x - tPoint.myX, tPOINT.y - tPoint.myY);
+	MfxPoint mousePos;
+	myUI->GetLocalMousePos(&mousePos);
 
 	bool tInside = false;
 	myRect.IsPointInside(&mousePos, &tInside);
+
 	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
@@ -1165,18 +1192,13 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDown(WPARAM wParam, LPARAM lParam)
 	}
 
 	MfxCodeLock(this);
-	//MfxPoint mousePos(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 
-	POINT tPOINT;
-	GetCursorPos(&tPOINT);
-
-	MfxPoint tPoint;
-	myUI->GetPoint(&tPoint);
-
-	MfxPoint mousePos(tPOINT.x - tPoint.myX, tPOINT.y - tPoint.myY);
+	MfxPoint mousePos;
+	myUI->GetLocalMousePos(&mousePos);
 
 	bool tInside = false;
 	myRect.IsPointInside(&mousePos, &tInside);
+
 	if (tInside)
 	{
 		MfxFlake* t_Conctrol = nullptr;
@@ -1205,6 +1227,11 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDown(WPARAM wParam, LPARAM lParam)
 	}
 
 	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDouble(WPARAM wParam, LPARAM lParam)
+{
+	return MfxReturn();
 }
 
 

@@ -39,39 +39,6 @@ namespace MicroFlakeX
 	typedef std::vector<MfxGraph*> MfxGraphVector;
 }
 
-namespace __MicroFlakeX
-{
-	template<class Interface>
-	inline void SafeRelease(Interface*& pInterfaceToRelease) 
-	{
-		if (pInterfaceToRelease != nullptr) 
-		{
-			pInterfaceToRelease->Release();
-			pInterfaceToRelease = nullptr;
-		}
-	}
-
-	template<class Pointer>
-	inline void SafeDelete(Pointer*& pPointerToDelete)
-	{
-		if (pPointerToDelete != nullptr)
-		{
-			delete pPointerToDelete;
-			pPointerToDelete = nullptr;
-		}
-	}
-
-	template<class Pointer>
-	inline void SafeDeleteL(Pointer*& pPointerToDelete)
-	{
-		if (pPointerToDelete != nullptr)
-		{
-			delete[] pPointerToDelete;
-			pPointerToDelete = nullptr;
-		}
-	}
-}
-
 namespace MicroFlakeX
 {
 	class MfxGraph

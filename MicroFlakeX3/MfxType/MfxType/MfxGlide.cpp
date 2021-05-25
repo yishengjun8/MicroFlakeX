@@ -87,8 +87,8 @@ MicroFlakeX::MfxGlide::~MfxGlide()
 
 	for (auto i : myWidelyTypeMap)
 	{
-		MfxSafeDelete(i.second.myGetObject_Set);
-		MfxSafeDelete(i.second.myGetObject_Begin);
+		SafeDelete(i.second.myGetObject_Set);
+		SafeDelete(i.second.myGetObject_Begin);
 	}
 }
 
@@ -202,8 +202,8 @@ MfxReturn MicroFlakeX::MfxGlide::BindObjectName(MfxString groupName, MfxGulid_Wi
 {
 	myWidelyTypeMap[groupName] = value;
 
-	MfxSafeDelete(myWidelyTypeMap[groupName].myGetObject_Set);
-	MfxSafeDelete(myWidelyTypeMap[groupName].myGetObject_Begin);
+	SafeDelete(myWidelyTypeMap[groupName].myGetObject_Set);
+	SafeDelete(myWidelyTypeMap[groupName].myGetObject_Begin);
 
 	MfxFactory(myWidelyTypeMap[groupName].setObjectName, &(myWidelyTypeMap[groupName].myGetObject_Set));
 	MfxFactory(myWidelyTypeMap[groupName].getObjectName, &(myWidelyTypeMap[groupName].myGetObject_Begin));
@@ -211,13 +211,13 @@ MfxReturn MicroFlakeX::MfxGlide::BindObjectName(MfxString groupName, MfxGulid_Wi
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGlide::Add_GetSetFuncName(MfxString groupName, MfxString getFuncName, MfxString setFuncName)
+MfxReturn MicroFlakeX::MfxGlide::Add_GetSetFuncName(MfxString groupName, MfxString getFuncName, MfxString setFuncName, pEaseGulid easeGulid)
 {
 	auto tFind = myWidelyTypeMap.find(groupName);
 
 	if (tFind != myWidelyTypeMap.end())
 	{
-		tFind->second.myGulidTypePair.push_back(MfxGulid_GetSet_FuncName(getFuncName, setFuncName));
+		tFind->second.myGulidTypePair.push_back(MfxGulid_GetSet_FuncName(getFuncName, setFuncName, easeGulid));
 	}
 
 	return Mfx_Return_Fine;
@@ -319,34 +319,23 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(WPARAM wParam, LPARAM lParam)
 				continue;
 			}
 
-			LONGLONG* tBg = new LONGLONG[tFind->second.myGulidTypePair.size()]{ 0 };
-			LONGLONG* tTo = new LONGLONG[tFind->second.myGulidTypePair.size()]{ 0 };
-			LONGLONG* tCR = new LONGLONG[tFind->second.myGulidTypePair.size()]{ 0 };
-
-			LONGLONG* tNow = new LONGLONG[tFind->second.myGulidTypePair.size()]{ 0 };
+			LONGLONG tBg = 0, tTo = 0, tNow = 0;
 
 			tFind->second.myThroughTime = clock() - tFind->second.myBeginTime;
 
 			for (int i = 0; i < tFind->second.myGulidTypePair.size(); i++)
 			{
-				tFind->second.myGetObject_Begin->AutoFunc(tFind->second.myGulidTypePair[i].myGetFuncName, &(tBg[i]));
+				tFind->second.myGetObject_Begin->AutoFunc(tFind->second.myGulidTypePair[i].myGetFuncName, &tBg);
 
-				tKeyObjectType.second.front().key->AutoFunc(tFind->second.myGulidTypePair[i].myGetFuncName, &(tTo[i]));
+				tKeyObjectType.second.front().key->AutoFunc(tFind->second.myGulidTypePair[i].myGetFuncName, &tTo);
 
-				tCR[i] = tTo[i] - tBg[i];
+				tNow = tBg + (tTo - tBg) * tFind->second.myGulidTypePair[i].myEaseGulid((double)tFind->second.myThroughTime / (double)tKeyObjectType.second.front().time);
 
-				tNow[i] = tBg[i] + (tCR[i] * tFind->second.myThroughTime / tKeyObjectType.second.front().time);
-
-				tFind->second.myGetObject_Set->AutoFunc(tFind->second.myGulidTypePair[i].mySetFuncName, (tNow[i]));
+				tFind->second.myGetObject_Set->AutoFunc(tFind->second.myGulidTypePair[i].mySetFuncName, tNow);
 			}
 
 			myBindObject->AutoFunc(tFind->second.setObjectFuncName, tFind->second.myGetObject_Set);
 
-			delete[] tBg;
-			delete[] tTo;
-			delete[] tCR;
-
-			delete[] tNow;
 
 			if (tFind->second.myThroughTime > tKeyObjectType.second.front().time)
 			{
@@ -368,21 +357,21 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(WPARAM wParam, LPARAM lParam)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGlide::MfxAddKeyframe(MfxString bindObjectType, MfxBase* set, LONGLONG span)
+MfxReturn MicroFlakeX::MfxGlide::MfxAddKeyframe(MfxString groupName, MfxBase* set, LONGLONG delay)
 {
 	MfxCodeLock(this);
 
 	Begin:
-	auto tFind = myBindObjectType_Keyframe.find(bindObjectType);
+	auto tFind = myBindObjectType_Keyframe.find(groupName);
 	if (tFind != myBindObjectType_Keyframe.end())
 	{
 		MfxBase* tObject = nullptr;
 		set->Clone(&tObject);
-		tFind->second.push(MfxGulid_Keyframe(tObject, span));
+		tFind->second.push(MfxGulid_Keyframe(tObject, delay));
 	}
 	else
 	{ 
-		myBindObjectType_Keyframe.insert(MfxGulid_BindObjectType_Keyframe_Queue_Map_Pair(bindObjectType, MfxGulid_BindObjectType_Keyframe_Queue()));
+		myBindObjectType_Keyframe.insert(MfxGulid_BindObjectType_Keyframe_Queue_Map_Pair(groupName, MfxGulid_BindObjectType_Keyframe_Queue()));
 		goto Begin;
 	}
 

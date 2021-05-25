@@ -27,6 +27,7 @@
 #pragma comment(lib, "DWrite.lib")
 
 /**/
+
 #include "MfxBase.h"
 
 #define MFXDLL_BUILDING

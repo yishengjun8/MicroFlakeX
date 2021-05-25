@@ -89,7 +89,7 @@ ForwardMessageBegin:
 	}
 	else
 	{
-		auto ret = t_Itera->second->myUI->ProcMessage(message, wParam, lParam);
+		auto ret = t_Itera->second->myUI->ProcMessage(message,wParam, lParam);
 		if (message == WM_DESTROY)
 		{
 			delete t_Itera->second;

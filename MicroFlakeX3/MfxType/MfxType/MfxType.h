@@ -64,6 +64,7 @@ namespace MicroFlakeX
     class MFX_PORT MfxGlide;
 
 
+
     /***************************************************************
     *	MfxType	常用容器
     ****************************************************************/
@@ -227,10 +228,6 @@ namespace MicroFlakeX
         MfxReturn Union(MfxRect* set, MfxRect* ret) const;
         MfxReturn Union_Widely(MfxBase* set, MfxRect* ret) const;
 
-        /* 差 */
-        MfxReturn Except(MfxRect* set, MfxRect* ret) const;
-        MfxReturn Except_Widely(MfxBase* set, MfxRect* ret) const;
-
         /* 交 */
         MfxReturn Intersect(MfxRect* set, MfxRect* ret) const;
         MfxReturn Intersect_Widely(MfxBase* set, MfxRect* ret) const;
@@ -241,8 +238,6 @@ namespace MicroFlakeX
 
         /* 膨胀 */
         MfxReturn Inflate(LONG setX, LONG setY);
-
-        /* 扩展系数 10 100 1000 倍 */
 
     public:
         /* 判断是否为空 */
@@ -497,10 +492,10 @@ namespace MicroFlakeX
         MfxReturn GetB(LONG* ret) const;
 
     public:
-        MfxReturn SetA(LONG ret);
-        MfxReturn SetR(LONG ret);
-        MfxReturn SetG(LONG ret);
-        MfxReturn SetB(LONG ret);
+        MfxReturn SetA(LONG set);
+        MfxReturn SetR(LONG set);
+        MfxReturn SetG(LONG set);
+        MfxReturn SetB(LONG set);
 
 
     public:
@@ -513,6 +508,8 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
+    typedef double(*pEaseGulid)(double);
+
     struct MfxGulid_Keyframe
     {
         MfxGulid_Keyframe(MfxBase* setKey, LONGLONG sTime)
@@ -523,19 +520,24 @@ namespace MicroFlakeX
         MfxBase* key;
         LONGLONG time;
     };
+
     struct MfxGulid_GetSet_FuncName
     {
-        MfxGulid_GetSet_FuncName(MfxString get, MfxString set)
+        MfxGulid_GetSet_FuncName(MfxString get, MfxString set, pEaseGulid easeGulid)
         {
             myGetFuncName = get;
             mySetFuncName = set;
+            myEaseGulid = easeGulid;
         }
-        MfxGulid_GetSet_FuncName(MfxString type)
+        MfxGulid_GetSet_FuncName(MfxString type, pEaseGulid easeGulid)
         {
+            myEaseGulid = easeGulid;
             mySetFuncName = myGetFuncName = type;
-        }
+        }        
+        pEaseGulid myEaseGulid;
         MfxString myGetFuncName;
         MfxString mySetFuncName;
+
     };
 
     typedef std::vector<MfxGulid_GetSet_FuncName> MfxGulid_GetSet_FuncName_Vector;
@@ -583,13 +585,56 @@ namespace MicroFlakeX
     typedef MfxGulid_WidelyType_Map::value_type MfxGulid_WidelyType_Map_Pair;
 
     /**************************************************************
+    ***************************************************************/
+    MFX_PORT double MfxEaseInSine(double x);
+    MFX_PORT double MfxEaseOutSine(double x);
+    MFX_PORT double MfxEaseInOutSine(double x);
+
+    MFX_PORT double MfxEaseInQuad(double x);
+    MFX_PORT double MfxEaseOutQuad(double x);
+    MFX_PORT double MfxEaseInOutQuad(double x);
+
+    MFX_PORT double MfxEaseInCubic(double x);
+    MFX_PORT double MfxEaseOutCubic(double x);
+    MFX_PORT double MfxEaseInOutCubic(double x);
+    
+    MFX_PORT double MfxEaseInQuart(double x);
+    MFX_PORT double MfxEaseOutQuart(double x);
+    MFX_PORT double MfxEaseInOutQuart(double x);
+
+    MFX_PORT double MfxEaseInQuint(double x);
+    MFX_PORT double MfxEaseOutQuint(double x);
+    MFX_PORT double MfxEaseInOutQuint(double x);
+    
+    MFX_PORT double MfxEaseInExpo(double x);
+    MFX_PORT double MfxEaseOutExpo(double x);
+    MFX_PORT double MfxEaseInOutExpo(double x);
+    
+    MFX_PORT double MfxEaseInCirc(double x);
+    MFX_PORT double MfxEaseOutCirc(double x);
+    MFX_PORT double MfxEaseInOutCirc(double x);
+   
+    MFX_PORT double MfxEaseInBack(double x);
+    MFX_PORT double MfxEaseOutBack(double x);
+    MFX_PORT double MfxEaseInOutBack(double x);
+    
+    MFX_PORT double MfxEaseInElastic(double x);
+    MFX_PORT double MfxEaseOutElastic(double x);
+    MFX_PORT double MfxEaseInOutElastic(double x);
+
+    MFX_PORT double MfxEaseInBounce(double x);
+    MFX_PORT double MfxEaseOutBounce(double x);
+    MFX_PORT double MfxEaseInOutBounce(double x);
+
+    /**************************************************************
     *   MfxGlide 赖于 MfxBase 的 AutoFunc。
     * 
     *   MfxGlide 允许绑定一个 MfxBase 对象，每帧根据给定参数
         自动调用 MfxBase::AutoFunc(MfxText("BindObjec"), XXX);
     *   
     *   如果对象未注册 AutoFunc 的 BindObjec ，则会调用失败。
-    *
+    *   对象必须可以Clone
+    * 
     ***************************************************************/
     class MfxGlide
         : public MfxBase
@@ -623,7 +668,7 @@ namespace MicroFlakeX
 
         MfxReturn BindObject(MfxBase* object);
         MfxReturn BindObjectName(MfxString groupName, MfxGulid_WidelyType value);
-        MfxReturn Add_GetSetFuncName(MfxString groupName, MfxString getFuncName, MfxString setFuncName);
+        MfxReturn Add_GetSetFuncName(MfxString groupName, MfxString getFuncName, MfxString setFuncName, pEaseGulid easeGulid = MfxEaseInOutQuad);
 
     public:
         MfxReturn GetFPS(UINT* ret);
@@ -639,7 +684,7 @@ namespace MicroFlakeX
         MfxReturn EachFrame(WPARAM wParam, LPARAM lParam);
 
     public:
-        MfxReturn MfxAddKeyframe(MfxString bindObjectType, MfxBase* set, LONGLONG span);
+        MfxReturn MfxAddKeyframe(MfxString groupName, MfxBase* set, LONGLONG delay);
 
     private:
         UINT myFPS;

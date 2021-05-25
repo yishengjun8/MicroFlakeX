@@ -29,7 +29,7 @@ int main()
 
     MfxRect tRect(19, 18, 360, 120);
     myFlake_00->SetRect(&tRect);
-    tRect.Reset(19, 18 * 2 + 120, 360, 120);
+    tRect.Reset(0, 0, 100, 100);
     myFlake_01->SetRect(&tRect);
 
     myUI_00->InsertFlake(myFlake_00);
@@ -63,8 +63,8 @@ int main()
     myGlide.Add_GetSetFuncName(MfxText("group_1"), MfxText("GetWidth"), MfxText("SetWidth"));
     myGlide.Add_GetSetFuncName(MfxText("group_1"), MfxText("GetHeight"), MfxText("SetHeight"));
 
-    myGlide.Add_GetSetFuncName(MfxText("group_2"), MfxText("GetX"), MfxText("SetX"));
-    myGlide.Add_GetSetFuncName(MfxText("group_2"), MfxText("GetY"), MfxText("SetY"));
+    myGlide.Add_GetSetFuncName(MfxText("group_2"), MfxText("GetX"), MfxText("SetX")); //MfxEaseOutBack
+    myGlide.Add_GetSetFuncName(MfxText("group_2"), MfxText("GetY"), MfxText("SetY")); //MfxEaseOutElastic
 
     myGlide.Add_GetSetFuncName(MfxText("group_3"), MfxText("GetA"), MfxText("SetA"));
     myGlide.Add_GetSetFuncName(MfxText("group_3"), MfxText("GetR"), MfxText("SetR"));
@@ -73,23 +73,23 @@ int main()
 
     myGlide.Add_GetSetFuncName(MfxText("group_3"), MfxText("GetDDDA"), MfxText("GetDDDA"));
 
-    MfxSize* tpSize = new MfxSize(200, 200);
-    myGlide.MfxAddKeyframe(MfxText("group_1"), tpSize, 5000);
+    //MfxSize* tpSize = new MfxSize(200, 200);
+    //myGlide.MfxAddKeyframe(MfxText("group_1"), tpSize, 500);
 
-    tpSize = new MfxSize(100, 100);
-    myGlide.MfxAddKeyframe(MfxText("group_1"), tpSize, 5000);
+    //tpSize = new MfxSize(100, 100);
+    //myGlide.MfxAddKeyframe(MfxText("group_1"), tpSize, 500);
 
-    MfxPoint* tpPoint = new MfxPoint(100, 200);
-    myGlide.MfxAddKeyframe(MfxText("group_2"), tpPoint, 5000);
+    MfxPoint* tpPoint = new MfxPoint(300, 300);
+    myGlide.MfxAddKeyframe(MfxText("group_2"), tpPoint, 3000);
 
     tpPoint = new MfxPoint(0, 0);
-    myGlide.MfxAddKeyframe(MfxText("group_2"), tpPoint, 5000);
+    myGlide.MfxAddKeyframe(MfxText("group_2"), tpPoint, 3000);
 
     MfxColor* tpColor = new MfxColor(0, 255, 0, 0);
-    myGlide.MfxAddKeyframe(MfxText("group_3"), tpColor, 5000);
+    myGlide.MfxAddKeyframe(MfxText("group_3"), tpColor, 3000);
 
     tpColor = new MfxColor(255, 255, 0, 0);
-    myGlide.MfxAddKeyframe(MfxText("group_3"), tpColor, 5000);
+    myGlide.MfxAddKeyframe(MfxText("group_3"), tpColor, 3000);
 
     myGlide.Begin();
     return MFXAPP->Run();

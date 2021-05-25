@@ -62,16 +62,14 @@
 
 namespace MicroFlakeX
 {
-	/***************************************************************
-	*	MfxReturn
-	* 
-	*	返回值标识符。
-	*	可返回	Mfx_Return_XXX	宏来标识返回结果
-	*	
-	*	返回值小于 0 表示函数失败。
-	*	大于等于 0 表示函数成功或者函数正常执行
-	* 
-	****************************************************************/
+	class MFX_PORT MfxBase;
+}
+
+/***************************************************************
+*	MfxReturn 预定义类型
+****************************************************************/
+namespace MicroFlakeX
+{
 	typedef long MfxReturn;
 
 #define Mfx_Return_Fine 0
@@ -80,49 +78,21 @@ namespace MicroFlakeX
 #define Mfx_Failed(MR) (((MfxReturn)(MR)) < 0)
 #define Mfx_Seccess(MR) (((MfxReturn)(MR)) >= 0)
 
-
-	/***************************************************************
-	*	MfxString 字符串
-	* 
-	*	MfxString自动扩展到适合当前编码的std::string或者std::wstring
-	* 
-	****************************************************************/
-#define MfxString __MfxString
-
-
-	/***************************************************************
-	*	字符集自动展开宏
-	*
-	*	MfxText() 内的字符串将会自动展开到适合当前的编码状态
-	*
-	****************************************************************/
-#define MfxText(str) __MfxText(str)
-
-
-	/***************************************************************
-	*	cout输出自动展开宏
-	*
-	*	cout自动扩展到适合当前编码的std::cout或者std::wcout
-	*
-	****************************************************************/
 #define MfxCout __MfxCout
+#define MfxString __MfxString
+#define MfxText(str) __MfxText(str)
 
 #ifdef UNICODE
 #define __MfxCout std::wcout
 #define __MfxText(str) L##str
-#define __MfxString MfxStringW
+#define __MfxString std::wstring
 #elif 
 #define __MfxCout std::cout
 #define __MfxText(str) str
-#define __MfxString MfxStringA;
+#define __MfxString std::string;
 #endif
 
-	typedef std::string MfxStringA;
-	typedef std::wstring MfxStringW;
-
-
-
-	typedef long long MfxFloor;
+	typedef long MfxFloor;
 
 	template<class lhsT, class rhsT = lhsT>
 	bool pFloorCompare(lhsT* lhs, rhsT* rhs)
@@ -141,48 +111,31 @@ namespace MicroFlakeX
 	friend bool pFloorCompare(lhsT* lhs, rhsT* rhs);\
 	template<class lhsT, class rhsT>\
 	friend bool FloorCompare(lhsT& lhs, rhsT& rhs);
+
+	typedef std::uint64_t MfxHash;
+
+	constexpr MfxHash MfxGetHash_StrA(char const* str)
+	{	//BKDRHash
+		MfxHash hash = 0;
+		while (MfxHash ch = *str++)
+		{
+			hash = hash * 131 + ch;   // 也可以乘以31、131、1313、13131、131313..    
+		}
+		return hash;
+	}
+
 }
 
 namespace MicroFlakeX
 {
-	class MFX_PORT MfxBase;
-
-
 	/***************************************************************
-	* 
-	*	MfxObject宏：
-	*		1、MfxBase	的子类需要在声明中添加	MfxObject宏	来声明	MicroFlakeX	的扩展功能
-	* 
-	*		2、MfxBase	的子类至少有一个无参构造函数。
-	*		这个构造函数将在程序开始运行之前被创建一次，用以初始化	MicroFlakeX扩展功能。
-	*	
-	*		3、如果声明了	MfxObject宏	那么该方法至少需要优先实现以下三个宏扩展 ：
-	*			①：MfxObject_Init_0(object)
-	*				{
-	*					//这里可以添加你需要在程序开始运行之前就初始化或者加载的一些内容
-	*				}
-	*			②：MfxObject_Init_1(object, END)
-	*			③：MfxObject_Init_2(object, fatherObject)
-	*
-	*		3、MicroFlakeX扩展的反射就是 ‘通过字符串调用对象的方法’。
-	*			如果你需要使用	MicroFlakeX扩展的反射功能，需要自行添加需要反射的函数。
-	*			①：MfxAutoFunc_AutoEnum自动扩展反射 - 最高支持扩展62个函数
-	*			②：MfxAutoFunc_AutoEnum_半自动扩展反射 - 最高支持扩展126个函数
-	*			③：MfxAutoFunc_手动反射 - 无上限
-	*
-	*	更加详细的MfxObject宏示例请参照	MfxBaseExample_00.h	
-	*	
+	*	MfxObject宏：的子类需要在声明中添加	MfxObject宏	来声明	MicroFlakeX	的扩展功能
 	****************************************************************/
 #define MfxObject __MfxObject
 
 #define MfxObject_Init(OBJ) __MfxObject_Init_0(OBJ)
 #define MfxObject_EndInit(OBJ, FATHER_OBJ, ...) \
 		 CONNECT(__MfxObject_EndInit, (OBJ, FATHER_OBJ, __VA_ARGS__, END, END))
-
-#define __MfxObject_EndInit(OBJ, FATHER_OBJ, NUM1, BEGIN, ...) \
-	MfxObject_Init_1(OBJ, BEGIN)\
-	CONNECT(MfxAutoFunc_AutoEnumBig, (OBJ, NUM1, BEGIN, __VA_ARGS__);)\
-	MfxObject_Init_2(OBJ, FATHER_OBJ);
 
 #define MfxObject_Init_0(OBJ) __MfxObject_Init_0(OBJ)
 #define MfxObject_Init_1(OBJ, GOTO_BEGIN) __MfxObject_Init_1(OBJ, GOTO_BEGIN)
@@ -191,20 +144,7 @@ namespace MicroFlakeX
 #define MfxAutoFunc_AutoEnum(...) CONNECT(__MfxAutoFunc_AutoEnum, (__VA_ARGS__))
 #define MfxAutoFunc_AutoEnumBig(...) CONNECT(MfxAutoFunc_Enum_120, (__VA_ARGS__))
 
-#define MfxAutoFunc_0(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_0(OBJ, AUTO_FUNC, GOTO_NEXT) 
-#define MfxAutoFunc_1(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_1(OBJ, AUTO_FUNC, GOTO_NEXT) 
-#define MfxAutoFunc_2(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_2(OBJ, AUTO_FUNC, GOTO_NEXT) 
-#define MfxAutoFunc_3(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_3(OBJ, AUTO_FUNC, GOTO_NEXT) 
-#define MfxAutoFunc_4(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_4(OBJ, AUTO_FUNC, GOTO_NEXT) 
-#define MfxAutoFunc_5(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_5(OBJ, AUTO_FUNC, GOTO_NEXT) 
-#define MfxAutoFunc_6(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_6(OBJ, AUTO_FUNC, GOTO_NEXT) 
-#define MfxAutoFunc_7(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_7(OBJ, AUTO_FUNC, GOTO_NEXT) 
-#define MfxAutoFunc_8(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_8(OBJ, AUTO_FUNC, GOTO_NEXT) 
-
 	/***************************************************************
-	*
-	*	MfxBase	常用容器
-	*
 	****************************************************************/
 	typedef std::set<MfxBase*> MfxBase_Set;
 	typedef std::queue<MfxBase*> MfxBase_Queue;
@@ -228,87 +168,19 @@ namespace MicroFlakeX
 
 }
 
+
+/***************************************************************
+*	MicroFlakeX	辅助框架
+****************************************************************/
 namespace MicroFlakeX
 {
-	/***************************************************************
-	*
-	*	MicroFlakeX	辅助框架
-	* 
-	*	MfxCodeLock宏：
-	*		1、MfxBase	支持线程安全，具体方案就是保证对象不会在同一时间被两个不同的线程
-	*		同时访问其有冲突的方法。
-	*		2、请在会造成线程冲突的对象方法开始的时候，添加	MfxCodeLock(this);	语句，以
-	*		保证访问唯一性。
-	* 
-	* 
-	****************************************************************/
 	class MFX_PORT MfxLock;
-	class MFX_PORT MfxThreadServer;
-
-	template<class DataType>
-	class MfxDataFlag;
-	/***************************************************************
-	*
-	*	MfxCodeLock宏：
-	*		1、MfxBase	支持线程安全，具体方案就是保证对象不会在同一时间被两个不同的线程
-	*		同时访问其有冲突的方法。
-	*		2、请在会造成线程冲突的对象方法开始的时候，添加	MfxCodeLock(this);	语句，以
-	*		保证访问唯一性。
-	*
-	*
-	****************************************************************/
-#define MfxCodeLock(OBJ) __MfxCodeLock(OBJ)
-}
-
-namespace MicroFlakeX
-{
-	/***************************************************************
-	*	MfxBase	基类
-	*	
-	*	若要继承MfxBase，则需要重写以下几个函数：
-	*		①：virtual MfxReturn Clone(MfxBase** ret);
-	*			深拷贝当前对象，并生成新的对象返回。
-	* 
-	*		②：virtual MfxBase& operator=(MfxBase& rhs);
-	*			浅拷贝一份当前对象，C++内部默认的拷贝函数。
-	* 
-	*		③：virtual BOOL operator==(MfxBase& rhs);
-	*			比较两个MfxBase是否相等。
-	* 
-	*	其余的	MfxBase	函数不需要用户管理，请声明	MfxObject宏	用以自动生成剩余函数。
-	* 
-	****************************************************************/
-	class MfxBase
-	{
-		friend class MfxLock;
-	public:
-		MfxBase();
-		virtual ~MfxBase();
-		virtual MfxReturn Clone(MfxBase** ret);
-
-	public:
-		virtual MfxBase& operator=(MfxBase& rhs);
-
-	public:
-		virtual bool operator==(MfxBase& rhs);
-
-	public:
-		virtual MfxReturn AutoFunc(MfxString recvFunc...);
-		virtual MfxReturn FuncName(MfxString* ret);
-		virtual MfxReturn ObjectName(MfxString* ret);
-	private:
-		CRITICAL_SECTION myCriticalSection;
-	};
-
 
 	/***************************************************************
-	*	MfxLock	
-	* 
-	*	这个类负责MfxBase及其派生类的线程安全，当你需要对象的某些方法不被多个线程
-	*	同时调用的时候，请在该方法的开头或者需要的地方加上 ： MfxCodeLock(shit);
-	*
-	*
+	*	MfxCodeLock宏：请在会造成线程冲突的对象方法开始的时候，添加	MfxCodeLock(this);	语句，以保证访问唯一性。
 	****************************************************************/
+#define MfxCodeLock(OBJ) MfxLock tLock(OBJ);
+
 	class MfxLock
 	{
 	public:
@@ -318,117 +190,82 @@ namespace MicroFlakeX
 		CRITICAL_SECTION* myCriticalSection;
 	};
 
-
-
 	typedef MfxReturn(*pThreadFunc)(WPARAM, LPARAM);
+
 	/***************************************************************
-	*	MfxThreadServer
-	*	
-	*	MfxThreadServer 是 MicroFlakeX 的线程服务器，线程服务器依赖于 MfxBase 的
-	*	AutoFunc。
-	* 
-	*	需要添加到线程服务器内的回调函数，必须注册了 AutoFunc ，否则会调用失败。
-	*	
-	*	
+	* 异步线程请勿传入局部变量指针。
+	* 参数一：回调对象指针
+	* 参数二：回调对象方法名字
+	* 参数三、四：传递给回调方法的wparam、lparam。
 	****************************************************************/
-	class MfxThreadServer
-	{
-	public:
-		MfxThreadServer();
-		~MfxThreadServer();
+	MFX_PORT MfxReturn MfxBeginNewThread(MfxBase* object, MfxString recvFunc, WPARAM wParam = NULL, LPARAM lParam = NULL);
+	/***************************************************************
+	* 异步线程请勿传入局部变量指针。
+	* 参数一：回调对象指针
+	* 参数二、三：传递给回调方法的wparam、lparam。
+	****************************************************************/
+	MFX_PORT MfxReturn MfxBeginNewThread_Widely(pThreadFunc pThreadFunc, WPARAM wParam = NULL, LPARAM lParam = NULL);
 
-	public:
-		static MfxReturn BeginNewThread(MfxBase* object, MfxString recvFunc, WPARAM wParam = NULL, LPARAM lParam = NULL);
-		static MfxReturn BeginNewThread_Widely(pThreadFunc pThreadFunc, WPARAM wParam = NULL, LPARAM lParam = NULL);
-	public:
-		static MfxReturn BeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, LPARAM lParam = NULL, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
-		static MfxReturn CloseTimer(PTP_TIMER& pTimer);
+	/***************************************************************
+	* 参数一：返回一个计时器ID
+	* 参数二：回调对象指针
+	* 参数三：回调对象方法名字
+	* 参数四：传递给回调方法的lparam，回调方法的wparam是当前调用它的计时器id
+	* 参数五：计时器每个多长时间调用一次，单位为ms，若为0，则调用一次结束
+	* 参数六：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
+	* 参数七：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
+	****************************************************************/
+	MFX_PORT MfxReturn MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, LPARAM lParam = NULL, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
 	
-	private:
-		static VOID CALLBACK MfxWorkCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val);
-		static VOID CALLBACK MfxWorkCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val);
-		static VOID CALLBACK MfxTimeCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
-	};
-
-#define MfxCloseTimer MicroFlakeX::MfxThreadServer::CloseTimer
-
-
-/***************************************************************
-*
-* 参数一：返回一个计时器ID
-* 参数二：回调对象指针
-* 参数三：回调对象方法名字
-* 参数四：传递给回调方法的lparam，回调方法的wparam是当前调用它的计时器id
-* 参数五：计时器每个多长时间调用一次，单位为ms，若为0，则调用一次结束
-* 参数六：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
-* 参数七：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
-*
-****************************************************************/
-#define MfxBeginNewTimer MicroFlakeX::MfxThreadServer::BeginNewTimer
-
-
-/***************************************************************
-*
-* 异步线程请勿传入局部变量指针。
-* 参数一：回调对象指针
-* 参数二：回调对象方法名字
-* 参数三、四：传递给回调方法的wparam、lparam。
-*
-****************************************************************/
-#define MfxBeginNewThread MicroFlakeX::MfxThreadServer::BeginNewThread
-
-/***************************************************************
-*
-* 异步线程请勿传入局部变量指针。
-* 参数一：回调对象指针
-* 参数二、三：传递给回调方法的wparam、lparam。
-*
-****************************************************************/
-#define MfxBeginNewThread_Widely MicroFlakeX::MfxThreadServer::BeginNewThread_Widely
-
+	MFX_PORT MfxReturn MfxCloseTimer(PTP_TIMER& pTimer);
 }
-
 namespace __MicroFlakeX
 {
-	/***************************************************************
-	*	__MicroFlakeX内部函数
-	*		>>	一般情况下这里的函数不需要额外的关注
-	*
-	*	MicroFlakeX辅助函数
-	*
-	*		MicroFlakeX的子类通过 MfxFactoryHand 来注册工厂创建。
-	*		MfxRemoveObject - 移除注册
-	*		MfxRegisterObject - 注册工厂
-	*
-	****************************************************************/
-	using namespace MicroFlakeX;
-
-	class MFX_PORT MfxFactoryHand
-	{
-	public:
-		MfxFactoryHand(MfxString object);
-		virtual MfxReturn Creat(MicroFlakeX::MfxBase** ret) = 0;
-		virtual ~MfxFactoryHand();
-	private:
-		MfxString myObjectName;
-	};
-
-	MFX_PORT MfxReturn MfxRemoveObject(MfxString object);
-	MFX_PORT MfxReturn MfxRegisterObject(MfxString object, MfxFactoryHand* hand);
+	MFX_PORT VOID CALLBACK MfxWorkCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val);
+	MFX_PORT VOID CALLBACK MfxWorkCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val);
+	MFX_PORT VOID CALLBACK MfxTimeCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
 }
 
+/***************************************************************
+*	MicroFlakeX辅助模板
+*	①：根据函数指针获取参数长度
+*	②：根据函数指针获取参数类型
+*	③：MfxDataFlag变量标志，检测变量是否更改过或者使用过 - 有Bug，暂时废弃
+*	④：MfxMutexLock变量锁，可以对任意变量上锁，自带防死锁功能
+*	⑤：MfxSignal信号槽，可以绑定任意对象的任意方法作为信号接收对象。支持同步消息和异步消息。
+****************************************************************/
 namespace MicroFlakeX
 {
-	/***************************************************************
-	*	MicroFlakeX辅助模板
-	* 
-	*	①：获取函数的参数长度Argc - 模板实现
-	*		int Argc = Mfx_GetFuncArgc(T) 
-	*
-	*	②：获取函数第N个参数的类型并重命名为FuncT - 模板实现
-	*		typedef decltype(Mfx_GetFuncArgv_N( pFunc ))) FuncT;
-	*
-	****************************************************************/
+	template<class Interface>
+	inline void SafeRelease(Interface*& pInterfaceToRelease)
+	{
+		if (pInterfaceToRelease != nullptr)
+		{
+			pInterfaceToRelease->Release();
+			pInterfaceToRelease = nullptr;
+		}
+	}
+
+	template<class Pointer>
+	inline void SafeDelete(Pointer*& pPointerToDelete)
+	{
+		if (pPointerToDelete != nullptr)
+		{
+			delete pPointerToDelete;
+			pPointerToDelete = nullptr;
+		}
+	}
+
+	template<class Pointer>
+	inline void SafeDeleteL(Pointer*& pPointerToDelete)
+	{
+		if (pPointerToDelete != nullptr)
+		{
+			delete[] pPointerToDelete;
+			pPointerToDelete = nullptr;
+		}
+	}
+
 	template<typename T>
 	struct MfxArgNum_;
 
@@ -451,8 +288,8 @@ namespace MicroFlakeX
 	};
 
 	template<typename T>
-	int Mfx_GetFuncArgc(T) 
-	{ 
+	int Mfx_GetFuncArgc(T)
+	{
 		return MfxArgNum_<T>::Argc;
 	};
 
@@ -599,15 +436,17 @@ namespace MicroFlakeX
 	{
 		return A8();
 	};
+}
 
+namespace MicroFlakeX
+{
 
 	/***************************************************************
-	*	MicroFlakeX辅助模板 - MfxDataFlag
-	*
 	*	MfxDataFlag	可以记录变量被更改的次数以及被使用的次数
-	* 
+	*
 	*	MfxDataFlag	重载了众多的运算符，使其在计算使用的时候，跟原版变量几乎相等
-	*	MfxDataFlag	出于安全考虑，禁止了隐式类型转换，但你仍可以使用显示的类型转换
+	*
+	*	由于设计问题，暂时废弃。请等待后续维护更新
 	*
 	****************************************************************/
 	template<class DataType>
@@ -659,7 +498,7 @@ namespace MicroFlakeX
 	public:
 		DataType& operator-> ()
 		{
-			myUseFlag++; 
+			myUseFlag++;
 			return myData;
 		};
 
@@ -735,6 +574,137 @@ namespace MicroFlakeX
 		bool operator|| (MfxDataFlag<DataType>&& rhs) { return myData || rhs.GetData(); };
 	};
 
+
+	/***************************************************************
+	*	MfxMutexLock Mfx参数锁。
+	****************************************************************/
+	class MfxMutexLock
+	{
+	public:
+		MfxMutexLock()
+		{
+			InitializeCriticalSection(&myCriticalSection);
+		}
+		virtual ~MfxMutexLock()
+		{
+			EnterCriticalSection(&myCriticalSection);
+			DeleteCriticalSection(&myCriticalSection);
+		}
+	public:
+		template<typename ...Args>
+		void UnLock(void* first, Args... rest)
+		{
+			EnterCriticalSection(&myCriticalSection);
+			myMutexSet.erase(first);
+			LeaveCriticalSection(&myCriticalSection);
+
+			UnLock(rest...);
+		}
+
+		template<typename ...Args>
+		void WaitLock(Args... rest)
+		{
+			while (!TryLock(rest...))
+			{
+				Sleep(1);
+			}
+
+		}
+
+		template<typename ...Args>
+		bool TryLock(void* first, Args... rest)
+		{
+			EnterCriticalSection(&myCriticalSection);
+			bool ret = myMutexSet.insert(first).second;
+			LeaveCriticalSection(&myCriticalSection);
+
+			if (ret == true)
+			{
+				ret = TryLock(rest...);
+
+				if (ret)
+				{
+					return true;
+				}
+				else
+				{
+					EnterCriticalSection(&myCriticalSection);
+					myMutexSet.erase(first);
+					LeaveCriticalSection(&myCriticalSection);
+
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		void UnLock(void* first)
+		{
+			//std::cout << "UnLock" << endl;
+
+			EnterCriticalSection(&myCriticalSection);
+			myMutexSet.erase(first);
+			LeaveCriticalSection(&myCriticalSection);
+		}
+
+		bool TryLock(void* first)
+		{
+			//std::cout << "Lock" << endl;
+
+			EnterCriticalSection(&myCriticalSection);
+			bool ret = myMutexSet.insert(first).second;
+			LeaveCriticalSection(&myCriticalSection);
+
+			return ret;
+		}
+
+	protected:
+		std::set<void*> myMutexSet;
+		CRITICAL_SECTION myCriticalSection;
+	};
+}
+
+
+
+/**************************************************************************************************************************************************************************************************/
+namespace MicroFlakeX
+{
+	class MfxBase
+	{
+		friend class MfxLock;
+	public:
+		MfxBase();
+		virtual ~MfxBase();
+		virtual MfxReturn Clone(MfxBase** ret);
+
+	public:
+		virtual MfxBase& operator=(MfxBase& rhs);
+
+	public:
+		virtual bool operator==(MfxBase& rhs);
+
+	public:
+		virtual MfxReturn AutoFunc(MfxString recvFunc...);
+		virtual MfxReturn FuncName(MfxString* ret);
+		virtual MfxReturn ObjectName(MfxString* ret);
+	protected:
+		MfxMutexLock myMutexLock;
+	private:
+		CRITICAL_SECTION myCriticalSection;
+	};
+}
+/**************************************************************************************************************************************************************************************************/
+
+
+
+/***************************************************************
+*	MfxSignal Mfx信号槽的模板实现
+****************************************************************/
+namespace MicroFlakeX
+{
 	struct MfxReceiver_Info
 	{
 		MfxReceiver_Info(MfxBase* recvObject, MfxString recvFunc)
@@ -1234,47 +1204,75 @@ namespace MicroFlakeX
 }
 
 
-typedef std::uint64_t MfxHash;
 
-//BKDRHash
-constexpr MfxHash MfxGetHash_StrA(char const* str)
+namespace __MicroFlakeX
 {
-	MfxHash hash = 0;
-	while (MfxHash ch = *str++)
+	/***************************************************************
+	*	__MicroFlakeX内部函数
+	*		>>	一般情况下这里的函数不需要额外的关注
+	*
+	*	MicroFlakeX辅助函数
+	*
+	*		MicroFlakeX的子类通过 MfxFactoryHand 来注册工厂创建。
+	*		MfxRemoveObject - 移除注册
+	*		MfxRegisterObject - 注册工厂
+	*
+	****************************************************************/
+	using namespace MicroFlakeX;
+
+	class MFX_PORT MfxFactoryHand
 	{
-		hash = hash * 131 + ch;   // 也可以乘以31、131、1313、13131、131313..    
-	}
-	return hash;
+	public:
+		MfxFactoryHand(MfxString object);
+		virtual MfxReturn Creat(MicroFlakeX::MfxBase** ret) = 0;
+		virtual ~MfxFactoryHand();
+	private:
+		MfxString myObjectName;
+	};
+
+	MFX_PORT MfxReturn MfxRemoveObject(MfxString object);
+	MFX_PORT MfxReturn MfxRegisterObject(MfxString object, MfxFactoryHand* hand);
 }
 
-/***************************************************************
-*	MicroFlakeX辅助宏
-*	
-*	这里是	MicroFlakeX辅助宏	的集中定义，不多赘述。
-* 
-****************************************************************/
 
-#define __MfxCodeLock(OBJ) \
-	MfxLock tLock(OBJ);
 
+
+
+namespace MicroFlakeX
+{
+
+	/***************************************************************
+	*	MicroFlakeX辅助宏
+	****************************************************************/
 #define __MfxObject \
 public:\
 	MfxReturn AutoFunc(MfxString recvFunc...);\
 	MfxReturn FuncName(MfxString* ret);\
 	MfxReturn ObjectName(MfxString* ret);
 
-#define MfxSafeDelete(OBJ)\
-	if(OBJ)\
-	{\
-		delete OBJ;\
-		OBJ = nullptr;\
-	}
+	/***************************************************************
+	*
+	****************************************************************/
+#define __MfxObject_EndInit(OBJ, FATHER_OBJ, NUM1, BEGIN, ...) \
+	MfxObject_Init_1(OBJ, BEGIN)\
+	CONNECT(MfxAutoFunc_AutoEnumBig, (OBJ, NUM1, BEGIN, __VA_ARGS__);)\
+	MfxObject_Init_2(OBJ, FATHER_OBJ);
 
-/***************************************************************
-*
-*
-*
-****************************************************************/
+#define MfxAutoFunc_0(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_0(OBJ, AUTO_FUNC, GOTO_NEXT) 
+#define MfxAutoFunc_1(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_1(OBJ, AUTO_FUNC, GOTO_NEXT) 
+#define MfxAutoFunc_2(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_2(OBJ, AUTO_FUNC, GOTO_NEXT) 
+#define MfxAutoFunc_3(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_3(OBJ, AUTO_FUNC, GOTO_NEXT) 
+#define MfxAutoFunc_4(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_4(OBJ, AUTO_FUNC, GOTO_NEXT) 
+#define MfxAutoFunc_5(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_5(OBJ, AUTO_FUNC, GOTO_NEXT) 
+#define MfxAutoFunc_6(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_6(OBJ, AUTO_FUNC, GOTO_NEXT) 
+#define MfxAutoFunc_7(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_7(OBJ, AUTO_FUNC, GOTO_NEXT) 
+#define MfxAutoFunc_8(OBJ, AUTO_FUNC, GOTO_NEXT) __MfxAutoFunc_8(OBJ, AUTO_FUNC, GOTO_NEXT) 
+
+	/***************************************************************
+	*
+	*
+	*
+	****************************************************************/
 #define __MfxObject_Init_0(OBJ)\
 using namespace MicroFlakeX;\
 using namespace __MicroFlakeX;\
@@ -1305,11 +1303,11 @@ public:\
 	{
 
 
-/***************************************************************
-*
-*
-*
-****************************************************************/
+	/***************************************************************
+	*
+	*
+	*
+	****************************************************************/
 #define __MfxObject_Init_1(OBJ, GOTO_BEGIN) \
 	}\
 	MfxReturn Creat(MfxBase** ret)\
@@ -1340,11 +1338,11 @@ MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 		{
 
 
-/***************************************************************
-*
-*
-*
-****************************************************************/
+	/***************************************************************
+	*
+	*
+	*
+	****************************************************************/
 #define __MfxObject_Init_2(OBJ, FATHER_OBJ) \
 		case MfxGetHash_StrA("AUTOFUNC_NOTFOUND"):\
 		{\
@@ -1365,11 +1363,13 @@ MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 	}\
 }
 
+}
 
+
+namespace MicroFlakeX
+{
 /***************************************************************
-*
-*
-*
+*	__MfxAutoFunc_注册宏
 ****************************************************************/
 
 #define __MfxAutoFunc_0(OBJ, AUTO_FUNC, GOTO_NEXT) \
@@ -1534,22 +1534,12 @@ case MfxGetHash_StrA(#AUTO_FUNC):\
 	goto REG_##GOTO_NEXT;\
 }
 
+}
 
-/***************************************************************
-*	①：MfxAutoFunc_AutoEnum_ArgcMap宏 - 从参数总数映射函数数量
-*	
-*	②：MfxAutoFunc_Connect宏 - 跳转生成对应的	MfxAutoFunc_NUM
-* 
-*	③：MfxAutoFunc_AutoEnum宏 - 根据给定的参数，自动推断需要生成的
-*		MfxAutoFunc_NUM。推断上限为62个函数。
-*	
-*	④：CONNECT组宏 - 延迟展开宏，非常重要的辅助宏，用来延迟宏的展开层次
-*
-*	⑤：MFX_COUNT宏 - 利用__COUNTER__自动展开计数。
-* 
-*	⑥：Mfx_Inc宏 - 自增宏，最高支持自增到512
-* 
-****************************************************************/
+
+
+
+
 #define MfxAutoFunc_AutoEnum_ArgcMap(NUM) CCONNECT(MfxAutoFunc_AutoEnum_ArgcMap_, NUM)
 
 #define MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2) CCONNECT(CONNECT(MfxAutoFunc_, NUM_1), (OBJ, FUNC_1, FUNC_2))
@@ -1589,7 +1579,6 @@ N113, N114, N115, N116, N117, N118, N119, N120, N121, N122, N123, N124, N125, N1
 
 
 #define MFX_COUNT(BEGIN) (__COUNTER__ - BEGIN)
-
 
 #define MfxAutoFunc_AutoEnum_ArgcMap_3 1
 
@@ -2217,35 +2206,3 @@ N113, N114, N115, N116, N117, N118, N119, N120, N121, N122, N123, N124, N125, N1
 #define MfxAutoFunc_Enum_126(OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, ...)\
     MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
     CONNECT(MfxAutoFunc_Enum_125(OBJ, NUM_2, FUNC_2, __VA_ARGS__))
-
-
-
-// 实验失败的宏递归
-// 宏不支持递归展开
-#define Mfx_AutoEnumBig_ForInc(Num) CONNECT(Mfx_AutoEnumBig_ForInc_, Num)
-#define Mfx_AutoEnumBig_ForInc_0 1
-#define Mfx_AutoEnumBig_ForInc_1 0
-#define Mfx_AutoEnumBig_ForInc_END END
-
-#define __MfxAutoFunc_AutoEnumBig(BEGIN, OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, FLAG, ...)\
-    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
-    CCCCONNECT(CCCONNECT(MfxAutoFunc_AutoEnumBig_, CCONNECT(Mfx_AutoEnumBig_ForInc(BEGIN) , FLAG))(BEGIN, OBJ, NUM_2, FUNC_2, FLAG, __VA_ARGS__))
-
-#define MfxAutoFunc_AutoEnumBig_END(BEGIN, OBJ, NUM_1, FUNC_1, ...)\
-    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, END)
-
-#define MfxAutoFunc_AutoEnumBig_00(BEGIN, OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, FLAG, ...)\
-    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
-    CCCCONNECT(CCCONNECT(MfxAutoFunc_AutoEnumBig_, CCONNECT(Mfx_AutoEnumBig_ForInc(BEGIN), FLAG))(BEGIN, OBJ, NUM_2, FUNC_2, FLAG, __VA_ARGS__))
-
-#define MfxAutoFunc_AutoEnumBig_10(BEGIN, OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, FLAG, ...)\
-    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
-    CCCCONNECT(CCCONNECT(MfxAutoFunc_AutoEnumBig_, CCONNECT(Mfx_AutoEnumBig_ForInc(BEGIN), FLAG))(BEGIN, OBJ, NUM_2, FUNC_2, FLAG, __VA_ARGS__))
-
-#define MfxAutoFunc_AutoEnumBig_01(BEGIN, OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, FLAG, ...)\
-    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
-    CCCCONNECT(CCCONNECT(MfxAutoFunc_AutoEnumBig_, CCONNECT(Mfx_AutoEnumBig_ForInc(BEGIN), FLAG))(BEGIN, OBJ, NUM_2, FUNC_2, FLAG, __VA_ARGS__))
-
-#define MfxAutoFunc_AutoEnumBig_11(BEGIN, OBJ, NUM_1, FUNC_1, NUM_2, FUNC_2, FLAG, ...)\
-    MfxAutoFunc_Connect(OBJ, NUM_1, FUNC_1, FUNC_2)\
-    CCCCONNECT(CCCONNECT(MfxAutoFunc_AutoEnumBig_, CCONNECT(Mfx_AutoEnumBig_ForInc(BEGIN), FLAG))(BEGIN, OBJ, NUM_2, FUNC_2, FLAG, __VA_ARGS__))

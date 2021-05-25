@@ -151,6 +151,7 @@ MfxReturn MicroFlakeX::MfxCanvas::PaintBegin(MfxRect* clip)
 	{
 		myRenderTarget->BeginDraw();
 
+
 		clip->GetRect(&myClipRect);
 		bool tEmpty = false;
 		myClipRect.IsEmpty(&tEmpty);
@@ -162,12 +163,14 @@ MfxReturn MicroFlakeX::MfxCanvas::PaintBegin(MfxRect* clip)
 			myRenderTarget->PushAxisAlignedClip(tRectF, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 		}
 
+		myRenderTarget->Clear();
 		myPaintFlag = true;
 
 		return Mfx_Return_Fine;
 	}
 
 	return Mfx_Return_Fail;
+
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::PaintFinish()

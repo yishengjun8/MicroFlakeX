@@ -12,8 +12,6 @@ namespace MicroFlakeX
     *   MfxBaseExample_00 提供了MfxBase派生类的构造标准示例
     *   
     *   ①：以public继承MfxBase
-    *   ②：在类的声明开始之前，使用 MfxObject; 宏，来辅助生成MicroFlakeX支持。
-    *   ③：重载  Colne， operator==， operator= 这三个基础。
     * 
     ****************************************************************/
     class MfxBaseExample_00 :
@@ -23,12 +21,6 @@ namespace MicroFlakeX
     public:
         MfxBaseExample_00();
         ~MfxBaseExample_00();
-
-        virtual MfxReturn Clone(MfxBase** ret);
-
-        virtual MfxBase& operator=(MfxBase& rhs);
-
-        virtual bool operator==(MfxBase& rhs) const;
     public:        
         MfxReturn SayGoodBy();
 

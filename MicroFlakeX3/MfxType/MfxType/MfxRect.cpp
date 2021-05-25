@@ -81,8 +81,6 @@ MfxObject_EndInit(MfxRect, MfxBase, \
 	\
 	2, Union, \
 	2, Union_Widely, \
-	2, Except, \
-	2, Except_Widely, \
 	2, Intersect, \
 	2, Intersect_Widely, \
 	\
@@ -1083,28 +1081,44 @@ MfxReturn MicroFlakeX::MfxRect::GetCenter(MfxPoint* ret) const
 ***************************************************************/
 MfxReturn MicroFlakeX::MfxRect::SetX(LONG set)
 {
+	myMutexLock.WaitLock(&myX);
+
 	myX = set;
+
+	myMutexLock.UnLock(&myX);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetY(LONG set)
 {
+	myMutexLock.WaitLock(&myY);
+
 	myY = set;
+
+	myMutexLock.UnLock(&myY);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetWidth(LONG set)
 {
+	myMutexLock.WaitLock(&myWidth);
+
 	myWidth = set;
+
+	myMutexLock.UnLock(&myWidth);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetHeight(LONG set)
 {
+	myMutexLock.WaitLock(&myHeight);
+
 	myHeight = set;
+
+	myMutexLock.UnLock(&myHeight);
 
 	return Mfx_Return_Fine;
 }
@@ -1220,19 +1234,10 @@ MfxReturn MicroFlakeX::MfxRect::Union_Widely(MfxBase* set, MfxRect* ret) const
 	}
 	if (Mfx_Seccess(set->AutoFunc(MfxText("GetBottom"), (&tRB))))
 	{
-		ret->SetBottom(max(tB, tRB));
+		ret->SetBottom(max
+		(tB, tRB));
 	}
 
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxRect::Except(MfxRect* set, MfxRect* ret) const
-{
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxRect::Except_Widely(MfxBase* set, MfxRect* ret) const
-{
 	return Mfx_Return_Fine;
 }
 

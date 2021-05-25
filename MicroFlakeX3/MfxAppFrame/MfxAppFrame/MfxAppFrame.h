@@ -48,14 +48,15 @@ namespace MicroFlakeX
 	*	MfxDataFlag_bool 为框架所使用的可以记录更改次数的变量，利
 		用它可以知道某个bool变量是否更改过，更改过几次
 	**************************************************************/
-	typedef MfxDataFlag<bool> MfxDataFlag_bool;
+	//typedef MfxDataFlag<bool> MfxDataFlag_bool;
 
 
 	/**************************************************************
 	*	App_UI_Info 映射了从win32的hwnd句柄到MfxUI指针
 	**************************************************************/
-	struct App_UI_Info
+	class App_UI_Info
 	{
+	public:
 		App_UI_Info(HWND hWnd, MfxUI* pUI, DWORD threadID)
 		{
 			myUI = pUI;
@@ -80,13 +81,14 @@ namespace MicroFlakeX
 
 
 	/**************************************************************
-	*	UI_UIMsg_RecvFunc_Infor 这里面存储了 "消息映射" 的具体信息
+	*	UI_UIRecvFunc_Info 这里面存储了 "消息映射" 的具体信息
 		例如消息的接收函数，消息的接收函数的字符串编码，该接收函数
 		处于消息接收链的第几层
 	***************************************************************/
-	struct UI_UIMsg_RecvFunc_Infor
+	class UI_UIRecvFunc_Info
 	{
-		UI_UIMsg_RecvFunc_Infor(pUIRecvFunc pFunc, MfxString funcName)
+	public:
+		UI_UIRecvFunc_Info(pUIRecvFunc pFunc, MfxString funcName)
 		{
 			recvFunc = pFunc;
 			myRecvFuncName = funcName;
@@ -96,28 +98,30 @@ namespace MicroFlakeX
 	};
 
 
-	typedef std::deque<UI_UIMsg_RecvFunc_Infor*> UI_UIMsg_RecvFunc_Infor_Deque;
+	typedef std::deque<UI_UIRecvFunc_Info*> UI_UIRecvFunc_Infor_Deque;
 
-	typedef std::map<MfxMessage, UI_UIMsg_RecvFunc_Infor_Deque> UI_UIMsg_Map;
-	typedef UI_UIMsg_Map::value_type UI_UIMsg_Map_Elem;
+	typedef std::map<MfxMessage, UI_UIRecvFunc_Infor_Deque> UI_UIMessage_Map;
+	typedef UI_UIMessage_Map::value_type UI_UIMessage_Map_Elem;
 
 
 	/**************************************************************
-	*	UI_FlakeMsg_Infor 标识了来自哪个MfxFlake控件，以及MfxFlake
+	*	UI_FlakeEvent_Info 标识了来自哪个MfxFlake控件，以及MfxFlake
 		控件发出了什么消息同时MfxUI_FlakeMsg_Key重载了operator< 使
 		其可以进行排序算法
 	***************************************************************/
-	struct UI_FlakeMsg_Infor
+	class UI_FlakeEvent_Info
 	{
-		UI_FlakeMsg_Infor(MfxFlake* set, MfxMessage msg)
+	public:
+		UI_FlakeEvent_Info(MfxFlake* set, MfxMessage msg)
 		{
 			Flake = set;
 			message = msg;
 		}
-		MfxMessage message;
 		MfxFlake* Flake;
+		MfxMessage message;
+		MfxString recvFuncName;
 
-		bool operator< (const UI_FlakeMsg_Infor& rhs) const
+		bool operator< (const UI_FlakeEvent_Info& rhs) const
 		{
 			if (Flake != rhs.Flake)
 			{
@@ -130,50 +134,46 @@ namespace MicroFlakeX
 		}
 	};
 
-
 	/**************************************************************
-	*	UI_FlakeMsg_Value 标识了MfxFlake控件发出的具体消息，采用
-		wParam和lParam两个消息，保持跟win32兼容
+	*	Win32Msg_Value 标识了win32的具体消息，采用
+		wParam和lParam两个消息,in32兼容
 	***************************************************************/
-	struct UI_FlakeMsg_Value
+	struct Win32Msg_Value
 	{
-		UI_FlakeMsg_Value(WPARAM wPara, LPARAM lPara)
+		Win32Msg_Value(WPARAM wPara, LPARAM lPara)
 		{
 			wParam = wPara;
 			lParam = lPara;
-		}
-		bool operator < (const UI_FlakeMsg_Value& get) const
-		{
-			return true;
 		}
 		WPARAM wParam;
 		LPARAM lParam;
 	};
 
 
-	typedef std::map<UI_FlakeMsg_Infor, UI_UIMsg_RecvFunc_Infor_Deque> UI_FlakeMsg_Map;
-	typedef UI_FlakeMsg_Map::value_type UI_FlakeMsg_Map_Elem;
+	typedef std::map<UI_FlakeEvent_Info, UI_UIRecvFunc_Infor_Deque> UI_FlakeEvent_Map;
+	typedef UI_FlakeEvent_Map::value_type UI_FlakeMsg_Map_Elem;
 
 
 	/**************************************************************
-	*	UI_UITimer_Infor 标识了定时器ID以及其接收函数
+	*	UI_UITimer_Info 标识了定时器ID以及其接收函数
 	***************************************************************/
-	struct UI_UITimer_Infor
+	class UI_UITimer_Info
 	{
-		UI_UITimer_Infor(DWORD id, clock_t delay, pUIRecvFunc pRecvFunc)
+	public:
+		UI_UITimer_Info(ULONG id, ULONG delay, pUIRecvFunc pRecvFunc)
 		{
 			myID = id;
 			delayTime = delay;
 			recvFunc = pRecvFunc;
 		}
-		DWORD myID;
-		clock_t delayTime;
+		ULONG myID;
+		ULONG delayTime;
 		pUIRecvFunc recvFunc;
 	};
 
 
-	typedef std::map<MfxMessage, UI_UITimer_Infor*> UI_UITimer_Infor_Map;
-	typedef UI_UITimer_Infor_Map::value_type UI_UITimer_Infor_Map_Elem;
+	typedef std::map<MfxMessage, UI_UITimer_Info*> UI_UITimer_Map;
+	typedef UI_UITimer_Map::value_type UI_UITimer_Map_Elem;
 
 
 	/**************************************************************
@@ -183,8 +183,9 @@ namespace MicroFlakeX
 	*		MfxFlake从MfxUI移除的时候，发送一次
 	*
 	***************************************************************/
-	struct Paper_Infor
+	class Paper_Infor
 	{
+	public:
 		Paper_Infor(MfxUI* setUI, HWND setWnd, MfxCanvas* setCanvas, DWORD setThreadID)
 		{
 			myUI = setUI;
@@ -217,13 +218,14 @@ namespace MicroFlakeX
 
 
 	/**************************************************************
-	*	Flake_FlakeMsg_Infor 这里面存储了 "消息映射" 的具体信息例如
+	*	Flake_RecvFunc_Infor 这里面存储了 "消息映射" 的具体信息例如
 		消息的接收函数，消息的接收函数的字符串编码，该接收函数处于消
 		息接收链的第几层
 	***************************************************************/
-	struct Flake_FlakeMsg_Infor
+	class Flake_RecvFunc_Infor
 	{
-		Flake_FlakeMsg_Infor(pFlakeRecvFunc pFunc, MfxString funcName)
+	public:
+		Flake_RecvFunc_Infor(pFlakeRecvFunc pFunc, MfxString funcName)
 		{
 			recvFunc = pFunc;
 			myFuncName = funcName;
@@ -233,10 +235,10 @@ namespace MicroFlakeX
 	};
 
 
-	typedef std::deque<Flake_FlakeMsg_Infor*> Flake_FlakeMsg_Infor_Vector;
+	typedef std::deque<Flake_RecvFunc_Infor*> Flake_RecvFunc_Infor_Deque;
 
-	typedef std::map<MfxMessage, Flake_FlakeMsg_Infor_Vector> Flake_FlakeMsg_Map;
-	typedef Flake_FlakeMsg_Map::value_type Flake_FlakeMsg_Map_Elem;
+	typedef std::map<MfxMessage, Flake_RecvFunc_Infor_Deque> Flake_FlakeMessage_Map;
+	typedef Flake_FlakeMessage_Map::value_type Flake_FlakeMessage_Map_Elem;
 }
 
 namespace MicroFlakeX
@@ -286,7 +288,7 @@ namespace MicroFlakeX
 		UI_MSG_(UI_MSG_OpenPercentRect)
 		UI_MSG_(UI_MSG_ClosePercentRect)
 
-		UI_MSG_(UI_MSG_FlakeMessage)
+		UI_MSG_(UI_MSG_FlakeEvent)
 
 		UI_MSG_(UI_MSG_FlakeFloorChange)
 	};
@@ -301,7 +303,10 @@ namespace MicroFlakeX
 #define FLAKE_MSG_(MSG) MSG = FLAKE_MSG_BEGIN - MFX_COUNT(FLAKE_MSG_COUNT),
 	enum FLAKE_MSG
 	{
+		FLAKE_MSG_(FLAKE_MSG_FlakeMessage)
+
 		FLAKE_MSG_(FLAKE_MSG_SetPaper)
+		FLAKE_MSG_(FLAKE_MSG_RemovePaper)
 
 		FLAKE_MSG_(FLAKE_MSG_PaintBack)
 		FLAKE_MSG_(FLAKE_MSG_PaintMask)
@@ -351,8 +356,7 @@ namespace MicroFlakeX
 	enum UI_WINDOWS_STYLE
 	{
 		UI_WINDOWS_STYLE_AntiFlicker = WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
-		UI_WINDOWS_STYLE_Normal = WS_OVERLAPPED | WS_CAPTION | WS_THICKFRAME | WS_VISIBLE,
-		UI_WINDOWS_STYLE_Pop = WS_POPUP | WS_VISIBLE | UI_WINDOWS_STYLE_AntiFlicker & ~WS_SYSMENU,
+		UI_WINDOWS_STYLE_Normal = WS_EX_LAYERED | WS_OVERLAPPED | WS_CAPTION | WS_THICKFRAME | WS_VISIBLE
 	};
 }
 
@@ -421,26 +425,61 @@ namespace MicroFlakeX
 
 		MfxReturn ProcMessage(MfxMessage message, WPARAM wParam, LPARAM lParam);
 		MfxReturn SendMessageToFlakes(MfxMessage message, WPARAM wParam, LPARAM lParam, bool sort = false);
-
-
+		
+		
 		/********************************************************************************
-		*
-		*
-		*
 		*
 		*********************************************************************************/
 	private:
-		UI_UIMsg_Map myMessageMap;
+		MfxFlake_Set myFlakeSet;
+		MfxFlake_Deque myFlakeDeque;
 	public:
-		MfxReturn RemoveUIMessage(MfxMessage message, MfxString recvFuncName);
-		MfxReturn PushBackUIMessage(MfxMessage message, UI_UIMsg_RecvFunc_Infor* msgValue);
-		MfxReturn PushFrontUIMessage(MfxMessage message, UI_UIMsg_RecvFunc_Infor* msgValue);
-		
+		MfxReturn RemoveFlake(MfxFlake* set);
+		MfxReturn InsertFlake(MfxFlake* set);
 
 		/********************************************************************************
 		*
+		*********************************************************************************/
+	private:
+		UI_UITimer_Map myTimerMap;
+	public:
+		MfxReturn RemoveTimer(ULONG setID);
+		MfxReturn InsertTimer(UI_UITimer_Info timer);
+
+		/********************************************************************************
 		*
+		*********************************************************************************/
+	private:
+		UI_UIMessage_Map myMessageMap;
+	public:
+		MfxReturn RemoveUIMessage(MfxMessage message, MfxString recvFuncName);
+		MfxReturn PushBackUIMessage(MfxMessage message, UI_UIRecvFunc_Info* msgValue);
+		MfxReturn PushFrontUIMessage(MfxMessage message, UI_UIRecvFunc_Info* msgValue);
+		
+		/********************************************************************************
 		*
+		*********************************************************************************/
+	private:
+		UI_FlakeEvent_Map myFlakeEventMap;
+	public:
+		MfxReturn RemoveFlakeEvent(UI_FlakeEvent_Info message);
+		MfxReturn PushBackFlakeEvent(UI_FlakeEvent_Info message, UI_UIRecvFunc_Info msgValue);
+		MfxReturn PushFrontFlakeEvent(UI_FlakeEvent_Info message, UI_UIRecvFunc_Info msgValue);
+
+		/********************************************************************************
+		*
+		*********************************************************************************/
+	protected:
+		MfxReturn myUIReturnKeep;
+	private:
+		std::vector<void*> myDeleteVector_pVoid;
+		std::vector<MfxBase*> myDeleteVector_pMfxBase;
+	protected:
+		MfxReturn ClearDeleteVctor();
+		MfxReturn AddDelete_pVoid(void* set);
+		MfxReturn AddDelete_pMfxBase(MfxBase* set);
+
+		/********************************************************************************
 		*
 		*********************************************************************************/
 	private:
@@ -448,52 +487,12 @@ namespace MicroFlakeX
 	public:
 		MfxReturn OpenPercentRect();
 		MfxReturn ClosePercentRect();
-		MfxReturn ChickPercentRect();
-
-
-		/********************************************************************************
-		*
-		*
-		*
-		*
-		*********************************************************************************/
-	private:
-		MfxFlake_Set myFlakeSet;
-		MfxFlake_Deque myFlakeDeque;
-
-		UI_FlakeMsg_Map myFlakeMessageMap;
-
-	public:
-		MfxReturn RemoveFlake(MfxFlake* set);
-		MfxReturn InsertFlake(MfxFlake* set);
-
-		MfxReturn RemoveFlakeMessage(UI_FlakeMsg_Infor message, MfxString recvFuncName);
-		MfxReturn PushBackFlakeMessage(UI_FlakeMsg_Infor message, UI_UIMsg_RecvFunc_Infor* msgValue);
-		MfxReturn PushFrontFlakeMessage(UI_FlakeMsg_Infor message, UI_UIMsg_RecvFunc_Infor* msgValue);
-
+		MfxReturn ChickPercentRect(bool* ret);
 
 		/********************************************************************************
 		*
-		*
-		*
-		*
 		*********************************************************************************/
 	private:
-		UI_UITimer_Infor_Map myTimerMap;
-	public:
-		MfxReturn RemoveTimer(WPARAM setID);
-		MfxReturn InsertTimer(WPARAM setID, clock_t delay, pUIRecvFunc recv);
-
-
-		/********************************************************************************
-		*
-		*
-		*
-		*
-		*********************************************************************************/
-	private:
-		MfxRect myInvalidateRect;
-
 		MfxFlake* myMutexFocus;
 		MfxFlake *myKeyboardFocus;
 
@@ -509,41 +508,43 @@ namespace MicroFlakeX
 		MfxReturn SetKeyboardFocus(MfxFlake* set);
 		MfxReturn GetKeyboardFocus(MfxFlake** ret);
 
-
-
+		/********************************************************************************
+		*
+		*********************************************************************************/
+	private:
+		MfxRect myInvalidateRect;
+	public:
 		MfxReturn UnionInvalidateRect(MfxRect* set);
 
 		/********************************************************************************
 		*
-		*
-		*
-		*
 		*********************************************************************************/
-	private:
+	protected:
 		HWND myWnd;
 		DWORD myUIThreadID;
 		MfxCanvas myCanvas;
-		PTP_TIMER myPTP_TIME;
 
 	public:
 		MfxReturn GetWnd(HWND* ret);
 		MfxReturn GetUIThreadID(DWORD* ret);
 		MfxReturn GetCanvas(MfxCanvas** ret);
 
+		MfxReturn GetWorldRect(MfxRect* ret);
+		MfxReturn GetLocalMousePos(MfxPoint* ret);
+		MfxReturn TransWorldRectToLocalRect(MfxRect* world, MfxRect* local);
+		MfxReturn TransWorldPointToLocalPoint(MfxPoint* world, MfxPoint* local);
 
 		/********************************************************************************
-		*
-		*
-		*
 		*
 		*********************************************************************************/
 	private:
 		MfxRect myRect;
-		MfxImage* myBackImage;
-		MfxImage* myMaskImage;
 
 		MfxColor myBackColor;
 		MfxColor myMaskColor;
+
+		MfxImage* myBackImage;
+		MfxImage* myMaskImage;
 	public:
 		MfxReturn GetRect(MfxRect* ret);
 		MfxReturn GetSize(MfxSize* ret);
@@ -578,24 +579,21 @@ namespace MicroFlakeX
 		MfxReturn __OnTest00(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnTest01(WPARAM wParam, LPARAM lParam);
 	private:
+
+		MfxReturn __OnNCPaint(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCHitTest(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCActivate(WPARAM wParam, LPARAM lParam);
+
 		MfxReturn __OnNCMouseMove(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnNCMouseHover(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnNCLButtonUp(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnNCLButtonDown(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnNCLButtonDblClk(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCLButtonDouble(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnNCRButtonUp(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnNCRButtonDown(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnNCRButtonDblClk(WPARAM wParam, LPARAM lParam);
-
-		MfxReturn __OnNCActivate(WPARAM wParam, LPARAM lParam);
-
-		MfxReturn __OnNCPaint(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnNCHitTest(WPARAM wParam, LPARAM lParam);
-
-		MfxReturn __OnSysCommand(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnINITMENUPOPUP(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCRButtonDouble(WPARAM wParam, LPARAM lParam);
 
 
 
@@ -612,7 +610,6 @@ namespace MicroFlakeX
 		MfxReturn __OnPaintBackDC(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnPaintMaskDC(WPARAM wParam, LPARAM lParam);
 
-
 		MfxReturn __OnFlakeInsert(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnFlakeRemove(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnFlakeFloorChange(WPARAM wParam, LPARAM lParam);
@@ -622,7 +619,7 @@ namespace MicroFlakeX
 		MfxReturn __OnInsertTimer(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnRemoveTimer(WPARAM wParam, LPARAM lParam);
 
-		MfxReturn __OnFlakeMessage(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnFlakeEvent(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnRemoveFlakeMessage(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnPushBackFlakeMessage(WPARAM wParam, LPARAM lParam);
@@ -640,13 +637,13 @@ namespace MicroFlakeX
 /********************************************************************************
 * 为UI添加一个来自控件的消息映射
 *********************************************************************************/
-#define UI_ADDRECV_FLAKEMSG(Flake, Msg, myClass, recvFunc) PushBackFlakeMessage(UI_FlakeMsg_Infor(Flake, Msg), new UI_UIMsg_RecvFunc_Infor((pUIRecvFunc)&myClass::recvFunc, MfxText(#recvFunc)));
+#define UI_ADDRECV_FLAKEMSG(Flake, Msg, myClass, recvFunc) PushBackFlakeEvent(UI_FlakeEvent_Info(Flake, Msg), new UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#recvFunc)));
 
 
 /********************************************************************************
 * 为UI添加一个来自窗口的消息映射
 *********************************************************************************/
-#define UI_ADDRECV_UIMSG(Msg, myClass, recvFunc) PushBackUIMessage(Msg, new UI_UIMsg_RecvFunc_Infor((pUIRecvFunc)&myClass::recvFunc, MfxText(#recvFunc)));
+#define UI_ADDRECV_UIMSG(Msg, myClass, recvFunc) PushBackUIMessage(Msg, new UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#recvFunc)));
 
 
 /********************************************************************************
@@ -659,6 +656,14 @@ namespace MicroFlakeX
 * Mfx消息回调函数
 *********************************************************************************/
 #define MfxCallBack(funcName) funcName(WPARAM wParam, LPARAM lParam)
+
+
+/********************************************************************************
+* Post一个消息到线程消息队列中
+*********************************************************************************/
+#define POSTMSG_UITHREAD(Msg, wPara, lPara)\
+	PostThreadMessage(myUIThreadID, Msg, wPara, lPara);
+
 
 }
 
@@ -694,11 +699,11 @@ namespace MicroFlakeX
 		*
 		*********************************************************************************/
 	private:
-		Flake_FlakeMsg_Map myMessageMap;
+		Flake_FlakeMessage_Map myMessageMap;
 	public:
-		MfxReturn RemoveFlakeMessage(MfxMessage message, MfxString name);
-		MfxReturn PushBackFlakeMessage(MfxMessage message, Flake_FlakeMsg_Infor* msgValue);
-		MfxReturn PushFrontFlakeMessage(MfxMessage message, Flake_FlakeMsg_Infor* msgValue);
+		MfxReturn RemoveFlakeEvent(MfxMessage message, MfxString name);
+		MfxReturn PushBackFlakeEvent(MfxMessage message, Flake_RecvFunc_Infor* msgValue);
+		MfxReturn PushFrontFlakeEvent(MfxMessage message, Flake_RecvFunc_Infor* msgValue);
 
 
 		/********************************************************************************
@@ -750,7 +755,7 @@ namespace MicroFlakeX
 		MfxReturn GetPoint(MfxPoint* ret);
 
 		MfxReturn GetTitle(MfxString* ret);
-		MfxReturn GetTitleSize(FLOAT* ret);
+		MfxReturn GetTitleSize(DOUBLE* ret);
 
 		MfxReturn GetBackColor(MfxColor* ret);
 		MfxReturn GetMaskColor(MfxColor* ret);
@@ -763,7 +768,7 @@ namespace MicroFlakeX
 
 		MfxReturn SetTitle(MfxString set);
 
-		MfxReturn SetTitleSize(FLOAT set);
+		MfxReturn SetTitleSize(DOUBLE set);
 
 		MfxReturn SetBackColor(MfxColor* set);
 		MfxReturn SetMaskColor(MfxColor* set);
@@ -777,13 +782,17 @@ namespace MicroFlakeX
 		*
 		*********************************************************************************/
 	protected:
-		MfxDataFlag_bool myMouseFloat;
-		MfxDataFlag_bool myLButtonPress;
-		MfxDataFlag_bool myLButtonClickFlag;
-		MfxDataFlag_bool myRButtonPress;
-		MfxDataFlag_bool myRButtonClickFlag;
-		MfxDataFlag_bool myLButtonMoveFlag, myRButtonMoveFlag;
+		bool myMouseFloat;
+		bool myMouseHover;
 
+		bool myLButtonPress;
+		bool myLButtonClickFlag;
+
+		bool myRButtonPress;
+		bool myRButtonClickFlag;
+
+		bool myLButtonMoveFlag;
+		bool myRButtonMoveFlag;
 	protected:
 		MfxPoint myButtonMoveBegin;
 	public:
@@ -820,8 +829,11 @@ namespace MicroFlakeX
 		*
 		*
 		*********************************************************************************/
-	private:
+		MfxReturn __OnTest001(WPARAM wParam, LPARAM lParam);
+private:
 		MfxReturn __OnSetPaper(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnRemovePaper(WPARAM wParam, LPARAM lParam);
+
 		MfxReturn __OnSetFloor(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnPaintBackDC(WPARAM wParam, LPARAM lParam);
@@ -847,20 +859,23 @@ namespace MicroFlakeX
 
 		MfxReturn __OnNCLButtonUp(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnNCLButtonDown(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnNCLButtonDblClk(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCLButtonDouble(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnNCRButtonUp(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnNCRButtonDown(WPARAM wParam, LPARAM lParam);
-		MfxReturn __OnNCRButtonDblClk(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnNCRButtonDouble(WPARAM wParam, LPARAM lParam);
 		//
 
 		MfxReturn __OnMouseMove(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnMouseHover(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnLButtonUp(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnLButtonDown(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnLButtonDouble(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnRButtonUp(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnRButtonDown(WPARAM wParam, LPARAM lParam);
+		MfxReturn __OnRButtonDouble(WPARAM wParam, LPARAM lParam);
 
 		MfxReturn __OnSetTitle(WPARAM wParam, LPARAM lParam);
 		MfxReturn __OnSetBackColor(WPARAM wParam, LPARAM lParam);
@@ -875,7 +890,7 @@ namespace MicroFlakeX
 * 为Flake添加一个来自Flake的消息映射
 *********************************************************************************/
 #define FLAKE_ADDRECV_FLAKEMSG(Msg, myClass, recvFunc) \
-	PushBackFlakeMessage(Msg, new Flake_FlakeMsg_Infor(\
+	PushBackFlakeEvent(Msg, new Flake_RecvFunc_Infor(\
 		(pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc))\
 		);
 
@@ -885,9 +900,9 @@ namespace MicroFlakeX
 *********************************************************************************/
 #define FLAKE_POSTMSG_MAIN(Msg, wPara, lPara)\
 	myUI ? \
-		PostMessage(myWnd, UI_MSG_FlakeMessage, \
-			(WPARAM)(new UI_FlakeMsg_Infor(this, Msg)), \
-			(LPARAM)(new UI_FlakeMsg_Value(wPara, lPara))) : Mfx_Return_Fail;
+		PostMessage(myWnd, UI_MSG_FlakeEvent, \
+			(WPARAM)(new UI_FlakeEvent_Info(this, Msg)), \
+			(LPARAM)(new Win32Msg_Value(wPara, lPara))) : Mfx_Return_Fail;
 
 
 /********************************************************************************
@@ -895,9 +910,9 @@ namespace MicroFlakeX
 *********************************************************************************/
 #define FLAKE_SENDMSG_MAIN(Msg, wPara, lPara)\
 	myUI ? \
-		SendMessage(myWnd, UI_MSG_FlakeMessage, \
-			(WPARAM)(new UI_FlakeMsg_Infor(this, Msg)), \
-			(LPARAM)(new UI_FlakeMsg_Value(wPara, lPara))) : Mfx_Return_Fail;
+		SendMessage(myWnd, UI_MSG_FlakeEvent, \
+			(WPARAM)(new UI_FlakeEvent_Info(this, Msg)), \
+			(LPARAM)(new Win32Msg_Value(wPara, lPara))) : Mfx_Return_Fail;
 
 
 /********************************************************************************
@@ -905,9 +920,9 @@ namespace MicroFlakeX
 *********************************************************************************/
 #define FLAKE_POSTMSG_UITHREAD(Msg, wPara, lPara)\
 	myUI ? \
-		PostThreadMessage(myUIThreadID, UI_MSG_FlakeMessage, \
-			(WPARAM)(new UI_FlakeMsg_Infor(this, Msg)), \
-			(LPARAM)(new UI_FlakeMsg_Value(wPara, lPara))) : Mfx_Return_Fail;
+		PostThreadMessage(myUIThreadID, UI_MSG_FlakeEvent, \
+			(WPARAM)(new UI_FlakeEvent_Info(this, Msg)), \
+			(LPARAM)(new Win32Msg_Value(wPara, lPara))) : Mfx_Return_Fail;
 
 
 }
