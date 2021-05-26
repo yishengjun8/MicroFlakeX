@@ -136,36 +136,6 @@ MicroFlakeX::MfxRect::MfxRect(MfxRect* set)
 	SetHeight(tSH);
 }
 
-MicroFlakeX::MfxRect::MfxRect(MfxRect& set)
-{
-	LONG tSX = 0, tSY = 0, tSW = 0, tSH = 0;
-
-	set.GetX(&tSX);
-	set.GetY(&tSY);
-	set.GetWidth(&tSW);
-	set.GetHeight(&tSH);
-
-	SetX(tSX);
-	SetY(tSY);
-	SetWidth(tSW);
-	SetHeight(tSH);
-}
-
-MicroFlakeX::MfxRect::MfxRect(MfxRect&& set)
-{
-	LONG tSX = 0, tSY = 0, tSW = 0, tSH = 0;
-
-	set.GetX(&tSX);
-	set.GetY(&tSY);
-	set.GetWidth(&tSW);
-	set.GetHeight(&tSH);
-
-	SetX(tSX);
-	SetY(tSY);
-	SetWidth(tSW);
-	SetHeight(tSH);
-}
-
 MicroFlakeX::MfxRect::MfxRect(MfxSize* set)
 {
 	LONG tSX = 0, tSY = 0, tSW = 0, tSH = 0;
@@ -179,64 +149,12 @@ MicroFlakeX::MfxRect::MfxRect(MfxSize* set)
 	SetHeight(tSH);
 }
 
-MicroFlakeX::MfxRect::MfxRect(MfxSize& set)
-{
-	LONG tSX = 0, tSY = 0, tSW = 0, tSH = 0;
-
-	set.GetWidth(&tSW);
-	set.GetHeight(&tSH);
-
-	SetX(tSX);
-	SetY(tSY);
-	SetWidth(tSW);
-	SetHeight(tSH);
-}
-
-MicroFlakeX::MfxRect::MfxRect(MfxSize&& set)
-{
-	LONG tSX = 0, tSY = 0, tSW = 0, tSH = 0;
-
-	set.GetWidth(&tSW);
-	set.GetHeight(&tSH);
-
-	SetX(tSX);
-	SetY(tSY);
-	SetWidth(tSW);
-	SetHeight(tSH);
-}
-
 MicroFlakeX::MfxRect::MfxRect(MfxPoint* set)
 {
 	LONG tSX = 0, tSY = 0, tSW = 0, tSH = 0;
 
 	set->GetX(&tSX);
 	set->GetY(&tSY);
-
-	SetX(tSX);
-	SetY(tSY);
-	SetWidth(tSW);
-	SetHeight(tSH);
-}
-
-MicroFlakeX::MfxRect::MfxRect(MfxPoint& set)
-{
-	LONG tSX = 0, tSY = 0, tSW = 0, tSH = 0;
-
-	set.GetX(&tSX);
-	set.GetY(&tSY);
-
-	SetX(tSX);
-	SetY(tSY);
-	SetWidth(tSW);
-	SetHeight(tSH);
-}
-
-MicroFlakeX::MfxRect::MfxRect(MfxPoint&& set)
-{
-	LONG tSX = 0, tSY = 0, tSW = 0, tSH = 0;
-
-	set.GetX(&tSX);
-	set.GetY(&tSY);
 
 	SetX(tSX);
 	SetY(tSY);

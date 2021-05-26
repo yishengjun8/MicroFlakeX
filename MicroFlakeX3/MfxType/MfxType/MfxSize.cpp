@@ -74,56 +74,12 @@ MicroFlakeX::MfxSize::MfxSize(MfxRect* set)
 	SetHeight(tSH);
 }
 
-MicroFlakeX::MfxSize::MfxSize(MfxRect& set)
-{
-	LONG tSW = 0, tSH = 0;
-
-	set.GetWidth(&tSW);
-	set.GetHeight(&tSH);
-
-	SetWidth(tSW);
-	SetHeight(tSH);
-}
-
-MicroFlakeX::MfxSize::MfxSize(MfxRect&& set)
-{
-	LONG tSW = 0, tSH = 0;
-
-	set.GetWidth(&tSW);
-	set.GetHeight(&tSH);
-
-	SetWidth(tSW);
-	SetHeight(tSH);
-}
-
 MicroFlakeX::MfxSize::MfxSize(MfxSize* set)
 {
 	LONG tSW = 0, tSH = 0;
 
 	set->GetWidth(&tSW);
 	set->GetHeight(&tSH);
-
-	SetWidth(tSW);
-	SetHeight(tSH);
-}
-
-MicroFlakeX::MfxSize::MfxSize(MfxSize& set)
-{
-	LONG tSW = 0, tSH = 0;
-
-	set.GetWidth(&tSW);
-	set.GetHeight(&tSH);
-
-	SetWidth(tSW);
-	SetHeight(tSH);
-}
-
-MicroFlakeX::MfxSize::MfxSize(MfxSize&& set)
-{
-	LONG tSW = 0, tSH = 0;
-
-	set.GetWidth(&tSW);
-	set.GetHeight(&tSH);
 
 	SetWidth(tSW);
 	SetHeight(tSH);

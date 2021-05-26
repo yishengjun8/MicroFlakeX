@@ -80,32 +80,6 @@ MicroFlakeX::MfxCanvas::MfxCanvas(HWND setWnd, MfxRect* setRect)
 	GetID2D1HwndRenderTarget(&myRenderTarget, myWnd, MfxSize(myRect));
 }
 
-MicroFlakeX::MfxCanvas::MfxCanvas(HDC setDC, MfxSize* setSize)
-{
-	myDC = nullptr;
-	myWnd = nullptr;
-	myPaintFlag = false;
-	myRenderTarget = nullptr;
-
-	myDC = setDC;
-	myRect = setSize;
-
-	GetID2D1DCRenderTarget(&myRenderTarget, myDC, myRect);
-}
-
-MicroFlakeX::MfxCanvas::MfxCanvas(HWND setWnd, MfxSize* setSize)
-{
-	myDC = nullptr;
-	myWnd = nullptr;
-	myPaintFlag = false;
-	myRenderTarget = nullptr;
-
-	myWnd = setWnd;
-	myRect = setSize;
-
-	GetID2D1HwndRenderTarget(&myRenderTarget, myWnd, MfxSize(myRect));
-}
-
 
 MicroFlakeX::MfxCanvas::~MfxCanvas()
 {

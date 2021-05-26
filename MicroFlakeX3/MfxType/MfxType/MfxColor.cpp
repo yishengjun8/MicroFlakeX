@@ -85,36 +85,6 @@ MicroFlakeX::MfxColor::MfxColor(MfxColor* set)
 	SetB(tSB);
 }
 
-MicroFlakeX::MfxColor::MfxColor(MfxColor& set)
-{
-	LONG tSA = 0, tSR = 0, tSG = 0, tSB = 0;
-
-	set.GetA(&tSA);
-	set.GetR(&tSR);
-	set.GetG(&tSG);
-	set.GetB(&tSB);
-
-	SetA(tSA);
-	SetR(tSR);
-	SetG(tSG);
-	SetB(tSB);
-}
-
-MicroFlakeX::MfxColor::MfxColor(MfxColor&& set)
-{
-	LONG tSA = 0, tSR = 0, tSG = 0, tSB = 0;
-
-	set.GetA(&tSA);
-	set.GetR(&tSR);
-	set.GetG(&tSG);
-	set.GetB(&tSB);
-
-	SetA(tSA);
-	SetR(tSR);
-	SetG(tSG);
-	SetB(tSB);
-}
-
 MicroFlakeX::MfxColor::MfxColor(LONG setA, LONG setR, LONG setG, LONG setB)
 {
 	SetA(setA);

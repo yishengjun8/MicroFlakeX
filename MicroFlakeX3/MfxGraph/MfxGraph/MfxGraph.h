@@ -101,27 +101,27 @@ namespace MicroFlakeX
 
 		MfxCanvas(MfxRect* set);
 		MfxCanvas(MfxRect& set) :MfxCanvas(&set) {};
-		MfxCanvas(MfxRect&& set) :MfxCanvas(set) {};
+		MfxCanvas(MfxRect&& set) :MfxCanvas(&set) {};
 
 		MfxCanvas(MfxSize* size);
 		MfxCanvas(MfxSize& size) :MfxCanvas(&size) {};
-		MfxCanvas(MfxSize&& size) :MfxCanvas(size) {};
+		MfxCanvas(MfxSize&& size) :MfxCanvas(&size) {};
 
 		MfxCanvas(HDC setDC, MfxRect* setRect);
 		MfxCanvas(HDC setDC, MfxRect& setRect) :MfxCanvas(setDC, &setRect) {};
-		MfxCanvas(HDC setDC, MfxRect&& setRect) :MfxCanvas(setDC, setRect) {};
+		MfxCanvas(HDC setDC, MfxRect&& setRect) :MfxCanvas(setDC, &setRect) {};
+
+		MfxCanvas(HDC setDC, MfxSize* setSize) :MfxCanvas(setDC, MfxRect(setSize)) {};
+		MfxCanvas(HDC setDC, MfxSize& setSize) :MfxCanvas(setDC, &setSize) {};
+		MfxCanvas(HDC setDC, MfxSize&& setSize) :MfxCanvas(setDC, &setSize) {};
 
 		MfxCanvas(HWND setWnd, MfxRect* setRect);
 		MfxCanvas(HWND setWnd, MfxRect& setRect) :MfxCanvas(setWnd, &setRect) {};
-		MfxCanvas(HWND setWnd, MfxRect&& setRect) :MfxCanvas(setWnd, setRect) {};
+		MfxCanvas(HWND setWnd, MfxRect&& setRect) :MfxCanvas(setWnd, &setRect) {};
 
-		MfxCanvas(HDC setDC, MfxSize* setSize);
-		MfxCanvas(HDC setDC, MfxSize& setSize) :MfxCanvas(setDC, &setSize) {};
-		MfxCanvas(HDC setDC, MfxSize&& setSize) :MfxCanvas(setDC, setSize) {};
-
-		MfxCanvas(HWND setWnd, MfxSize* setSize);
+		MfxCanvas(HWND setWnd, MfxSize* setSize) :MfxCanvas(setWnd, MfxRect(setSize)) {};
 		MfxCanvas(HWND setWnd, MfxSize& setSize) :MfxCanvas(setWnd, &setSize) {};
-		MfxCanvas(HWND setWnd, MfxSize&& setSize) :MfxCanvas(setWnd, setSize) {};
+		MfxCanvas(HWND setWnd, MfxSize&& setSize) :MfxCanvas(setWnd, &setSize) {};
 
 		virtual ~MfxCanvas();
 
@@ -171,9 +171,30 @@ namespace MicroFlakeX
 		MfxObject;
 	public:
 		MfxImage();
+
 		MfxImage(MfxColor* color, MfxRect* set);
+		MfxImage(MfxColor* color, MfxRect& set) :MfxImage(color, &set) {};
+		MfxImage(MfxColor* color, MfxRect&& set) :MfxImage(color, &set) {};
+
+		MfxImage(MfxColor* color, MfxSize* set) :MfxImage(color, MfxRect(set)) {};
+		MfxImage(MfxColor* color, MfxSize& set) :MfxImage(color, &set) {};
+		MfxImage(MfxColor* color, MfxSize&& set) :MfxImage(color, &set) {};
+
 		MfxImage(MfxString* path, MfxRect* set);
+		MfxImage(MfxString* path, MfxRect& set) :MfxImage(path, &set) {};
+		MfxImage(MfxString* path, MfxRect&& set) :MfxImage(path, &set) {};
+
+		MfxImage(MfxString* path, MfxSize* set) :MfxImage(path, MfxRect(set)) {};
+		MfxImage(MfxString* path, MfxSize& set) :MfxImage(path, &set) {};
+		MfxImage(MfxString* path, MfxSize&& set) :MfxImage(path, &set) {};
+
 		MfxImage(IWICBitmap* tIWICBitmap, MfxRect* set);
+		MfxImage(IWICBitmap* tIWICBitmap, MfxRect& set) :MfxImage(tIWICBitmap, &set) {};
+		MfxImage(IWICBitmap* tIWICBitmap, MfxRect&& set) :MfxImage(tIWICBitmap, &set) {};
+
+		MfxImage(IWICBitmap* tIWICBitmap, MfxSize* set) :MfxImage(tIWICBitmap, MfxRect(set)) {};
+		MfxImage(IWICBitmap* tIWICBitmap, MfxSize& set) :MfxImage(tIWICBitmap, &set) {};
+		MfxImage(IWICBitmap* tIWICBitmap, MfxSize&& set) :MfxImage(tIWICBitmap, &set) {};
 
 		virtual ~MfxImage();
 
@@ -226,9 +247,30 @@ namespace MicroFlakeX
 		MfxObject;
 	public:
 		MfxWords();
+
 		MfxWords(MfxString str, MfxRect* set);
+		MfxWords(MfxString str, MfxRect& set) :MfxWords(str, &set) {};
+		MfxWords(MfxString str, MfxRect&& set) :MfxWords(str, &set) {};
+
+		MfxWords(MfxString str, MfxSize* set) :MfxWords(str, MfxRect(set)) {};
+		MfxWords(MfxString str, MfxSize& set) :MfxWords(str, &set) {};
+		MfxWords(MfxString str, MfxSize&& set) :MfxWords(str, &set) {};
+
 		MfxWords(MfxString str, MfxRect* set, FLOAT size);
+		MfxWords(MfxString str, MfxRect& set, FLOAT size) :MfxWords(str, &set, size) {};
+		MfxWords(MfxString str, MfxRect&& set, FLOAT size) :MfxWords(str, &set, size) {};
+
+		MfxWords(MfxString str, MfxSize* set, FLOAT size) :MfxWords(str, MfxRect(set)) {};
+		MfxWords(MfxString str, MfxSize& set, FLOAT size) :MfxWords(str, &set, size) {};
+		MfxWords(MfxString str, MfxSize&& set, FLOAT size) :MfxWords(str, &set, size) {};
+
 		MfxWords(MfxString str, MfxRect* set, FLOAT size, IDWriteTextFormat* format);
+		MfxWords(MfxString str, MfxRect& set, FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
+		MfxWords(MfxString str, MfxRect&& set, FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
+
+		MfxWords(MfxString str, MfxSize* set, FLOAT size, IDWriteTextFormat* format) :MfxWords(str, MfxRect(set), size, format) {};
+		MfxWords(MfxString str, MfxSize& set, FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
+		MfxWords(MfxString str, MfxSize&& set, FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
 
 		virtual ~MfxWords();
 

@@ -105,16 +105,16 @@ namespace MicroFlakeX
         MfxRect(MfxBase& set);
 
         MfxRect(MfxRect* set);
-        MfxRect(MfxRect& set);
-        MfxRect(MfxRect&& set);
+        MfxRect(MfxRect& set) :MfxRect(&set) {};
+        MfxRect(MfxRect&& set) noexcept :MfxRect(&set) {};
 
         MfxRect(MfxSize* set);
-        MfxRect(MfxSize& set);
-        MfxRect(MfxSize&& set);
+        MfxRect(MfxSize& set) :MfxRect(&set) {};
+        MfxRect(MfxSize&& set) :MfxRect(&set) {};
 
         MfxRect(MfxPoint* set);
-        MfxRect(MfxPoint& set);
-        MfxRect(MfxPoint&& set);
+        MfxRect(MfxPoint& set) :MfxRect(&set) {};
+        MfxRect(MfxPoint&& set) :MfxRect(&set) {};
 
         MfxRect(LONG setX, LONG setY, LONG setWidth, LONG setHeight);
 
@@ -265,12 +265,12 @@ namespace MicroFlakeX
         MfxSize(MfxBase& set);
 
         MfxSize(MfxRect* set);
-        MfxSize(MfxRect& set);
-        MfxSize(MfxRect&& set);
+        MfxSize(MfxRect& set) :MfxSize(&set) {};
+        MfxSize(MfxRect&& set) :MfxSize(&set) {};
 
         MfxSize(MfxSize* set);
-        MfxSize(MfxSize& set);
-        MfxSize(MfxSize&& set);
+        MfxSize(MfxSize& set) :MfxSize(&set) {};
+        MfxSize(MfxSize&& set) noexcept :MfxSize(&set) {};
 
         MfxSize(LONG setWidth, LONG setHeight);
 
@@ -356,12 +356,12 @@ namespace MicroFlakeX
         MfxPoint(MfxBase& set);
 
         MfxPoint(MfxRect* set);
-        MfxPoint(MfxRect& set);
-        MfxPoint(MfxRect&& set);
+        MfxPoint(MfxRect& set) :MfxPoint(&set) {};
+        MfxPoint(MfxRect&& set) :MfxPoint(&set) {};
 
         MfxPoint(MfxPoint* set);
-        MfxPoint(MfxPoint& set);
-        MfxPoint(MfxPoint&& set);
+        MfxPoint(MfxPoint& set) :MfxPoint(&set) {};
+        MfxPoint(MfxPoint&& set) noexcept :MfxPoint(&set) {};
 
         MfxPoint(LONG setX, LONG setY);
 
@@ -441,8 +441,8 @@ namespace MicroFlakeX
         MfxColor(MfxBase& set);
 
         MfxColor(MfxColor* set);
-        MfxColor(MfxColor& set);
-        MfxColor(MfxColor&& set);
+        MfxColor(MfxColor& set) :MfxColor(&set) {};
+        MfxColor(MfxColor&& set)noexcept :MfxColor(&set) {};
 
         MfxColor(LONG setA, LONG setR, LONG setG, LONG setB);
 
@@ -644,8 +644,8 @@ namespace MicroFlakeX
         MfxGlide();
 
         MfxGlide(MfxGlide* set);
-        MfxGlide(MfxGlide& set);
-        MfxGlide(MfxGlide&& set);
+        MfxGlide(MfxGlide& set) :MfxGlide(&set) {};
+        MfxGlide(MfxGlide&& set) noexcept :MfxGlide(&set) {};
 
         ~MfxGlide();
 

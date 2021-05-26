@@ -1424,16 +1424,18 @@ MfxReturn MicroFlakeX::MfxUI::__OnSetMaskColor(WPARAM wParam, LPARAM lParam)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::__OnSetBackImage(WPARAM wParam, LPARAM lParam)
 {
-    MfxCodeLock(this);
-
     MfxImage* t_Set = (MfxImage*)lParam;
     if (t_Set)
     {
+        myMutexLock.WaitLock(&myBackImage, &myRect, &myCanvas);
+
         SafeDelete(myBackImage);
         (t_Set)->Clone(&myBackImage);
         MfxRect tRect(0, 0, myRect.myWidth, myRect.myHeight);
         myBackImage->SetRect(&tRect);
         myBackImage->SetCanvas(&myCanvas);
+
+        myMutexLock.UnLock(&myBackImage, &myRect, &myCanvas);
     }
 
     return Mfx_Return_Fine;
@@ -1446,11 +1448,15 @@ MfxReturn MicroFlakeX::MfxUI::__OnSetMaskImage(WPARAM wParam, LPARAM lParam)
     MfxImage* t_Set = (MfxImage*)lParam;
     if (t_Set)
     {
+        myMutexLock.WaitLock(&myMaskImage, &myRect, &myCanvas);
+
         SafeDelete(myMaskImage);
         (t_Set)->Clone(&myMaskImage);
         MfxRect tRect(0, 0, myRect.myWidth, myRect.myHeight);
         myMaskImage->SetRect(&tRect);
         myMaskImage->SetCanvas(&myCanvas);
+
+        myMutexLock.UnLock(&myMaskImage, &myRect, &myCanvas);
     }
 
     return Mfx_Return_Fine;

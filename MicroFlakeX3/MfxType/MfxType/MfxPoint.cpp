@@ -72,28 +72,6 @@ MicroFlakeX::MfxPoint::MfxPoint(MfxRect* set)
 	SetY(tSY);
 }
 
-MicroFlakeX::MfxPoint::MfxPoint(MfxRect& set)
-{
-	LONG tSX = 0, tSY = 0;
-
-	set.GetX(&tSX);
-	set.GetY(&tSY);
-
-	SetX(tSX);
-	SetY(tSY);
-}
-
-MicroFlakeX::MfxPoint::MfxPoint(MfxRect&& set)
-{
-	LONG tSX = 0, tSY = 0;
-
-	set.GetX(&tSX);
-	set.GetY(&tSY);
-
-	SetX(tSX);
-	SetY(tSY);
-}
-
 MicroFlakeX::MfxPoint::MfxPoint(MfxPoint* set)
 {
 	LONG tSX = 0, tSY = 0;
@@ -105,27 +83,6 @@ MicroFlakeX::MfxPoint::MfxPoint(MfxPoint* set)
 	SetY(tSY);
 }
 
-MicroFlakeX::MfxPoint::MfxPoint(MfxPoint& set)
-{
-	LONG tSX = 0, tSY = 0;
-
-	set.GetX(&tSX);
-	set.GetY(&tSY);
-
-	SetX(tSX);
-	SetY(tSY);
-}
-
-MicroFlakeX::MfxPoint::MfxPoint(MfxPoint&& set)
-{
-	LONG tSX = 0, tSY = 0;
-
-	set.GetX(&tSX);
-	set.GetY(&tSY);
-
-	SetX(tSX);
-	SetY(tSY);
-}
 
 MicroFlakeX::MfxPoint::MfxPoint(LONG setX, LONG setY)
 {

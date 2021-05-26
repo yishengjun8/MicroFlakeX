@@ -43,38 +43,6 @@ MicroFlakeX::MfxGlide::MfxGlide(MfxGlide* set)
 	}
 }
 
-MicroFlakeX::MfxGlide::MfxGlide(MfxGlide& set)
-{
-	myFPS = set.myFPS;
-	myBegin = 0;
-	myPTP_TIMER = nullptr;
-	myBindObject = nullptr;
-
-	std::copy(set.myWidelyTypeMap.begin(), set.myWidelyTypeMap.end(), inserter(myWidelyTypeMap, myWidelyTypeMap.begin()));
-
-	for (auto iter : myWidelyTypeMap)
-	{
-		MfxFactory(myWidelyTypeMap[iter.first].setObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Set));
-		MfxFactory(myWidelyTypeMap[iter.first].getObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Begin));
-	}
-}
-
-MicroFlakeX::MfxGlide::MfxGlide(MfxGlide&& set)
-{
-	myFPS = set.myFPS;
-	myBegin = 0;
-	myPTP_TIMER = nullptr;
-	myBindObject = nullptr;
-
-	std::copy(set.myWidelyTypeMap.begin(), set.myWidelyTypeMap.end(), inserter(myWidelyTypeMap, myWidelyTypeMap.begin()));
-
-	for (auto iter : myWidelyTypeMap)
-	{
-		MfxFactory(myWidelyTypeMap[iter.first].setObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Set));
-		MfxFactory(myWidelyTypeMap[iter.first].getObjectName, &(myWidelyTypeMap[iter.first].myGetObject_Begin));
-	}
-}
-
 MicroFlakeX::MfxGlide::~MfxGlide()
 {
 	MfxCodeLock(this);
