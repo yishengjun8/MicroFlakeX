@@ -8,41 +8,34 @@ int main()
 {
     cout << "Hello MicroFlakeX!\n";
 
-
     MfxUI* myUI_00 = nullptr;
-    MfxFlake* myFlake_00 = nullptr;
     MfxFlake* myFlake_01 = nullptr;
 
-    //利用Mfx工厂创建一个对象 - 当然你也可以直接new对象
-    //MfxFlake在MfxUIUI结束的时候会被delete，所以MfxFlake不能是局部变量
     MfxFactory(MfxText("MfxUI"), (MfxBase**)&myUI_00);
-    MfxFactory(MfxText("MfxFlake"), (MfxBase**)&myFlake_00);
     MfxFactory(MfxText("MfxFlake"), (MfxBase**)&myFlake_01);
 
-    MfxColor tColor(255, 0, 255, 0);
-    myUI_00->SetBackColor(&tColor);
-
-    MfxRect tRect(19, 18, 360, 120);
-    myFlake_00->SetRect(&tRect);
-    tRect.Reset(0, 0, 100, 100);
-    myFlake_01->SetRect(&tRect);
-
-    myUI_00->InsertFlake(myFlake_00);
+    MfxSize uiSize(400, 400);
+    myUI_00->SetSize(&uiSize);
     myUI_00->InsertFlake(myFlake_01);
 
-    tColor.Reset(255, 0, 0, 255);
-    myFlake_00->SetBackColor(&tColor);
-    myFlake_00->SetTitle(L"Hello MicroFlakeX!");
-    myFlake_01->SetTitle(L"Welcome to MFX based on D2D");
+    MfxColor uiColor(255, 0, 255, 255);
+    myUI_00->SetBackColor(&uiColor);
 
-    myFlake_00->OpenLButtonMove();
+    MfxColor flakeColor(255, 255, 0, 0);
+    myFlake_01->SetBackColor(&flakeColor);
+
+    flakeColor.Reset(255, 0, 0, 255);
+    myFlake_01->SetTitleColor(&flakeColor);
+
+    MfxRect flakeRect(0, 0, 100, 100);
+    myFlake_01->SetRect(&flakeRect);
+
+    myFlake_01->SetTitle(L"Welcome to MFX based on D2D");
 
     myFlake_01->OpenRButtonMove();
 
-    myFlake_00->OpenPercentRect();
-
-
     MfxGlide myGlide;
+    
     myGlide.SetFPS(90);
     myGlide.BindObject(myFlake_01);
 
@@ -53,6 +46,9 @@ int main()
         MfxGulid_WidelyType(MfxText("MfxPoint"), MfxText("MfxPoint"), MfxText("GetPoint"), MfxText("SetPoint")));
 
     myGlide.BindObjectName(MfxText("group_3"),
+        MfxGulid_WidelyType(MfxText("MfxColor"), MfxText("MfxColor"), MfxText("GetTitleColor"), MfxText("SetTitleColor")));
+
+    myGlide.BindObjectName(MfxText("group_4"),
         MfxGulid_WidelyType(MfxText("MfxColor"), MfxText("MfxColor"), MfxText("GetBackColor"), MfxText("SetBackColor")));
 
     myGlide.Add_GetSetFuncName(MfxText("group_1"), MfxText("GetWidth"), MfxText("SetWidth"));
@@ -66,26 +62,32 @@ int main()
     myGlide.Add_GetSetFuncName(MfxText("group_3"), MfxText("GetG"), MfxText("SetG"));
     myGlide.Add_GetSetFuncName(MfxText("group_3"), MfxText("GetB"), MfxText("SetB"));
 
-    myGlide.Add_GetSetFuncName(MfxText("group_3"), MfxText("GetDDDA"), MfxText("GetDDDA"));
+    myGlide.Add_GetSetFuncName(MfxText("group_4"), MfxText("GetA"), MfxText("SetA"));
+    myGlide.Add_GetSetFuncName(MfxText("group_4"), MfxText("GetR"), MfxText("SetR"));
+    myGlide.Add_GetSetFuncName(MfxText("group_4"), MfxText("GetG"), MfxText("SetG"));
+    myGlide.Add_GetSetFuncName(MfxText("group_4"), MfxText("GetB"), MfxText("SetB"));
 
-    //MfxSize* tpSize = new MfxSize(200, 200);
-    //myGlide.MfxAddKeyframe(MfxText("group_1"), tpSize, 500);
+    MfxPoint tpPoint(300, 0);
+    myGlide.MfxAddKeyframe(MfxText("group_2"), &tpPoint, 1500);
+    tpPoint.Reset(300, 300);
+    myGlide.MfxAddKeyframe(MfxText("group_2"), &tpPoint, 1500);
+    tpPoint.Reset(0, 300);
+    myGlide.MfxAddKeyframe(MfxText("group_2"), &tpPoint, 1500);
+    tpPoint.Reset(0, 0);
+    myGlide.MfxAddKeyframe(MfxText("group_2"), &tpPoint, 1500);
 
-    //tpSize = new MfxSize(100, 100);
-    //myGlide.MfxAddKeyframe(MfxText("group_1"), tpSize, 500);
 
-    MfxPoint* tpPoint = new MfxPoint(300, 300);
-    myGlide.MfxAddKeyframe(MfxText("group_2"), tpPoint, 3000);
+    MfxColor tpColor(255, 0, 255, 0);
+    myGlide.MfxAddKeyframe(MfxText("group_3"), &tpColor, 3000);
+    tpColor.Reset(255, 255, 0, 255);
+    myGlide.MfxAddKeyframe(MfxText("group_4"), &tpColor, 3000);
 
-    tpPoint = new MfxPoint(0, 0);
-    myGlide.MfxAddKeyframe(MfxText("group_2"), tpPoint, 3000);
-
-    MfxColor* tpColor = new MfxColor(0, 255, 0, 0);
-    myGlide.MfxAddKeyframe(MfxText("group_3"), tpColor, 3000);
-
-    tpColor = new MfxColor(255, 255, 0, 0);
-    myGlide.MfxAddKeyframe(MfxText("group_3"), tpColor, 3000);
+    tpColor.Reset(255, 255, 0, 255);
+    myGlide.MfxAddKeyframe(MfxText("group_3"), &tpColor, 3000);
+    tpColor.Reset(255, 0, 255, 0);
+    myGlide.MfxAddKeyframe(MfxText("group_4"), &tpColor, 3000);
 
     myGlide.Begin();
+
     return MFXAPP->Run();
 }

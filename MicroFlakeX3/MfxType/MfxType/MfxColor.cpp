@@ -31,13 +31,13 @@ MfxObject_EndInit(MfxColor, MfxBase, \
 *
 *
 ***************************************************************/
-static const UINT32 sc_rShift = 16;
-static const UINT32 sc_gShift = 8;
-static const UINT32 sc_bShift = 0;
+static UINT32 sc_rShift = 16;
+static UINT32 sc_gShift = 8;
+static UINT32 sc_bShift = 0;
 
-static const UINT32 sc_rMask = 0xff << sc_rShift;
-static const UINT32 sc_gMask = 0xff << sc_gShift;
-static const UINT32 sc_bMask = 0xff << sc_bShift;
+static UINT32 sc_rMask = 0xff << sc_rShift;
+static UINT32 sc_gMask = 0xff << sc_gShift;
+static UINT32 sc_bMask = 0xff << sc_bShift;
 
 
 /**************************************************************
@@ -99,7 +99,7 @@ MicroFlakeX::MfxColor::~MfxColor()
 
 MfxReturn MicroFlakeX::MfxColor::Clone(MfxBase** ret)
 {
-	*ret = new MfxColor(*this);
+	*ret = new MfxColor(this);
 
 	return Mfx_Return_Fine;
 }
@@ -191,7 +191,7 @@ MfxColor& MicroFlakeX::MfxColor::operator=(MfxColor&& rhs)
 *
 *
 ***************************************************************/
-bool MicroFlakeX::MfxColor::operator==(MfxBase& rhs) const
+bool MicroFlakeX::MfxColor::operator==(MfxBase& rhs)
 {
 	LONG tA = 0, tR = 0, tG = 0, tB = 0;
 	LONG tRA = 0, tRR = 0, tRG = 0, tRB = 0;
@@ -213,7 +213,7 @@ bool MicroFlakeX::MfxColor::operator==(MfxBase& rhs) const
 	return false;
 }
 
-bool MicroFlakeX::MfxColor::operator==(MfxColor* rhs) const
+bool MicroFlakeX::MfxColor::operator==(MfxColor* rhs)
 {
 	LONG tA = 0, tR = 0, tG = 0, tB = 0;
 	LONG tRA = 0, tRR = 0, tRG = 0, tRB = 0;
@@ -231,7 +231,7 @@ bool MicroFlakeX::MfxColor::operator==(MfxColor* rhs) const
 	return tA == tRA && tR == tRR && tG == tRG && tB == tRB;
 }
 
-bool MicroFlakeX::MfxColor::operator==(MfxColor& rhs) const
+bool MicroFlakeX::MfxColor::operator==(MfxColor& rhs)
 {
 	LONG tA = 0, tR = 0, tG = 0, tB = 0;
 	LONG tRA = 0, tRR = 0, tRG = 0, tRB = 0;
@@ -249,7 +249,7 @@ bool MicroFlakeX::MfxColor::operator==(MfxColor& rhs) const
 	return tA == tRA && tR == tRR && tG == tRG && tB == tRB;
 }
 
-bool MicroFlakeX::MfxColor::operator==(MfxColor&& rhs) const
+bool MicroFlakeX::MfxColor::operator==(MfxColor&& rhs)
 {
 	LONG tA = 0, tR = 0, tG = 0, tB = 0;
 	LONG tRA = 0, tRR = 0, tRG = 0, tRB = 0;
@@ -268,6 +268,33 @@ bool MicroFlakeX::MfxColor::operator==(MfxColor&& rhs) const
 }
 
 
+MicroFlakeX::MfxColor::operator COLORREF()
+{
+	LONG a;
+	COLORREF tCOLORREF;
+	GetRGB(&a, &tCOLORREF);
+
+	return tCOLORREF;
+}
+
+MicroFlakeX::MfxColor::operator D2D1_COLOR_F()
+{
+	D2D1_COLOR_F tCOLORF;
+
+	GetD2D1ColorF(&tCOLORF);
+
+	return tCOLORF;
+}
+
+MicroFlakeX::MfxColor::operator Gdiplus::Color()
+{
+	Gdiplus::Color tColor;
+
+	GetGdipColor(&tColor);
+
+	return tColor;
+}
+
 /**************************************************************
 *
 *
@@ -283,7 +310,7 @@ MfxReturn MicroFlakeX::MfxColor::Reset(LONG setA, LONG setR, LONG setG, LONG set
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxColor::GetColor(MfxColor* ret) const
+MfxReturn MicroFlakeX::MfxColor::GetColor(MfxColor* ret)
 {
 	LONG tA = 0, tR = 0, tG = 0, tB = 0;
 
@@ -300,7 +327,7 @@ MfxReturn MicroFlakeX::MfxColor::GetColor(MfxColor* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxColor::GetGdipColor(Gdiplus::Color* ret) const
+MfxReturn MicroFlakeX::MfxColor::GetGdipColor(Gdiplus::Color* ret)
 {
 	LONG tA = 0, tR = 0, tG = 0, tB = 0;
 
@@ -320,7 +347,7 @@ MfxReturn MicroFlakeX::MfxColor::GetGdipColor(Gdiplus::Color* ret) const
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxColor::GetPRGB(UINT32* ret) const
+MfxReturn MicroFlakeX::MfxColor::GetPRGB(UINT32* ret)
 {
 	LONG tA = 0, tR = 0, tG = 0, tB = 0;
 
@@ -338,7 +365,7 @@ MfxReturn MicroFlakeX::MfxColor::GetPRGB(UINT32* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxColor::GetRGB(LONG* retA, UINT32* ret) const
+MfxReturn MicroFlakeX::MfxColor::GetRGB(LONG* retA, COLORREF* ret)
 {
 	LONG tA = 0, tR = 0, tG = 0, tB = 0;
 
@@ -353,7 +380,7 @@ MfxReturn MicroFlakeX::MfxColor::GetRGB(LONG* retA, UINT32* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxColor::GetD2D1ColorF(D2D1_COLOR_F* ret) const
+MfxReturn MicroFlakeX::MfxColor::GetD2D1ColorF(D2D1_COLOR_F* ret)
 {
 	LONG tA = 0, tR = 0, tG = 0, tB = 0;
 
@@ -362,10 +389,10 @@ MfxReturn MicroFlakeX::MfxColor::GetD2D1ColorF(D2D1_COLOR_F* ret) const
 	GetG(&tG);
 	GetB(&tB);
 
-	ret->a = tA;
-	ret->r = tR;
-	ret->g = tG;
-	ret->b = tB;
+	ret->a = (double)tA / 255;
+	ret->r = (double)tR / 255;
+	ret->g = (double)tG / 255;
+	ret->b = (double)tB / 255;
 
 	return Mfx_Return_Fine;
 }
@@ -446,10 +473,10 @@ MfxReturn MicroFlakeX::MfxColor::SetRGB(LONG setA, UINT32 set)
 
 MfxReturn MicroFlakeX::MfxColor::SetD2D1ColorF(D2D1_COLOR_F* set)
 {
-	SetA(set->a);
-	SetR(set->r);
-	SetG(set->g);
-	SetB(set->b);
+	SetA(set->a * 255);
+	SetR(set->r * 255);
+	SetG(set->g * 255);
+	SetB(set->b * 255);
 
 	return Mfx_Return_Fine;
 }
@@ -460,28 +487,28 @@ MfxReturn MicroFlakeX::MfxColor::SetD2D1ColorF(D2D1_COLOR_F* set)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxColor::GetA(LONG* ret) const
+MfxReturn MicroFlakeX::MfxColor::GetA(LONG* ret)
 {
 	*ret = myA;
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxColor::GetR(LONG* ret) const
+MfxReturn MicroFlakeX::MfxColor::GetR(LONG* ret)
 {
 	*ret = myR;
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxColor::GetG(LONG* ret) const
+MfxReturn MicroFlakeX::MfxColor::GetG(LONG* ret)
 {
 	*ret = myG;
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxColor::GetB(LONG* ret) const
+MfxReturn MicroFlakeX::MfxColor::GetB(LONG* ret)
 {
 	*ret = myB;
 

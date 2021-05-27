@@ -439,21 +439,21 @@ MfxReturn MicroFlakeX::MfxGraph::CopyTextFormat(IDWriteTextFormat** ret, IDWrite
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxGraph::GetRect(MfxRect* set) const
+MfxReturn MicroFlakeX::MfxGraph::GetRect(MfxRect* set)
 {
 	myRect.GetRect(set);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::GetSize(MfxSize* set) const
+MfxReturn MicroFlakeX::MfxGraph::GetSize(MfxSize* set)
 {
 	myRect.GetSize(set);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::GetPoint(MfxPoint* set) const
+MfxReturn MicroFlakeX::MfxGraph::GetPoint(MfxPoint* set)
 {
 	myRect.GetPoint(set);
 

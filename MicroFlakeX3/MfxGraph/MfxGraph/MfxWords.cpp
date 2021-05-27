@@ -159,6 +159,7 @@ MfxReturn MicroFlakeX::MfxWords::Clone(MfxWords** ret)
 	(*ret)->SetCanvas(myCanvas);
 	(*ret)->SetTextColor(&myColor);
 
+
 	return Mfx_Return_Fine;
 }
 
@@ -170,61 +171,39 @@ MfxReturn MicroFlakeX::MfxWords::Clone(MfxWords** ret)
 ***************************************************************/
 MfxReturn MicroFlakeX::MfxWords::Paint()
 {
-	if (myCanvas)
+	Update_Canvas();
+	myMutexLock.TryWaitLock(&myRenderTarget, &myTextBrush, &myTextLayout, &myRect);
+
+	if (myRenderTarget && myTextBrush)
 	{
-		ID2D1RenderTarget* tRenderTarget = nullptr;
-		myCanvas->GetRenderTarget(&tRenderTarget);
-
-		if (myRenderTarget != tRenderTarget)
-		{
-			myRenderTarget = tRenderTarget;
-			SafeRelease(myTextBrush);
-			D2D1_COLOR_F tColor{ 0 };
-			myColor.GetD2D1ColorF(&tColor);
-			myRenderTarget->CreateSolidColorBrush(tColor, (ID2D1SolidColorBrush**)&myTextBrush);
-		}
-
-		if (myTextBrush)
-		{
-			D2D1_POINT_2F tPoint{ 0 };
-			myRect.GetD2D1PointF(&tPoint);
-			myRenderTarget->DrawTextLayout(
-				tPoint,
-				myTextLayout,
-				myTextBrush,
-				D2D1_DRAW_TEXT_OPTIONS_CLIP);
-		}
+		myRenderTarget->DrawTextLayout(
+			myRect,
+			myTextLayout,
+			myTextBrush,
+			D2D1_DRAW_TEXT_OPTIONS_CLIP);
 	}
+
+	myMutexLock.UnLock(&myRenderTarget, &myTextBrush, &myTextLayout, &myRect);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetCanvas(MfxCanvas* set)
 {
+	myMutexLock.WaitLock(&myCanvas);
 	myCanvas = set; 
+	myMutexLock.UnLock(&myCanvas);
 
-	if (!myCanvas)
-	{
-		return Mfx_Return_Fine;
-	}
-
-	ID2D1RenderTarget* tRenderTarget = nullptr;
-	myCanvas->GetRenderTarget(&tRenderTarget);
-
-	if (myRenderTarget != tRenderTarget)
-	{
-		myRenderTarget = tRenderTarget;
-		D2D1_COLOR_F tColor{ 0 };
-		myColor.GetD2D1ColorF(&tColor);
-		myRenderTarget->CreateSolidColorBrush(tColor, (ID2D1SolidColorBrush**)&myTextBrush);
-	}
+	Update_Canvas();
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::GetCanvas(MfxCanvas** ret) const
+MfxReturn MicroFlakeX::MfxWords::GetCanvas(MfxCanvas** ret)
 {
+	myMutexLock.WaitLock(&myCanvas);
 	*ret = myCanvas;
+	myMutexLock.UnLock(&myCanvas);
 
 	return Mfx_Return_Fine;
 }
@@ -235,24 +214,31 @@ MfxReturn MicroFlakeX::MfxWords::GetCanvas(MfxCanvas** ret) const
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxWords::GetText(MfxString* ret) const
+MfxReturn MicroFlakeX::MfxWords::GetText(MfxString* ret)
 {
+	myMutexLock.WaitLock(&myText);
 	*ret = myText;
+	myMutexLock.UnLock(&myText);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::GetTextSize(FLOAT* ret) const
+MfxReturn MicroFlakeX::MfxWords::GetTextSize(FLOAT* ret)
 {
+	myMutexLock.WaitLock(&myTextLayout);
 	*ret = myTextLayout->GetFontSize();
+	myMutexLock.UnLock(&myTextLayout);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::GetFontName(MfxString* ret) const
+MfxReturn MicroFlakeX::MfxWords::GetFontName(MfxString* ret)
 {
 	WCHAR* fontFamilyName = new WCHAR[myTextLayout->GetFontFamilyNameLength()]{ 0 };
+
+	myMutexLock.WaitLock(&myTextLayout);
 	myTextLayout->GetFontFamilyName(fontFamilyName, myTextLayout->GetFontFamilyNameLength());
+	myMutexLock.UnLock(&myTextLayout);
 
 	*ret = fontFamilyName;
 	SafeDeleteL(fontFamilyName);
@@ -260,28 +246,38 @@ MfxReturn MicroFlakeX::MfxWords::GetFontName(MfxString* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::GetTextColor(MfxColor* ret) const
+MfxReturn MicroFlakeX::MfxWords::GetTextColor(MfxColor* ret)
 {
+	myMutexLock.WaitLock(&myColor);
 	myColor.GetColor(ret);
+	myMutexLock.UnLock(&myColor);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::GetTextFormat(IDWriteTextFormat** ret) const
+MfxReturn MicroFlakeX::MfxWords::GetTextFormat(IDWriteTextFormat** ret)
 {
-	return CopyTextFormat(ret, myTextLayout);
+	myMutexLock.WaitLock(&myTextLayout);
+	MfxReturn tRet = CopyTextFormat(ret, myTextLayout);
+	myMutexLock.UnLock(&myTextLayout);
+
+	return tRet;
 }
 
-MfxReturn MicroFlakeX::MfxWords::GetTextAlignmentX(TextAlignmentX* ret) const
+MfxReturn MicroFlakeX::MfxWords::GetTextAlignmentX(TextAlignmentX* ret)
 {
+	myMutexLock.WaitLock(&myTextLayout);
 	*ret = myTextLayout->GetTextAlignment();
+	myMutexLock.UnLock(&myTextLayout);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::GetTextAlignmentY(TextAlignmentY* ret) const
+MfxReturn MicroFlakeX::MfxWords::GetTextAlignmentY(TextAlignmentY* ret)
 {
+	myMutexLock.WaitLock(&myTextLayout);
 	*ret = myTextLayout->GetParagraphAlignment();
+	myMutexLock.UnLock(&myTextLayout);
 
 	return Mfx_Return_Fine;
 }
@@ -296,27 +292,35 @@ MfxReturn MicroFlakeX::MfxWords::GetTextAlignmentY(TextAlignmentY* ret) const
 ***************************************************************/
 MfxReturn MicroFlakeX::MfxWords::SetRect(MfxRect* set)
 {
-	myRect = set;
+	myMutexLock.TryWaitLock(&myTextLayout, &myRect);
 
+	myRect = set;
 	myTextLayout->SetMaxWidth(myRect.myWidth);
 	myTextLayout->SetMaxHeight(myRect.myHeight);
+
+	myMutexLock.UnLock(&myTextLayout, &myRect);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetSize(MfxSize* set)
 {
-	myRect = set;
+	myMutexLock.TryWaitLock(&myTextLayout, &myRect);
 
+	myRect = set;
 	myTextLayout->SetMaxWidth(myRect.myWidth);
 	myTextLayout->SetMaxHeight(myRect.myHeight);
+
+	myMutexLock.UnLock(&myTextLayout, &myRect);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetText(MfxString set)
 {
+	myMutexLock.WaitLock(&myText);
 	myText = set;
+	myMutexLock.UnLock(&myText);
 
 	ResetTextLayout();
 
@@ -325,7 +329,9 @@ MfxReturn MicroFlakeX::MfxWords::SetText(MfxString set)
 
 MfxReturn MicroFlakeX::MfxWords::SetTextSize(FLOAT set)
 {
+	myMutexLock.TryWaitLock(&myTextLayout, &myText);
 	myTextLayout->SetFontSize(set, DWRITE_TEXT_RANGE{ 0,myText.length() });
+	myMutexLock.UnLock(&myTextLayout, &myText);
 
 	return Mfx_Return_Fine;
 }
@@ -333,49 +339,50 @@ MfxReturn MicroFlakeX::MfxWords::SetTextSize(FLOAT set)
 
 MfxReturn MicroFlakeX::MfxWords::SetFontName(MfxString set)
 {
+	myMutexLock.TryWaitLock(&myTextLayout, &myText);
 	myTextLayout->SetFontFamilyName(set.c_str(), DWRITE_TEXT_RANGE{ 0,myText.length() });
+	myMutexLock.UnLock(&myTextLayout, &myText);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetTextColor(MfxColor* set)
 {
-	myColor = set;
-
-	if (myCanvas)
-	{
-		ID2D1RenderTarget* tRenderTarget = nullptr;
-		myCanvas->GetRenderTarget(&tRenderTarget);
-		if (myRenderTarget != tRenderTarget)
-		{
-			myRenderTarget = tRenderTarget;
-			D2D1_COLOR_F tColor{ 0 };
-			myColor.GetD2D1ColorF(&tColor);
-			myRenderTarget->CreateSolidColorBrush(tColor, (ID2D1SolidColorBrush**)&myTextBrush);
-		}
-	}
+	myMutexLock.WaitLock(&myColor);
+	myColor.SetColor(set);
+	myMutexLock.UnLock(&myColor);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetTextFormat(IDWriteTextFormat* set)
 {
+	myMutexLock.WaitLock(&myTextFormat);
+
 	SafeRelease(myTextFormat);
 	CopyTextFormat(&myTextFormat, set);
 
-	return ResetTextLayout();
+	myMutexLock.UnLock(&myTextFormat);
+
+	MfxReturn tRet = ResetTextLayout();
+
+	return tRet;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetTextAlignmentX(TextAlignmentX set)
 {
+	myMutexLock.WaitLock(&myTextLayout);
 	myTextLayout->SetTextAlignment(set);
+	myMutexLock.UnLock(&myTextLayout);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetTextAlignmentY(TextAlignmentY set)
 {
+	myMutexLock.WaitLock(&myTextLayout);
 	myTextLayout->SetParagraphAlignment(set);
+	myMutexLock.UnLock(&myTextLayout);
 
 	return Mfx_Return_Fine;
 }
@@ -388,13 +395,15 @@ MfxReturn MicroFlakeX::MfxWords::SetTextAlignmentY(TextAlignmentY set)
 ***************************************************************/
 MfxReturn MicroFlakeX::MfxWords::ResetTextLayout()
 {
+	myMutexLock.TryWaitLock(&myText, &myRect, &myTextLayout, &myTextFormat);
+
 	SafeRelease(myTextFormat);
 
 	CopyTextFormat(&myTextFormat, myTextLayout);
 
 	SafeRelease(myTextLayout);
 
-	return MfxGraph::myIDWriteFactory->CreateTextLayout(
+	MfxReturn tRet = MfxGraph::myIDWriteFactory->CreateTextLayout(
 		myText.c_str(),
 		myText.length(),
 		myTextFormat,
@@ -402,5 +411,31 @@ MfxReturn MicroFlakeX::MfxWords::ResetTextLayout()
 		myRect.myHeight,
 		&myTextLayout
 	);
+
+	myMutexLock.UnLock(&myText, &myRect, &myTextLayout, &myTextFormat);
+
+	return tRet;
+}
+
+MfxReturn MicroFlakeX::MfxWords::Update_Canvas()
+{
+	myMutexLock.TryWaitLock(&myCanvas, &myRenderTarget, &myColor, &myTextBrush);
+	if (myCanvas)
+	{
+		ID2D1RenderTarget* tID2D1RenderTarget;
+		myCanvas->GetRenderTarget(&tID2D1RenderTarget);
+		myRenderTarget = (myRenderTarget == tID2D1RenderTarget) ? myRenderTarget : tID2D1RenderTarget;
+
+		SafeRelease(myTextBrush);
+		myRenderTarget ? myRenderTarget->CreateSolidColorBrush(myColor, &myTextBrush) : 0;
+	}
+	else
+	{
+		SafeRelease(myTextBrush);
+		myRenderTarget = nullptr;
+	}
+	myMutexLock.UnLock(&myCanvas, &myRenderTarget, &myColor, &myTextBrush);
+
+	return Mfx_Return_Fine;
 }
 

@@ -30,8 +30,6 @@ int main()
     *   原理 - new一个新对象返回
     *********************************************************/
 
-
-
     strFuncName = MfxText("SayGoodBy");
     temp->AutoFunc(strFuncName);
 

@@ -170,8 +170,8 @@ MfxReturn MicroFlakeX::MfxGlide::BindObjectName(MfxString groupName, MfxGulid_Wi
 {
 	myWidelyTypeMap[groupName] = value;
 
-	SafeDelete(myWidelyTypeMap[groupName].myGetObject_Set);
-	SafeDelete(myWidelyTypeMap[groupName].myGetObject_Begin);
+	//SafeDelete(myWidelyTypeMap[groupName].myGetObject_Set);
+	//SafeDelete(myWidelyTypeMap[groupName].myGetObject_Begin);
 
 	MfxFactory(myWidelyTypeMap[groupName].setObjectName, &(myWidelyTypeMap[groupName].myGetObject_Set));
 	MfxFactory(myWidelyTypeMap[groupName].getObjectName, &(myWidelyTypeMap[groupName].myGetObject_Begin));
@@ -215,10 +215,7 @@ MfxReturn MicroFlakeX::MfxGlide::Begin()
 		for (auto& iter : myWidelyTypeMap)
 		{
 			iter.second.myBeginTime = clock();
-			if (Mfx_Failed(myBindObject->AutoFunc(iter.second.getObjectFuncName, iter.second.myGetObject_Begin)))
-			{
-				return Mfx_Return_Fail;
-			}
+			myBindObject->AutoFunc(iter.second.getObjectFuncName, iter.second.myGetObject_Begin);
 		}
 	}
 

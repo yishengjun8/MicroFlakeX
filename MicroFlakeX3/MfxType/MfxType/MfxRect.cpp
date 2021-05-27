@@ -14,20 +14,24 @@ MfxObject_EndInit(MfxRect, MfxBase, \
 	1, GetPOINT, \
 	\
 	1, GetGdipRect, \
-	1, GetGdipSize, \
-	1, GetGdipPoint, \
-	\
 	1, GetGdipRectF, \
+	\
+	1, GetGdipSize, \
 	1, GetGdipSizeF, \
+	\
+	1, GetGdipPoint, \
 	1, GetGdipPointF, \
 	\
+	1, GetD2D1RectL, \
 	1, GetD2D1RectU, \
-	1, GetD2D1SizeU, \
-	1, GetD2D1PointU, \
-	\
 	1, GetD2D1RectF, \
+	\
+	1, GetD2D1SizeU, \
 	1, GetD2D1SizeF, \
-	1, GetD2D1PointF, \
+	\
+	1, GetD2D1Point2L, \
+	1, GetD2D1Point2U, \
+	1, GetD2D1Point2F, \
 	\
 	1, SetRect, \
 	1, SetSize, \
@@ -38,20 +42,24 @@ MfxObject_EndInit(MfxRect, MfxBase, \
 	1, SetPOINT, \
 	\
 	1, SetGdipRect, \
-	1, SetGdipSize, \
-	1, SetGdipPoint, \
-	\
 	1, SetGdipRectF, \
+	\
+	1, SetGdipSize, \
 	1, SetGdipSizeF, \
+	\
+	1, SetGdipPoint, \
 	1, SetGdipPointF, \
 	\
+	1, SetD2D1RectL, \
 	1, SetD2D1RectU, \
-	1, SetD2D1SizeU, \
-	1, SetD2D1PointU, \
-	\
 	1, SetD2D1RectF, \
+	\
+	1, SetD2D1SizeU, \
 	1, SetD2D1SizeF, \
-	1, SetD2D1PointF, \
+	\
+	1, SetD2D1Point2L, \
+	1, SetD2D1Point2U, \
+	1, SetD2D1Point2F, \
 	\
 	\
 	1, GetX, \
@@ -65,6 +73,7 @@ MfxObject_EndInit(MfxRect, MfxBase, \
 	1, GetBottom, \
 	\
 	1, GetCenter, \
+	2, GetPointPosition, \
 	\
 	\
 	1, SetX, \
@@ -78,6 +87,7 @@ MfxObject_EndInit(MfxRect, MfxBase, \
 	1, SetBottom, \
 	\
 	1, SetCenter, \
+	2, SetPointPosition, \
 	\
 	2, Union, \
 	2, Union_Widely, \
@@ -160,6 +170,23 @@ MicroFlakeX::MfxRect::MfxRect(MfxPoint* set)
 	SetY(tSY);
 	SetWidth(tSW);
 	SetHeight(tSH);
+}
+
+MicroFlakeX::MfxRect::MfxRect(MfxPoint* set1, MfxPoint* set2)
+{
+	LONG tX1 = 0, tX2 = 0, tY1 = 0, tY2 = 0;
+
+	set1->GetX(&tX1);
+	set1->GetY(&tY1);
+	set2->GetX(&tX2);
+	set2->GetY(&tY2);
+
+
+	SetX(min(tX1, tX2));
+	SetY(min(tY1, tY2));
+
+	SetWidth(max(tX1, tX2) - min(tX1, tX2));
+	SetHeight(max(tY1, tY2) - min(tY1, tY2));
 }
 
 MicroFlakeX::MfxRect::MfxRect(LONG setX, LONG setY, LONG setWidth, LONG setHeight)
@@ -346,7 +373,7 @@ MfxRect& MicroFlakeX::MfxRect::operator=(MfxPoint&& rhs)
 *
 *
 ***************************************************************/
-bool MicroFlakeX::MfxRect::operator==(MfxBase& rhs) const
+bool MicroFlakeX::MfxRect::operator==(MfxBase& rhs)
 {
 	LONG tX = 0, tY = 0, tW = 0, tH = 0;
 	LONG tRX = 0, tRY = 0, tRW = 0, tRH = 0;
@@ -368,7 +395,7 @@ bool MicroFlakeX::MfxRect::operator==(MfxBase& rhs) const
 	return false;
 }
 
-bool MicroFlakeX::MfxRect::operator==(MfxRect* rhs) const
+bool MicroFlakeX::MfxRect::operator==(MfxRect* rhs)
 {
 	LONG tX = 0, tY = 0, tW = 0, tH = 0;
 	LONG tRX = 0, tRY = 0, tRW = 0, tRH = 0;
@@ -386,7 +413,7 @@ bool MicroFlakeX::MfxRect::operator==(MfxRect* rhs) const
 	return tX == tRX && tY == tRY && tW == tRW && tH == tRH;
 }
 
-bool MicroFlakeX::MfxRect::operator==(MfxRect& rhs) const
+bool MicroFlakeX::MfxRect::operator==(MfxRect& rhs)
 {
 	LONG tX = 0, tY = 0, tW = 0, tH = 0;
 	LONG tRX = 0, tRY = 0, tRW = 0, tRH = 0;
@@ -404,7 +431,7 @@ bool MicroFlakeX::MfxRect::operator==(MfxRect& rhs) const
 	return tX == tRX && tY == tRY && tW == tRW && tH == tRH;
 }
 
-bool MicroFlakeX::MfxRect::operator==(MfxRect&& rhs) const
+bool MicroFlakeX::MfxRect::operator==(MfxRect&& rhs)
 {
 	LONG tX = 0, tY = 0, tW = 0, tH = 0;
 	LONG tRX = 0, tRY = 0, tRW = 0, tRH = 0;
@@ -422,7 +449,132 @@ bool MicroFlakeX::MfxRect::operator==(MfxRect&& rhs) const
 	return tX == tRX && tY == tRY && tW == tRW && tH == tRH;
 }
 
+MicroFlakeX::MfxRect::operator D2D1_RECT_L()
+{
+	D2D1_RECT_L tD2D1_RECT_L;
 
+	GetD2D1RectL(&tD2D1_RECT_L);
+
+	return tD2D1_RECT_L;
+}
+
+MicroFlakeX::MfxRect::operator D2D1_RECT_U()
+{
+	D2D1_RECT_U tD2D1_RECT_U;
+
+	GetD2D1RectU(&tD2D1_RECT_U);
+
+	return tD2D1_RECT_U;
+}
+
+MicroFlakeX::MfxRect::operator D2D1_RECT_F()
+{
+	D2D1_RECT_F tD2D1_RECT_F;
+
+	GetD2D1RectF(&tD2D1_RECT_F);
+
+	return tD2D1_RECT_F;
+}
+
+MicroFlakeX::MfxRect::operator D2D1_SIZE_U()
+{
+	D2D1_SIZE_U tD2D1_SIZE_U;
+
+	GetD2D1SizeU(&tD2D1_SIZE_U);
+
+	return tD2D1_SIZE_U;
+}
+
+MicroFlakeX::MfxRect::operator D2D1_SIZE_F()
+{
+	D2D1_SIZE_F tD2D1_SIZE_F;
+
+	GetD2D1SizeF(&tD2D1_SIZE_F);
+
+	return tD2D1_SIZE_F;
+}
+
+MicroFlakeX::MfxRect::operator D2D1_POINT_2L()
+{
+	D2D1_POINT_2L tD2D1_POINT_2L;
+
+	GetD2D1Point2L(&tD2D1_POINT_2L);
+
+	return tD2D1_POINT_2L;
+}
+
+MicroFlakeX::MfxRect::operator D2D1_POINT_2U()
+{
+	D2D1_POINT_2U tD2D1_POINT_2U;
+
+	GetD2D1Point2U(&tD2D1_POINT_2U);
+
+	return tD2D1_POINT_2U;
+}
+
+MicroFlakeX::MfxRect::operator D2D1_POINT_2F()
+{
+	D2D1_POINT_2F tD2D1_POINT_2F;
+
+	GetD2D1Point2F(&tD2D1_POINT_2F);
+
+	return tD2D1_POINT_2F;
+}
+
+MicroFlakeX::MfxRect::operator Gdiplus::Rect()
+{
+	Gdiplus::Rect tRect;
+
+	GetGdipRect(&tRect);
+
+	return tRect;
+}
+
+MicroFlakeX::MfxRect::operator Gdiplus::RectF()
+{
+	Gdiplus::RectF tRectF;
+
+	GetGdipRectF(&tRectF);
+
+	return tRectF;
+}
+
+MicroFlakeX::MfxRect::operator Gdiplus::Size()
+{
+	Gdiplus::Size tSize;
+
+	GetGdipSize(&tSize);
+
+	return tSize;
+}
+
+MicroFlakeX::MfxRect::operator Gdiplus::SizeF()
+{
+	Gdiplus::SizeF tSizeF;
+
+	GetGdipSizeF(&tSizeF);
+
+	return tSizeF;
+}
+
+MicroFlakeX::MfxRect::operator Gdiplus::Point()
+{
+	Gdiplus::Point tPoint;
+
+	GetGdipPoint(&tPoint);
+
+	return tPoint;
+}
+
+MicroFlakeX::MfxRect::operator Gdiplus::PointF()
+{
+	Gdiplus::PointF tPointF;
+
+	GetGdipPointF(&tPointF);
+
+	return tPointF;
+}
+/**/
 /**************************************************************
 *
 *
@@ -440,32 +592,44 @@ MfxReturn MicroFlakeX::MfxRect::Reset(LONG setX, LONG setY, LONG setWidth, LONG 
 
 
 /**************************************************************
-* 
-* 
-* 
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxRect::GetRect(MfxRect* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetRect(MfxRect* ret)
 {
-	return ret->Reset(myX, myY, myWidth, myHeight);
+	LONG tX = 0, tY = 0, tW = 0, tH = 0;
+
+	GetX(&tX);
+	GetY(&tY);
+	GetWidth(&tW);
+	GetHeight(&tH);
+
+	return ret->Reset(tX, tY, tW, tH);
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetSize(MfxSize* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetSize(MfxSize* ret)
 {
-	return ret->Reset(myWidth, myHeight);
+	LONG tW = 0, tH = 0;
+
+	GetWidth(&tW);
+	GetHeight(&tH);
+
+	return ret->Reset(tW, tH);
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetPoint(MfxPoint* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetPoint(MfxPoint* ret)
 {
-	return ret->Reset(myX, myY);
+	LONG tX = 0, tY = 0;
+
+	GetX(&tX);
+	GetY(&tY);
+
+	return ret->Reset(tX, tY);
 }
+
 
 
 /**************************************************************
-*
-*
-*
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxRect::GetRECT(RECT* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetRECT(RECT* ret)
 {
 	LONG tT = 0, tL = 0, tR = 0, tB = 0;
 
@@ -482,7 +646,7 @@ MfxReturn MicroFlakeX::MfxRect::GetRECT(RECT* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetSIZE(SIZE* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetSIZE(SIZE* ret)
 {
 	LONG tW = 0, tH = 0;
 
@@ -495,7 +659,7 @@ MfxReturn MicroFlakeX::MfxRect::GetSIZE(SIZE* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetPOINT(POINT* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetPOINT(POINT* ret)
 {
 	LONG tX = 0, tY = 0;
 
@@ -510,11 +674,8 @@ MfxReturn MicroFlakeX::MfxRect::GetPOINT(POINT* ret) const
 
 
 /**************************************************************
-*
-*
-*
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxRect::GetGdipRect(Gdiplus::Rect* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetGdipRect(Gdiplus::Rect* ret)
 {
 	LONG tX = 0, tY = 0, tW = 0, tH = 0;
 
@@ -531,33 +692,7 @@ MfxReturn MicroFlakeX::MfxRect::GetGdipRect(Gdiplus::Rect* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetGdipSize(Gdiplus::Size* ret) const
-{
-	LONG tW = 0, tH = 0;
-
-	GetWidth(&tW);
-	GetHeight(&tH);
-
-	ret->Width = tW;
-	ret->Height = tH;
-
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxRect::GetGdipPoint(Gdiplus::Point* ret) const
-{
-	LONG tX = 0, tY = 0;
-
-	GetX(&tX);
-	GetY(&tY);
-
-	ret->X = tX;
-	ret->Y = tY;
-
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxRect::GetGdipRectF(Gdiplus::RectF* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetGdipRectF(Gdiplus::RectF* ret)
 {
 	LONG tX = 0, tY = 0, tW = 0, tH = 0;
 
@@ -574,7 +709,7 @@ MfxReturn MicroFlakeX::MfxRect::GetGdipRectF(Gdiplus::RectF* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetGdipSizeF(Gdiplus::SizeF* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetGdipSize(Gdiplus::Size* ret)
 {
 	LONG tW = 0, tH = 0;
 
@@ -587,7 +722,33 @@ MfxReturn MicroFlakeX::MfxRect::GetGdipSizeF(Gdiplus::SizeF* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetGdipPointF(Gdiplus::PointF* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetGdipSizeF(Gdiplus::SizeF* ret)
+{
+	LONG tW = 0, tH = 0;
+
+	GetWidth(&tW);
+	GetHeight(&tH);
+
+	ret->Width = tW;
+	ret->Height = tH;
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::GetGdipPoint(Gdiplus::Point* ret)
+{
+	LONG tX = 0, tY = 0;
+
+	GetX(&tX);
+	GetY(&tY);
+
+	ret->X = tX;
+	ret->Y = tY;
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::GetGdipPointF(Gdiplus::PointF* ret)
 {
 	LONG tX = 0, tY = 0;
 
@@ -602,11 +763,10 @@ MfxReturn MicroFlakeX::MfxRect::GetGdipPointF(Gdiplus::PointF* ret) const
 
 
 /**************************************************************
-*
-*
-*
+* 
+* 
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxRect::GetD2D1RectU(D2D1_RECT_U* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetD2D1RectL(D2D1_RECT_L* ret)
 {
 	LONG tT = 0, tL = 0, tR = 0, tB = 0;
 
@@ -623,7 +783,41 @@ MfxReturn MicroFlakeX::MfxRect::GetD2D1RectU(D2D1_RECT_U* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetD2D1SizeU(D2D1_SIZE_U* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetD2D1RectU(D2D1_RECT_U* ret)
+{
+	LONG tT = 0, tL = 0, tR = 0, tB = 0;
+
+	GetTop(&tT);
+	GetLeft(&tL);
+	GetRight(&tR);
+	GetBottom(&tB);
+
+	ret->top = tT;
+	ret->left = tL;
+	ret->right = tR;
+	ret->bottom = tB;
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::GetD2D1RectF(D2D1_RECT_F* ret)
+{
+	LONG tT = 0, tL = 0, tR = 0, tB = 0;
+
+	GetTop(&tT);
+	GetLeft(&tL);
+	GetRight(&tR);
+	GetBottom(&tB);
+
+	ret->top = tT;
+	ret->left = tL;
+	ret->right = tR;
+	ret->bottom = tB;
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::GetD2D1SizeU(D2D1_SIZE_U* ret)
 {
 	LONG tW = 0, tH = 0;
 
@@ -636,7 +830,32 @@ MfxReturn MicroFlakeX::MfxRect::GetD2D1SizeU(D2D1_SIZE_U* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetD2D1PointU(D2D1_POINT_2U* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetD2D1SizeF(D2D1_SIZE_F* ret)
+{
+	LONG tW = 0, tH = 0;
+
+	GetWidth(&tW);
+	GetHeight(&tH);
+
+	ret->width = tW;
+	ret->height = tH;
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::GetD2D1Point2L(D2D1_POINT_2L* ret)
+{
+	LONG tX = 0, tY = 0;
+
+	GetX(&tX);
+	GetY(&tY);
+
+	ret->x = tX;
+	ret->y = tY;
+
+	return Mfx_Return_Fine;
+}
+MfxReturn MicroFlakeX::MfxRect::GetD2D1Point2U(D2D1_POINT_2U* ret)
 {
 	LONG tX = 0, tY = 0;
 
@@ -649,37 +868,7 @@ MfxReturn MicroFlakeX::MfxRect::GetD2D1PointU(D2D1_POINT_2U* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetD2D1RectF(D2D1_RECT_F* ret) const
-{
-	LONG tT = 0, tL = 0, tR = 0, tB = 0;
-
-	GetTop(&tT);
-	GetLeft(&tL);
-	GetRight(&tR);
-	GetBottom(&tB);
-
-	ret->top = tT;
-	ret->left = tL;
-	ret->right = tR;
-	ret->bottom = tB;
-
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxRect::GetD2D1SizeF(D2D1_SIZE_F* ret) const
-{
-	LONG tW = 0, tH = 0;
-
-	GetWidth(&tW);
-	GetHeight(&tH);
-
-	ret->width = tW;
-	ret->height = tH;
-
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxRect::GetD2D1PointF(D2D1_POINT_2F* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetD2D1Point2F(D2D1_POINT_2F* ret)
 {
 	LONG tX = 0, tY = 0;
 
@@ -789,7 +978,25 @@ MfxReturn MicroFlakeX::MfxRect::SetGdipRect(Gdiplus::Rect* set)
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxRect::SetGdipRectF(Gdiplus::RectF* set)
+{
+	SetX(set->X);
+	SetY(set->Y);
+	SetWidth(set->Width);
+	SetHeight(set->Height);
+
+	return Mfx_Return_Fine;
+}
+
 MfxReturn MicroFlakeX::MfxRect::SetGdipSize(Gdiplus::Size* set)
+{
+	SetWidth(set->Width);
+	SetHeight(set->Height);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::SetGdipSizeF(Gdiplus::SizeF* set)
 {
 	SetWidth(set->Width);
 	SetHeight(set->Height);
@@ -801,24 +1008,6 @@ MfxReturn MicroFlakeX::MfxRect::SetGdipPoint(Gdiplus::Point* set)
 {
 	SetX(set->X);
 	SetY(set->Y);
-
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxRect::SetGdipRectF(Gdiplus::RectF* set)
-{
-	SetX(set->X);
-	SetY(set->Y);
-	SetWidth(set->Width);
-	SetHeight(set->Height);
-
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxRect::SetGdipSizeF(Gdiplus::SizeF* set)
-{
-	SetWidth(set->Width);
-	SetHeight(set->Height);
 
 	return Mfx_Return_Fine;
 }
@@ -837,7 +1026,28 @@ MfxReturn MicroFlakeX::MfxRect::SetGdipPointF(Gdiplus::PointF* set)
 *
 *
 ***************************************************************/
+
+MfxReturn MicroFlakeX::MfxRect::SetD2D1RectL(D2D1_RECT_L* set)
+{
+	SetTop(set->top);
+	SetLeft(set->left);
+	SetRight(set->right);
+	SetBottom(set->bottom);
+
+	return Mfx_Return_Fine;
+}
+
 MfxReturn MicroFlakeX::MfxRect::SetD2D1RectU(D2D1_RECT_U* set)
+{
+	SetTop(set->top);
+	SetLeft(set->left);
+	SetRight(set->right);
+	SetBottom(set->bottom);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::SetD2D1RectF(D2D1_RECT_F* set)
 {
 	SetTop(set->top);
 	SetLeft(set->left);
@@ -855,24 +1065,6 @@ MfxReturn MicroFlakeX::MfxRect::SetD2D1SizeU(D2D1_SIZE_U* set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::SetD2D1PointU(D2D1_POINT_2U* set)
-{
-	SetX(set->x);
-	SetY(set->y);
-
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxRect::SetD2D1RectF(D2D1_RECT_F* set)
-{
-	SetTop(set->top);
-	SetLeft(set->left);
-	SetRight(set->right);
-	SetBottom(set->bottom);
-
-	return Mfx_Return_Fine;
-}
-
 MfxReturn MicroFlakeX::MfxRect::SetD2D1SizeF(D2D1_SIZE_F* set)
 {
 	SetWidth(set->width);
@@ -881,7 +1073,23 @@ MfxReturn MicroFlakeX::MfxRect::SetD2D1SizeF(D2D1_SIZE_F* set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::SetD2D1PointF(D2D1_POINT_2F* set)
+MfxReturn MicroFlakeX::MfxRect::SetD2D1Point2L(D2D1_POINT_2L* set)
+{
+	SetX(set->x);
+	SetY(set->y);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::SetD2D1Point2U(D2D1_POINT_2U* set)
+{
+	SetX(set->x);
+	SetY(set->y);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::SetD2D1Point2F(D2D1_POINT_2F* set)
 {
 	SetX(set->x);
 	SetY(set->y);
@@ -890,33 +1098,35 @@ MfxReturn MicroFlakeX::MfxRect::SetD2D1PointF(D2D1_POINT_2F* set)
 }
 
 
+
+
 /**************************************************************
 *
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxRect::GetX(LONG* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetX(LONG* ret)
 {
 	*ret = myX;
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetY(LONG* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetY(LONG* ret)
 {
 	*ret = myY;
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetWidth(LONG* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetWidth(LONG* ret)
 {
 	*ret = myWidth;
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetHeight(LONG* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetHeight(LONG* ret)
 {
 	*ret = myHeight;
 
@@ -929,7 +1139,7 @@ MfxReturn MicroFlakeX::MfxRect::GetHeight(LONG* ret) const
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxRect::GetTop(LONG* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetTop(LONG* ret)
 {
 	LONG tY = 0;
 
@@ -940,7 +1150,7 @@ MfxReturn MicroFlakeX::MfxRect::GetTop(LONG* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetLeft(LONG* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetLeft(LONG* ret)
 {
 	LONG tX = 0;
 
@@ -951,7 +1161,7 @@ MfxReturn MicroFlakeX::MfxRect::GetLeft(LONG* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetRight(LONG* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetRight(LONG* ret)
 {
 	LONG tX = 0, tW = 0;
 
@@ -963,7 +1173,7 @@ MfxReturn MicroFlakeX::MfxRect::GetRight(LONG* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetBottom(LONG* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetBottom(LONG* ret)
 {
 	LONG tY = 0, tH = 0;
 
@@ -975,7 +1185,7 @@ MfxReturn MicroFlakeX::MfxRect::GetBottom(LONG* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::GetCenter(MfxPoint* ret) const
+MfxReturn MicroFlakeX::MfxRect::GetCenter(MfxPoint* ret)
 {
 	LONG tX = 0, tY = 0, tW = 0, tH = 0;
 
@@ -986,6 +1196,24 @@ MfxReturn MicroFlakeX::MfxRect::GetCenter(MfxPoint* ret) const
 
 	ret->SetX((tX + tW) / 2);
 	ret->SetY((tY + tH) / 2);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::GetPointPosition(MfxPoint* ret1, MfxPoint* ret2)
+{
+	LONG tX = 0, tY = 0, tW = 0, tH = 0;
+
+	GetX(&tX);
+	GetY(&tY);
+	GetWidth(&tW);
+	GetHeight(&tH);
+
+	ret1->SetX(tX);
+	ret1->SetY(tY);
+
+	ret1->SetX(tX + tW);
+	ret1->SetY(tY + tH);
 
 	return Mfx_Return_Fine;
 }
@@ -1099,13 +1327,32 @@ MfxReturn MicroFlakeX::MfxRect::SetCenter(MfxPoint* set)
 	return Mfx_Return_Fine;
 }
 
+MfxReturn MicroFlakeX::MfxRect::SetPointPosition(MfxPoint* set1, MfxPoint* set2)
+{
+	LONG tX1 = 0, tX2 = 0, tY1 = 0, tY2 = 0;
+
+	set1->GetX(&tX1);
+	set1->GetY(&tY1);
+	set2->GetX(&tX2);
+	set2->GetY(&tY2);
+
+
+	SetX(min(tX1, tX2));
+	SetY(min(tY1, tY2));
+
+	SetWidth(max(tX1, tX2) - min(tX1, tX2));
+	SetHeight(max(tY1, tY2) - min(tY1, tY2));
+
+	return Mfx_Return_Fine;
+}
+
 
 /**************************************************************
 *
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxRect::Union(MfxRect* set, MfxRect* ret) const
+MfxReturn MicroFlakeX::MfxRect::Union(MfxRect* set, MfxRect* ret)
 {
 	LONG tT = 0, tL = 0, tR = 0, tB = 0;
 	LONG tRT = 0, tRL = 0, tRR = 0, tRB = 0;
@@ -1128,7 +1375,7 @@ MfxReturn MicroFlakeX::MfxRect::Union(MfxRect* set, MfxRect* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::Union_Widely(MfxBase* set, MfxRect* ret) const
+MfxReturn MicroFlakeX::MfxRect::Union_Widely(MfxBase* set, MfxRect* ret)
 {
 	LONG tT = 0, tL = 0, tR = 0, tB = 0;
 	LONG tRT = 0, tRL = 0, tRR = 0, tRB = 0;
@@ -1159,7 +1406,7 @@ MfxReturn MicroFlakeX::MfxRect::Union_Widely(MfxBase* set, MfxRect* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::Intersect(MfxRect* set, MfxRect* ret) const
+MfxReturn MicroFlakeX::MfxRect::Intersect(MfxRect* set, MfxRect* ret)
 {
 	LONG tT = 0, tL = 0, tR = 0, tB = 0;
 	LONG tST = 0, tSL = 0, tSR = 0, tSB = 0;
@@ -1187,7 +1434,7 @@ MfxReturn MicroFlakeX::MfxRect::Intersect(MfxRect* set, MfxRect* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::Intersect_Widely(MfxBase* set, MfxRect* ret) const
+MfxReturn MicroFlakeX::MfxRect::Intersect_Widely(MfxBase* set, MfxRect* ret)
 {
 	LONG tT = 0, tL = 0, tR = 0, tB = 0;
 	LONG tST = 0, tSL = 0, tSR = 0, tSB = 0;
@@ -1261,7 +1508,7 @@ MfxReturn MicroFlakeX::MfxRect::Inflate(LONG setX, LONG setY)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxRect::IsEmpty(bool* ret) const
+MfxReturn MicroFlakeX::MfxRect::IsEmpty(bool* ret)
 {
 	LONG tW = 0, tH = 0;
 
@@ -1273,7 +1520,27 @@ MfxReturn MicroFlakeX::MfxRect::IsEmpty(bool* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::IsPointInside(MfxPoint* set, bool* ret) const
+MfxReturn MicroFlakeX::MfxRect::IsRectInside(MfxRect* set, bool* ret)
+{
+	LONG tT = 0, tL = 0, tR = 0, tB = 0;
+	LONG tST = 0, tSL = 0, tSR = 0, tSB = 0;
+
+	GetTop(&tT);
+	GetLeft(&tL);
+	GetRight(&tR);
+	GetBottom(&tB);
+
+	set->GetTop(&tST);
+	set->GetLeft(&tSL);
+	set->GetRight(&tSR);
+	set->GetBottom(&tSB);
+
+	*ret = (tT <= tST) && (tR >= tSR) && (tL <= tSL) && (tB >= tSB);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxRect::IsPointInside(MfxPoint* set, bool* ret)
 {
 	LONG tT = 0, tL = 0, tR = 0, tB = 0;
 	LONG tSX = 0, tSY = 0;
@@ -1290,20 +1557,3 @@ MfxReturn MicroFlakeX::MfxRect::IsPointInside(MfxPoint* set, bool* ret) const
 
 	return Mfx_Return_Fine;
 }
-
-/**
-MfxReturn MicroFlakeX::MfxRect::Collision(MfxBase* set, BOOL* ret)
-{
-	LONG myTop = 0, myLeft = 0, myRight = 0, myBottom = 0;
-	LONG setTop = 0, setLeft = 0, setRight = 0, setBottom = 0;
-
-	GetTop(&myTop); set->AutoFunc(MfxText("GetBottom"), &setTop);
-	GetLeft(&myLeft); set->AutoFunc(MfxText("GetLeft"), &myLeft);
-	GetRight(&myRight); set->AutoFunc(MfxText("GetRight"), &myRight);
-	GetBottom(&myBottom); set->AutoFunc(MfxText("GetBottom"), &myBottom);
-
-	*ret = (myLeft < setRight) && (myTop < setBottom) &&
-		(myRight > setLeft) && (myBottom > setTop);
-	return Mfx_Return_Fine;
-}
-/**/

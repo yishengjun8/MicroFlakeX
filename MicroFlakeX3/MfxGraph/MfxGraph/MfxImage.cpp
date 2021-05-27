@@ -101,8 +101,12 @@ MfxReturn MicroFlakeX::MfxImage::Paint()
 
 		if (myRenderTarget && (myRenderTarget == tRenderTarget))
 		{
-			D2D1_RECT_F tRectF; myRect.GetD2D1RectF(&tRectF);
-			myRenderTarget->DrawBitmap(myID2D1Bitmap, &tRectF);
+			bool IsEmpty = false;
+			myRect.IsEmpty(&IsEmpty);
+			if (!IsEmpty)
+			{
+				myRenderTarget->DrawBitmap(myID2D1Bitmap, myRect);
+			}
 		}
 	}
 	return Mfx_Return_Fine;
@@ -128,33 +132,33 @@ MfxReturn MicroFlakeX::MfxImage::FromColor(MfxColor* color, MfxSize* set)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxImage::GetCanvas(MfxCanvas** ret) const
+MfxReturn MicroFlakeX::MfxImage::GetCanvas(MfxCanvas** ret)
 {
 	*ret = myCanvas;
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxImage::GetIWICBitmap(IWICBitmap** ret) const
+MfxReturn MicroFlakeX::MfxImage::GetIWICBitmap(IWICBitmap** ret)
 {
 	CopyIWICBitmap(ret, myIWICBitmap);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxImage::GetID2D1Bitmap(ID2D1Bitmap** ret) const
+MfxReturn MicroFlakeX::MfxImage::GetID2D1Bitmap(ID2D1Bitmap** ret)
 {
 	*ret = myID2D1Bitmap;
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxImage::GetGdipBitmap(Gdiplus::Bitmap** ret) const
+MfxReturn MicroFlakeX::MfxImage::GetGdipBitmap(Gdiplus::Bitmap** ret)
 {
 	return GdipBitmapFromIWICBitmap(ret, myIWICBitmap, MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
 }
 
-MfxReturn MicroFlakeX::MfxImage::GetHICON(HICON* ret) const
+MfxReturn MicroFlakeX::MfxImage::GetHICON(HICON* ret)
 {
 	Gdiplus::Bitmap* tBitmap = nullptr;
 
@@ -168,7 +172,7 @@ MfxReturn MicroFlakeX::MfxImage::GetHICON(HICON* ret) const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxImage::GetHBITMAP(MfxColor* set, HBITMAP* ret) const
+MfxReturn MicroFlakeX::MfxImage::GetHBITMAP(MfxColor* set, HBITMAP* ret)
 {
 	Gdiplus::Bitmap* tBitmap = nullptr;
 
@@ -214,6 +218,11 @@ MfxReturn MicroFlakeX::MfxImage::SetIWICBitmap(IWICBitmap* set)
 	return Mfx_Return_Fine;
 }
 
+
+MfxReturn MicroFlakeX::MfxImage::Update_Canvas()
+{
+	return MfxReturn();
+}
 
 /**************************************************************
 *

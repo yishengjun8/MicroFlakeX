@@ -73,9 +73,9 @@ namespace MicroFlakeX
 		MfxObject;
 
 	public:
-		virtual MfxReturn GetRect(MfxRect* ret) const;
-		virtual MfxReturn GetSize(MfxSize* ret) const;
-		virtual MfxReturn GetPoint(MfxPoint* ret) const;
+		virtual MfxReturn GetRect(MfxRect* ret);
+		virtual MfxReturn GetSize(MfxSize* ret);
+		virtual MfxReturn GetPoint(MfxPoint* ret);
 
 	public:
 		virtual MfxReturn SetRect(MfxRect* set);
@@ -126,9 +126,9 @@ namespace MicroFlakeX
 		virtual ~MfxCanvas();
 
 	public:
-		MfxReturn GetDC(HDC* ret) const;
-		MfxReturn GetWnd(HWND* ret) const;
-		MfxReturn GetBackColor(MfxColor* ret) const;
+		MfxReturn GetDC(HDC* ret);
+		MfxReturn GetWnd(HWND* ret);
+		MfxReturn GetBackColor(MfxColor* ret);
 
 	public:
 		MfxReturn SetDC(HDC set);
@@ -143,7 +143,7 @@ namespace MicroFlakeX
 		MfxReturn PaintCheck(bool* ret);
 
 	public:
-		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret) const;
+		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret);
 
 	public:
 		MfxReturn SetRect(MfxRect* set);
@@ -211,24 +211,26 @@ namespace MicroFlakeX
 		MfxReturn Paint();
 
 		MfxReturn SetCanvas(MfxCanvas* set);
-		MfxReturn GetCanvas(MfxCanvas** ret) const;
+		MfxReturn GetCanvas(MfxCanvas** ret);
 
 		MfxReturn FromFile(MfxString* path, MfxSize* set);
 		MfxReturn FromColor(MfxColor* color, MfxSize* set);
 
 	public:
-		MfxReturn GetIWICBitmap(IWICBitmap** ret) const;
-		MfxReturn GetID2D1Bitmap(ID2D1Bitmap** ret) const;
+		MfxReturn GetIWICBitmap(IWICBitmap** ret);
+		MfxReturn GetID2D1Bitmap(ID2D1Bitmap** ret);
 
-		MfxReturn GetGdipBitmap(Gdiplus::Bitmap** ret) const;
+		MfxReturn GetGdipBitmap(Gdiplus::Bitmap** ret);
 
-		MfxReturn GetHICON(HICON* ret) const;
-		MfxReturn GetHBITMAP(MfxColor* set, HBITMAP* ret) const;
+		MfxReturn GetHICON(HICON* ret);
+		MfxReturn GetHBITMAP(MfxColor* set, HBITMAP* ret);
 
 	public:
 		MfxReturn SetIWICBitmap(IWICBitmap* set);
 
 	public:
+		MfxReturn Update_Canvas();
+
 		MfxReturn ResetID2D1Bitmap();
 
 		MfxReturn ResetIWICBitmapFromFile(MfxString* path, MfxSize* set);
@@ -281,7 +283,7 @@ namespace MicroFlakeX
 	protected:
 		MfxString myText;
 		MfxColor myColor;
-		ID2D1Brush* myTextBrush;
+		ID2D1SolidColorBrush* myTextBrush;
 		IDWriteTextFormat* myTextFormat;
 		IDWriteTextLayout* myTextLayout;
 
@@ -292,19 +294,19 @@ namespace MicroFlakeX
 		MfxReturn Paint();
 
 		MfxReturn SetCanvas(MfxCanvas* set);
-		MfxReturn GetCanvas(MfxCanvas** ret) const;
+		MfxReturn GetCanvas(MfxCanvas** ret);
 
 	public:
-		MfxReturn GetText(MfxString* ret) const;
-		MfxReturn GetTextSize(FLOAT* ret) const;
+		MfxReturn GetText(MfxString* ret);
+		MfxReturn GetTextSize(FLOAT* ret);
 
-		MfxReturn GetFontName(MfxString* ret) const;
-		MfxReturn GetTextColor(MfxColor* ret) const;
+		MfxReturn GetFontName(MfxString* ret);
+		MfxReturn GetTextColor(MfxColor* ret);
 
-		MfxReturn GetTextFormat(IDWriteTextFormat** ret) const;
+		MfxReturn GetTextFormat(IDWriteTextFormat** ret);
 
-		MfxReturn GetTextAlignmentX(TextAlignmentX* ret) const;
-		MfxReturn GetTextAlignmentY(TextAlignmentY* ret) const;
+		MfxReturn GetTextAlignmentX(TextAlignmentX* ret);
+		MfxReturn GetTextAlignmentY(TextAlignmentY* ret);
 
 	public:
 		MfxReturn SetRect(MfxRect* set);
@@ -322,6 +324,7 @@ namespace MicroFlakeX
 		MfxReturn SetTextAlignmentY(TextAlignmentY set);
 
 	public:
+		MfxReturn Update_Canvas();
 		MfxReturn ResetTextLayout();
 	};
 }

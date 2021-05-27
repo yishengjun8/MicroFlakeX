@@ -609,14 +609,24 @@ namespace MicroFlakeX
 			UnLock(rest...);
 		}
 
-		template<typename ...Args>
-		void WaitLock(Args... rest)
+		void WaitLock(void* first)
 		{
-			while (!TryLock(rest...))
+			auto tFind = myMutexResour.find(first);
+			if (tFind == myMutexResour.end())
 			{
-				Sleep(1);
+				Add_Resour(first);
+				EnterCriticalSection(&myMutexResour[first]);
 			}
+			else
+			{
+				EnterCriticalSection(&tFind->second);
+			}
+		}
 
+		template<typename ...Args>
+		void TryWaitLock(Args... rest)
+		{
+			while (!TryLock(rest...));
 		}
 
 		template<typename ...Args>
