@@ -426,7 +426,6 @@ namespace MicroFlakeX
 	private:
 		void MfxUIInitData();
 		void MfxRegMessages();
-		MfxReturn UIThread(WPARAM wParam, LPARAM lParam);
 	public:
 		MfxUI();
 		MfxUI(MfxRect set, MfxString title);
@@ -437,6 +436,12 @@ namespace MicroFlakeX
 
 		MfxReturn ProcMessage(MfxMessage message, WPARAM wParam, LPARAM lParam);
 		MfxReturn SendMessageToFlakes(MfxMessage message, WPARAM wParam, LPARAM lParam, bool sort = false);
+	
+	public:
+		MfxReturn UI_PostMessage(MfxMessage message, MfxParam param);
+	private:
+		std::queue<MfxParam> myTreadQueue;
+		MfxReturn UIThread(WPARAM wParam, LPARAM lParam);
 	protected:
 		MfxReturn myUIMessageReturnKeep;
 		MfxReturn myFlakeEventReturnKeep;
@@ -480,18 +485,6 @@ namespace MicroFlakeX
 		MfxReturn RemoveFlakeEvent(UI_FlakeEvent_Info message);
 		MfxReturn PushBackFlakeEvent(UI_FlakeEvent_Info message, UI_UIRecvFunc_Info msgValue);
 		MfxReturn PushFrontFlakeEvent(UI_FlakeEvent_Info message, UI_UIRecvFunc_Info msgValue);
-
-		/********************************************************************************
-		*
-		*********************************************************************************/
-
-	private:
-		std::set<void*> myDeleteSet_pVoid;
-		std::set<MfxBase*> myDeleteSet_pMfxBase;
-	protected:
-		MfxReturn ClearDeleteVctor();
-		MfxReturn AddDelete_pVoid(void* set);
-		MfxReturn AddDelete_pMfxBase(MfxBase* set);
 
 		/********************************************************************************
 		*
@@ -725,10 +718,9 @@ namespace MicroFlakeX
 
 		MfxReturn ProcMessage(MfxMessage message, WPARAM wParam, LPARAM lParam);
 
+	protected:
+		MfxReturn myFlakeReturnKeep;
 		/********************************************************************************
-		*
-		*
-		*
 		*
 		*********************************************************************************/
 	private:
@@ -738,21 +730,6 @@ namespace MicroFlakeX
 		MfxReturn PushBackFlakeEvent(MfxMessage message, Flake_RecvFunc_Infor* msgValue);
 		MfxReturn PushFrontFlakeEvent(MfxMessage message, Flake_RecvFunc_Infor* msgValue);
 
-
-
-		/********************************************************************************
-		*
-		*********************************************************************************/
-
-	protected:
-		MfxReturn myFlakeReturnKeep;
-	private:
-		std::set<void*> myDeleteSet_pVoid;
-		std::set<MfxBase*> myDeleteSet_pMfxBase;
-	protected:
-		MfxReturn ClearDeleteVctor();
-		MfxReturn AddDelete_pVoid(void* set);
-		MfxReturn AddDelete_pMfxBase(MfxBase* set);
 		/********************************************************************************
 		*
 		*********************************************************************************/

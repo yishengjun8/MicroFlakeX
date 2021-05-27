@@ -144,24 +144,6 @@ void MicroFlakeX::MfxUI::MfxUIInitData()
     myBackColor.Reset(255, 0, 255, 255);
 }
 
-/**/
-MfxReturn MicroFlakeX::MfxUI::UIThread(WPARAM wParam, LPARAM lParam)
-{
-    myUIThreadID = GetCurrentThreadId();
-
-    MSG tMsg;
-
-    while (GetMessage(&tMsg, nullptr, 0, 0) > 0)
-    {
-        TranslateMessage(&tMsg);
-        ProcMessage(tMsg.message, tMsg.wParam, tMsg.lParam);
-    }
-
-    MessageBox(nullptr, L"One UIThread Is Close", L"Close", 0);
-
-    return tMsg.wParam;
-}
-/**/
 /********************************************************************************
 *
 *
@@ -254,8 +236,6 @@ MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxMessage message, WPARAM wParam, LPA
 
     myMutexLock.UnLock(&myMessageMap);
 
-    ClearDeleteVctor();
-
     return myUIMessageReturnKeep;
 }
 
@@ -285,6 +265,30 @@ MfxReturn MicroFlakeX::MfxUI::SendMessageToFlakes(MfxMessage message, WPARAM wPa
     //myMutexFocus = (myMutexFocus ? myMutexFocus : t_FloatFocus);
     return t_Ret;
 }
+
+MfxReturn MicroFlakeX::MfxUI::UI_PostMessage(MfxMessage message, MfxParam param)
+{
+    return MfxReturn();
+}
+
+/**/
+MfxReturn MicroFlakeX::MfxUI::UIThread(WPARAM wParam, LPARAM lParam)
+{
+    myUIThreadID = GetCurrentThreadId();
+
+    MSG tMsg;
+
+    while (GetMessage(&tMsg, nullptr, 0, 0) > 0)
+    {
+        TranslateMessage(&tMsg);
+        ProcMessage(tMsg.message, tMsg.wParam, tMsg.lParam);
+    }
+
+    MessageBox(nullptr, L"One UIThread Is Close", L"Close", 0);
+
+    return tMsg.wParam;
+}
+/**/
 
 /********************************************************************************
 *
@@ -411,55 +415,6 @@ MfxReturn MicroFlakeX::MfxUI::PushFrontFlakeEvent(UI_FlakeEvent_Info message, UI
 }
 
 
-/********************************************************************************
-*
-*
-*
-*
-*********************************************************************************/
-
-MfxReturn MicroFlakeX::MfxUI::ClearDeleteVctor()
-{
-    myMutexLock.WaitLock(&myDeleteSet_pVoid);
-    for (auto iter : myDeleteSet_pVoid)
-    {
-        delete iter;
-    }
-    myDeleteSet_pVoid.clear();
-    myMutexLock.UnLock(&myDeleteSet_pVoid);
-
-
-    myMutexLock.WaitLock(&myDeleteSet_pMfxBase);
-    for (auto iter : myDeleteSet_pMfxBase)
-    {
-        delete iter;
-    }
-    myDeleteSet_pMfxBase.clear();
-    myMutexLock.UnLock(&myDeleteSet_pMfxBase);
-
-    return Mfx_Return_Fine;
-}
-MfxReturn MicroFlakeX::MfxUI::AddDelete_pVoid(void* set)
-{
-    myMutexLock.WaitLock(&myDeleteSet_pVoid);
-
-    myDeleteSet_pVoid.insert(set);
-
-    myMutexLock.UnLock(&myDeleteSet_pVoid);
-
-    return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxUI::AddDelete_pMfxBase(MfxBase* set)
-{
-    myMutexLock.WaitLock(&myDeleteSet_pMfxBase);
-
-    myDeleteSet_pMfxBase.insert(set);
-
-    myMutexLock.UnLock(&myDeleteSet_pMfxBase);
-
-    return Mfx_Return_Fine;
-}
 /********************************************************************************
 *
 *

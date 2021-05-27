@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #include "MfxBase.h"
 using namespace MicroFlakeX;
-
+using namespace std;
 
 /*********************************************************
 *	UTF-8 - win - x86
@@ -10,77 +10,51 @@ using namespace MicroFlakeX;
 *
 *   这个示例展示了如何使用MfxBase及其组件
 *********************************************************/
+
+class point
+{
+public:
+    int a = 10;
+    point(const point& rhs)
+    {
+        cout << "point copy " << endl;
+    }
+
+    point(int a)
+    {
+        this->a = a;
+        cout << "point Creat" << endl;
+    }
+
+    void say()
+    {
+        cout << "point say hello" << endl;
+    }
+};
+
+
+
+void func(MfxParam mpParam)
+{
+    cout << GetParam(mpParam, point, 0).a << endl;
+
+    mpParam.push_back(500);
+}
+
+
 int main()
 {
-    MfxCout << MfxText("\nmain begin") <<  std::endl;
-    //MfxBase* temp = nullptr;
-    MfxString str = MfxText("Example_Base_00.cpp");
-    MfxString strFuncName;
+    cout << endl;
+    MfxParam mpParam;
+
+    point tem(10);
+
+    mpParam.push_back(tem);
+
+    func(mpParam);
+
+    cout << GetParam(mpParam, int, 1) << endl;
 
 
-    MfxBase* temp = nullptr;
-    MfxFactory(MfxText("MfxBaseExample_00"), &temp);
-
-    /*********************************************************
-    *   MfxFactory工厂可以根据字符串直接生成对象
-    * 
-    *   函数原型
-    *   MfxReturn MfxFactory(MfxString, MfxBase**);
-    * 
-    *   原理 - new一个新对象返回
-    *********************************************************/
-
-    strFuncName = MfxText("SayGoodBy");
-    temp->AutoFunc(strFuncName);
-
-    //strFuncName = MfxText("SayHello");
-    //temp->AutoFunc(strFuncName, str);
-
-    //strFuncName = MfxText("SetData");
-    //temp->AutoFunc(strFuncName, 1234);
-
-   // strFuncName = MfxText("SayGoodBy");
-    //temp->AutoFunc(strFuncName);
-
-    strFuncName = MfxText("SayTest");
-    temp->AutoFunc(strFuncName, 878, 88.5, 'M');
-    
-    //MfxBeginNewThread(temp, MfxText("TestThread"), 212, 323);
-
-    //PTP_TIMER myTimer;
-    //MfxBeginNewTimer(myTimer, temp, MfxText("TestTimer"), 434, 2000);
-    
-    
-
-
-    MfxSignal<int, double, char> myOneSignal;
-    MfxSignal<> myTwoSignal;
-
-    myOneSignal.PushBackReceiver(temp, MfxText("SayTest"));
-    myTwoSignal.PushBackReceiver(temp, MfxText("SayGoodBy"));
-
-    myOneSignal.SendSignal(878, 85.5, 'A');
-    myTwoSignal.SendSignal();
-
-    MfxCout << std::endl;
-
-    myTwoSignal.PostSignal();
-    myOneSignal.PostSignal(868, 86.5, 'B');
-    myOneSignal.PostSignal(858, 87.5, 'C');
-    myOneSignal.RemoveReceiver(temp, MfxText("SayTest"));
-    myOneSignal.PostSignal(848, 88.5, 'D');
-
-    /*********************************************************
-    * 
-    *   使用完之后，释放对象。
-    *   因为MfxFactory是new出来的对象，需要我们手动释放。
-    * 
-    *********************************************************/
-    //delete temp;
-    int a;
-    std::cin >> a;
-
-    delete temp;
-    MfxCout << MfxText("main over\n") << std::endl;
     return 0;
 }

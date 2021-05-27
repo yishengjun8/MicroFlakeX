@@ -45,6 +45,7 @@
 /**/
 
 /* STL模板库 */
+#include <any>
 #include <map>
 #include <set>
 #include <deque>
@@ -178,17 +179,20 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	class MFX_PORT MfxLock;
-
+	class MFX_PORT MfxParam;
 	/***************************************************************
 	*	MfxCodeLock宏：请在会造成线程冲突的对象方法开始的时候，添加	MfxCodeLock(this);	语句，以保证访问唯一性。
 	****************************************************************/
 #define MfxCodeLock(OBJ) MfxLock tLock(OBJ);
 
+
 	class MfxLock
 	{
 	public:
 		MfxLock(MfxBase* object);
+		MfxLock(MfxParam* object);
 		~MfxLock();
+
 	private:
 		CRITICAL_SECTION* myCriticalSection;
 	};
@@ -450,7 +454,6 @@ namespace MicroFlakeX
 	*	MfxDataFlag	重载了众多的运算符，使其在计算使用的时候，跟原版变量几乎相等
 	*
 	*	由于设计问题，暂时废弃。请等待后续维护更新
-	*
 	****************************************************************/
 	template<class DataType>
 	class MfxDataFlag
@@ -719,6 +722,61 @@ namespace MicroFlakeX
 	private:
 		CRITICAL_SECTION myCriticalSection;
 	};
+
+
+	class MfxParam
+	{
+		friend class MfxLock;
+	protected:
+		int* myUseCount;
+		std::vector<std::any>* myParam;
+		CRITICAL_SECTION* myCriticalSection;
+	public:
+		MfxParam()
+		{
+			myUseCount = new int;
+			myParam = new std::vector<std::any>;
+			myCriticalSection = new CRITICAL_SECTION;
+			InitializeCriticalSection(myCriticalSection);
+			*myUseCount = 1;
+		}
+		MfxParam(const MfxParam& rhs)
+		{
+			myCriticalSection = rhs.myCriticalSection;
+			MfxLock myLock(this);
+			myUseCount = rhs.myUseCount;
+			myParam = rhs.myParam;
+			(*myUseCount)++;
+		}
+		~MfxParam()
+		{
+			EnterCriticalSection(myCriticalSection);
+			(*myUseCount)--;
+			if (*myUseCount <= 0)
+			{
+				delete myParam;
+				delete myUseCount;
+				DeleteCriticalSection(myCriticalSection);
+				delete myCriticalSection;
+			}
+
+		}
+		template<class T>
+		void push_back(T&& val)
+		{
+			MfxLock myLock(this);
+			myParam->push_back(std::forward<T>(val));
+		}
+
+#define GetParam(param, type, place)  (std::any_cast<type&>(param[place]))
+
+		std::any& operator [] (int i)
+		{
+			MfxLock myLock(this);
+			return (*myParam)[i];
+		}
+	};
+
 }
 /**************************************************************************************************************************************************************************************************/
 

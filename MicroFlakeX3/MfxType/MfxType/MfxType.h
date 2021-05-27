@@ -104,30 +104,30 @@ namespace MicroFlakeX
         MfxRect();
         MfxRect(MfxBase& set);
 
-        MfxRect(MfxRect* set);
-        MfxRect(MfxRect& set) :MfxRect(&set) {};
-        MfxRect(MfxRect&& set) noexcept :MfxRect(&set) {};
+        MfxRect(const MfxRect* set);
+        MfxRect(const MfxRect& set) :MfxRect(&set) {};
+        MfxRect(const MfxRect&& set) noexcept :MfxRect(&set) {};
 
-        MfxRect(MfxSize* set);
-        MfxRect(MfxSize& set) :MfxRect(&set) {};
-        MfxRect(MfxSize&& set) :MfxRect(&set) {};
+        MfxRect(const MfxSize* set);
+        MfxRect(const MfxSize& set) :MfxRect(&set) {};
+        MfxRect(const MfxSize&& set) :MfxRect(&set) {};
 
-        MfxRect(MfxPoint* set);
-        MfxRect(MfxPoint& set) :MfxRect(&set) {};
-        MfxRect(MfxPoint&& set) :MfxRect(&set) {};
+        MfxRect(const MfxPoint* set);
+        MfxRect(const MfxPoint& set) :MfxRect(&set) {};
+        MfxRect(const MfxPoint&& set) :MfxRect(&set) {};
 
-        MfxRect(MfxPoint* set1, MfxPoint* set2);
+        MfxRect(const MfxPoint* set1, const MfxPoint* set2);
 
-        MfxRect(MfxPoint& set1, MfxPoint* set2) :MfxRect(&set1, set2) {};
-        MfxRect(MfxPoint&& set1, MfxPoint* set2) :MfxRect(&set1, set2) {};
+        MfxRect(const MfxPoint& set1, const MfxPoint* set2) :MfxRect(&set1, set2) {};
+        MfxRect(const MfxPoint&& set1, const MfxPoint* set2) :MfxRect(&set1, set2) {};
 
-        MfxRect(MfxPoint& set1, MfxPoint& set2) :MfxRect(&set1, &set2) {};
-        MfxRect(MfxPoint&& set1, MfxPoint& set2) :MfxRect(&set1, &set2) {};
+        MfxRect(const MfxPoint& set1, const  MfxPoint& set2) :MfxRect(&set1, &set2) {};
+        MfxRect(const MfxPoint&& set1, const MfxPoint& set2) :MfxRect(&set1, &set2) {};
 
-        MfxRect(MfxPoint& set1, MfxPoint&& set2) :MfxRect(&set1, &set2) {};
-        MfxRect(MfxPoint&& set1, MfxPoint&& set2) :MfxRect(&set1, &set2) {};
+        MfxRect(const MfxPoint& set1, const MfxPoint&& set2) :MfxRect(&set1, &set2) {};
+        MfxRect(const MfxPoint&& set1, const MfxPoint&& set2) :MfxRect(&set1, &set2) {};
 
-        MfxRect(LONG setX, LONG setY, LONG setWidth, LONG setHeight);
+        MfxRect(const LONG setX, const LONG setY, const LONG setWidth, const  LONG setHeight);
 
         ~MfxRect();
 
@@ -151,12 +151,11 @@ namespace MicroFlakeX
     public:
         bool operator==(MfxBase& rhs);
 
-        bool operator==(MfxRect* rhs);
-        bool operator==(MfxRect& rhs);
-        bool operator==(MfxRect&& rhs);
+        bool operator==(const MfxRect* rhs)const;
+        bool operator==(const MfxRect& rhs)const;
+        bool operator==(const MfxRect&& rhs)const;
 
     public:
-
         operator D2D1_RECT_L();
         operator D2D1_RECT_U();
         operator D2D1_RECT_F();
@@ -181,34 +180,34 @@ namespace MicroFlakeX
         MfxReturn Reset(LONG setX, LONG setY, LONG setWidth, LONG setHeight);
     
     public:
-        MfxReturn GetRect(MfxRect* ret);
-        MfxReturn GetSize(MfxSize* ret);
-        MfxReturn GetPoint(MfxPoint* ret);
+        MfxReturn GetRect(MfxRect* ret)const;
+        MfxReturn GetSize(MfxSize* ret)const;
+        MfxReturn GetPoint(MfxPoint* ret)const;
 
-        MfxReturn GetRECT(RECT* ret);
-        MfxReturn GetSIZE(SIZE* ret);
-        MfxReturn GetPOINT(POINT* ret);
+        MfxReturn GetRECT(RECT* ret)const;
+        MfxReturn GetSIZE(SIZE* ret)const;
+        MfxReturn GetPOINT(POINT* ret)const;
       
-        MfxReturn GetGdipRect(Gdiplus::Rect* ret);
-        MfxReturn GetGdipRectF(Gdiplus::RectF* ret);
+        MfxReturn GetGdipRect(Gdiplus::Rect* ret)const;
+        MfxReturn GetGdipRectF(Gdiplus::RectF* ret)const;
 
-        MfxReturn GetGdipSize(Gdiplus::Size* ret);
-        MfxReturn GetGdipSizeF(Gdiplus::SizeF* ret);
+        MfxReturn GetGdipSize(Gdiplus::Size* ret)const;
+        MfxReturn GetGdipSizeF(Gdiplus::SizeF* ret)const;
 
-        MfxReturn GetGdipPoint(Gdiplus::Point* ret);
-        MfxReturn GetGdipPointF(Gdiplus::PointF* ret);
+        MfxReturn GetGdipPoint(Gdiplus::Point* ret)const;
+        MfxReturn GetGdipPointF(Gdiplus::PointF* ret)const;
 
     public:
-        MfxReturn GetD2D1RectL(D2D1_RECT_L* ret);
-        MfxReturn GetD2D1RectU(D2D1_RECT_U* ret);
-        MfxReturn GetD2D1RectF(D2D1_RECT_F* ret);
+        MfxReturn GetD2D1RectL(D2D1_RECT_L* ret)const;
+        MfxReturn GetD2D1RectU(D2D1_RECT_U* ret)const;
+        MfxReturn GetD2D1RectF(D2D1_RECT_F* ret)const;
 
-        MfxReturn GetD2D1SizeU(D2D1_SIZE_U* ret);
-        MfxReturn GetD2D1SizeF(D2D1_SIZE_F* ret);
+        MfxReturn GetD2D1SizeU(D2D1_SIZE_U* ret)const;
+        MfxReturn GetD2D1SizeF(D2D1_SIZE_F* ret)const;
 
-        MfxReturn GetD2D1Point2L(D2D1_POINT_2L* ret);
-        MfxReturn GetD2D1Point2U(D2D1_POINT_2U* ret);
-        MfxReturn GetD2D1Point2F(D2D1_POINT_2F* ret);
+        MfxReturn GetD2D1Point2L(D2D1_POINT_2L* ret)const;
+        MfxReturn GetD2D1Point2U(D2D1_POINT_2U* ret)const;
+        MfxReturn GetD2D1Point2F(D2D1_POINT_2F* ret)const;
 
     public:
         MfxReturn SetRect(MfxRect* set);
@@ -240,18 +239,18 @@ namespace MicroFlakeX
         MfxReturn SetD2D1Point2F(D2D1_POINT_2F* set);
 
     public:
-        MfxReturn GetX(LONG* ret);
-        MfxReturn GetY(LONG* ret);
-        MfxReturn GetWidth(LONG* ret);
-        MfxReturn GetHeight(LONG* ret);
+        MfxReturn GetX(LONG* ret)const;
+        MfxReturn GetY(LONG* ret)const;
+        MfxReturn GetWidth(LONG* ret)const;
+        MfxReturn GetHeight(LONG* ret)const;
 
-        MfxReturn GetTop(LONG* ret);
-        MfxReturn GetLeft(LONG* ret);
-        MfxReturn GetRight(LONG* ret);
-        MfxReturn GetBottom(LONG* ret);
+        MfxReturn GetTop(LONG* ret)const;
+        MfxReturn GetLeft(LONG* ret)const;
+        MfxReturn GetRight(LONG* ret)const;
+        MfxReturn GetBottom(LONG* ret)const;
 
-        MfxReturn GetCenter(MfxPoint* ret);
-        MfxReturn GetPointPosition(MfxPoint* ret1, MfxPoint* ret2);
+        MfxReturn GetCenter(MfxPoint* ret)const;
+        MfxReturn GetPointPosition(MfxPoint* ret1, MfxPoint* ret2)const;
     public:
         MfxReturn SetX(LONG set);
         MfxReturn SetY(LONG set);
@@ -310,13 +309,13 @@ namespace MicroFlakeX
         MfxSize();
         MfxSize(MfxBase& set);
 
-        MfxSize(MfxRect* set);
-        MfxSize(MfxRect& set) :MfxSize(&set) {};
-        MfxSize(MfxRect&& set) :MfxSize(&set) {};
+        MfxSize(const MfxRect* set);
+        MfxSize(const MfxRect& set) :MfxSize(&set) {};
+        MfxSize(const MfxRect&& set) :MfxSize(&set) {};
 
-        MfxSize(MfxSize* set);
-        MfxSize(MfxSize& set) :MfxSize(&set) {};
-        MfxSize(MfxSize&& set) noexcept :MfxSize(&set) {};
+        MfxSize(const MfxSize* set);
+        MfxSize(const MfxSize& set) :MfxSize(&set) {};
+        MfxSize(const MfxSize&& set) noexcept :MfxSize(&set) {};
 
         MfxSize(LONG setWidth, LONG setHeight);
 
@@ -327,20 +326,20 @@ namespace MicroFlakeX
 
         MfxBase& operator=(MfxBase& rhs);
 
-        MfxSize& operator=(MfxRect* rhs);
-        MfxSize& operator=(MfxRect& rhs);
-        MfxSize& operator=(MfxRect&& rhs);
+        MfxSize& operator=(const MfxRect* rhs);
+        MfxSize& operator=(const MfxRect& rhs);
+        MfxSize& operator=(const MfxRect&& rhs);
 
-        MfxSize& operator=(MfxSize* rhs);
-        MfxSize& operator=(MfxSize& rhs);
-        MfxSize& operator=(MfxSize&& rhs);
+        MfxSize& operator=(const MfxSize* rhs);
+        MfxSize& operator=(const MfxSize& rhs);
+        MfxSize& operator=(const MfxSize&& rhs);
 
     public:
         bool operator==(MfxBase& rhs);
 
-        bool operator==(MfxSize* rhs);
-        bool operator==(MfxSize& rhs);
-        bool operator==(MfxSize&& rhs);
+        bool operator==(const MfxSize* rhs) const;
+        bool operator==(const MfxSize& rhs)const;
+        bool operator==(const MfxSize&& rhs)const;
 
     public:
         operator D2D1_SIZE_U();
@@ -353,15 +352,15 @@ namespace MicroFlakeX
         MfxReturn Reset(LONG setWidth, LONG setHeight);
 
     public:
-        MfxReturn GetSize(MfxSize* ret);
+        MfxReturn GetSize(MfxSize* ret) const;
 
-        MfxReturn GetSIZE(SIZE* ret);;
+        MfxReturn GetSIZE(SIZE* ret) const;
 
-        MfxReturn GetGdipSize(Gdiplus::Size* ret);
-        MfxReturn GetGdipSizeF(Gdiplus::SizeF* ret);
+        MfxReturn GetGdipSize(Gdiplus::Size* ret) const;
+        MfxReturn GetGdipSizeF(Gdiplus::SizeF* ret) const;
 
-        MfxReturn GetD2D1SizeU(D2D1_SIZE_U* ret);
-        MfxReturn GetD2D1SizeF(D2D1_SIZE_F* ret);
+        MfxReturn GetD2D1SizeU(D2D1_SIZE_U* ret) const;
+        MfxReturn GetD2D1SizeF(D2D1_SIZE_F* ret) const;
 
     public:
         MfxReturn SetSize(MfxSize* set);
@@ -375,8 +374,8 @@ namespace MicroFlakeX
         MfxReturn SetD2D1SizeF(D2D1_SIZE_F* set);
 
     public:
-        MfxReturn GetWidth(LONG* ret);
-        MfxReturn GetHeight(LONG* ret);
+        MfxReturn GetWidth(LONG* ret) const;
+        MfxReturn GetHeight(LONG* ret) const;
 
     public:
         MfxReturn SetWidth(LONG set);
@@ -408,15 +407,15 @@ namespace MicroFlakeX
         MfxPoint();
         MfxPoint(MfxBase& set);
 
-        MfxPoint(MfxRect* set);
-        MfxPoint(MfxRect& set) :MfxPoint(&set) {};
-        MfxPoint(MfxRect&& set) :MfxPoint(&set) {};
+        MfxPoint(const MfxRect* set);
+        MfxPoint(const MfxRect& set) :MfxPoint(&set) {};
+        MfxPoint(const MfxRect&& set) :MfxPoint(&set) {};
 
-        MfxPoint(MfxPoint* set);
-        MfxPoint(MfxPoint& set) :MfxPoint(&set) {};
-        MfxPoint(MfxPoint&& set) noexcept :MfxPoint(&set) {};
+        MfxPoint(const MfxPoint* set);
+        MfxPoint(const MfxPoint& set) :MfxPoint(&set) {};
+        MfxPoint(const MfxPoint&& set) noexcept :MfxPoint(&set) {};
 
-        MfxPoint(LONG setX, LONG setY);
+        MfxPoint(const LONG setX, const  LONG setY);
 
         ~MfxPoint();
 
@@ -425,20 +424,20 @@ namespace MicroFlakeX
 
         MfxBase& operator=(MfxBase& rhs);
 
-        MfxPoint& operator=(MfxRect* rhs);
-        MfxPoint& operator=(MfxRect& rhs);
-        MfxPoint& operator=(MfxRect&& rhs);
+        MfxPoint& operator=(const MfxRect* rhs);
+        MfxPoint& operator=(const MfxRect& rhs);
+        MfxPoint& operator=(const MfxRect&& rhs);
 
-        MfxPoint& operator=(MfxPoint* rhs);
-        MfxPoint& operator=(MfxPoint& rhs);
-        MfxPoint& operator=(MfxPoint&& rhs);
+        MfxPoint& operator=(const MfxPoint* rhs);
+        MfxPoint& operator=(const MfxPoint& rhs);
+        MfxPoint& operator=(const MfxPoint&& rhs);
 
     public:
         bool operator==(MfxBase& rhs);
 
-        bool operator==(MfxPoint* rhs);
-        bool operator==(MfxPoint& rhs);
-        bool operator==(MfxPoint&& rhs);
+        bool operator==(const MfxPoint* rhs)const;
+        bool operator==(const MfxPoint& rhs)const;
+        bool operator==(const MfxPoint&& rhs)const;
 
     public:
         operator D2D1_POINT_2L();
@@ -452,16 +451,16 @@ namespace MicroFlakeX
         MfxReturn Reset(LONG setX, LONG setY);
 
     public:
-        MfxReturn GetPoint(MfxPoint* ret);
+        MfxReturn GetPoint(MfxPoint* ret)const;
 
-        MfxReturn GetPOINT(POINT* ret);
+        MfxReturn GetPOINT(POINT* ret)const;
 
-        MfxReturn GetGdipPoint(Gdiplus::Point* ret);
-        MfxReturn GetGdipPointF(Gdiplus::PointF* ret);
+        MfxReturn GetGdipPoint(Gdiplus::Point* ret)const;
+        MfxReturn GetGdipPointF(Gdiplus::PointF* ret)const;
 
-        MfxReturn GetD2D1Point2L(D2D1_POINT_2L* ret);
-        MfxReturn GetD2D1Point2U(D2D1_POINT_2U* ret);
-        MfxReturn GetD2D1Point2F(D2D1_POINT_2F* ret);
+        MfxReturn GetD2D1Point2L(D2D1_POINT_2L* ret)const;
+        MfxReturn GetD2D1Point2U(D2D1_POINT_2U* ret)const;
+        MfxReturn GetD2D1Point2F(D2D1_POINT_2F* ret)const;
 
     public:
         MfxReturn SetPoint(MfxPoint* set);
@@ -476,8 +475,8 @@ namespace MicroFlakeX
         MfxReturn SetD2D1Point2F(D2D1_POINT_2F* set);
 
     public:
-        MfxReturn GetX(LONG* ret);
-        MfxReturn GetY(LONG* ret);
+        MfxReturn GetX(LONG* ret)const;
+        MfxReturn GetY(LONG* ret)const;
 
     public:
         MfxReturn SetX(LONG set);
@@ -503,11 +502,11 @@ namespace MicroFlakeX
         MfxColor();
         MfxColor(MfxBase& set);
 
-        MfxColor(MfxColor* set);
-        MfxColor(MfxColor& set) :MfxColor(&set) {};
-        MfxColor(MfxColor&& set)noexcept :MfxColor(&set) {};
+        MfxColor(const MfxColor* set);
+        MfxColor(const MfxColor& set) :MfxColor(&set) {};
+        MfxColor(const MfxColor&& set)noexcept :MfxColor(&set) {};
 
-        MfxColor(LONG setA, LONG setR, LONG setG, LONG setB);
+        MfxColor(const LONG setA, const LONG setR, const LONG setG, const LONG setB);
 
         ~MfxColor();
 
@@ -516,16 +515,16 @@ namespace MicroFlakeX
 
         MfxBase& operator=(MfxBase& rhs);
 
-        MfxColor& operator=(MfxColor* rhs);
-        MfxColor& operator=(MfxColor& rhs);
-        MfxColor& operator=(MfxColor&& rhs);
+        MfxColor& operator=(const MfxColor* rhs);
+        MfxColor& operator=(const MfxColor& rhs);
+        MfxColor& operator=(const MfxColor&& rhs);
 
     public:
         bool operator==(MfxBase& rhs);
 
-        bool operator==(MfxColor* rhs);
-        bool operator==(MfxColor& rhs);
-        bool operator==(MfxColor&& rhs);
+        bool operator==(const MfxColor* rhs)const;
+        bool operator==(const MfxColor& rhs)const;
+        bool operator==(const MfxColor&& rhs)const;
 
     public:
         operator COLORREF();
@@ -536,13 +535,13 @@ namespace MicroFlakeX
         MfxReturn Reset(LONG setA, LONG setR, LONG setG, LONG setB);
 
     public:
-        MfxReturn GetColor(MfxColor* ret);
-        MfxReturn GetGdipColor(Gdiplus::Color* ret);
+        MfxReturn GetColor(MfxColor* ret)const;
+        MfxReturn GetGdipColor(Gdiplus::Color* ret)const;
 
-        MfxReturn GetPRGB(UINT32* ret);
-        MfxReturn GetRGB(LONG* retA, COLORREF* ret);
+        MfxReturn GetPRGB(UINT32* ret)const;
+        MfxReturn GetRGB(LONG* retA, COLORREF* ret)const;
 
-        MfxReturn GetD2D1ColorF(D2D1_COLOR_F* ret);
+        MfxReturn GetD2D1ColorF(D2D1_COLOR_F* ret)const;
 
     public:
         MfxReturn SetColor(MfxColor* set);
@@ -554,10 +553,10 @@ namespace MicroFlakeX
         MfxReturn SetD2D1ColorF(D2D1_COLOR_F* set);
 
     public:
-        MfxReturn GetA(LONG* ret);
-        MfxReturn GetR(LONG* ret);
-        MfxReturn GetG(LONG* ret);
-        MfxReturn GetB(LONG* ret);
+        MfxReturn GetA(LONG* ret)const;
+        MfxReturn GetR(LONG* ret)const;
+        MfxReturn GetG(LONG* ret)const;
+        MfxReturn GetB(LONG* ret)const;
 
     public:
         MfxReturn SetA(LONG set);

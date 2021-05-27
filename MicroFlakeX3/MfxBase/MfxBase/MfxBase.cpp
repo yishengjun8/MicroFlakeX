@@ -98,12 +98,6 @@ MfxBase& MicroFlakeX::MfxBase::operator=(MfxBase& rhs)
 	return *this;
 }
 
-
-/***************************************************************
-*
-*
-*
-****************************************************************/
 bool MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 {
 	return false;
@@ -133,14 +127,21 @@ MfxReturn MicroFlakeX::MfxBase::ObjectName(MfxString* ret)
 }
 
 
+
 /***************************************************************
 *
 *
 *
 ****************************************************************/
+MicroFlakeX::MfxLock::MfxLock(MfxParam* object)
+{
+	myCriticalSection = object->myCriticalSection;
+	EnterCriticalSection(myCriticalSection);
+}
+
 MicroFlakeX::MfxLock::MfxLock(MfxBase* object)
 {
-	myCriticalSection = &object->myCriticalSection;
+	myCriticalSection = &(object->myCriticalSection);
 	EnterCriticalSection(myCriticalSection);
 }
 
@@ -148,4 +149,3 @@ MicroFlakeX::MfxLock::~MfxLock()
 {
 	LeaveCriticalSection(myCriticalSection);
 }
-

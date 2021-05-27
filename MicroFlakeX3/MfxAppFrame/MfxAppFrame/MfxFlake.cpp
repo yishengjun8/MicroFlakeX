@@ -208,8 +208,6 @@ MfxReturn MicroFlakeX::MfxFlake::ProcMessage(MfxMessage message, WPARAM wParam, 
 
 	myMutexLock.UnLock(&myMessageMap);
 
-	ClearDeleteVctor();
-
 	return t_Ret;
 }
 
@@ -283,56 +281,6 @@ MfxReturn MicroFlakeX::MfxFlake::PushFrontFlakeEvent(MfxMessage message, Flake_R
 	}
 
 	myMutexLock.UnLock(&myMessageMap);
-
-	return Mfx_Return_Fine;
-}
-
-/********************************************************************************
-*
-*
-*
-*
-*********************************************************************************/
-
-MfxReturn MicroFlakeX::MfxFlake::ClearDeleteVctor()
-{
-	myMutexLock.WaitLock(&myDeleteSet_pVoid);
-	for (auto iter : myDeleteSet_pVoid)
-	{
-		delete iter;
-	}
-	myDeleteSet_pVoid.clear();
-	myMutexLock.UnLock(&myDeleteSet_pVoid);
-
-
-	myMutexLock.WaitLock(&myDeleteSet_pMfxBase);
-	for (auto iter : myDeleteSet_pMfxBase)
-	{
-		delete iter;
-	}
-	myDeleteSet_pMfxBase.clear();
-	myMutexLock.UnLock(&myDeleteSet_pMfxBase);
-
-	return Mfx_Return_Fine;
-}
-MfxReturn MicroFlakeX::MfxFlake::AddDelete_pVoid(void* set)
-{
-	myMutexLock.WaitLock(&myDeleteSet_pVoid);
-
-	myDeleteSet_pVoid.insert(set);
-
-	myMutexLock.UnLock(&myDeleteSet_pVoid);
-
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxFlake::AddDelete_pMfxBase(MfxBase* set)
-{
-	myMutexLock.WaitLock(&myDeleteSet_pMfxBase);
-
-	myDeleteSet_pMfxBase.insert(set);
-
-	myMutexLock.UnLock(&myDeleteSet_pMfxBase);
 
 	return Mfx_Return_Fine;
 }
