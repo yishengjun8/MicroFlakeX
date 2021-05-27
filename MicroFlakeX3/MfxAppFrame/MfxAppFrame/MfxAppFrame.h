@@ -441,7 +441,7 @@ namespace MicroFlakeX
 		MfxReturn UI_PostMessage(MfxMessage message, MfxParam param);
 	private:
 		std::queue<MfxParam> myTreadQueue;
-		MfxReturn UIThread(WPARAM wParam, LPARAM lParam);
+		MfxReturn UIThread(MfxParam myParam);
 	protected:
 		MfxReturn myUIMessageReturnKeep;
 		MfxReturn myFlakeEventReturnKeep;

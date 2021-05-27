@@ -274,7 +274,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // TODO: 在此处添加使用 hdc 的任何绘图代码...
         EndPaint(hWnd, &ps);
 
-        MfxRect tRect(10, 10, 200, 200);
+        MfxRect tRect;
         //myCanvas.GetRect(&tRect);
         myCanvas.PaintBegin(&tRect);
 

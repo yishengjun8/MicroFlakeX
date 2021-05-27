@@ -16,7 +16,7 @@ MfxObject_EndInit(MfxGlide, MfxBase, \
 	0, Pause, \
 	0, Clear, \
 	\
-	2, EachFrame, \
+	1, EachFrame, \
 	3, MfxAddKeyframe);
 
 MicroFlakeX::MfxGlide::MfxGlide()
@@ -219,7 +219,7 @@ MfxReturn MicroFlakeX::MfxGlide::Begin()
 		}
 	}
 
-	MfxBeginNewTimer(myPTP_TIMER, this, MfxText("EachFrame"), 0, 1000 / myFPS);
+	MfxBeginNewTimer(myPTP_TIMER, this, MfxText("EachFrame"), MfxParam(), 1000 / myFPS);
 
 	return Mfx_Return_Fine;
 }
@@ -239,7 +239,7 @@ MfxReturn MicroFlakeX::MfxGlide::Clear()
 	return MfxReturn();
 }
 
-MfxReturn MicroFlakeX::MfxGlide::EachFrame(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam myParam)
 {
 	MfxCodeLock(this);
 

@@ -118,15 +118,6 @@ namespace MicroFlakeX
 
 	typedef std::uint64_t MfxHash;
 
-	constexpr MfxHash MfxGetHash_StrA(char const* str)
-	{	//BKDRHash
-		MfxHash hash = 0;
-		while (MfxHash ch = *str++)
-		{
-			hash = hash * 131 + ch;   // 也可以乘以31、131、1313、13131、131313..    
-		}
-		return hash;
-	}
 
 }
 
@@ -197,32 +188,130 @@ namespace MicroFlakeX
 		CRITICAL_SECTION* myCriticalSection;
 	};
 
-	typedef MfxReturn(*pThreadFunc)(WPARAM, LPARAM);
+
+	constexpr MfxHash MfxGetHash_StrA(char const* str)
+	{	//BKDRHash
+		MfxHash hash = 0;
+		while (MfxHash ch = *str++)
+		{
+			hash = hash * 131 + ch;   // 也可以乘以31、131、1313、13131、131313..    
+		}
+		return hash;
+	}
+
+	class MfxParam
+	{
+		friend class MfxLock;
+	protected:
+		int* myUseCount;
+		std::vector<std::any>* myParam;
+		CRITICAL_SECTION* myCriticalSection;
+	public:
+		MfxParam()
+		{
+			myUseCount = new int;
+			myParam = new std::vector<std::any>;
+			myCriticalSection = new CRITICAL_SECTION;
+			InitializeCriticalSection(myCriticalSection);
+			*myUseCount = 1;
+		}
+		MfxParam(const MfxParam& rhs)
+		{
+			myCriticalSection = rhs.myCriticalSection;
+			MfxLock myLock(this);
+			myUseCount = rhs.myUseCount;
+			myParam = rhs.myParam;
+			(*myUseCount)++;
+		}
+		MfxParam& operator=(const MfxParam& rhs)
+		{
+			EnterCriticalSection(myCriticalSection);
+			(*myUseCount)--;
+			if (*myUseCount <= 0)
+			{
+				delete myParam;
+				delete myUseCount;
+				DeleteCriticalSection(myCriticalSection);
+				delete myCriticalSection;
+			}
+			else
+			{
+				LeaveCriticalSection(myCriticalSection);
+			}
+
+			myCriticalSection = rhs.myCriticalSection;
+
+			EnterCriticalSection(myCriticalSection);
+			myUseCount = rhs.myUseCount;
+			myParam = rhs.myParam;
+			(*myUseCount)++;
+			LeaveCriticalSection(myCriticalSection);
+
+			return *this;
+		}
+
+		~MfxParam()
+		{
+			EnterCriticalSection(myCriticalSection);
+			(*myUseCount)--;
+			if (*myUseCount <= 0)
+			{
+				delete myParam;
+				delete myUseCount;
+				DeleteCriticalSection(myCriticalSection);
+				delete myCriticalSection;
+			}
+			else
+			{
+				LeaveCriticalSection(myCriticalSection);
+			}
+		}
+		template<class T>
+		void push_back(T&& val)
+		{
+			MfxLock myLock(this);
+			myParam->push_back(std::forward<T>(val));
+		}
+
+#define GetParam(param, type, place)  std::any_cast<type&>(param[place])
+
+		std::any& operator [] (int i)
+		{
+			MfxLock myLock(this);
+			return (*myParam)[i];
+		}
+	};
+}
+
+
+namespace MicroFlakeX
+{
+	typedef MfxReturn(*pThreadFunc)(MfxParam);
 
 	/***************************************************************
 	* 异步线程请勿传入局部变量指针。
 	* 参数一：回调对象指针
 	* 参数二：回调对象方法名字
-	* 参数三、四：传递给回调方法的wparam、lparam。
+	* 参数三：传递给回调方法的MfxParam。
 	****************************************************************/
-	MFX_PORT MfxReturn MfxBeginNewThread(MfxBase* object, MfxString recvFunc, WPARAM wParam = NULL, LPARAM lParam = NULL);
+	MFX_PORT MfxReturn MfxBeginNewThread(MfxBase* object, MfxString recvFunc, MfxParam mParam);
 	/***************************************************************
 	* 异步线程请勿传入局部变量指针。
 	* 参数一：回调对象指针
-	* 参数二、三：传递给回调方法的wparam、lparam。
+	* 参数二：传递给回调方法的MfxParam。
 	****************************************************************/
-	MFX_PORT MfxReturn MfxBeginNewThread_Widely(pThreadFunc pThreadFunc, WPARAM wParam = NULL, LPARAM lParam = NULL);
+	MFX_PORT MfxReturn MfxBeginNewThread_Widely(pThreadFunc pThreadFunc, MfxParam mParam);
 
 	/***************************************************************
 	* 参数一：返回一个计时器ID
 	* 参数二：回调对象指针
 	* 参数三：回调对象方法名字
-	* 参数四：传递给回调方法的lparam，回调方法的wparam是当前调用它的计时器id
+	* 参数四：传递给回调方法的MfxParam
 	* 参数五：计时器每个多长时间调用一次，单位为ms，若为0，则调用一次结束
 	* 参数六：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
 	* 参数七：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
 	****************************************************************/
-	MFX_PORT MfxReturn MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, LPARAM lParam = NULL, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
+	MFX_PORT MfxReturn MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, MfxParam mParam, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
 	
 	MFX_PORT MfxReturn MfxCloseTimer(PTP_TIMER& pTimer);
 }
@@ -724,58 +813,7 @@ namespace MicroFlakeX
 	};
 
 
-	class MfxParam
-	{
-		friend class MfxLock;
-	protected:
-		int* myUseCount;
-		std::vector<std::any>* myParam;
-		CRITICAL_SECTION* myCriticalSection;
-	public:
-		MfxParam()
-		{
-			myUseCount = new int;
-			myParam = new std::vector<std::any>;
-			myCriticalSection = new CRITICAL_SECTION;
-			InitializeCriticalSection(myCriticalSection);
-			*myUseCount = 1;
-		}
-		MfxParam(const MfxParam& rhs)
-		{
-			myCriticalSection = rhs.myCriticalSection;
-			MfxLock myLock(this);
-			myUseCount = rhs.myUseCount;
-			myParam = rhs.myParam;
-			(*myUseCount)++;
-		}
-		~MfxParam()
-		{
-			EnterCriticalSection(myCriticalSection);
-			(*myUseCount)--;
-			if (*myUseCount <= 0)
-			{
-				delete myParam;
-				delete myUseCount;
-				DeleteCriticalSection(myCriticalSection);
-				delete myCriticalSection;
-			}
 
-		}
-		template<class T>
-		void push_back(T&& val)
-		{
-			MfxLock myLock(this);
-			myParam->push_back(std::forward<T>(val));
-		}
-
-#define GetParam(param, type, place)  (std::any_cast<type&>(param[place]))
-
-		std::any& operator [] (int i)
-		{
-			MfxLock myLock(this);
-			return (*myParam)[i];
-		}
-	};
 
 }
 /**************************************************************************************************************************************************************************************************/
@@ -799,7 +837,7 @@ namespace MicroFlakeX
 	};
 
 
-	class MFX_PORT MfxSignal_Base
+	class MFX_PORT MfxSignal
 	{
 	public:
 		void RemoveReceiver(MfxBase* recvObject, MfxString recvFunc);
@@ -807,15 +845,11 @@ namespace MicroFlakeX
 		void PushFrontReceiver(MfxBase* recvObject, MfxString recvFunc);
 	protected:
 		std::deque<MfxReceiver_Info*> myReceiver;
-	};
 
-	template<class ...>
-	class MfxSignal;
 
-	template<>
-	class MFX_PORT MfxSignal<>
-		: public MfxSignal_Base
-	{
+		/***************************************************************
+		* 
+		****************************************************************/
 	public:
 		void SendSignal()
 		{
@@ -827,13 +861,15 @@ namespace MicroFlakeX
 
 		void PostSignal()
 		{
-			MfxBeginNewThread_Widely(&(MfxSignal<>::ThreadSignal), NULL, (LPARAM)this);
+			MfxParam tParam;
+			tParam.push_back(this);
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_0), tParam);
 		}
 
 	private:
-		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		static MfxReturn ThreadSignal_0(MfxParam myParam)
 		{
-			MfxSignal<>* tThis = (MfxSignal<>*)lParam;
+			MfxSignal* tThis = GetParam(myParam, MfxSignal*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter->recvObject->AutoFunc(iter->recvFunc);
@@ -841,448 +877,369 @@ namespace MicroFlakeX
 
 			return Mfx_Return_Fine;
 		}
-	};
 
-	template<class T1>
-	class MFX_PORT MfxSignal<T1>
-		: public MfxSignal_Base
-	{
-	private:
-		T1 myA1;
+		/***************************************************************
+		*
+		****************************************************************/
 	public:
-		MfxSignal()
-		{
-			myA1 = NULL;
-		}
-
-		void SendSignal(T1 A1)
+		template<typename T1>
+		void SendSignal(T1&& A1)
 		{
 			for (auto& iter : myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, A1);
+				iter->recvObject->AutoFunc(iter->recvFunc, 
+					std::forward<T1>(A1)
+				);
 			}
 		}
 
-		void PostSignal(T1 A1)
+		template<typename T1>
+		void PostSignal(T1&& A1)
 		{
-			while (myA1);
-			myA1 = A1;
-			MfxBeginNewThread_Widely(&(MfxSignal<T1>::ThreadSignal), NULL, (LPARAM)this);
+			MfxParam tParam;
+			tParam.push_back(this);
+			tParam.push_back(std::forward<T1>(A1));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1>), tParam);
 		}
-
 	private:
-		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		template<typename T1>
+		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal<T1>* tThis = (MfxSignal<T1>*)lParam;
+			MfxSignal* tThis = GetParam(myParam, MfxSignal*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1);
+				iter->recvObject->AutoFunc(iter->recvFunc, 
+					GetParam(myParam, T1, 1)
+				);
 			}
-
-			tThis->myA1 = NULL;
 			return Mfx_Return_Fine;
 		}
-	};
 
-	template<class T1, class T2>
-	class MFX_PORT MfxSignal<T1, T2>
-		: public MfxSignal_Base
-	{
-	private:
-		T1 myA1;
-		T2 myA2;
+
+		/***************************************************************
+		*
+		****************************************************************/
 	public:
-		MfxSignal()
-		{
-			myA1 = NULL;
-			myA2 = NULL;
-		}
-
-		void SendSignal(T1 A1, T2 A2)
+		template<class T1, class T2>
+		void SendSignal(T1&& A1, T2&& A2)
 		{
 			for (auto& iter : myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2);
+				iter->recvObject->AutoFunc(iter->recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2)
+				);
 			}
 		}
 
-		void PostSignal(T1 A1, T2 A2)
+		template<class T1, class T2>
+		void PostSignal(T1&& A1, T2&& A2)
 		{
-			while (myA1 || myA2);
-			myA1 = A1;
-			myA2 = A2;
-			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2>::ThreadSignal), NULL, (LPARAM)this);
+			MfxParam tParam;
+			tParam.push_back(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2>), tParam);
 		}
 
 	private:
-		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		template<class T1, class T2>
+		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal<T1, T2>* tThis = (MfxSignal<T1, T2>*)lParam;
+			MfxSignal* tThis = GetParam(myParam, MfxSignal*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2);
+				iter->recvObject->AutoFunc(
+					iter->recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2)
+				);
 			}
-
-			tThis->myA1 = NULL;
-			tThis->myA2 = NULL;
 			return Mfx_Return_Fine;
 		}
-	};
 
-	template<class T1, class T2, class T3>
-	class MFX_PORT MfxSignal<T1, T2, T3>
-		: public MfxSignal_Base
-	{
-	private:
-		T1 myA1;
-		T2 myA2;
-		T3 myA3;
+		/***************************************************************
+		*
+		****************************************************************/
 	public:
-		MfxSignal()
-		{
-			myA1 = NULL;
-			myA2 = NULL;
-			myA3 = NULL;
-		}
-
-		void SendSignal(T1 A1, T2 A2, T3 A3)
+		template<class T1, class T2, class T3>
+		void SendSignal(T1&& A1, T2&& A2, T3&& A3)
 		{
 			for (auto& iter : myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2, A3);
+				iter->recvObject->AutoFunc(iter->recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3)
+				);
 			}
 		}
 
-		void PostSignal(T1 A1, T2 A2, T3 A3)
+		template<class T1, class T2, class T3>
+		void PostSignal(T1&& A1, T2&& A2, T3&& A3)
 		{
-			while (myA1 || myA2 || myA3);
-			myA1 = A1;
-			myA2 = A2;
-			myA3 = A3;
-			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2, T3>::ThreadSignal), NULL, (LPARAM)this);
+			MfxParam tParam;
+			tParam.push_back(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3>), tParam);
 		}
 
 	private:
-		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		template<class T1, class T2, class T3>
+		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal<T1, T2, T3>* tThis = (MfxSignal<T1, T2, T3>*)lParam;
+			MfxSignal* tThis = GetParam(myParam, MfxSignal*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2, tThis->myA3);
+				iter->recvObject->AutoFunc(
+					iter->recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2),
+					GetParam(myParam, T3, 3)
+				);
 			}
-
-			tThis->myA1 = NULL;
-			tThis->myA2 = NULL;
-			tThis->myA3 = NULL;
 			return Mfx_Return_Fine;
 		}
-	};
 
-	template<class T1, class T2, class T3, class T4>
-	class MFX_PORT MfxSignal<T1, T2, T3, T4>
-		: public MfxSignal_Base
-	{
-	private:
-		T1 myA1;
-		T2 myA2;
-		T3 myA3;
-		T4 myA4;
+		/***************************************************************
+		*
+		****************************************************************/
 	public:
-		MfxSignal()
-		{
-			myA1 = NULL;
-			myA2 = NULL;
-			myA3 = NULL;
-			myA4 = NULL;
-		}
-
-		void SendSignal(T1 A1, T2 A2, T3 A3, T4 A4)
+		template<class T1, class T2, class T3, class T4>
+		void SendSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4)
 		{
 			for (auto& iter : myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2, A3, A4);
+				iter->recvObject->AutoFunc(iter->recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3), std::forward<T4>(A4)
+				);
 			}
 		}
 
-		void PostSignal(T1 A1, T2 A2, T3 A3, T4 A4)
+		template<class T1, class T2, class T3, class T4>
+		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4)
 		{
-			while (myA1 || myA2 || myA3 || myA4);
-			myA1 = A1;
-			myA2 = A2;
-			myA3 = A3;
-			myA4 = A4;
-			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2, T3, T4>::ThreadSignal), NULL, (LPARAM)this);
+			MfxParam tParam;
+			tParam.push_back(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4>), tParam);
 		}
 
 	private:
-		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		template<class T1, class T2, class T3, class T4>
+		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal<T1, T2, T3, T4>* tThis = (MfxSignal<T1, T2, T3, T4>*)lParam;
+			MfxSignal* tThis = GetParam(myParam, MfxSignal*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2, tThis->myA3, tThis->myA4);
+				iter->recvObject->AutoFunc(
+					iter->recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2),
+					GetParam(myParam, T3, 3), GetParam(myParam, T4, 4)
+				);
 			}
-
-			tThis->myA1 = NULL;
-			tThis->myA2 = NULL;
-			tThis->myA3 = NULL;
-			tThis->myA4 = NULL;
 			return Mfx_Return_Fine;
 		}
-	};
 
 
-	template<class T1, class T2, class T3, class T4, class T5>
-	class MFX_PORT MfxSignal<T1, T2, T3, T4, T5>
-		: public MfxSignal_Base
-	{
-	private:
-		T1 myA1;
-		T2 myA2;
-		T3 myA3;
-		T4 myA4;
-		T5 myA5;
+		/***************************************************************
+		*
+		****************************************************************/
 	public:
-		MfxSignal()
-		{
-			myA1 = NULL;
-			myA2 = NULL;
-			myA3 = NULL;
-			myA4 = NULL;
-			myA5 = NULL;
-		}
-
-		void SendSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5)
+		template<class T1, class T2, class T3, class T4, class T5>
+		void SendSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5)
 		{
 			for (auto& iter : myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2, A3, A4, A5);
+				iter->recvObject->AutoFunc(iter->recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3), std::forward<T4>(A4),
+					std::forward<T5>(A5)
+				);
 			}
 		}
 
-		void PostSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5)
+		template<class T1, class T2, class T3, class T4, class T5>
+		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5)
 		{
-			while (myA1 || myA2 || myA3 || myA4 || myA5);
-			myA1 = A1;
-			myA2 = A2;
-			myA3 = A3;
-			myA4 = A4;
-			myA5 = A5;
-			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2, T3, T4, T5>::ThreadSignal), NULL, (LPARAM)this);
+			MfxParam tParam;
+			tParam.push_back(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			tParam.push_back(std::forward<T5>(A5));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4, T5>), tParam);
 		}
 
 	private:
-		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		template<class T1, class T2, class T3, class T4, class T5>
+		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal<T1, T2, T3, T4, T5>* tThis = (MfxSignal<T1, T2, T3, T4, T5>*)lParam;
+			MfxSignal* tThis = GetParam(myParam, MfxSignal*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2, tThis->myA3, tThis->myA4, tThis->myA5);
+				iter->recvObject->AutoFunc(
+					iter->recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2),
+					GetParam(myParam, T3, 3), GetParam(myParam, T4, 4),
+					GetParam(myParam, T5, 5)
+				);
 			}
-
-			tThis->myA1 = NULL;
-			tThis->myA2 = NULL;
-			tThis->myA3 = NULL;
-			tThis->myA4 = NULL;
-			tThis->myA5 = NULL;
 			return Mfx_Return_Fine;
 		}
-	};
 
-	template<class T1, class T2, class T3, class T4, class T5, class T6>
-	class MFX_PORT MfxSignal<T1, T2, T3, T4, T5, T6>
-		: public MfxSignal_Base
-	{
-	private:
-		T1 myA1;
-		T2 myA2;
-		T3 myA3;
-		T4 myA4;
-		T5 myA5;
-		T6 myA6;
+		/***************************************************************
+		*
+		****************************************************************/
 	public:
-		MfxSignal()
-		{
-			myA1 = NULL;
-			myA2 = NULL;
-			myA3 = NULL;
-			myA4 = NULL;
-			myA5 = NULL;
-			myA6 = NULL;
-		}
-
-		void SendSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5, T6 A6)
+		template<class T1, class T2, class T3, class T4, class T5, class T6>
+		void SendSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6)
 		{
 			for (auto& iter : myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2, A3, A4, A5, A6);
+				iter->recvObject->AutoFunc(iter->recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3), std::forward<T4>(A4),
+					std::forward<T5>(A5), std::forward<T6>(A6)
+				);
 			}
 		}
 
-		void PostSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5, T6 A6)
+		template<class T1, class T2, class T3, class T4, class T5, class T6>
+		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6)
 		{
-			while (myA1 || myA2 || myA3 || myA4 || myA5 || myA6);
-			myA1 = A1;
-			myA2 = A2;
-			myA3 = A3;
-			myA4 = A4;
-			myA5 = A5;
-			myA6 = A6;
-			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2, T3, T4, T5, T6>::ThreadSignal), NULL, (LPARAM)this);
+			MfxParam tParam;
+			tParam.push_back(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4, T5, T6>), tParam);
 		}
 
 	private:
-		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		template<class T1, class T2, class T3, class T4, class T5, class T6>
+		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal<T1, T2, T3, T4, T5, T6>* tThis = (MfxSignal<T1, T2, T3, T4, T5, T6>*)lParam;
+			MfxSignal* tThis = GetParam(myParam, MfxSignal*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2, tThis->myA3, tThis->myA4, tThis->myA5, tThis->myA6);
+				iter->recvObject->AutoFunc(
+					iter->recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2),
+					GetParam(myParam, T3, 3), GetParam(myParam, T4, 4),
+					GetParam(myParam, T5, 5), GetParam(myParam, T6, 6)
+				);
 			}
-
-			tThis->myA1 = NULL;
-			tThis->myA2 = NULL;
-			tThis->myA3 = NULL;
-			tThis->myA4 = NULL;
-			tThis->myA5 = NULL;
-			tThis->myA6 = NULL;
 			return Mfx_Return_Fine;
 		}
-	};
 
-	template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
-	class MFX_PORT MfxSignal<T1, T2, T3, T4, T5, T6, T7>
-		: public MfxSignal_Base
-	{
-	private:
-		T1 myA1;
-		T2 myA2;
-		T3 myA3;
-		T4 myA4;
-		T5 myA5;
-		T6 myA6;
-		T7 myA7;
+		/***************************************************************
+		*
+		****************************************************************/
 	public:
-		MfxSignal()
-		{
-			myA1 = NULL;
-			myA2 = NULL;
-			myA3 = NULL;
-			myA4 = NULL;
-			myA5 = NULL;
-			myA6 = NULL;
-			myA7 = NULL;
-		}
-
-		void SendSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5, T6 A6, T7 A7)
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
+		void SendSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7)
 		{
 			for (auto& iter : myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2, A3, A4, A5, A6, A7);
+				iter->recvObject->AutoFunc(iter->recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3), std::forward<T4>(A4),
+					std::forward<T5>(A5), std::forward<T6>(A6),
+					std::forward<T7>(A7)
+				);
 			}
 		}
 
-		void PostSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5, T6 A6, T7 A7)
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
+		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7)
 		{
-			while (myA1 || myA2 || myA3 || myA4 || myA5 || myA6 || myA7);
-			myA1 = A1;
-			myA2 = A2;
-			myA3 = A3;
-			myA4 = A4;
-			myA5 = A5;
-			myA6 = A6;
-			myA7 = A7;
-			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2, T3, T4, T5, T6, T7>::ThreadSignal), NULL, (LPARAM)this);
+			MfxParam tParam;
+			tParam.push_back(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
+			tParam.push_back(std::forward<T7>(A7)); 
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4, T5, T6, T7>), tParam);
 		}
 
 	private:
-		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
+		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal<T1, T2, T3, T4, T5, T6, T7>* tThis = (MfxSignal<T1, T2, T3, T4, T5, T6, T7>*)lParam;
+			MfxSignal* tThis = GetParam(myParam, MfxSignal*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2, tThis->myA3, tThis->myA4, tThis->myA5, tThis->myA6, tThis->myA7);
+				iter->recvObject->AutoFunc(
+					iter->recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2),
+					GetParam(myParam, T3, 3), GetParam(myParam, T4, 4),
+					GetParam(myParam, T5, 5), GetParam(myParam, T6, 6),
+					GetParam(myParam, T7, 7)
+				);
 			}
-
-			tThis->myA1 = NULL;
-			tThis->myA2 = NULL;
-			tThis->myA3 = NULL;
-			tThis->myA4 = NULL;
-			tThis->myA5 = NULL;
-			tThis->myA6 = NULL;
-			tThis->myA7 = NULL;
 			return Mfx_Return_Fine;
 		}
+
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
+		void SendSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7, T8&& A8)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->recvObject->AutoFunc(iter->recvFunc, 
+					std::forward<T1>(A1), std::forward<T2>(A2), 
+					std::forward<T3>(A3), std::forward<T4>(A4),
+					std::forward<T5>(A5), std::forward<T6>(A6),
+					std::forward<T7>(A7), std::forward<T8>(A8)
+				);
+			}
+		}
+
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
+		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7, T8&& A8)
+		{
+			MfxParam tParam;
+			tParam.push_back(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
+			tParam.push_back(std::forward<T7>(A7)); tParam.push_back(std::forward<T8>(A8));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4, T5, T6, T7, T8>), tParam);
+		}
+
+	private:
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
+		static MfxReturn ThreadSignal_Template(MfxParam myParam)
+		{
+			MfxSignal* tThis = GetParam(myParam, MfxSignal*, 0);
+			for (auto& iter : tThis->myReceiver)
+			{
+				iter->recvObject->AutoFunc(
+					iter->recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2),
+					GetParam(myParam, T3, 3), GetParam(myParam, T4, 4),
+					GetParam(myParam, T5, 5), GetParam(myParam, T6, 6),
+					GetParam(myParam, T7, 7), GetParam(myParam, T8, 8)
+				);
+			}
+			return Mfx_Return_Fine;
+		}
+
+
 	};
 
+/*************************************************************
+* 
+***************************************************************
 	template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
 	class MFX_PORT MfxSignal<T1, T2, T3, T4, T5, T6, T7, T8>
 		: public MfxSignal_Base
 	{
-	private:
-		T1 myA1;
-		T2 myA2;
-		T3 myA3;
-		T4 myA4;
-		T5 myA5;
-		T6 myA6;
-		T7 myA7;
-		T8 myA8;
-	public:
-		MfxSignal()
-		{
-			myA1 = NULL;
-			myA2 = NULL;
-			myA3 = NULL;
-			myA4 = NULL;
-			myA5 = NULL;
-			myA6 = NULL;
-			myA7 = NULL;
-			myA8;
-		}
-
-		void SendSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5, T6 A6, T7 A7, T8 A8)
-		{
-			for (auto& iter : myReceiver)
-			{
-				iter->recvObject->AutoFunc(iter->recvFunc, A1, A2, A3, A4, A5, A6, A7, A8);
-			}
-		}
-
-		void PostSignal(T1 A1, T2 A2, T3 A3, T4 A4, T5 A5, T6 A6, T7 A7, T8 A8)
-		{
-			while (myA1 || myA2 || myA3 || myA4 || myA5 || myA6 || myA7 || myA8);
-			myA1 = A1;
-			myA2 = A2;
-			myA3 = A3;
-			myA4 = A4;
-			myA5 = A5;
-			myA6 = A6;
-			myA7 = A7;
-			myA8 = A8;
-			MfxBeginNewThread_Widely(&(MfxSignal<T1, T2, T3, T4, T5, T6, T7, T8>::ThreadSignal), NULL, (LPARAM)this);
-		}
-
-	private:
-		static MfxReturn ThreadSignal(WPARAM wParam, LPARAM lParam)
-		{
-			MfxSignal<T1, T2, T3, T4, T5, T6, T7, T8>* tThis = (MfxSignal<T1, T2, T3, T4, T5, T6, T7, T8>*)lParam;
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter->recvObject->AutoFunc(iter->recvFunc, tThis->myA1, tThis->myA2, tThis->myA3, tThis->myA4, tThis->myA5, tThis->myA6, tThis->myA7, tThis->myA8);
-			}
-
-			tThis->myA1 = NULL;
-			tThis->myA2 = NULL;
-			tThis->myA3 = NULL;
-			tThis->myA4 = NULL;
-			tThis->myA5 = NULL;
-			tThis->myA6 = NULL;
-			tThis->myA7 = NULL;
-			tThis->myA8 = NULL;
-			return Mfx_Return_Fine;
-		}
+		typedef MfxSignal<T1, T2, T3, T4, T5, T6, T7, T8> typeMfxSignal;
+	
 	};
+	/**/
 }
 
 

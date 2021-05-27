@@ -78,7 +78,7 @@ ForwardMessageBegin:
 	{
 		if (myBindingUI)
 		{
-			MfxBeginNewThread(myBindingUI, MfxText("UIThread"), NULL, NULL);
+			MfxBeginNewThread(myBindingUI, MfxText("UIThread"), MfxParam());
 
 			myUIMap.insert(App_UI_Info_Map_Elem(hWnd, new App_UI_Info(hWnd, myBindingUI, 0)));
 			myBindingUI->myWnd = hWnd;

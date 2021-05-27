@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include "MfxBase.h"
+#include "MfxBaseExample_00.h"
 using namespace MicroFlakeX;
 using namespace std;
 
@@ -11,50 +12,24 @@ using namespace std;
 *   这个示例展示了如何使用MfxBase及其组件
 *********************************************************/
 
-class point
-{
-public:
-    int a = 10;
-    point(const point& rhs)
-    {
-        cout << "point copy " << endl;
-    }
-
-    point(int a)
-    {
-        this->a = a;
-        cout << "point Creat" << endl;
-    }
-
-    void say()
-    {
-        cout << "point say hello" << endl;
-    }
-};
-
-
-
-void func(MfxParam mpParam)
-{
-    cout << GetParam(mpParam, point, 0).a << endl;
-
-    mpParam.push_back(500);
-}
-
-
 int main()
 {
-    cout << endl;
-    MfxParam mpParam;
+    MfxBase* test;
 
-    point tem(10);
+    MfxFactory(L"MfxBaseExample_00", &test);
 
-    mpParam.push_back(tem);
+    MfxSignal mySignal;
 
-    func(mpParam);
+    mySignal.PushBackReceiver(test, MfxText("SayHello"));
 
-    cout << GetParam(mpParam, int, 1) << endl;
+    mySignal.SendSignal(MfxString(L"SendSignal"));
 
+    MfxString str = MfxText("PostSignal");
 
+    mySignal.PostSignal(str);
+
+    Sleep(1000);
+
+    mySignal.SendSignal(MfxString(L"SendSignal"));
     return 0;
 }

@@ -748,7 +748,7 @@ namespace MicroFlakeX
         MfxReturn Clear();
 
     public:
-        MfxReturn EachFrame(WPARAM wParam, LPARAM lParam);
+        MfxReturn EachFrame(MfxParam myParam);
 
     public:
         MfxReturn MfxAddKeyframe(MfxString groupName, MfxBase* set, LONGLONG delay);

@@ -6,7 +6,7 @@ MfxObject_EndInit(MfxUI, MfxBase, \
     \
     0, CreateSuccess, \
     \
-    2, UIThread, \
+    1, UIThread, \
     \
     3, ProcMessage, \
     4, SendMessageToFlakes, \
@@ -272,7 +272,7 @@ MfxReturn MicroFlakeX::MfxUI::UI_PostMessage(MfxMessage message, MfxParam param)
 }
 
 /**/
-MfxReturn MicroFlakeX::MfxUI::UIThread(WPARAM wParam, LPARAM lParam)
+MfxReturn MicroFlakeX::MfxUI::UIThread(MfxParam myParam)
 {
     myUIThreadID = GetCurrentThreadId();
 
