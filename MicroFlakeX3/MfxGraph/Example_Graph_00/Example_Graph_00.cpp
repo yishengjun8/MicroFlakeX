@@ -175,23 +175,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 
-            /**
-            myGlide.SetFPS(60);
-            myGlide.BindObject(&(myImage[1]));
-            myGlide.BindObjectType(MfxText("Rect"), MfxText("Rect"));
-
-            myGlide.AddGulidTypePair(MfxText("Rect"), MfxText("X"), MfxText("X"));
-            myGlide.AddGulidTypePair(MfxText("Rect"), MfxText("Y"), MfxText("Y"));
-            myGlide.AddGulidTypePair(MfxText("Rect"), MfxText("Width"), MfxText("Width"));
-            myGlide.AddGulidTypePair(MfxText("Rect"), MfxText("Height"), MfxText("Height"));
-
-            MfxRect* tRect = new MfxRect(200, 100, 200, 200);
-            myGlide.MfxAddKeyframe(MfxText("Rect"), tRect, 5000);
-
-            tRect = new MfxRect(100, 200, 10, 10);
-            myGlide.MfxAddKeyframe(MfxText("Rect"), tRect, 5000);
-            /**/
-
             MfxGlide tGulid;
             tGulid.SetFPS(60);
             //tGulid.BindObject(&(myImage[1]));

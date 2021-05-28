@@ -60,7 +60,7 @@ MicroFlakeX::MfxWords::MfxWords()
 	}
 }
 
-MicroFlakeX::MfxWords::MfxWords(MfxString str, MfxRect* set)
+MicroFlakeX::MfxWords::MfxWords(const MfxString str, const MfxRect* set)
 {
 	myRect = set;
 	myText = str;
@@ -87,7 +87,7 @@ MicroFlakeX::MfxWords::MfxWords(MfxString str, MfxRect* set)
 	}
 }
 
-MicroFlakeX::MfxWords::MfxWords(MfxString str, MfxRect* set, FLOAT size)
+MicroFlakeX::MfxWords::MfxWords(const MfxString str, const MfxRect* set, const FLOAT size)
 {
 	myRect = set;
 	myText = str;
@@ -116,7 +116,7 @@ MicroFlakeX::MfxWords::MfxWords(MfxString str, MfxRect* set, FLOAT size)
 	}
 }
 
-MicroFlakeX::MfxWords::MfxWords(MfxString str, MfxRect* set, FLOAT size, IDWriteTextFormat* format)
+MicroFlakeX::MfxWords::MfxWords(const MfxString str, const MfxRect* set, const FLOAT size, IDWriteTextFormat* format)
 {
 	myRect = set;
 	myText = str;
@@ -152,7 +152,7 @@ MicroFlakeX::MfxWords::~MfxWords()
 	SafeRelease(myTextLayout);
 }
 
-MfxReturn MicroFlakeX::MfxWords::Clone(MfxWords** ret)
+MfxReturn MicroFlakeX::MfxWords::Clone(MfxWords** ret)const
 {
 	*ret = new MfxWords(myText, &myRect, myTextLayout->GetFontSize(), myTextLayout);
 
@@ -290,7 +290,7 @@ MfxReturn MicroFlakeX::MfxWords::GetTextAlignmentY(TextAlignmentY* ret)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxWords::SetRect(MfxRect* set)
+MfxReturn MicroFlakeX::MfxWords::SetRect(const MfxRect* set)
 {
 	myMutexLock.TryWaitLock(&myTextLayout, &myRect);
 
@@ -303,7 +303,7 @@ MfxReturn MicroFlakeX::MfxWords::SetRect(MfxRect* set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::SetSize(MfxSize* set)
+MfxReturn MicroFlakeX::MfxWords::SetSize(const MfxSize* set)
 {
 	myMutexLock.TryWaitLock(&myTextLayout, &myRect);
 
@@ -316,7 +316,7 @@ MfxReturn MicroFlakeX::MfxWords::SetSize(MfxSize* set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::SetText(MfxString set)
+MfxReturn MicroFlakeX::MfxWords::SetText(const MfxString set)
 {
 	myMutexLock.WaitLock(&myText);
 	myText = set;
@@ -327,7 +327,7 @@ MfxReturn MicroFlakeX::MfxWords::SetText(MfxString set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::SetTextSize(FLOAT set)
+MfxReturn MicroFlakeX::MfxWords::SetTextSize(const FLOAT set)
 {
 	myMutexLock.TryWaitLock(&myTextLayout, &myText);
 	myTextLayout->SetFontSize(set, DWRITE_TEXT_RANGE{ 0,myText.length() });
@@ -337,7 +337,7 @@ MfxReturn MicroFlakeX::MfxWords::SetTextSize(FLOAT set)
 }
 
 
-MfxReturn MicroFlakeX::MfxWords::SetFontName(MfxString set)
+MfxReturn MicroFlakeX::MfxWords::SetFontName(const MfxString set)
 {
 	myMutexLock.TryWaitLock(&myTextLayout, &myText);
 	myTextLayout->SetFontFamilyName(set.c_str(), DWRITE_TEXT_RANGE{ 0,myText.length() });
@@ -346,7 +346,7 @@ MfxReturn MicroFlakeX::MfxWords::SetFontName(MfxString set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxWords::SetTextColor(MfxColor* set)
+MfxReturn MicroFlakeX::MfxWords::SetTextColor(const MfxColor* set)
 {
 	myMutexLock.WaitLock(&myColor);
 	myColor.SetColor(set);

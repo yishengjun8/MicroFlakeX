@@ -102,7 +102,7 @@ MicroFlakeX::MfxPoint::~MfxPoint()
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxPoint::Clone(MfxBase** ret)
+MfxReturn MicroFlakeX::MfxPoint::Clone(MfxBase** ret)const
 {
 	*ret = new MfxPoint(*this);
 
@@ -268,7 +268,7 @@ bool MicroFlakeX::MfxPoint::operator==(const MfxPoint&& rhs)const
 	return tX == tRX && tY == tRY;
 }
 
-MicroFlakeX::MfxPoint::operator D2D1_POINT_2L()
+MicroFlakeX::MfxPoint::operator D2D1_POINT_2L()const
 {
 	D2D1_POINT_2L tD2D1_POINT_2L;
 
@@ -277,7 +277,7 @@ MicroFlakeX::MfxPoint::operator D2D1_POINT_2L()
 	return tD2D1_POINT_2L;
 }
 
-MicroFlakeX::MfxPoint::operator D2D1_POINT_2U()
+MicroFlakeX::MfxPoint::operator D2D1_POINT_2U()const
 {
 	D2D1_POINT_2U tD2D1_POINT_2U;
 
@@ -286,7 +286,7 @@ MicroFlakeX::MfxPoint::operator D2D1_POINT_2U()
 	return tD2D1_POINT_2U;
 }
 
-MicroFlakeX::MfxPoint::operator D2D1_POINT_2F()
+MicroFlakeX::MfxPoint::operator D2D1_POINT_2F()const
 {
 	D2D1_POINT_2F tD2D1_POINT_2F;
 
@@ -295,7 +295,7 @@ MicroFlakeX::MfxPoint::operator D2D1_POINT_2F()
 	return tD2D1_POINT_2F;
 }
 
-MicroFlakeX::MfxPoint::operator Gdiplus::Point()
+MicroFlakeX::MfxPoint::operator Gdiplus::Point()const
 {
 	Gdiplus::Point tPoint;
 
@@ -304,7 +304,7 @@ MicroFlakeX::MfxPoint::operator Gdiplus::Point()
 	return tPoint;
 }
 
-MicroFlakeX::MfxPoint::operator Gdiplus::PointF()
+MicroFlakeX::MfxPoint::operator Gdiplus::PointF()const
 {
 	Gdiplus::PointF tPointF;
 
@@ -443,7 +443,7 @@ MfxReturn MicroFlakeX::MfxPoint::GetD2D1Point2F(D2D1_POINT_2F* ret)const
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxPoint::SetPoint(MfxPoint* set)
+MfxReturn MicroFlakeX::MfxPoint::SetPoint(const MfxPoint* set)
 {
 	LONG tSX = 0, tSY = 0;
 
@@ -462,7 +462,7 @@ MfxReturn MicroFlakeX::MfxPoint::SetPoint(MfxPoint* set)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxPoint::SetPOINT(POINT* set)
+MfxReturn MicroFlakeX::MfxPoint::SetPOINT(const POINT* set)
 {
 	SetX(set->x);
 	SetY(set->y);
@@ -476,7 +476,7 @@ MfxReturn MicroFlakeX::MfxPoint::SetPOINT(POINT* set)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxPoint::SetGdipPoint(Gdiplus::Point* set)
+MfxReturn MicroFlakeX::MfxPoint::SetGdipPoint(const Gdiplus::Point* set)
 {
 	SetX(set->X);
 	SetY(set->Y);
@@ -484,7 +484,7 @@ MfxReturn MicroFlakeX::MfxPoint::SetGdipPoint(Gdiplus::Point* set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxPoint::SetGdipPointF(Gdiplus::PointF* set)
+MfxReturn MicroFlakeX::MfxPoint::SetGdipPointF(const Gdiplus::PointF* set)
 {
 	SetX(set->X);
 	SetY(set->Y);
@@ -500,7 +500,7 @@ MfxReturn MicroFlakeX::MfxPoint::SetGdipPointF(Gdiplus::PointF* set)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxPoint::SetD2D1Point2L(D2D1_POINT_2U* set)
+MfxReturn MicroFlakeX::MfxPoint::SetD2D1Point2L(const D2D1_POINT_2U* set)
 {
 	SetX(set->x);
 	SetY(set->y);
@@ -508,7 +508,7 @@ MfxReturn MicroFlakeX::MfxPoint::SetD2D1Point2L(D2D1_POINT_2U* set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxPoint::SetD2D1Point2U(D2D1_POINT_2U* set)
+MfxReturn MicroFlakeX::MfxPoint::SetD2D1Point2U(const D2D1_POINT_2U* set)
 {
 	SetX(set->x);
 	SetY(set->y);
@@ -516,7 +516,7 @@ MfxReturn MicroFlakeX::MfxPoint::SetD2D1Point2U(D2D1_POINT_2U* set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxPoint::SetD2D1Point2F(D2D1_POINT_2F* set)
+MfxReturn MicroFlakeX::MfxPoint::SetD2D1Point2F(const D2D1_POINT_2F* set)
 {
 	SetX(set->x);
 	SetY(set->y);
@@ -530,7 +530,7 @@ MfxReturn MicroFlakeX::MfxPoint::SetD2D1Point2F(D2D1_POINT_2F* set)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxPoint::SetX(LONG set)
+MfxReturn MicroFlakeX::MfxPoint::SetX(const LONG set)
 {
 	myMutexLock.WaitLock(&myX);
 
@@ -541,7 +541,7 @@ MfxReturn MicroFlakeX::MfxPoint::SetX(LONG set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxPoint::SetY(LONG set)
+MfxReturn MicroFlakeX::MfxPoint::SetY(const LONG set)
 {
 	myMutexLock.WaitLock(&myY);
 
@@ -578,7 +578,7 @@ MfxReturn MicroFlakeX::MfxPoint::GetY(LONG* ret)const
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxPoint::Offset(LONG setX, LONG setY)
+MfxReturn MicroFlakeX::MfxPoint::Offset(const LONG setX, const LONG setY)
 {
 	LONG tX = 0, tY = 0;
 

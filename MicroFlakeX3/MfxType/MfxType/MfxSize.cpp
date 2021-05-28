@@ -85,7 +85,7 @@ MicroFlakeX::MfxSize::MfxSize(const MfxSize* set)
 	SetHeight(tSH);
 }
 
-MicroFlakeX::MfxSize::MfxSize(LONG setWidth, LONG setHeight)
+MicroFlakeX::MfxSize::MfxSize(const LONG setWidth, const LONG setHeight)
 {
 	SetWidth(setWidth);
 	SetHeight(setHeight);
@@ -95,7 +95,7 @@ MicroFlakeX::MfxSize::~MfxSize()
 {
 }
 
-MfxReturn MicroFlakeX::MfxSize::Clone(MfxBase** ret)
+MfxReturn MicroFlakeX::MfxSize::Clone(MfxBase** ret)const
 {
 	*ret = new MfxSize(*this);
 	return Mfx_Return_Fine;
@@ -267,7 +267,7 @@ bool MicroFlakeX::MfxSize::operator==(const MfxSize&& rhs)const
 	return tW == tRW && tH == tRH;
 }
 
-MicroFlakeX::MfxSize::operator D2D1_SIZE_U()
+MicroFlakeX::MfxSize::operator D2D1_SIZE_U()const
 {
 	D2D1_SIZE_U tD2D1_SIZE_U;
 
@@ -276,7 +276,7 @@ MicroFlakeX::MfxSize::operator D2D1_SIZE_U()
 	return tD2D1_SIZE_U;
 }
 
-MicroFlakeX::MfxSize::operator D2D1_SIZE_F()
+MicroFlakeX::MfxSize::operator D2D1_SIZE_F()const
 {
 	D2D1_SIZE_F tD2D1_SIZE_F;
 
@@ -285,7 +285,7 @@ MicroFlakeX::MfxSize::operator D2D1_SIZE_F()
 	return tD2D1_SIZE_F;
 }
 
-MicroFlakeX::MfxSize::operator Gdiplus::Size()
+MicroFlakeX::MfxSize::operator Gdiplus::Size()const
 {
 	Gdiplus::Size tSize;
 
@@ -294,7 +294,7 @@ MicroFlakeX::MfxSize::operator Gdiplus::Size()
 	return tSize;
 }
 
-MicroFlakeX::MfxSize::operator Gdiplus::SizeF()
+MicroFlakeX::MfxSize::operator Gdiplus::SizeF()const
 {
 	Gdiplus::SizeF tSizeF;
 
@@ -309,7 +309,7 @@ MicroFlakeX::MfxSize::operator Gdiplus::SizeF()
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxSize::Reset(LONG setWidth, LONG setHeight)
+MfxReturn MicroFlakeX::MfxSize::Reset(const LONG setWidth, const LONG setHeight)
 {
 	SetWidth(setWidth);
 	SetHeight(setHeight);
@@ -416,7 +416,7 @@ MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeU(D2D1_SIZE_U* ret)const
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxSize::SetSize(MfxSize* set)
+MfxReturn MicroFlakeX::MfxSize::SetSize(const MfxSize* set)
 {
 	LONG tSW = 0, tSH = 0;
 
@@ -435,7 +435,7 @@ MfxReturn MicroFlakeX::MfxSize::SetSize(MfxSize* set)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxSize::SetSIZE(SIZE* set)
+MfxReturn MicroFlakeX::MfxSize::SetSIZE(const SIZE* set)
 {
 	SetWidth(set->cx);
 	SetHeight(set->cy);
@@ -449,7 +449,7 @@ MfxReturn MicroFlakeX::MfxSize::SetSIZE(SIZE* set)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxSize::SetGdipSize(Gdiplus::Size* set)
+MfxReturn MicroFlakeX::MfxSize::SetGdipSize(const Gdiplus::Size* set)
 {
 	SetWidth(set->Width);
 	SetHeight(set->Height);
@@ -457,7 +457,7 @@ MfxReturn MicroFlakeX::MfxSize::SetGdipSize(Gdiplus::Size* set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxSize::SetGdipSizeF(Gdiplus::SizeF* set)
+MfxReturn MicroFlakeX::MfxSize::SetGdipSizeF(const Gdiplus::SizeF* set)
 {
 	SetWidth(set->Width);
 	SetHeight(set->Height);
@@ -465,7 +465,7 @@ MfxReturn MicroFlakeX::MfxSize::SetGdipSizeF(Gdiplus::SizeF* set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxSize::SetD2D1SizeF(D2D1_SIZE_F* set)
+MfxReturn MicroFlakeX::MfxSize::SetD2D1SizeF(const D2D1_SIZE_F* set)
 {
 	SetWidth(set->width);
 	SetHeight(set->height);
@@ -473,7 +473,7 @@ MfxReturn MicroFlakeX::MfxSize::SetD2D1SizeF(D2D1_SIZE_F* set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxSize::SetD2D1SizeU(D2D1_SIZE_U* set)
+MfxReturn MicroFlakeX::MfxSize::SetD2D1SizeU(const D2D1_SIZE_U* set)
 {
 	SetWidth(set->width);
 	SetHeight(set->height);
@@ -507,7 +507,7 @@ MfxReturn MicroFlakeX::MfxSize::GetHeight(LONG* ret)const
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxSize::SetWidth(LONG set)
+MfxReturn MicroFlakeX::MfxSize::SetWidth(const LONG set)
 {
 	myMutexLock.WaitLock(&myWidth);
 
@@ -518,7 +518,7 @@ MfxReturn MicroFlakeX::MfxSize::SetWidth(LONG set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxSize::SetHeight(LONG set)
+MfxReturn MicroFlakeX::MfxSize::SetHeight(const LONG set)
 {
 	myMutexLock.WaitLock(&myHeight);
 
@@ -535,7 +535,7 @@ MfxReturn MicroFlakeX::MfxSize::SetHeight(LONG set)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxSize::Inflate(LONG setX, LONG setY)
+MfxReturn MicroFlakeX::MfxSize::Inflate(const LONG setX, const LONG setY)
 {
 	LONG tW = 0, tH = 0;
 

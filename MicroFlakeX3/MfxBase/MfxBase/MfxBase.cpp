@@ -80,7 +80,7 @@ MicroFlakeX::MfxBase::~MfxBase()
 	DeleteCriticalSection(&myCriticalSection);
 }
 
-MfxReturn MicroFlakeX::MfxBase::Clone(MfxBase** ret)
+MfxReturn MicroFlakeX::MfxBase::Clone(MfxBase** ret) const
 {
 	*ret = nullptr;
 

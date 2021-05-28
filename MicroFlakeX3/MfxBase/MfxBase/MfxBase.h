@@ -118,7 +118,35 @@ namespace MicroFlakeX
 
 	typedef std::uint64_t MfxHash;
 
+	template<class Interface>
+	inline void SafeRelease(Interface*& pInterfaceToRelease)
+	{
+		if (pInterfaceToRelease != nullptr)
+		{
+			pInterfaceToRelease->Release();
+			pInterfaceToRelease = nullptr;
+		}
+	}
 
+	template<class Pointer>
+	inline void SafeDelete(Pointer*& pPointerToDelete)
+	{
+		if (pPointerToDelete != nullptr)
+		{
+			delete pPointerToDelete;
+			pPointerToDelete = nullptr;
+		}
+	}
+
+	template<class Pointer>
+	inline void SafeDeleteL(Pointer*& pPointerToDelete)
+	{
+		if (pPointerToDelete != nullptr)
+		{
+			delete[] pPointerToDelete;
+			pPointerToDelete = nullptr;
+		}
+	}
 }
 
 namespace MicroFlakeX
@@ -203,25 +231,33 @@ namespace MicroFlakeX
 	{
 		friend class MfxLock;
 	protected:
+		MfxReturn* myReturn;
 		int* myUseCount;
 		std::vector<std::any>* myParam;
 		CRITICAL_SECTION* myCriticalSection;
 	public:
 		MfxParam()
 		{
+			myReturn = new MfxReturn;
 			myUseCount = new int;
 			myParam = new std::vector<std::any>;
 			myCriticalSection = new CRITICAL_SECTION;
+	
 			InitializeCriticalSection(myCriticalSection);
 			*myUseCount = 1;
+			*myReturn = Mfx_Return_Fine;
 		}
 		MfxParam(const MfxParam& rhs)
 		{
+			EnterCriticalSection(rhs.myCriticalSection);
+
 			myCriticalSection = rhs.myCriticalSection;
-			MfxLock myLock(this);
 			myUseCount = rhs.myUseCount;
 			myParam = rhs.myParam;
+			myReturn = rhs.myReturn;
 			(*myUseCount)++;
+
+			LeaveCriticalSection(myCriticalSection);
 		}
 		MfxParam& operator=(const MfxParam& rhs)
 		{
@@ -229,10 +265,11 @@ namespace MicroFlakeX
 			(*myUseCount)--;
 			if (*myUseCount <= 0)
 			{
-				delete myParam;
-				delete myUseCount;
+				SafeDelete(myParam);
+				SafeDelete(myReturn);
+				SafeDelete(myUseCount);
 				DeleteCriticalSection(myCriticalSection);
-				delete myCriticalSection;
+				SafeDelete(myCriticalSection);
 			}
 			else
 			{
@@ -244,6 +281,7 @@ namespace MicroFlakeX
 			EnterCriticalSection(myCriticalSection);
 			myUseCount = rhs.myUseCount;
 			myParam = rhs.myParam;
+			myReturn = rhs.myReturn;
 			(*myUseCount)++;
 			LeaveCriticalSection(myCriticalSection);
 
@@ -256,10 +294,11 @@ namespace MicroFlakeX
 			(*myUseCount)--;
 			if (*myUseCount <= 0)
 			{
-				delete myParam;
-				delete myUseCount;
+				SafeDelete(myParam);
+				SafeDelete(myReturn);
+				SafeDelete(myUseCount);
 				DeleteCriticalSection(myCriticalSection);
-				delete myCriticalSection;
+				SafeDelete(myCriticalSection);
 			}
 			else
 			{
@@ -269,16 +308,38 @@ namespace MicroFlakeX
 		template<class T>
 		void push_back(T&& val)
 		{
-			MfxLock myLock(this);
 			myParam->push_back(std::forward<T>(val));
 		}
 
-#define GetParam(param, type, place)  std::any_cast<type&>(param[place])
+#define GetParam(param, type, place)  (std::any_cast<type&>(param[place]))
+#define GetParam_Safe(param, type, place)  (param.isSafe(place) ? (std::any_cast<type&>(param[place])) : type())
 
 		std::any& operator [] (int i)
 		{
-			MfxLock myLock(this);
 			return (*myParam)[i];
+		}
+
+		bool  isSafe(int i)
+		{
+			return myParam->size() > i;
+		}
+
+		size_t  GetParamSize()
+		{
+			return myParam->size();
+		}
+
+
+		MfxReturn GetReturn()
+		{
+			return *myReturn;
+		}
+
+		MfxReturn SetReturn(MfxReturn set)
+		{
+			MfxReturn ret = *myReturn;
+			*myReturn = set;
+			return ret;
 		}
 	};
 }
@@ -295,12 +356,15 @@ namespace MicroFlakeX
 	* 参数三：传递给回调方法的MfxParam。
 	****************************************************************/
 	MFX_PORT MfxReturn MfxBeginNewThread(MfxBase* object, MfxString recvFunc, MfxParam mParam);
+
+
 	/***************************************************************
 	* 异步线程请勿传入局部变量指针。
 	* 参数一：回调对象指针
 	* 参数二：传递给回调方法的MfxParam。
 	****************************************************************/
 	MFX_PORT MfxReturn MfxBeginNewThread_Widely(pThreadFunc pThreadFunc, MfxParam mParam);
+
 
 	/***************************************************************
 	* 参数一：返回一个计时器ID
@@ -313,6 +377,7 @@ namespace MicroFlakeX
 	****************************************************************/
 	MFX_PORT MfxReturn MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, MfxParam mParam, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
 	
+
 	MFX_PORT MfxReturn MfxCloseTimer(PTP_TIMER& pTimer);
 }
 namespace __MicroFlakeX
@@ -332,36 +397,6 @@ namespace __MicroFlakeX
 ****************************************************************/
 namespace MicroFlakeX
 {
-	template<class Interface>
-	inline void SafeRelease(Interface*& pInterfaceToRelease)
-	{
-		if (pInterfaceToRelease != nullptr)
-		{
-			pInterfaceToRelease->Release();
-			pInterfaceToRelease = nullptr;
-		}
-	}
-
-	template<class Pointer>
-	inline void SafeDelete(Pointer*& pPointerToDelete)
-	{
-		if (pPointerToDelete != nullptr)
-		{
-			delete pPointerToDelete;
-			pPointerToDelete = nullptr;
-		}
-	}
-
-	template<class Pointer>
-	inline void SafeDeleteL(Pointer*& pPointerToDelete)
-	{
-		if (pPointerToDelete != nullptr)
-		{
-			delete[] pPointerToDelete;
-			pPointerToDelete = nullptr;
-		}
-	}
-
 	template<typename T>
 	struct MfxArgNum_;
 
@@ -779,7 +814,6 @@ namespace MicroFlakeX
 
 			return ret;
 		}
-
 	};
 }
 
@@ -794,8 +828,7 @@ namespace MicroFlakeX
 	public:
 		MfxBase();
 		virtual ~MfxBase();
-		virtual MfxReturn Clone(MfxBase** ret);
-
+		virtual MfxReturn Clone(MfxBase** ret)const;
 	public:
 		virtual MfxBase& operator=(MfxBase& rhs);
 

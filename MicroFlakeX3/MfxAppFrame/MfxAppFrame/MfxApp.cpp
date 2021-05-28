@@ -3,7 +3,6 @@
 
 using namespace MicroFlakeX;
 
-
 MfxApp* const MfxApp::g_pApp = new MfxApp;
 HINSTANCE const MfxApp::g_hInstance = GetModuleHandle(NULL);
 
@@ -57,7 +56,7 @@ WPARAM MicroFlakeX::MfxApp::Run()
 	return tMsg.wParam;
 }
 
-HWND MicroFlakeX::MfxApp::MfxCreateUIEx(MfxUI* ui, MfxRect rect,
+HWND MicroFlakeX::MfxApp::MfxCreateUIEx(pMfxUI ui, MfxRect rect,
 	DWORD dwExStyle, DWORD dwStyle, MfxString className, MfxString windowsName)
 {
 	while (myBindingUI);
@@ -80,7 +79,7 @@ ForwardMessageBegin:
 		{
 			MfxBeginNewThread(myBindingUI, MfxText("UIThread"), MfxParam());
 
-			myUIMap.insert(App_UI_Info_Map_Elem(hWnd, new App_UI_Info(hWnd, myBindingUI, 0)));
+			myUIMap.insert(App_UI_Info_Map_Elem(hWnd, App_UI_Info(hWnd, myBindingUI)));
 			myBindingUI->myWnd = hWnd;
 			myBindingUI = nullptr;
 
@@ -89,10 +88,14 @@ ForwardMessageBegin:
 	}
 	else
 	{
-		auto ret = t_Itera->second->myUI->ProcMessage(message,wParam, lParam);
+		MfxParam win32;
+		win32.push_back(message);
+		win32.push_back(wParam);
+		win32.push_back(lParam);
+
+		auto ret = t_Itera->second.myUI->Send_Message(win32);
 		if (message == WM_DESTROY)
 		{
-			delete t_Itera->second;
 			myUIMap.erase(t_Itera);
 		}
 		return ret;

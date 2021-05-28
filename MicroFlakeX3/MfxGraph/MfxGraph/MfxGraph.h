@@ -45,17 +45,17 @@ namespace MicroFlakeX
 		: public MfxBase
 	{
 	public:
-		static MfxReturn GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, HDC set, MfxRect rect);
-		static MfxReturn GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, HWND set, MfxSize size);
+		static MfxReturn GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, const  HDC set, const  MfxRect rect);
+		static MfxReturn GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, const HWND set, const  MfxSize size);
 
-		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, MfxString path, MfxSize size);
-		static MfxReturn IWICBitmapFromColor(IWICBitmap** ret, MfxColor color, MfxSize size);
-		static MfxReturn IWICBitmapFromGdipBitmap(IWICBitmap** ret, Gdiplus::Bitmap* set, MfxRect rect);
+		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, const MfxString path, const MfxSize size);
+		static MfxReturn IWICBitmapFromColor(IWICBitmap** ret, const  MfxColor color, const  MfxSize size);
+		static MfxReturn IWICBitmapFromGdipBitmap(IWICBitmap** ret, const Gdiplus::Bitmap* set, const  MfxRect rect);
 
-		static MfxReturn ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxString path, MfxSize size);
-		static MfxReturn ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, IWICBitmap* bitmap, MfxSize size);
+		static MfxReturn ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, const MfxString path, const  MfxSize size);
+		static MfxReturn ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, IWICBitmap* bitmap, const MfxSize size);
 
-		static MfxReturn GdipBitmapFromIWICBitmap(Gdiplus::Bitmap** ret, IWICBitmap* set, MfxRect rect);
+		static MfxReturn GdipBitmapFromIWICBitmap(Gdiplus::Bitmap** ret, IWICBitmap* set, const MfxRect rect);
 
 		static MfxReturn CopyIWICBitmap(IWICBitmap** ret, IWICBitmap* set);
 		static MfxReturn CopyTextFormat(IDWriteTextFormat** ret, IDWriteTextFormat* set);
@@ -73,14 +73,14 @@ namespace MicroFlakeX
 		MfxObject;
 
 	public:
-		virtual MfxReturn GetRect(MfxRect* ret);
-		virtual MfxReturn GetSize(MfxSize* ret);
-		virtual MfxReturn GetPoint(MfxPoint* ret);
+		virtual MfxReturn GetRect(MfxRect* ret)const;
+		virtual MfxReturn GetSize(MfxSize* ret)const;
+		virtual MfxReturn GetPoint(MfxPoint* ret)const;
 
 	public:
-		virtual MfxReturn SetRect(MfxRect* set);
-		virtual MfxReturn SetSize(MfxSize* set);
-		virtual MfxReturn SetPoint(MfxPoint* set);
+		virtual MfxReturn SetRect(const MfxRect* set);
+		virtual MfxReturn SetSize(const MfxSize* set);
+		virtual MfxReturn SetPoint(const MfxPoint* set);
 
 	public:
 		virtual MfxReturn IntersectWith(MfxGraph* set, MfxRect* ret);
@@ -99,36 +99,36 @@ namespace MicroFlakeX
 	public:
 		MfxCanvas();
 
-		MfxCanvas(MfxRect* set);
-		MfxCanvas(MfxRect& set) :MfxCanvas(&set) {};
-		MfxCanvas(MfxRect&& set) :MfxCanvas(&set) {};
+		MfxCanvas(const MfxRect* set);
+		MfxCanvas(const MfxRect& set) :MfxCanvas(&set) {};
+		MfxCanvas(const MfxRect&& set) :MfxCanvas(&set) {};
 
-		MfxCanvas(MfxSize* size);
-		MfxCanvas(MfxSize& size) :MfxCanvas(&size) {};
-		MfxCanvas(MfxSize&& size) :MfxCanvas(&size) {};
+		MfxCanvas(const MfxSize* size);
+		MfxCanvas(const MfxSize& size) :MfxCanvas(&size) {};
+		MfxCanvas(const MfxSize&& size) :MfxCanvas(&size) {};
 
-		MfxCanvas(HDC setDC, MfxRect* setRect);
-		MfxCanvas(HDC setDC, MfxRect& setRect) :MfxCanvas(setDC, &setRect) {};
-		MfxCanvas(HDC setDC, MfxRect&& setRect) :MfxCanvas(setDC, &setRect) {};
+		MfxCanvas(const HDC setDC, const MfxRect* setRect);
+		MfxCanvas(const HDC setDC, const MfxRect& setRect) :MfxCanvas(setDC, &setRect) {};
+		MfxCanvas(const HDC setDC, const MfxRect&& setRect) :MfxCanvas(setDC, &setRect) {};
 
-		MfxCanvas(HDC setDC, MfxSize* setSize) :MfxCanvas(setDC, MfxRect(setSize)) {};
-		MfxCanvas(HDC setDC, MfxSize& setSize) :MfxCanvas(setDC, &setSize) {};
-		MfxCanvas(HDC setDC, MfxSize&& setSize) :MfxCanvas(setDC, &setSize) {};
+		MfxCanvas(const HDC setDC, const MfxSize* setSize) :MfxCanvas(setDC, MfxRect(setSize)) {};
+		MfxCanvas(const HDC setDC, const  MfxSize& setSize) :MfxCanvas(setDC, &setSize) {};
+		MfxCanvas(const HDC setDC, const MfxSize&& setSize) :MfxCanvas(setDC, &setSize) {};
 
-		MfxCanvas(HWND setWnd, MfxRect* setRect);
-		MfxCanvas(HWND setWnd, MfxRect& setRect) :MfxCanvas(setWnd, &setRect) {};
-		MfxCanvas(HWND setWnd, MfxRect&& setRect) :MfxCanvas(setWnd, &setRect) {};
+		MfxCanvas(const HWND setWnd, const MfxRect* setRect);
+		MfxCanvas(const HWND setWnd, const MfxRect& setRect) :MfxCanvas(setWnd, &setRect) {};
+		MfxCanvas(const HWND setWnd, const  MfxRect&& setRect) :MfxCanvas(setWnd, &setRect) {};
 
-		MfxCanvas(HWND setWnd, MfxSize* setSize) :MfxCanvas(setWnd, MfxRect(setSize)) {};
-		MfxCanvas(HWND setWnd, MfxSize& setSize) :MfxCanvas(setWnd, &setSize) {};
-		MfxCanvas(HWND setWnd, MfxSize&& setSize) :MfxCanvas(setWnd, &setSize) {};
+		MfxCanvas(const HWND setWnd, const MfxSize* setSize) :MfxCanvas(setWnd, MfxRect(setSize)) {};
+		MfxCanvas(const HWND setWnd, const MfxSize& setSize) :MfxCanvas(setWnd, &setSize) {};
+		MfxCanvas(const HWND setWnd, const MfxSize&& setSize) :MfxCanvas(setWnd, &setSize) {};
 
 		virtual ~MfxCanvas();
 
 	public:
-		MfxReturn GetDC(HDC* ret);
-		MfxReturn GetWnd(HWND* ret);
-		MfxReturn GetBackColor(MfxColor* ret);
+		MfxReturn GetDC(HDC* ret)const;
+		MfxReturn GetWnd(HWND* ret)const;
+		MfxReturn GetBackColor(MfxColor* ret)const;
 
 	public:
 		MfxReturn SetDC(HDC set);
@@ -140,10 +140,10 @@ namespace MicroFlakeX
 		MfxReturn PaintFinish();
 
 	public:
-		MfxReturn PaintCheck(bool* ret);
+		MfxReturn PaintCheck(bool* ret)const;
 
 	public:
-		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret);
+		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret)const;
 
 	public:
 		MfxReturn SetRect(MfxRect* set);
@@ -171,34 +171,37 @@ namespace MicroFlakeX
 		MfxObject;
 	public:
 		MfxImage();
+		MfxImage(const MfxImage* set) : MfxImage(set->myIWICBitmap, set->myRect) {};
+		MfxImage(const MfxImage& set) :MfxImage(&set) {};
+		MfxImage(const MfxImage&& set) noexcept :MfxImage(&set) {};
 
-		MfxImage(MfxColor* color, MfxRect* set);
-		MfxImage(MfxColor* color, MfxRect& set) :MfxImage(color, &set) {};
-		MfxImage(MfxColor* color, MfxRect&& set) :MfxImage(color, &set) {};
+		MfxImage(const MfxColor* color, const  MfxRect* set);
+		MfxImage(const MfxColor* color, const  MfxRect& set) :MfxImage(color, &set) {};
+		MfxImage(const MfxColor* color, const  MfxRect&& set) :MfxImage(color, &set) {};
 
-		MfxImage(MfxColor* color, MfxSize* set) :MfxImage(color, MfxRect(set)) {};
-		MfxImage(MfxColor* color, MfxSize& set) :MfxImage(color, &set) {};
-		MfxImage(MfxColor* color, MfxSize&& set) :MfxImage(color, &set) {};
+		MfxImage(const MfxColor* color, const MfxSize* set) :MfxImage(color, MfxRect(set)) {};
+		MfxImage(const MfxColor* color, const  MfxSize& set) :MfxImage(color, &set) {};
+		MfxImage(const MfxColor* color, const  MfxSize&& set) :MfxImage(color, &set) {};
 
-		MfxImage(MfxString* path, MfxRect* set);
-		MfxImage(MfxString* path, MfxRect& set) :MfxImage(path, &set) {};
-		MfxImage(MfxString* path, MfxRect&& set) :MfxImage(path, &set) {};
+		MfxImage(const MfxString* path, const MfxRect* set);
+		MfxImage(const MfxString* path, const MfxRect& set) :MfxImage(path, &set) {};
+		MfxImage(const MfxString* path, const MfxRect&& set) :MfxImage(path, &set) {};
 
-		MfxImage(MfxString* path, MfxSize* set) :MfxImage(path, MfxRect(set)) {};
-		MfxImage(MfxString* path, MfxSize& set) :MfxImage(path, &set) {};
-		MfxImage(MfxString* path, MfxSize&& set) :MfxImage(path, &set) {};
+		MfxImage(const MfxString* path, const  MfxSize* set) :MfxImage(path, MfxRect(set)) {};
+		MfxImage(const MfxString* path, const  MfxSize& set) :MfxImage(path, &set) {};
+		MfxImage(const MfxString* path, const  MfxSize&& set) :MfxImage(path, &set) {};
 
-		MfxImage(IWICBitmap* tIWICBitmap, MfxRect* set);
-		MfxImage(IWICBitmap* tIWICBitmap, MfxRect& set) :MfxImage(tIWICBitmap, &set) {};
-		MfxImage(IWICBitmap* tIWICBitmap, MfxRect&& set) :MfxImage(tIWICBitmap, &set) {};
+		MfxImage(IWICBitmap* tIWICBitmap, const MfxRect* set);
+		MfxImage(IWICBitmap* tIWICBitmap, const  MfxRect& set) :MfxImage(tIWICBitmap, &set) {};
+		MfxImage(IWICBitmap* tIWICBitmap, const MfxRect&& set) :MfxImage(tIWICBitmap, &set) {};
 
-		MfxImage(IWICBitmap* tIWICBitmap, MfxSize* set) :MfxImage(tIWICBitmap, MfxRect(set)) {};
-		MfxImage(IWICBitmap* tIWICBitmap, MfxSize& set) :MfxImage(tIWICBitmap, &set) {};
-		MfxImage(IWICBitmap* tIWICBitmap, MfxSize&& set) :MfxImage(tIWICBitmap, &set) {};
+		MfxImage(IWICBitmap* tIWICBitmap, const MfxSize* set) :MfxImage(tIWICBitmap, MfxRect(set)) {};
+		MfxImage(IWICBitmap* tIWICBitmap, const MfxSize& set) :MfxImage(tIWICBitmap, &set) {};
+		MfxImage(IWICBitmap* tIWICBitmap, const MfxSize&& set) :MfxImage(tIWICBitmap, &set) {};
 
 		virtual ~MfxImage();
 
-		MfxReturn Clone(MfxImage** ret);
+		MfxReturn Clone(MfxImage** ret) const;
 
 	protected:
 		MfxCanvas* myCanvas;
@@ -211,19 +214,19 @@ namespace MicroFlakeX
 		MfxReturn Paint();
 
 		MfxReturn SetCanvas(MfxCanvas* set);
-		MfxReturn GetCanvas(MfxCanvas** ret);
+		MfxReturn GetCanvas(MfxCanvas** ret)const;
 
 		MfxReturn FromFile(MfxString* path, MfxSize* set);
 		MfxReturn FromColor(MfxColor* color, MfxSize* set);
 
 	public:
-		MfxReturn GetIWICBitmap(IWICBitmap** ret);
-		MfxReturn GetID2D1Bitmap(ID2D1Bitmap** ret);
+		MfxReturn GetIWICBitmap(IWICBitmap** ret)const;
+		MfxReturn GetID2D1Bitmap(ID2D1Bitmap** ret)const;
 
-		MfxReturn GetGdipBitmap(Gdiplus::Bitmap** ret);
+		MfxReturn GetGdipBitmap(Gdiplus::Bitmap** ret)const;
 
-		MfxReturn GetHICON(HICON* ret);
-		MfxReturn GetHBITMAP(MfxColor* set, HBITMAP* ret);
+		MfxReturn GetHICON(HICON* ret)const;
+		MfxReturn GetHBITMAP(MfxColor* set, HBITMAP* ret)const;
 
 	public:
 		MfxReturn SetIWICBitmap(IWICBitmap* set);
@@ -233,8 +236,8 @@ namespace MicroFlakeX
 
 		MfxReturn ResetID2D1Bitmap();
 
-		MfxReturn ResetIWICBitmapFromFile(MfxString* path, MfxSize* set);
-		MfxReturn ResetIWICBitmapFromColor(MfxColor* color, MfxSize *set);
+		MfxReturn ResetIWICBitmapFromFile(const MfxString* path, const MfxSize* set);
+		MfxReturn ResetIWICBitmapFromColor(const MfxColor* color, const MfxSize *set);
 	};
 }
 
@@ -249,34 +252,37 @@ namespace MicroFlakeX
 		MfxObject;
 	public:
 		MfxWords();
+		MfxWords(const MfxWords* set) :MfxWords(set->myText, set->myRect, set->myTextLayout->GetFontSize(), set->myTextLayout) {};
+		MfxWords(const MfxWords& set) :MfxWords(&set) {};
+		MfxWords(const MfxWords&& set) noexcept :MfxWords(&set) {};
 
-		MfxWords(MfxString str, MfxRect* set);
-		MfxWords(MfxString str, MfxRect& set) :MfxWords(str, &set) {};
-		MfxWords(MfxString str, MfxRect&& set) :MfxWords(str, &set) {};
+		MfxWords(const MfxString str, const MfxRect* set);
+		MfxWords(const MfxString str, const MfxRect& set) :MfxWords(str, &set) {};
+		MfxWords(const MfxString str, const MfxRect&& set) :MfxWords(str, &set) {};
 
-		MfxWords(MfxString str, MfxSize* set) :MfxWords(str, MfxRect(set)) {};
-		MfxWords(MfxString str, MfxSize& set) :MfxWords(str, &set) {};
-		MfxWords(MfxString str, MfxSize&& set) :MfxWords(str, &set) {};
+		MfxWords(const MfxString str, const MfxSize* set) :MfxWords(str, MfxRect(set)) {};
+		MfxWords(const MfxString str, const MfxSize& set) :MfxWords(str, &set) {};
+		MfxWords(const MfxString str, const MfxSize&& set) :MfxWords(str, &set) {};
 
-		MfxWords(MfxString str, MfxRect* set, FLOAT size);
-		MfxWords(MfxString str, MfxRect& set, FLOAT size) :MfxWords(str, &set, size) {};
-		MfxWords(MfxString str, MfxRect&& set, FLOAT size) :MfxWords(str, &set, size) {};
+		MfxWords(const MfxString str, const MfxRect* set, const FLOAT size);
+		MfxWords(const MfxString str, const MfxRect& set, const FLOAT size) :MfxWords(str, &set, size) {};
+		MfxWords(const MfxString str, const MfxRect&& set, const FLOAT size) :MfxWords(str, &set, size) {};
 
-		MfxWords(MfxString str, MfxSize* set, FLOAT size) :MfxWords(str, MfxRect(set)) {};
-		MfxWords(MfxString str, MfxSize& set, FLOAT size) :MfxWords(str, &set, size) {};
-		MfxWords(MfxString str, MfxSize&& set, FLOAT size) :MfxWords(str, &set, size) {};
+		MfxWords(const MfxString str, const MfxSize* set, const FLOAT size) :MfxWords(str, MfxRect(set)) {};
+		MfxWords(const MfxString str, const MfxSize& set, const FLOAT size) :MfxWords(str, &set, size) {};
+		MfxWords(const MfxString str, const MfxSize&& set, const FLOAT size) :MfxWords(str, &set, size) {};
 
-		MfxWords(MfxString str, MfxRect* set, FLOAT size, IDWriteTextFormat* format);
-		MfxWords(MfxString str, MfxRect& set, FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
-		MfxWords(MfxString str, MfxRect&& set, FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
+		MfxWords(const MfxString str, const MfxRect* set, const FLOAT size, IDWriteTextFormat* format);
+		MfxWords(const MfxString str, const MfxRect& set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
+		MfxWords(const MfxString str, const MfxRect&& set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
 
-		MfxWords(MfxString str, MfxSize* set, FLOAT size, IDWriteTextFormat* format) :MfxWords(str, MfxRect(set), size, format) {};
-		MfxWords(MfxString str, MfxSize& set, FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
-		MfxWords(MfxString str, MfxSize&& set, FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
+		MfxWords(const MfxString str, const MfxSize* set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, MfxRect(set), size, format) {};
+		MfxWords(const MfxString str, const MfxSize& set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
+		MfxWords(const MfxString str, const MfxSize&& set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
 
 		virtual ~MfxWords();
 
-		MfxReturn Clone(MfxWords** ret);
+		MfxReturn Clone(MfxWords** ret) const;
 
 		static IDWriteTextFormat* gDefTextFormat;
 
@@ -309,19 +315,19 @@ namespace MicroFlakeX
 		MfxReturn GetTextAlignmentY(TextAlignmentY* ret);
 
 	public:
-		MfxReturn SetRect(MfxRect* set);
-		MfxReturn SetSize(MfxSize* set);
+		MfxReturn SetRect(const MfxRect* set);
+		MfxReturn SetSize(const MfxSize* set);
 
-		MfxReturn SetText(MfxString set);
-		MfxReturn SetTextSize(FLOAT set);
+		MfxReturn SetText(const MfxString set);
+		MfxReturn SetTextSize(const FLOAT set);
 
-		MfxReturn SetFontName(MfxString set);
-		MfxReturn SetTextColor(MfxColor* set);
+		MfxReturn SetFontName(const MfxString set);
+		MfxReturn SetTextColor(const MfxColor* set);
 
 		MfxReturn SetTextFormat(IDWriteTextFormat* set);
 
-		MfxReturn SetTextAlignmentX(TextAlignmentX set);
-		MfxReturn SetTextAlignmentY(TextAlignmentY set);
+		MfxReturn SetTextAlignmentX(const TextAlignmentX set);
+		MfxReturn SetTextAlignmentY(const TextAlignmentY set);
 
 	public:
 		MfxReturn Update_Canvas();

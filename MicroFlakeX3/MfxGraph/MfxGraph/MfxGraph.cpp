@@ -168,12 +168,12 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromColor(IWICBitmap** ret, MfxColor 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromGdipBitmap(IWICBitmap** ret, Gdiplus::Bitmap* set, MfxRect rect)
+MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromGdipBitmap(IWICBitmap** ret, const Gdiplus::Bitmap* set, const MfxRect rect)
 {
 	return Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, MfxString path, MfxSize size)
+MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, const  MfxString path, const MfxSize size)
 {
 	IWICBitmapDecoder* pDecoder = NULL;
 	IWICBitmapFrameDecode* pSource = NULL;
@@ -236,7 +236,7 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1Ren
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, IWICBitmap* bitmap, MfxSize size)
+MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, IWICBitmap* bitmap, const MfxSize size)
 {
 	IWICBitmapScaler* pScaler = nullptr;
 	IWICFormatConverter* pConverter = nullptr;
@@ -439,21 +439,21 @@ MfxReturn MicroFlakeX::MfxGraph::CopyTextFormat(IDWriteTextFormat** ret, IDWrite
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxGraph::GetRect(MfxRect* set)
+MfxReturn MicroFlakeX::MfxGraph::GetRect(MfxRect* set)const
 {
 	myRect.GetRect(set);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::GetSize(MfxSize* set)
+MfxReturn MicroFlakeX::MfxGraph::GetSize(MfxSize* set)const
 {
 	myRect.GetSize(set);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::GetPoint(MfxPoint* set)
+MfxReturn MicroFlakeX::MfxGraph::GetPoint(MfxPoint* set)const
 {
 	myRect.GetPoint(set);
 
@@ -466,21 +466,21 @@ MfxReturn MicroFlakeX::MfxGraph::GetPoint(MfxPoint* set)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxGraph::SetRect(MfxRect* set)
+MfxReturn MicroFlakeX::MfxGraph::SetRect(const MfxRect* set)
 {
 	myRect.SetRect(set);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::SetSize(MfxSize* set)
+MfxReturn MicroFlakeX::MfxGraph::SetSize(const MfxSize* set)
 {
 	myRect.SetSize(set);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGraph::SetPoint(MfxPoint* set)
+MfxReturn MicroFlakeX::MfxGraph::SetPoint(const MfxPoint* set)
 {
 	myRect.SetPoint(set);
 

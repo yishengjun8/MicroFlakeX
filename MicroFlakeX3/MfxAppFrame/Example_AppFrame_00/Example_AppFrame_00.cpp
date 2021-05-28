@@ -14,6 +14,7 @@ int main()
     MfxFactory(MfxText("MfxUI"), (MfxBase**)&myUI_00);
     MfxFactory(MfxText("MfxFlake"), (MfxBase**)&myFlake_01);
 
+    /***/
     MfxSize uiSize(400, 400);
     myUI_00->SetSize(&uiSize);
     myUI_00->InsertFlake(myFlake_01);
@@ -88,6 +89,6 @@ int main()
     myGlide.MfxAddKeyframe(MfxText("group_4"), &tpColor, 3000);
 
     myGlide.Begin();
-
+    /**/
     return MFXAPP->Run();
 }

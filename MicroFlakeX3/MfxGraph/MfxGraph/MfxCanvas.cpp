@@ -34,7 +34,7 @@ MicroFlakeX::MfxCanvas::MfxCanvas()
 	myRect.Reset(0, 0, 300, 300);
 }
 
-MicroFlakeX::MfxCanvas::MfxCanvas(MfxRect* set)
+MicroFlakeX::MfxCanvas::MfxCanvas(const MfxRect* set)
 {
 	myDC = nullptr;
 	myWnd = nullptr;
@@ -44,7 +44,7 @@ MicroFlakeX::MfxCanvas::MfxCanvas(MfxRect* set)
 	myRect = set;
 }
 
-MicroFlakeX::MfxCanvas::MfxCanvas(MfxSize* size)
+MicroFlakeX::MfxCanvas::MfxCanvas(const MfxSize* size)
 {
 	myDC = nullptr;
 	myWnd = nullptr;
@@ -54,7 +54,7 @@ MicroFlakeX::MfxCanvas::MfxCanvas(MfxSize* size)
 	myRect = size;
 }
 
-MicroFlakeX::MfxCanvas::MfxCanvas(HDC setDC, MfxRect* setRect)
+MicroFlakeX::MfxCanvas::MfxCanvas(const HDC setDC, const MfxRect* setRect)
 {
 	myDC = nullptr;
 	myWnd = nullptr;
@@ -67,7 +67,7 @@ MicroFlakeX::MfxCanvas::MfxCanvas(HDC setDC, MfxRect* setRect)
 	GetID2D1DCRenderTarget(&myRenderTarget, myDC, myRect);
 }
 
-MicroFlakeX::MfxCanvas::MfxCanvas(HWND setWnd, MfxRect* setRect)
+MicroFlakeX::MfxCanvas::MfxCanvas(const HWND setWnd, const MfxRect* setRect)
 {
 	myDC = nullptr;
 	myWnd = nullptr;
@@ -92,21 +92,21 @@ MicroFlakeX::MfxCanvas::~MfxCanvas()
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxCanvas::GetDC(HDC* ret)
+MfxReturn MicroFlakeX::MfxCanvas::GetDC(HDC* ret)const
 {
 	*ret = myDC;
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::GetWnd(HWND* ret)
+MfxReturn MicroFlakeX::MfxCanvas::GetWnd(HWND* ret)const
 {
 	*ret = myWnd;
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::GetBackColor(MfxColor* ret)
+MfxReturn MicroFlakeX::MfxCanvas::GetBackColor(MfxColor* ret)const
 {
 	myBackColor.GetColor(ret);
 	
@@ -213,7 +213,7 @@ MfxReturn MicroFlakeX::MfxCanvas::PaintFinish()
 	return Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::PaintCheck(bool* ret)
+MfxReturn MicroFlakeX::MfxCanvas::PaintCheck(bool* ret)const
 {
 	*ret = myPaintFlag;
 
@@ -226,7 +226,7 @@ MfxReturn MicroFlakeX::MfxCanvas::PaintCheck(bool* ret)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxCanvas::GetRenderTarget(ID2D1RenderTarget** ret)
+MfxReturn MicroFlakeX::MfxCanvas::GetRenderTarget(ID2D1RenderTarget** ret)const
 {
 	*ret = myRenderTarget;
 

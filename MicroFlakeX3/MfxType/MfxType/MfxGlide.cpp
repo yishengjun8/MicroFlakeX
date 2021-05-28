@@ -27,7 +27,7 @@ MicroFlakeX::MfxGlide::MfxGlide()
 	myBindObject = nullptr;
 }
 
-MicroFlakeX::MfxGlide::MfxGlide(MfxGlide* set)
+MicroFlakeX::MfxGlide::MfxGlide(const MfxGlide* set)
 {
 	myFPS = set->myFPS;
 	myBegin = 0;
@@ -60,7 +60,7 @@ MicroFlakeX::MfxGlide::~MfxGlide()
 	}
 }
 
-MfxReturn MicroFlakeX::MfxGlide::Clone(MfxBase** ret)
+MfxReturn MicroFlakeX::MfxGlide::Clone(MfxBase** ret)const
 {
 	*ret = new MfxGlide(this);
 
@@ -73,7 +73,7 @@ MfxBase& MicroFlakeX::MfxGlide::operator=(MfxBase& rhs)
 	return *this;
 }
 
-MfxGlide& MicroFlakeX::MfxGlide::operator=(MfxGlide* rhs)
+MfxGlide& MicroFlakeX::MfxGlide::operator=(const MfxGlide* rhs)
 {
 	myFPS = rhs->myFPS;
 
@@ -88,7 +88,7 @@ MfxGlide& MicroFlakeX::MfxGlide::operator=(MfxGlide* rhs)
 	return *this;
 }
 
-MfxGlide& MicroFlakeX::MfxGlide::operator=(MfxGlide& rhs)
+MfxGlide& MicroFlakeX::MfxGlide::operator=(const MfxGlide& rhs)
 {
 	myFPS = rhs.myFPS;
 
@@ -103,7 +103,7 @@ MfxGlide& MicroFlakeX::MfxGlide::operator=(MfxGlide& rhs)
 	return *this;
 }
 
-MfxGlide& MicroFlakeX::MfxGlide::operator=(MfxGlide&& rhs)
+MfxGlide& MicroFlakeX::MfxGlide::operator=(const MfxGlide&& rhs)
 {
 	myFPS = rhs.myFPS;
 
@@ -123,17 +123,17 @@ bool MicroFlakeX::MfxGlide::operator==(MfxBase& rhs)
 	return false;
 }
 
-bool MicroFlakeX::MfxGlide::operator==(MfxGlide* rhs)
+bool MicroFlakeX::MfxGlide::operator==(const MfxGlide* rhs)const
 {
 	return false;
 }
 
-bool MicroFlakeX::MfxGlide::operator==(MfxGlide& rhs)
+bool MicroFlakeX::MfxGlide::operator==(const MfxGlide& rhs)const
 {
 	return false;
 }
 
-bool MicroFlakeX::MfxGlide::operator==(MfxGlide&& rhs)
+bool MicroFlakeX::MfxGlide::operator==(const MfxGlide&& rhs)const
 {
 	return false;
 }
@@ -152,7 +152,7 @@ MfxReturn MicroFlakeX::MfxGlide::GetBindObject(MfxBase** object)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGlide::SetFPS(UINT set)
+MfxReturn MicroFlakeX::MfxGlide::SetFPS(const UINT set)
 {
 	myFPS = set;
 
@@ -249,9 +249,9 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam myParam)
 	}
 
 	int i = myBindObjectType_Keyframe.size();
-	for (auto tKeyObjectType : myBindObjectType_Keyframe)
+	for (auto tKeyObjectType = myBindObjectType_Keyframe.begin(); tKeyObjectType != myBindObjectType_Keyframe.end(); tKeyObjectType++)
 	{
-		if (tKeyObjectType.second.size() == 0)
+		if (tKeyObjectType->second.size() == 0)
 		{
 			i--;
 		}

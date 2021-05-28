@@ -37,6 +37,9 @@
 *		或者在MfxObject_Init 和 MfxObject_EndInit之间添加
 ****************************************************************/
 MfxObject_Init(MfxBaseExample_00)
+{
+
+}
 MfxObject_EndInit(MfxBaseExample_00, MfxBase, \
 	1, SetData, \
 	1, SayHello, \
