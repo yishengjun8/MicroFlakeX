@@ -1227,44 +1227,44 @@ MfxReturn MicroFlakeX::MfxRect::GetPointPosition(MfxPoint* ret1, MfxPoint* ret2)
 ***************************************************************/
 MfxReturn MicroFlakeX::MfxRect::SetX(LONG set)
 {
-	myMutexLock.WaitLock(&myX);
+	myMemberLock.WaitLock(&myX);
 
 	myX = set;
 
-	myMutexLock.UnLock(&myX);
+	myMemberLock.UnLock(&myX);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetY(LONG set)
 {
-	myMutexLock.WaitLock(&myY);
+	myMemberLock.WaitLock(&myY);
 
 	myY = set;
 
-	myMutexLock.UnLock(&myY);
+	myMemberLock.UnLock(&myY);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetWidth(LONG set)
 {
-	myMutexLock.WaitLock(&myWidth);
+	myMemberLock.WaitLock(&myWidth);
 
 	myWidth = set;
 
-	myMutexLock.UnLock(&myWidth);
+	myMemberLock.UnLock(&myWidth);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxRect::SetHeight(LONG set)
 {
-	myMutexLock.WaitLock(&myHeight);
+	myMemberLock.WaitLock(&myHeight);
 
 	myHeight = set;
 
-	myMutexLock.UnLock(&myHeight);
+	myMemberLock.UnLock(&myHeight);
 
 	return Mfx_Return_Fine;
 }

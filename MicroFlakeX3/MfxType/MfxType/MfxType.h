@@ -301,8 +301,8 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-    class MfxSize
-        : public MfxBase
+    class MfxSize :
+        public MfxBase
     {
         MfxObject;
     public:
@@ -399,8 +399,8 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-    class MfxPoint
-        : public MfxBase
+    class MfxPoint :
+        public MfxBase
     {
         MfxObject;
     public:
@@ -494,8 +494,8 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-    class MfxColor
-        : public MfxBase
+    class MfxColor :
+        public MfxBase
     {
         MfxObject;
     public:
@@ -703,8 +703,8 @@ namespace MicroFlakeX
     *   对象必须可以Clone
     * 
     ***************************************************************/
-    class MfxGlide
-        : public MfxBase
+    class MfxGlide :
+        public MfxBase
     {
         MfxObject;
     public:

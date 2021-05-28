@@ -38,10 +38,19 @@
     <ClCompile Include="MfxBaseExample_00.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MfxThreadServer.cpp">
+    <ClCompile Include="MfxThread.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MfxSignal.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MfxParam.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MfxCriticalLock.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MfxMemberLock.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

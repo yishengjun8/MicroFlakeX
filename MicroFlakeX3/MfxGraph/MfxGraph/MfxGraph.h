@@ -41,8 +41,8 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-	class MfxGraph
-		: public MfxBase
+	class MfxGraph : 
+		public MfxBase
 	{
 	public:
 		static MfxReturn GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, const  HDC set, const  MfxRect rect);
@@ -92,8 +92,8 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-	class MfxCanvas
-		: public MfxGraph
+	class MfxCanvas :
+		public MfxGraph
 	{
 		MfxObject;
 	public:
@@ -165,8 +165,8 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	/* µÈ´ýÔö¼ÓÂÖÀªÅö×² */
-	class MfxImage
-		: public MfxGraph
+	class MfxImage : 
+		public MfxGraph
 	{
 		MfxObject;
 	public:
@@ -246,8 +246,8 @@ namespace MicroFlakeX
 	typedef enum DWRITE_TEXT_ALIGNMENT TextAlignmentX;
 	typedef enum DWRITE_PARAGRAPH_ALIGNMENT TextAlignmentY;
 
-	class MfxWords
-		: public MfxGraph
+	class MfxWords :
+		public MfxGraph
 	{
 		MfxObject;
 	public:

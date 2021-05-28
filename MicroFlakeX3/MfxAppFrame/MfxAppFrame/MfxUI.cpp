@@ -13,6 +13,12 @@ MfxObject_EndInit(MfxUI, MfxBase, \
     1, Send_Message, \
     1, Post_Message, \
     \
+    1, RemoveFlake, \
+    1, InsertFlake, \
+    \
+    1, RemoveTimer, \
+    1, InsertTimer, \
+    \
     2, RemoveUIMessage, \
     2, PushBackUIMessage, \
     2, PushFrontUIMessage, \
@@ -21,15 +27,9 @@ MfxObject_EndInit(MfxUI, MfxBase, \
     0, ClosePercentRect, \
     1, ChickPercentRect, \
     \
-    1, RemoveFlake, \
-    1, InsertFlake, \
-    \
     2, RemoveFlakeEvent, \
     2, PushBackFlakeEvent, \
     2, PushFrontFlakeEvent, \
-    \
-    1, RemoveTimer, \
-    1, InsertTimer, \
     \
     1, LockMutexFocus, \
     0, UnLockMutexFocus, \
@@ -39,27 +39,45 @@ MfxObject_EndInit(MfxUI, MfxBase, \
     1, SetKeyboardFocus, \
     1, GetKeyboardFocus, \
     \
+    1, UnionInvalidateRect, \
+    \
     1, GetWnd, \
     1, GetCanvas, \
+    \
+    1, GetWorldRect, \
+    1, GetLocalMousePos, \
+    2, TransWorldRectToLocalRect, \
+    2, TransWorldPointToLocalPoint, \
+    \
     \
     1, GetRect, \
     1, GetSize, \
     1, GetPoint, \
+    1, GetBackColor, \
+    1, GetMaskColor, \
     1, GetBackImage, \
     1, GetMaskImage, \
-    \
-    1, GetGlobeAlpha, \
     \
     1, SetRect, \
     1, SetSize, \
     1, SetPoint, \
-    \
-    1, SetGlobeAlpha, \
-    \
     1, SetBackColor, \
     1, SetMaskColor, \
     1, SetBackImage, \
-    1, SetMaskImage);
+    1, SetMaskImage, \
+    \
+    1, GetGlobeAlpha, \
+    1, GetGlobeAlphaMode, \
+    1, SetGlobeAlpha, \
+    1, SetGlobeAlphaMode, \
+    \
+    0, SetUI_Max, \
+    0, SetUI_Min, \
+    0, SetUI_Show, \
+    0, SetUI_Hide, \
+    0, SetUI_Normal \
+
+);
 
 
 /********************************************************************************
@@ -107,7 +125,7 @@ void MicroFlakeX::MfxUI::MfxRegMessages()
     UI_ADDRECV_UIMSG(UI_MSG_RemoveTimer, MfxUI, __OnRemoveTimer);
     UI_ADDRECV_UIMSG(UI_MSG_InsertTimer, MfxUI, __OnInsertTimer);
 
-    UI_ADDRECV_UIMSG(UI_MSG_FlakeEvent, MfxUI, __OnFlakeEvent);
+    UI_ADDRECV_UIMSG(MSG_FlakeEvent, MfxUI, __OnFlakeEvent);
 
     UI_ADDRECV_UIMSG(UI_MSG_RemoveFlakeEvent, MfxUI, __OnRemoveFlakeEvent);
     UI_ADDRECV_UIMSG(UI_MSG_PushBackFlakeEvent, MfxUI, __OnPushBackFlakeEvent);
@@ -212,7 +230,7 @@ MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxParam param)
     MfxReturn tRet = Mfx_Return_Fail;
     ProcFlakesMessage(param);
 
-    myMutexLock.WaitLock(&myMessageMap);
+    myMemberLock.WaitLock(&myMessageMap);
 
     auto t_Iter = myMessageMap.find(GetParam(param, MfxMessage, 0));
     if (t_Iter != myMessageMap.end())
@@ -234,7 +252,7 @@ MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxParam param)
         tRet = DefWindowProc(myWnd, message, wParam, lParam);
     }
 
-    myMutexLock.UnLock(&myMessageMap);
+    myMemberLock.UnLock(&myMessageMap);
 
     return tRet;
 }
@@ -274,7 +292,7 @@ MfxReturn MicroFlakeX::MfxUI::Send_Message(MfxParam param)
 
 MfxReturn MicroFlakeX::MfxUI::Post_Message(MfxParam param)
 {
-    return ProcMessage(param);
+    return MfxBeginNewThread(this, MfxText("ProcMessage"), param);
 }
 
 
@@ -332,7 +350,7 @@ MfxReturn MicroFlakeX::MfxUI::RemoveUIMessage(MfxMessage message, MfxString recv
 {
     MfxReturn tRet = Mfx_Return_Fail;
 
-    myMutexLock.WaitLock(&myMessageMap);
+    myMemberLock.WaitLock(&myMessageMap);
 
     auto t_Iter = myMessageMap.find(message);
     if (t_Iter != myMessageMap.end())
@@ -348,14 +366,14 @@ MfxReturn MicroFlakeX::MfxUI::RemoveUIMessage(MfxMessage message, MfxString recv
         }
     }
 
-    myMutexLock.UnLock(&myMessageMap);
+    myMemberLock.UnLock(&myMessageMap);
 
     return tRet;
 }
 
 MfxReturn MicroFlakeX::MfxUI::PushBackUIMessage(MfxMessage message, UI_UIRecvFunc_Info recvInfo)
 {
-    myMutexLock.WaitLock(&myMessageMap);
+    myMemberLock.WaitLock(&myMessageMap);
 
     Begin:
     auto t_Iter = myMessageMap.find(message);
@@ -369,14 +387,14 @@ MfxReturn MicroFlakeX::MfxUI::PushBackUIMessage(MfxMessage message, UI_UIRecvFun
         t_Iter->second.push_back(recvInfo);
     }
 
-    myMutexLock.UnLock(&myMessageMap);
+    myMemberLock.UnLock(&myMessageMap);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::PushFrontUIMessage(MfxMessage message, UI_UIRecvFunc_Info recvInfo)
 {
-    myMutexLock.WaitLock(&myMessageMap);
+    myMemberLock.WaitLock(&myMessageMap);
 
     Begin:
     auto t_Iter = myMessageMap.find(message);
@@ -390,7 +408,7 @@ MfxReturn MicroFlakeX::MfxUI::PushFrontUIMessage(MfxMessage message, UI_UIRecvFu
         t_Iter->second.push_front(recvInfo);
     }
 
-    myMutexLock.UnLock(&myMessageMap);
+    myMemberLock.UnLock(&myMessageMap);
 
     return Mfx_Return_Fine;
 }
@@ -399,7 +417,7 @@ MfxReturn MicroFlakeX::MfxUI::PushFrontUIMessage(MfxMessage message, UI_UIRecvFu
 /********************************************************************************
 * 
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxUI::RemoveFlakeEvent(UI_FlakeEvent_Info flakeEvent, MfxString recvFuncName)
+MfxReturn MicroFlakeX::MfxUI::RemoveFlakeEvent(FlakeEvent_Info flakeEvent, MfxString recvFuncName)
 {
     MfxParam msgParam;
     msgParam.push_back(UI_MSG_RemoveFlakeEvent);
@@ -408,7 +426,7 @@ MfxReturn MicroFlakeX::MfxUI::RemoveFlakeEvent(UI_FlakeEvent_Info flakeEvent, Mf
     return Send_Message(msgParam);
 }
 
-MfxReturn MicroFlakeX::MfxUI::PushBackFlakeEvent(UI_FlakeEvent_Info flakeEvent, UI_UIRecvFunc_Info recvInfo)
+MfxReturn MicroFlakeX::MfxUI::PushBackFlakeEvent(FlakeEvent_Info flakeEvent, UI_UIRecvFunc_Info recvInfo)
 {
     MfxParam msgParam;
     msgParam.push_back(UI_MSG_PushBackFlakeEvent);
@@ -417,7 +435,7 @@ MfxReturn MicroFlakeX::MfxUI::PushBackFlakeEvent(UI_FlakeEvent_Info flakeEvent, 
     return Send_Message(msgParam);
 }
 
-MfxReturn MicroFlakeX::MfxUI::PushFrontFlakeEvent(UI_FlakeEvent_Info flakeEvent, UI_UIRecvFunc_Info recvInfo)
+MfxReturn MicroFlakeX::MfxUI::PushFrontFlakeEvent(FlakeEvent_Info flakeEvent, UI_UIRecvFunc_Info recvInfo)
 {
     MfxParam msgParam;
     msgParam.push_back(UI_MSG_PushFrontFlakeEvent);
@@ -462,7 +480,7 @@ MfxReturn MicroFlakeX::MfxUI::LockMutexFocus(pMfxFlake set)
 {
     auto tRet = Mfx_Return_Fail;
 
-    myMutexLock.TryWaitLock(&myMutexFocusLockFlag, &myMutexFocus);
+    myMemberLock.TryWaitLock(&myMutexFocusLockFlag, &myMutexFocus);
 
     if (myMutexFocusLockFlag)
     {
@@ -475,18 +493,18 @@ MfxReturn MicroFlakeX::MfxUI::LockMutexFocus(pMfxFlake set)
         tRet = Mfx_Return_Fine;
     }
 
-    myMutexLock.UnLock(&myMutexFocusLockFlag, &myMutexFocus);
+    myMemberLock.UnLock(&myMutexFocusLockFlag, &myMutexFocus);
 
     return tRet;
 }
 
 MfxReturn MicroFlakeX::MfxUI::UnLockMutexFocus()
 {
-    myMutexLock.WaitLock(&myMutexFocusLockFlag);
+    myMemberLock.WaitLock(&myMutexFocusLockFlag);
 
     myMutexFocusLockFlag = false;
 
-    myMutexLock.UnLock(&myMutexFocusLockFlag);
+    myMemberLock.UnLock(&myMutexFocusLockFlag);
 
     return Mfx_Return_Fine;
 }
@@ -499,7 +517,7 @@ MfxReturn MicroFlakeX::MfxUI::SetMutexFocus(pMfxFlake set)
 {
     auto tRet = Mfx_Return_Fail;
 
-    myMutexLock.TryWaitLock(&myMutexFocusLockFlag, &myMutexFocus);
+    myMemberLock.TryWaitLock(&myMutexFocusLockFlag, &myMutexFocus);
 
     if (!myMutexFocus && !myMutexFocusLockFlag)
     {
@@ -511,18 +529,18 @@ MfxReturn MicroFlakeX::MfxUI::SetMutexFocus(pMfxFlake set)
         tRet = Mfx_Return_Fail;
     }
 
-    myMutexLock.UnLock(&myMutexFocusLockFlag, &myMutexFocus);
+    myMemberLock.UnLock(&myMutexFocusLockFlag, &myMutexFocus);
 
     return tRet;
 }
 
 MfxReturn MicroFlakeX::MfxUI::GetMutexFocus(pMfxFlake* ret)
 {
-    myMutexLock.WaitLock(&myMutexFocus);
+    myMemberLock.WaitLock(&myMutexFocus);
 
     *ret = myMutexFocus;
 
-    myMutexLock.UnLock(&myMutexFocus);
+    myMemberLock.UnLock(&myMutexFocus);
 
     return Mfx_Return_Fine;
 }
@@ -534,7 +552,7 @@ MfxReturn MicroFlakeX::MfxUI::SetKeyboardFocus(pMfxFlake set)
 {
     auto tRet = Mfx_Return_Fail;
 
-    myMutexLock.TryWaitLock(&myMutexFocusLockFlag, &myKeyboardFocus);
+    myMemberLock.TryWaitLock(&myMutexFocusLockFlag, &myKeyboardFocus);
 
     if (!myMutexFocusLockFlag)
     {
@@ -546,18 +564,18 @@ MfxReturn MicroFlakeX::MfxUI::SetKeyboardFocus(pMfxFlake set)
         tRet = Mfx_Return_Fail;
     }
 
-    myMutexLock.UnLock(&myMutexFocusLockFlag, &myKeyboardFocus);
+    myMemberLock.UnLock(&myMutexFocusLockFlag, &myKeyboardFocus);
 
     return tRet;
 }
 
 MfxReturn MicroFlakeX::MfxUI::GetKeyboardFocus(pMfxFlake* ret)
 {
-    myMutexLock.WaitLock(&myKeyboardFocus);
+    myMemberLock.WaitLock(&myKeyboardFocus);
 
     *ret = myKeyboardFocus;
 
-    myMutexLock.UnLock(&myKeyboardFocus);
+    myMemberLock.UnLock(&myKeyboardFocus);
 
     return Mfx_Return_Fine;
 }
@@ -568,11 +586,11 @@ MfxReturn MicroFlakeX::MfxUI::UnionInvalidateRect(MfxRect* set)
     set->GetRECT(&tRECT);
     InvalidateRect(myWnd, &tRECT, TRUE);
 
-    myMutexLock.WaitLock(&myInvalidateRect);
+    myMemberLock.WaitLock(&myInvalidateRect);
 
     myInvalidateRect.Union(set, &myInvalidateRect);
 
-    myMutexLock.UnLock(&myInvalidateRect);
+    myMemberLock.UnLock(&myInvalidateRect);
 
     return Mfx_Return_Fine;
 }
@@ -652,77 +670,77 @@ MfxReturn MicroFlakeX::MfxUI::TransWorldPointToLocalPoint(MfxPoint* world, MfxPo
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::GetRect(MfxRect* ret)
 {
-    myMutexLock.WaitLock(&myRect);
+    myMemberLock.WaitLock(&myRect);
 
     myRect.GetRect(ret);
 
-    myMutexLock.UnLock(&myRect);
+    myMemberLock.UnLock(&myRect);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::GetSize(MfxSize* ret)
 {
-    myMutexLock.WaitLock(&myRect);
+    myMemberLock.WaitLock(&myRect);
 
     myRect.GetSize(ret);
 
-    myMutexLock.UnLock(&myRect);
+    myMemberLock.UnLock(&myRect);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::GetPoint(MfxPoint* ret)
 {
-    myMutexLock.WaitLock(&myRect);
+    myMemberLock.WaitLock(&myRect);
 
     myRect.GetPoint(ret);
 
-    myMutexLock.UnLock(&myRect);
+    myMemberLock.UnLock(&myRect);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::GetBackColor(MfxColor* ret)
 {
-    myMutexLock.WaitLock(&myBackColor);
+    myMemberLock.WaitLock(&myBackColor);
 
     myBackColor.GetColor(ret);
 
-    myMutexLock.UnLock(&myBackColor);
+    myMemberLock.UnLock(&myBackColor);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::GetMaskColor(MfxColor* ret)
 {
-    myMutexLock.WaitLock(&myMaskColor);
+    myMemberLock.WaitLock(&myMaskColor);
 
     myMaskColor.GetColor(ret);
 
-    myMutexLock.UnLock(&myMaskColor);
+    myMemberLock.UnLock(&myMaskColor);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::GetBackImage(MfxImage** ret)
 {
-    myMutexLock.WaitLock(&myBackImage);
+    myMemberLock.WaitLock(&myBackImage);
 
     auto tRet = myBackImage ? myBackImage->Clone(ret) : Mfx_Return_Fail;
 
-    myMutexLock.UnLock(&myBackImage);
+    myMemberLock.UnLock(&myBackImage);
 
     return tRet;
 }
 
 MfxReturn MicroFlakeX::MfxUI::GetMaskImage(MfxImage** ret)
 {
-    myMutexLock.WaitLock(&myMaskImage);
+    myMemberLock.WaitLock(&myMaskImage);
 
     auto tRet = myMaskImage ? myMaskImage->Clone(ret) : Mfx_Return_Fail;
 
-    myMutexLock.UnLock(&myMaskImage);
+    myMemberLock.UnLock(&myMaskImage);
 
     return tRet;
 }
@@ -754,7 +772,7 @@ MfxReturn MicroFlakeX::MfxUI::SetBackColor(MfxColor* set)
     MfxParam msgParam;
     msgParam.push_back(UI_MSG_SetBackColor);
     msgParam.push_back(MfxColor(set));
-    return Post_Message(msgParam);
+    return Send_Message(msgParam);
 }
 
 MfxReturn MicroFlakeX::MfxUI::SetMaskColor(MfxColor* set)
@@ -793,29 +811,25 @@ MfxReturn MicroFlakeX::MfxUI::SetSmallIcon(MfxImage* set)
 
 MfxReturn MicroFlakeX::MfxUI::GetGlobeAlpha(MfxColor* set)
 {
-    myMutexLock.WaitLock(&myGlobeAlpha);
-
+    myMemberLock.WaitLock(&myGlobeAlpha);
     *set = myGlobeAlpha;
-
-    myMutexLock.UnLock(&myGlobeAlpha);
+    myMemberLock.UnLock(&myGlobeAlpha);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::GetGlobeAlphaMode(UINT set)
 {
-    myMutexLock.WaitLock(&myGlobeAlphaMode);
-
+    myMemberLock.WaitLock(&myGlobeAlphaMode);
     set = myGlobeAlphaMode;
-
-    myMutexLock.UnLock(&myGlobeAlphaMode);
+    myMemberLock.UnLock(&myGlobeAlphaMode);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::SetGlobeAlpha(MfxColor* set)
 {
-    myMutexLock.WaitLock(&myGlobeAlpha);
+    myMemberLock.WaitLock(&myGlobeAlpha);
 
     myGlobeAlpha = set;
     LONG tA = 0;
@@ -823,16 +837,16 @@ MfxReturn MicroFlakeX::MfxUI::SetGlobeAlpha(MfxColor* set)
 
     SetLayeredWindowAttributes(myWnd, myGlobeAlpha, tA, myGlobeAlphaMode);
 
-    myMutexLock.UnLock(&myGlobeAlpha);
+    myMemberLock.UnLock(&myGlobeAlpha);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::SetGlobeAlphaMode(UINT set)
 {
-    myMutexLock.WaitLock(&myGlobeAlphaMode);
+    myMemberLock.WaitLock(&myGlobeAlphaMode);
     myGlobeAlphaMode = set;
-    myMutexLock.UnLock(&myGlobeAlphaMode);
+    myMemberLock.UnLock(&myGlobeAlphaMode);
 
     return Mfx_Return_Fine;
 }
@@ -898,30 +912,30 @@ MfxReturn MicroFlakeX::MfxUI::__OnTest01(MfxParam param)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::__OnCreate(MfxParam param)
 {
-    myMutexLock.WaitLock(&myRect);
+    myMemberLock.WaitLock(&myRect);
 
     GetWorldRect(&myRect);
     HRGN tRNG = CreateRectRgn(0, 0, myRect.myWidth, myRect.myHeight);
 
-    myMutexLock.UnLock(&myRect);
+    myMemberLock.UnLock(&myRect);
    
     MfxSize tSize(myRect.myWidth, myRect.myHeight);
     MfxRect tRect(0, 0, myRect.myWidth, myRect.myHeight);
 
-    myMutexLock.WaitLock(&myCanvas);
+    myMemberLock.WaitLock(&myCanvas);
 
     myCanvas.SetSize(&tSize);
     myCanvas.SetDC(GetWindowDC(myWnd));
 
-    myMutexLock.UnLock(&myCanvas);
+    myMemberLock.UnLock(&myCanvas);
 
 
-    myMutexLock.WaitLock(&myBackImage);
+    myMemberLock.WaitLock(&myBackImage);
 
     myBackImage = new MfxImage(&myBackColor, &tRect);
     myBackImage->SetCanvas(&myCanvas);
 
-    myMutexLock.UnLock(&myBackImage);
+    myMemberLock.UnLock(&myBackImage);
 
     SetWindowRgn(myWnd, tRNG, TRUE);
 
@@ -950,28 +964,28 @@ MfxReturn MicroFlakeX::MfxUI::__OnDestroy(MfxParam param)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::__OnSize(MfxParam param)
 {
-    myMutexLock.WaitLock(&myRect);
+    myMemberLock.WaitLock(&myRect);
 
     GetWorldRect(&myRect);
     MfxSize tSize;
     myRect.GetSize(&tSize);
     UnionInvalidateRect(&myRect);
 
-    myMutexLock.UnLock(&myRect);
+    myMemberLock.UnLock(&myRect);
 
 
-    myMutexLock.WaitLock(&myCanvas);
+    myMemberLock.WaitLock(&myCanvas);
     myCanvas.SetSize(&tSize);
-    myMutexLock.UnLock(&myCanvas);
+    myMemberLock.UnLock(&myCanvas);
 
 
-    myMutexLock.WaitLock(&myBackImage);
+    myMemberLock.WaitLock(&myBackImage);
     myBackImage ? myBackImage->SetSize(&tSize) : 0;
-    myMutexLock.UnLock(&myBackImage);
+    myMemberLock.UnLock(&myBackImage);
 
-    myMutexLock.WaitLock(&myMaskImage);
+    myMemberLock.WaitLock(&myMaskImage);
     myMaskImage ? myMaskImage->SetSize(&tSize) : 0;
-    myMutexLock.UnLock(&myMaskImage);
+    myMemberLock.UnLock(&myMaskImage);
 
     HRGN tRNG = CreateRectRgn(0, 0, tSize.myWidth, tSize.myHeight);
 
@@ -988,12 +1002,9 @@ MfxReturn MicroFlakeX::MfxUI::__OnSize(MfxParam param)
 
 MfxReturn MicroFlakeX::MfxUI::__OnMove(MfxParam param)
 {
-    myMutexLock.WaitLock(&myRect);
-
+    myMemberLock.WaitLock(&myRect);
     GetWorldRect(&myRect);
-    UnionInvalidateRect(&myRect);
-
-    myMutexLock.UnLock(&myRect);
+    myMemberLock.UnLock(&myRect);
 
     MfxMessage message = GetParam(param, MfxMessage, 0);
     WPARAM wParam = GetParam_Safe(param, WPARAM, 1);
@@ -1017,18 +1028,18 @@ MfxReturn MicroFlakeX::MfxUI::__OnPaint(MfxParam param)
 
     bool isEmpty = true;
 
-    myMutexLock.WaitLock(&myInvalidateRect);
+    myMemberLock.WaitLock(&myInvalidateRect);
     myInvalidateRect.IsEmpty(&isEmpty);
-    myMutexLock.UnLock(&myInvalidateRect);
+    myMemberLock.UnLock(&myInvalidateRect);
 
     if (!isEmpty)
     {
-        myMutexLock.TryWaitLock(&myCanvas, &myInvalidateRect);
+        myMemberLock.TryWaitLock(&myCanvas, &myInvalidateRect);
 
         myCanvas.PaintBegin(&myInvalidateRect);
         myInvalidateRect.Reset(0, 0, 0, 0);
 
-        myMutexLock.UnLock(&myCanvas, &myInvalidateRect);
+        myMemberLock.UnLock(&myCanvas, &myInvalidateRect);
 
         MfxParam msgParam1;
         msgParam1.push_back(UI_MSG_PaintBack);
@@ -1038,9 +1049,9 @@ MfxReturn MicroFlakeX::MfxUI::__OnPaint(MfxParam param)
         msgParam2.push_back(UI_MSG_PaintMask);
         ProcMessage(msgParam2);
 
-        myMutexLock.WaitLock(&myCanvas);
+        myMemberLock.WaitLock(&myCanvas);
         myCanvas.PaintFinish();
-        myMutexLock.UnLock(&myCanvas);
+        myMemberLock.UnLock(&myCanvas);
     }
 
     EndPaint(myWnd, &t_Paint);
@@ -1055,9 +1066,9 @@ MfxReturn MicroFlakeX::MfxUI::__OnEraseBackGrand(MfxParam param)
 
 MfxReturn MicroFlakeX::MfxUI::__OnPaintBackDC(MfxParam param)
 {
-    myMutexLock.WaitLock(&myBackImage);
+    myMemberLock.WaitLock(&myBackImage);
     myBackImage ? myBackImage->Paint() : 0;
-    myMutexLock.UnLock(&myBackImage);
+    myMemberLock.UnLock(&myBackImage);
 
     MfxParam msgParam;
     msgParam.push_back(FLAKE_MSG_PaintBack);
@@ -1072,9 +1083,9 @@ MfxReturn MicroFlakeX::MfxUI::__OnPaintMaskDC(MfxParam param)
     msgParam.push_back(FLAKE_MSG_PaintMask);
     RProcFlakesMessage(msgParam);
 
-    myMutexLock.WaitLock(&myMaskImage);
+    myMemberLock.WaitLock(&myMaskImage);
     myMaskImage ? myMaskImage->Paint() : 0;
-    myMutexLock.UnLock(&myMaskImage);
+    myMemberLock.UnLock(&myMaskImage);
 
     return Mfx_Return_Fine;
 }
@@ -1091,30 +1102,30 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeInsert(MfxParam param)
     pMfxFlake tpFlake = GetParam_Safe(param, pMfxFlake, 1);
     if (tpFlake)
     {
-        myMutexLock.WaitLock(&myFlakeSet);
+        myMemberLock.WaitLock(&myFlakeSet);
         bool tIns = myFlakeSet.insert(tpFlake).second;
-        myMutexLock.UnLock(&myFlakeSet);
+        myMemberLock.UnLock(&myFlakeSet);
 
         if(tIns)
         {
-            myMutexLock.WaitLock(&myFlakeDeque);
+            myMemberLock.WaitLock(&myFlakeDeque);
             myFlakeDeque.push_back(tpFlake);
-            myMutexLock.UnLock(&myFlakeDeque);
+            myMemberLock.UnLock(&myFlakeDeque);
 
-            myMutexLock.TryWaitLock(&myWnd, &myCanvas);
+            myMemberLock.TryWaitLock(&myWnd, &myCanvas);
 
             MfxParam msgParam;
             msgParam.push_back(FLAKE_MSG_SetPaper);
             msgParam.push_back(Paper_Infor(this, myWnd, &myCanvas));
             tpFlake->Send_Message(msgParam);
 
-            myMutexLock.UnLock(&myWnd, &myCanvas);
+            myMemberLock.UnLock(&myWnd, &myCanvas);
 
             PostMessage(myWnd, UI_MSG_FlakeFloorChange, NULL, NULL);
 
-            myMutexLock.WaitLock(&myRect);
+            myMemberLock.WaitLock(&myRect);
             UnionInvalidateRect(&myRect);
-            myMutexLock.UnLock(&myRect);
+            myMemberLock.UnLock(&myRect);
 
             return Mfx_Return_Fine;
         }
@@ -1128,13 +1139,13 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeRemove(MfxParam param)
     pMfxFlake tpFlake = GetParam_Safe(param, pMfxFlake, 1);
     if (tpFlake)
     {
-        myMutexLock.WaitLock(&myFlakeSet);
+        myMemberLock.WaitLock(&myFlakeSet);
         bool tFind = myFlakeSet.find(tpFlake) != myFlakeSet.end();
-        myMutexLock.UnLock(&myFlakeSet);
+        myMemberLock.UnLock(&myFlakeSet);
 
         if (tFind)
         {
-            myMutexLock.WaitLock(&myFlakeDeque);
+            myMemberLock.WaitLock(&myFlakeDeque);
             for (auto delIt = myFlakeDeque.begin(); delIt != myFlakeDeque.end(); delIt++)
             {
                 if (*delIt == (tpFlake))
@@ -1146,9 +1157,9 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeRemove(MfxParam param)
 
                     myFlakeDeque.erase(delIt);
 
-                    myMutexLock.WaitLock(&myFlakeSet);
+                    myMemberLock.WaitLock(&myFlakeSet);
                     myFlakeSet.erase(tpFlake);
-                    myMutexLock.UnLock(&myFlakeSet);
+                    myMemberLock.UnLock(&myFlakeSet);
 
                     PostMessage(myWnd, UI_MSG_FlakeFloorChange, NULL, NULL);
 
@@ -1157,7 +1168,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeRemove(MfxParam param)
                     break;
                 }
             }
-            myMutexLock.UnLock(&myFlakeDeque);
+            myMemberLock.UnLock(&myFlakeDeque);
         }
     }
 
@@ -1166,11 +1177,11 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeRemove(MfxParam param)
 
 MfxReturn MicroFlakeX::MfxUI::__OnFlakeFloorChange(MfxParam param)
 {
-    myMutexLock.WaitLock(&myFlakeDeque);
+    myMemberLock.WaitLock(&myFlakeDeque);
 
     std::sort(myFlakeDeque.begin(), myFlakeDeque.end(), pFloorCompare<MfxFlake>);
 
-    myMutexLock.UnLock(&myFlakeDeque);
+    myMemberLock.UnLock(&myFlakeDeque);
 
     return Mfx_Return_Fine;
 }
@@ -1185,7 +1196,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeFloorChange(MfxParam param)
 MfxReturn MicroFlakeX::MfxUI::__OnTimer(MfxParam param)
 {
     auto tRet = Mfx_Return_Fail;
-    myMutexLock.WaitLock(&myTimerMap);
+    myMemberLock.WaitLock(&myTimerMap);
 
     auto t_Iter = myTimerMap.find(GetParam_Safe(param, WPARAM, 1));
     if (t_Iter != myTimerMap.end())
@@ -1195,7 +1206,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnTimer(MfxParam param)
         tRet = (this->*t_Iter->second.recvFunc)(msgParam);
     }
 
-    myMutexLock.UnLock(&myTimerMap);
+    myMemberLock.UnLock(&myTimerMap);
 
     return tRet;
 }
@@ -1205,9 +1216,9 @@ MfxReturn MicroFlakeX::MfxUI::__OnInsertTimer(MfxParam param)
     auto tRet = Mfx_Return_Fail;
     UI_UITimer_Info tTimer = GetParam_Safe(param, UI_UITimer_Info, 1);
 
-    myMutexLock.WaitLock(&myTimerMap);
+    myMemberLock.WaitLock(&myTimerMap);
     bool tIns = myTimerMap.insert(UI_UITimer_Map_Elem(tTimer.myID, tTimer)).second;
-    myMutexLock.UnLock(&myTimerMap);
+    myMemberLock.UnLock(&myTimerMap);
 
     if (tIns)
     {
@@ -1223,7 +1234,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnRemoveTimer(MfxParam param)
     auto tRet = Mfx_Return_Fail;
     UI_UITimer_Info tTimer = GetParam_Safe(param, UI_UITimer_Info, 1);
 
-    myMutexLock.WaitLock(&myTimerMap);
+    myMemberLock.WaitLock(&myTimerMap);
 
     auto iter = myTimerMap.find(tTimer.myID);
     if (iter != myTimerMap.end())
@@ -1235,7 +1246,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnRemoveTimer(MfxParam param)
         tRet = Mfx_Return_Fine;
     }
 
-    myMutexLock.UnLock(&myTimerMap);
+    myMemberLock.UnLock(&myTimerMap);
 
     return tRet;
 }
@@ -1251,9 +1262,9 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeEvent(MfxParam param)
 {
     MfxReturn tRet = Mfx_Return_Fail;
 
-    myMutexLock.WaitLock(&myFlakeEventMap);
+    myMemberLock.WaitLock(&myFlakeEventMap);
 
-    UI_FlakeEvent_Info tInfo = GetParam_Safe(param, UI_FlakeEvent_Info, 1);
+    FlakeEvent_Info tInfo = GetParam_Safe(param, FlakeEvent_Info, 1);
 
     auto t_Iter = myFlakeEventMap.find(tInfo);
     if (t_Iter != myFlakeEventMap.end())
@@ -1267,7 +1278,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeEvent(MfxParam param)
         }
     }
 
-    myMutexLock.UnLock(&myFlakeEventMap);
+    myMemberLock.UnLock(&myFlakeEventMap);
 
     return tRet;
 }
@@ -1276,10 +1287,10 @@ MfxReturn MicroFlakeX::MfxUI::__OnRemoveFlakeEvent(MfxParam param)
 {
     MfxReturn tRet = Mfx_Return_Fail;
 
-    UI_FlakeEvent_Info tFlakeEvent = GetParam_Safe(param, UI_FlakeEvent_Info, 1);
+    FlakeEvent_Info tFlakeEvent = GetParam_Safe(param, FlakeEvent_Info, 1);
     MfxString tRecvFuncName = GetParam_Safe(param, MfxString, 2);
 
-    myMutexLock.WaitLock(&myFlakeEventMap);
+    myMemberLock.WaitLock(&myFlakeEventMap);
 
     auto t_Iter = myFlakeEventMap.find(tFlakeEvent);
     if (t_Iter != myFlakeEventMap.end())
@@ -1295,16 +1306,16 @@ MfxReturn MicroFlakeX::MfxUI::__OnRemoveFlakeEvent(MfxParam param)
         }
     }
 
-    myMutexLock.UnLock(&myFlakeEventMap);
+    myMemberLock.UnLock(&myFlakeEventMap);
 
     return tRet;
 }
 
 MfxReturn MicroFlakeX::MfxUI::__OnPushBackFlakeEvent(MfxParam param)
 {
-    myMutexLock.WaitLock(&myFlakeEventMap);
+    myMemberLock.WaitLock(&myFlakeEventMap);
 
-    UI_FlakeEvent_Info tFlakeEvent = GetParam_Safe(param, UI_FlakeEvent_Info, 1);
+    FlakeEvent_Info tFlakeEvent = GetParam_Safe(param, FlakeEvent_Info, 1);
     UI_UIRecvFunc_Info tRecvInfo = GetParam_Safe(param, UI_UIRecvFunc_Info, 2);
 
 Begin:
@@ -1319,16 +1330,16 @@ Begin:
         t_Iter->second.push_back(tRecvInfo);
     }
 
-    myMutexLock.UnLock(&myFlakeEventMap);
+    myMemberLock.UnLock(&myFlakeEventMap);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::__OnPushFrontFlakeEvent(MfxParam param)
 {
-    myMutexLock.WaitLock(&myFlakeEventMap);
+    myMemberLock.WaitLock(&myFlakeEventMap);
 
-    UI_FlakeEvent_Info tFlakeEvent = GetParam_Safe(param, UI_FlakeEvent_Info, 1);
+    FlakeEvent_Info tFlakeEvent = GetParam_Safe(param, FlakeEvent_Info, 1);
     UI_UIRecvFunc_Info tRecvInfo = GetParam_Safe(param, UI_UIRecvFunc_Info, 2);
 
 Begin:
@@ -1343,7 +1354,7 @@ Begin:
         t_Iter->second.push_front(tRecvInfo);
     }
 
-    myMutexLock.UnLock(&myFlakeEventMap);
+    myMemberLock.UnLock(&myFlakeEventMap);
 
     return Mfx_Return_Fine;
 }
@@ -1356,9 +1367,9 @@ Begin:
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::__OnOpenPercentRect(MfxParam param)
 {
-    myMutexLock.WaitLock(&myPercentRectFlag);
+    myMemberLock.WaitLock(&myPercentRectFlag);
     myPercentRectFlag = true;
-    myMutexLock.UnLock(&myPercentRectFlag);
+    myMemberLock.UnLock(&myPercentRectFlag);
 
     MfxParam msgParam;
     msgParam.push_back(FLAKE_MSG_OpenPercentRect);
@@ -1369,9 +1380,9 @@ MfxReturn MicroFlakeX::MfxUI::__OnOpenPercentRect(MfxParam param)
 
 MfxReturn MicroFlakeX::MfxUI::__OnClosePercentRect(MfxParam param)
 {
-    myMutexLock.WaitLock(&myPercentRectFlag);
+    myMemberLock.WaitLock(&myPercentRectFlag);
     myPercentRectFlag = false;
-    myMutexLock.UnLock(&myPercentRectFlag);
+    myMemberLock.UnLock(&myPercentRectFlag);
 
     return Mfx_Return_Fine;
 }
@@ -1385,11 +1396,11 @@ MfxReturn MicroFlakeX::MfxUI::__OnClosePercentRect(MfxParam param)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::__OnSetBackColor(MfxParam param)
 {
-    myMutexLock.WaitLock(&myRect);
+    myMemberLock.WaitLock(&myRect);
     MfxSize tSize(myRect);
-    myMutexLock.UnLock(&myRect);
+    myMemberLock.UnLock(&myRect);
 
-    myMutexLock.TryWaitLock(&myBackImage, &myBackColor, &myCanvas);
+    myMemberLock.TryWaitLock(&myBackImage, &myBackColor, &myCanvas);
     myBackColor = GetParam_Safe(param, MfxColor, 1);
     if (myBackImage)
     {
@@ -1401,18 +1412,18 @@ MfxReturn MicroFlakeX::MfxUI::__OnSetBackColor(MfxParam param)
         myBackImage->SetCanvas(&myCanvas);
     }
     SetGlobeAlpha(&myBackColor);
-    myMutexLock.UnLock(&myBackImage, &myBackColor, &myCanvas);
+    myMemberLock.UnLock(&myBackImage, &myBackColor, &myCanvas);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::__OnSetMaskColor(MfxParam param)
 {
-    myMutexLock.WaitLock(&myRect);
+    myMemberLock.WaitLock(&myRect);
     MfxSize tSize(myRect);
-    myMutexLock.UnLock(&myRect);
+    myMemberLock.UnLock(&myRect);
 
-    myMutexLock.TryWaitLock(&myMaskColor, &myMaskImage, &myCanvas);
+    myMemberLock.TryWaitLock(&myMaskColor, &myMaskImage, &myCanvas);
     myMaskColor = GetParam_Safe(param, MfxColor, 1);
     if (myMaskImage)
     {
@@ -1424,7 +1435,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnSetMaskColor(MfxParam param)
 
         myMaskImage->SetCanvas(&myCanvas);
     }
-    myMutexLock.UnLock(&myBackImage, &myBackColor, &myCanvas);
+    myMemberLock.UnLock(&myBackImage, &myBackColor, &myCanvas);
 
     return Mfx_Return_Fine;
 }
@@ -1438,7 +1449,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnSetMaskColor(MfxParam param)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::__OnSetBackImage(MfxParam param)
 {
-    myMutexLock.TryWaitLock(&myBackImage, &myRect, &myCanvas);
+    myMemberLock.TryWaitLock(&myBackImage, &myRect, &myCanvas);
 
     SafeDelete(myBackImage);
     (GetParam_Safe(param, MfxImage, 1)).Clone(&myBackImage);
@@ -1446,14 +1457,14 @@ MfxReturn MicroFlakeX::MfxUI::__OnSetBackImage(MfxParam param)
     myBackImage->SetRect(&tRect);
     myBackImage->SetCanvas(&myCanvas);
 
-    myMutexLock.UnLock(&myBackImage, &myRect, &myCanvas);
+    myMemberLock.UnLock(&myBackImage, &myRect, &myCanvas);
 
     return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxUI::__OnSetMaskImage(MfxParam param)
 {
-    myMutexLock.TryWaitLock(&myMaskImage, &myRect, &myCanvas);
+    myMemberLock.TryWaitLock(&myMaskImage, &myRect, &myCanvas);
 
     SafeDelete(myMaskImage);
     (GetParam_Safe(param, MfxImage, 1)).Clone(&myMaskImage);
@@ -1461,7 +1472,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnSetMaskImage(MfxParam param)
     myMaskImage->SetRect(&tRect);
     myMaskImage->SetCanvas(&myCanvas);
 
-    myMutexLock.UnLock(&myMaskImage, &myRect, &myCanvas);
+    myMemberLock.UnLock(&myMaskImage, &myRect, &myCanvas);
 
     return Mfx_Return_Fine;
 }
@@ -1562,4 +1573,3 @@ MfxReturn MicroFlakeX::MfxUI::__OnNCRButtonDouble(MfxParam param)
 {
     return myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCRBUTTONDBLCLK, GetParam_Safe(param, WPARAM, 1), GetParam_Safe(param, LPARAM, 2));
 }
-

@@ -263,12 +263,12 @@ MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromFile(const MfxString* path, 
 
 MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromColor(const MfxColor* color, const  MfxSize* set)
 {
-	myMutexLock.WaitLock(&myIWICBitmap);
+	myMemberLock.WaitLock(&myIWICBitmap);
 
 	SafeRelease(myIWICBitmap);
 	IWICBitmapFromColor(&myIWICBitmap, color, set);
 
-	myMutexLock.UnLock(&myIWICBitmap);
+	myMemberLock.UnLock(&myIWICBitmap);
 
 	ResetID2D1Bitmap();
 

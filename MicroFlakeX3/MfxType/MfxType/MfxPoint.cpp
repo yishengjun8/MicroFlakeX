@@ -532,22 +532,22 @@ MfxReturn MicroFlakeX::MfxPoint::SetD2D1Point2F(const D2D1_POINT_2F* set)
 ***************************************************************/
 MfxReturn MicroFlakeX::MfxPoint::SetX(const LONG set)
 {
-	myMutexLock.WaitLock(&myX);
+	myMemberLock.WaitLock(&myX);
 
 	myX = set;
 
-	myMutexLock.UnLock(&myX);
+	myMemberLock.UnLock(&myX);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxPoint::SetY(const LONG set)
 {
-	myMutexLock.WaitLock(&myY);
+	myMemberLock.WaitLock(&myY);
 
 	myY = set;
 
-	myMutexLock.UnLock(&myY);
+	myMemberLock.UnLock(&myY);
 
 	return Mfx_Return_Fine;
 }

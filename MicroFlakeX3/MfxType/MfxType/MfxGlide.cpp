@@ -45,8 +45,6 @@ MicroFlakeX::MfxGlide::MfxGlide(const MfxGlide* set)
 
 MicroFlakeX::MfxGlide::~MfxGlide()
 {
-	MfxCodeLock(this);
-
 	if (myPTP_TIMER)
 	{
 		MfxCloseTimer(myPTP_TIMER);
@@ -241,8 +239,6 @@ MfxReturn MicroFlakeX::MfxGlide::Clear()
 
 MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam myParam)
 {
-	MfxCodeLock(this);
-
 	if (myPTP_TIMER == 0)
 	{
 		return Mfx_Return_Fine;
@@ -324,8 +320,6 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam myParam)
 
 MfxReturn MicroFlakeX::MfxGlide::MfxAddKeyframe(MfxString groupName, MfxBase* set, LONGLONG delay)
 {
-	MfxCodeLock(this);
-
 	Begin:
 	auto tFind = myBindObjectType_Keyframe.find(groupName);
 	if (tFind != myBindObjectType_Keyframe.end())

@@ -509,22 +509,22 @@ MfxReturn MicroFlakeX::MfxSize::GetHeight(LONG* ret)const
 ***************************************************************/
 MfxReturn MicroFlakeX::MfxSize::SetWidth(const LONG set)
 {
-	myMutexLock.WaitLock(&myWidth);
+	myMemberLock.WaitLock(&myWidth);
 
 	myWidth = set;
 
-	myMutexLock.UnLock(&myWidth);
+	myMemberLock.UnLock(&myWidth);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxSize::SetHeight(const LONG set)
 {
-	myMutexLock.WaitLock(&myHeight);
+	myMemberLock.WaitLock(&myHeight);
 
 	myHeight = set;
 
-	myMutexLock.UnLock(&myHeight);
+	myMemberLock.UnLock(&myHeight);
 
 	return Mfx_Return_Fine;
 }
