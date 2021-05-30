@@ -16,8 +16,8 @@ MfxObject_EndInit(MfxUI, MfxBase, \
     1, RemoveFlake, \
     1, InsertFlake, \
     \
-    1, RemoveTimer, \
-    1, InsertTimer, \
+    1, RemoveWin32Timer, \
+    1, InsertWin32Timer, \
     \
     2, RemoveUIMessage, \
     2, PushBackUIMessage, \
@@ -122,8 +122,8 @@ void MicroFlakeX::MfxUI::MfxRegMessages()
     UI_ADDRECV_UIMSG(UI_MSG_FlakeRemove, MfxUI, __OnFlakeRemove);
     UI_ADDRECV_UIMSG(UI_MSG_FlakeFloorChange, MfxUI, __OnFlakeFloorChange);
 
-    UI_ADDRECV_UIMSG(UI_MSG_RemoveTimer, MfxUI, __OnRemoveTimer);
-    UI_ADDRECV_UIMSG(UI_MSG_InsertTimer, MfxUI, __OnInsertTimer);
+    UI_ADDRECV_UIMSG(UI_MSG_RemoveWin32Timer, MfxUI, __OnRemoveWin32Timer);
+    UI_ADDRECV_UIMSG(UI_MSG_InsertWin32Timer, MfxUI, __OnInsertWin32Timer);
 
     UI_ADDRECV_UIMSG(MSG_FlakeEvent, MfxUI, __OnFlakeEvent);
 
@@ -324,18 +324,18 @@ MfxReturn MicroFlakeX::MfxUI::InsertFlake(pMfxFlake set)
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxUI::RemoveTimer(ULONG setID)
+MfxReturn MicroFlakeX::MfxUI::RemoveWin32Timer(ULONG setID)
 {
     MfxParam msgParam;
-    msgParam.push_back(UI_MSG_RemoveTimer);
+    msgParam.push_back(UI_MSG_RemoveWin32Timer);
     msgParam.push_back(setID);
     return Send_Message(msgParam);
 }
 
-MfxReturn MicroFlakeX::MfxUI::InsertTimer(UI_UITimer_Info timer)
+MfxReturn MicroFlakeX::MfxUI::InsertWin32Timer(Win32_Timer_Info timer)
 {
     MfxParam msgParam;
-    msgParam.push_back(UI_MSG_InsertTimer);
+    msgParam.push_back(UI_MSG_InsertWin32Timer);
     msgParam.push_back(timer);
     return Send_Message(msgParam);
 }
@@ -1211,13 +1211,13 @@ MfxReturn MicroFlakeX::MfxUI::__OnTimer(MfxParam param)
     return tRet;
 }
 
-MfxReturn MicroFlakeX::MfxUI::__OnInsertTimer(MfxParam param)
+MfxReturn MicroFlakeX::MfxUI::__OnInsertWin32Timer(MfxParam param)
 {
     auto tRet = Mfx_Return_Fail;
-    UI_UITimer_Info tTimer = GetParam_Safe(param, UI_UITimer_Info, 1);
+    Win32_Timer_Info tTimer = GetParam_Safe(param, Win32_Timer_Info, 1);
 
     myMemberLock.WaitLock(&myTimerMap);
-    bool tIns = myTimerMap.insert(UI_UITimer_Map_Elem(tTimer.myID, tTimer)).second;
+    bool tIns = myTimerMap.insert(Win32_Timer_Info_Map_Elem(tTimer.myID, tTimer)).second;
     myMemberLock.UnLock(&myTimerMap);
 
     if (tIns)
@@ -1229,10 +1229,10 @@ MfxReturn MicroFlakeX::MfxUI::__OnInsertTimer(MfxParam param)
     return tRet;
 }
 
-MfxReturn MicroFlakeX::MfxUI::__OnRemoveTimer(MfxParam param)
+MfxReturn MicroFlakeX::MfxUI::__OnRemoveWin32Timer(MfxParam param)
 {
     auto tRet = Mfx_Return_Fail;
-    UI_UITimer_Info tTimer = GetParam_Safe(param, UI_UITimer_Info, 1);
+    Win32_Timer_Info tTimer = GetParam_Safe(param, Win32_Timer_Info, 1);
 
     myMemberLock.WaitLock(&myTimerMap);
 

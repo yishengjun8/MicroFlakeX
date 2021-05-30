@@ -143,18 +143,18 @@ namespace MicroFlakeX
 	typedef UI_FlakeEvent_Map::value_type UI_FlakeMsg_Map_Elem;
 
 	/**************************************************************
-	*	UI_UITimer_Info 标识了定时器ID以及其接收函数
+	*	Win32_Timer_Info 标识了定时器ID以及其接收函数
 	***************************************************************/
-	struct UI_UITimer_Info
+	struct Win32_Timer_Info
 	{
-		UI_UITimer_Info()
+		Win32_Timer_Info()
 		{
 			myID = 0;
 			delayTime = 0;
 			recvFunc = nullptr;
 		}
 
-		UI_UITimer_Info(ULONG id, ULONG delay, pUIRecvFunc pRecvFunc)
+		Win32_Timer_Info(ULONG id, ULONG delay, pUIRecvFunc pRecvFunc)
 		{
 			myID = id;
 			delayTime = delay;
@@ -166,8 +166,8 @@ namespace MicroFlakeX
 	};
 
 
-	typedef std::unordered_map<MfxMessage, UI_UITimer_Info> UI_UITimer_Map;
-	typedef UI_UITimer_Map::value_type UI_UITimer_Map_Elem;
+	typedef std::unordered_map<MfxMessage, Win32_Timer_Info> Win32_Timer_Info_Map;
+	typedef Win32_Timer_Info_Map::value_type Win32_Timer_Info_Map_Elem;
 
 
 	/**************************************************************
@@ -256,8 +256,8 @@ namespace MicroFlakeX
 	UI_MSG_(UI_MSG_PushBackFlakeEvent)
 	UI_MSG_(UI_MSG_PushFrontFlakeEvent)
 
-	UI_MSG_(UI_MSG_RemoveTimer)
-	UI_MSG_(UI_MSG_InsertTimer)
+	UI_MSG_(UI_MSG_RemoveWin32Timer)
+	UI_MSG_(UI_MSG_InsertWin32Timer)
 
 	UI_MSG_(UI_MSG_SetBackColor)
 	UI_MSG_(UI_MSG_SetMaskColor)
@@ -406,10 +406,10 @@ namespace MicroFlakeX
 		*
 		*********************************************************************************/
 	private:
-		UI_UITimer_Map myTimerMap;
+		Win32_Timer_Info_Map myTimerMap;
 	public:
-		MfxReturn RemoveTimer(ULONG setID);
-		MfxReturn InsertTimer(UI_UITimer_Info timer);
+		MfxReturn RemoveWin32Timer(ULONG setID);
+		MfxReturn InsertWin32Timer(Win32_Timer_Info timer);
 
 		/********************************************************************************
 		*
@@ -568,8 +568,8 @@ namespace MicroFlakeX
 
 		MfxReturn __OnTimer(MfxParam param);
 
-		MfxReturn __OnInsertTimer(MfxParam param);
-		MfxReturn __OnRemoveTimer(MfxParam param);
+		MfxReturn __OnInsertWin32Timer(MfxParam param);
+		MfxReturn __OnRemoveWin32Timer(MfxParam param);
 
 		MfxReturn __OnFlakeEvent(MfxParam param);
 
@@ -618,7 +618,7 @@ namespace MicroFlakeX
 /********************************************************************************
 * 为UI添加一个来自定时器的消息映射
 *********************************************************************************/
-#define UI_ADDRECV_TIMER(timerID, delay, recvFunc) InsertTimer(timerID, delay, (pUIRecvFunc)&recvFunc)
+#define UI_ADDRECV_TIMER(timerID, delay, recvFunc) InsertWin32Timer(timerID, delay, (pUIRecvFunc)&recvFunc)
 
 
 /********************************************************************************

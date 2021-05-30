@@ -1,29 +1,25 @@
 #pragma once
 
 /**************************************************************************************************
-*	UTF-8 - win - x86
-* 
-*   版本：1.01       作者：yishengjun8     
+*	> : UTF-8 - Windows - x86
+*   > : 1.00
+*	> : yishengjun8     
 *	
-* 
-*	MfxBase.h	提供了构造	MicroFlakeX	的基础类和基础支持
+*	MfxBase.h 提供了构造 MicroFlakeX 的基础类和基础支持
 *	
-*	强制 - 
-*	1、所有的	MicroFlakeX子类	必须继承于	MfxBase基类
+*	1、所有的 MicroFlakeX子类 必须继承于 MfxBase基类
 *	2、所有的 MfxBase 子类，都必须声明 MfxObject宏
 *	3、任何添加到 AutoFunc 的方法，不允许重载、不允许使用右值引用、不允许使用引用传递。
 * 
-*	建议 - 
 *	1、每次调用方法之后，都判断 MfxReturn，是否成功
 *	2、实现类的 'operator==' ，以方便判断两个对象是否相等
 * 
 * 
-*	关于	AutoFunc	的继承处理
+*	关于AutoFunc的继承处理
 *			如果子类实现了一个和父类同名的方法，并且都注册了 AutoFunc，
 *		那么，通过 AutoFunc 调用该方法的顺序为：子类，即父类被子类覆盖。
 *			如果继承方式为：基类->类0->类1->类2，并且类0 、类2都注册了
-*		'Hello()'，此时调用	AutoFunc	的调用顺序为：类2::Hello()，即类0被覆盖。
-* 
+*		'Hello()'，此时调用AutoFunc的调用顺序为：类2::Hello()，即类0被覆盖。
 * 
 **************************************************************************************************/
 
@@ -33,16 +29,10 @@
 #define MFX_PORT __declspec(dllimport)
 #pragma comment(lib, "MfxBase.lib")
 
-/* Windows 头文件 */
 #include <windows.h>
-/**/
-
-/* 可变参数 - 类型获取 */
 #include <stdarg.h>
 #include <typeinfo>
-/**/
 
-/* STL模板库 */
 #include <any>
 #include <map>
 #include <set>
@@ -69,7 +59,7 @@ namespace MicroFlakeX
 
 #define MfxObject __MfxObject
 #define MfxObject_Init(OBJ) __MfxObject_Init_0(OBJ)
-#define MfxObject_EndInit(OBJ, FATHER_OBJ, ...) CONNECT(__MfxObject_EndInit, (OBJ, FATHER_OBJ, __VA_ARGS__, END, END))
+#define MfxObject_EndInit(OBJ, FATHER, ...) CONNECT(__MfxObject_EndInit, (OBJ, FATHER, __VA_ARGS__, END, END))
 }
 
 /***************************************************************
@@ -85,12 +75,10 @@ namespace MicroFlakeX
 #define Mfx_Failed(MR) (MfxReturn)(((MfxReturn)(MR)) < 0)
 #define Mfx_Seccess(MR) (MfxReturn)(((MfxReturn)(MR)) >= 0)
 
-
 #define M_S __MfxString
 #define MfxString __MfxString
 #define M_T(str) __MfxText(str)
 #define MfxText(str) __MfxText(str)
-
 
 #ifdef UNICODE
 #define __MfxCout std::wcout
@@ -129,7 +117,7 @@ namespace MicroFlakeX
 		MfxHash hash = 0;
 		while (MfxHash ch = *str++)
 		{
-			hash = hash * 131 + ch;   // 也可以乘以31、131、1313、13131、131313..    
+			hash = hash * 131 + ch;   // may be: 31、131、1313、13131、131313 ...
 		}
 		return hash;
 	}
@@ -245,12 +233,22 @@ namespace MicroFlakeX
 
 
 	/***************************************************************
-	* 参数一：回调对象指针
+	* 参数一：回调函数指针
 	* 参数二：传递给回调方法的MfxParam
 	****************************************************************/
 	MFX_PORT MfxReturn MfxBeginNewThread_Widely(pThreadFunc pThreadFunc, MfxParam mParam);
 
 
+	/***************************************************************
+	* 参数一：返回一个计时器ID
+	* 参数二：回调函数指针
+	* 参数三：传递给回调方法的MfxParam
+	* 参数四：计时器每个多长时间调用一次，单位为ms，若为0，则调用一次结束
+	* 参数五：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
+	* 参数六：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
+	****************************************************************/
+	MFX_PORT MfxReturn MfxBeginNewTimer_Widely(PTP_TIMER& pTimer, pThreadFunc pThreadFunc, MfxParam mParam, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
+	
 	/***************************************************************
 	* 参数一：返回一个计时器ID
 	* 参数二：回调对象指针
@@ -261,7 +259,7 @@ namespace MicroFlakeX
 	* 参数七：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
 	****************************************************************/
 	MFX_PORT MfxReturn MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, MfxParam mParam, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
-	
+
 	/***************************************************************
 	* 参数一：计时器ID，根据id删除对应的计时器
 	****************************************************************/

@@ -17,8 +17,12 @@ int main()
     MfxSize uiSize(400, 400);
     myUI_00->SetSize(&uiSize);
 
+
     MfxColor uiColor(255, 0, 255, 255);
     myUI_00->SetBackColor(&uiColor);
+
+
+
 
     MfxColor flake_bkColor(255, 255, 255, 255);
     myFlake_01->SetBackColor(&flake_bkColor);
