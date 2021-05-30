@@ -1,63 +1,43 @@
-﻿#include <iostream>
-#include "MfxBase.h"
-#include "MfxBaseExample_00.h"
+﻿#include "MfxBase.h"
+#include "AutoExample.h"
 using namespace MicroFlakeX;
-using namespace std;
-
-/*********************************************************
-*	UTF-8 - win - x86
-*
-*   版本：1.01       作者：yishengjun8
-*
-*   这个示例展示了如何使用MfxBase及其组件
-*********************************************************/
-
-typedef long MfxMessage;
-
-MfxMessage FLAKE_MSG_FlakeMessage = 1;
-
-MfxMessage FLAKE_MSG_SetPaper = 2;
-MfxMessage FLAKE_MSG_RemovePaper = 3;
-
-MfxMessage FLAKE_MSG_PaintBack = 4;
-MfxMessage FLAKE_MSG_PaintMask = 5;
-
-
-MfxMessage UI_MSG_FlakeMessage = 1;
-
-MfxMessage UI_MSG_SetPaper = 2;
-MfxMessage UI_MSG_RemovePaper = 3;
-
-MfxMessage UI_MSG_PaintBack = 4;
-MfxMessage UI_MSG_PaintMask = 5;
-
 
 int main()
 {
+    int param1 = 1;
+    char param2 = 'c';
+    double param3 = 55.55;
+
     MfxParam myParam1, myParam2;
 
-    myParam1.push_back(FLAKE_MSG_FlakeMessage);
+    myParam1.push_back(param1);
     myParam1.push_back(myParam2);
+    myParam1.push_back(param2);
 
-    cout << GetParam_Safe(myParam1, MfxMessage, 0);
+    GetParam(myParam1, MfxParam, 1).push_back(param3);
+    GetParam(myParam1, MfxParam, 1).push_back((int)99);
 
+    std::cout << GetParam(myParam1, int, 0) << std::endl;
 
-    MfxBase* test;
+    std::cout << GetParam(GetParam(myParam1, MfxParam, 1), double, 0) << std::endl;
+    std::cout << GetParam(GetParam(myParam1, MfxParam, 1), int, 1) << std::endl;
 
-    MfxFactory(L"MfxBaseExample_00", &test);
+    AutoExample myAutoExample;
 
     MfxSignal mySignal;
 
-    mySignal.PushBackReceiver(test, MfxText("SayHello"));
+    //mySignal.PushFrontReceiver(&myAutoExample, MfxText("OutPutString"));
 
-    mySignal.SendSignal(MfxString(L"SendSignal"));
+    //mySignal.PostSignal(MfxString(L"<<PostSignal>>"));
 
-    MfxString str = MfxText("PostSignal");
+    //mySignal.RemoveReceiver(&myAutoExample, MfxText("OutPutString"));
 
-    mySignal.PostSignal(str);
+    mySignal.PushFrontReceiver(&myAutoExample, MfxText("SetData"));
 
-    Sleep(1000);
+    mySignal.PostSignal((int)99);
+    myAutoExample.GetData(nullptr);
+    /**/
 
-    mySignal.SendSignal(MfxString(L"SendSignal"));
+
     return 0;
 }

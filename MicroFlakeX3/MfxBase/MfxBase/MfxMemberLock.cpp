@@ -45,7 +45,15 @@ bool MicroFlakeX::MfxMemberLock::TryLock(void* first)
 
 void MicroFlakeX::MfxMemberLock::UnLock(void* first)
 {
-	LeaveCriticalSection(&myMutexResour[first]);
+	auto tFind = myMutexResour.find(first);
+	if (tFind == myMutexResour.end())
+	{
+		InsertMemberLock(first);
+	}
+	else
+	{
+		LeaveCriticalSection(&myMutexResour[first]);
+	}
 }
 
 MicroFlakeX::MfxMemberLock::~MfxMemberLock()

@@ -18,5 +18,13 @@
     <ClCompile Include="Example_Base_00.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="AutoExample.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AutoExample.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

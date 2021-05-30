@@ -129,7 +129,7 @@ namespace MicroFlakeX
 		}
 		bool operator==(const FlakeEvent_Info& rhs) const
 		{
-			return (myFlake != rhs.myFlake) && (myEvent != rhs.myEvent);
+			return (myFlake == rhs.myFlake) && (myEvent == rhs.myEvent);
 		}
 
 		std::size_t operator()(const FlakeEvent_Info& key) const
@@ -245,71 +245,73 @@ namespace MicroFlakeX
 	*	UI_MSG定义了MfxUI类型所产生的消息
 	***************************************************************/
 	const int UI_MSG_COUNT = __COUNTER__;
-#define UI_MSG_(MSG) const MfxMessage MSG = UI_MSG_BEGIN - MFX_COUNT(UI_MSG_COUNT);
-	UI_MSG_(UI_MSG_PaintBack)
-	UI_MSG_(UI_MSG_PaintMask)
+#define UI_MSG_(MSG) const MfxMessage MSG = UI_MSG_BEGIN - MFX_COUNT(UI_MSG_COUNT)
+	UI_MSG_(UI_MSG_PaintBack);
+	UI_MSG_(UI_MSG_PaintMask);
 
-	UI_MSG_(UI_MSG_FlakeInsert)
-	UI_MSG_(UI_MSG_FlakeRemove)
+	UI_MSG_(UI_MSG_FlakeInsert);
+	UI_MSG_(UI_MSG_FlakeRemove);
 
-	UI_MSG_(UI_MSG_RemoveFlakeEvent)
-	UI_MSG_(UI_MSG_PushBackFlakeEvent)
-	UI_MSG_(UI_MSG_PushFrontFlakeEvent)
+	UI_MSG_(UI_MSG_RemoveFlakeEvent);
+	UI_MSG_(UI_MSG_PushBackFlakeEvent);
+	UI_MSG_(UI_MSG_PushFrontFlakeEvent);
 
-	UI_MSG_(UI_MSG_RemoveWin32Timer)
-	UI_MSG_(UI_MSG_InsertWin32Timer)
+	UI_MSG_(UI_MSG_RemoveWin32Timer);
+	UI_MSG_(UI_MSG_InsertWin32Timer);
 
-	UI_MSG_(UI_MSG_SetBackColor)
-	UI_MSG_(UI_MSG_SetMaskColor)
-	UI_MSG_(UI_MSG_SetBackImage)
-	UI_MSG_(UI_MSG_SetMaskImage)
+	UI_MSG_(UI_MSG_SetBackColor);
+	UI_MSG_(UI_MSG_SetMaskColor);
+	UI_MSG_(UI_MSG_SetBackImage);
+	UI_MSG_(UI_MSG_SetMaskImage);
 
-	UI_MSG_(UI_MSG_OpenPercentRect)
-	UI_MSG_(UI_MSG_ClosePercentRect)
+	UI_MSG_(UI_MSG_OpenPercentRect);
+	UI_MSG_(UI_MSG_ClosePercentRect);
 
-	UI_MSG_(MSG_FlakeEvent)
+	UI_MSG_(MSG_FlakeEvent);
 
-	UI_MSG_(UI_MSG_FlakeFloorChange)
+	UI_MSG_(UI_MSG_FlakeFloorChange);
 
 
 	/**************************************************************
 	*	FLAKE_MSG定义了MfxFlake类型所产生的消息
 	***************************************************************/
 	const int FLAKE_MSG_COUNT = __COUNTER__;
-#define FLAKE_MSG_(MSG) const MfxMessage MSG = FLAKE_MSG_BEGIN - MFX_COUNT(FLAKE_MSG_COUNT);
-	FLAKE_MSG_(FLAKE_MSG_FlakeMessage)
+#define FLAKE_MSG_(MSG) const MfxMessage MSG = FLAKE_MSG_BEGIN - MFX_COUNT(FLAKE_MSG_COUNT)
+	FLAKE_MSG_(FLAKE_MSG_RemoveFlakeEvent);
+	FLAKE_MSG_(FLAKE_MSG_PushBackFlakeEvent);
+	FLAKE_MSG_(FLAKE_MSG_PushFrontFlakeEvent);
 
-	FLAKE_MSG_(FLAKE_MSG_SetPaper)
-	FLAKE_MSG_(FLAKE_MSG_RemovePaper)
+	FLAKE_MSG_(FLAKE_MSG_SetPaper);
+	FLAKE_MSG_(FLAKE_MSG_RemovePaper);
 
-	FLAKE_MSG_(FLAKE_MSG_PaintBack)
-	FLAKE_MSG_(FLAKE_MSG_PaintMask)
+	FLAKE_MSG_(FLAKE_MSG_PaintBack);
+	FLAKE_MSG_(FLAKE_MSG_PaintMask);
 
-	FLAKE_MSG_(FLAKE_MSG_Rect)
-	FLAKE_MSG_(FLAKE_MSG_PercentRect)
+	FLAKE_MSG_(FLAKE_MSG_Rect);
+	FLAKE_MSG_(FLAKE_MSG_PercentRect);
 
-	FLAKE_MSG_(FLAKE_MSG_ResetRect)
-	FLAKE_MSG_(FLAKE_MSG_ResetPercentRect)
+	FLAKE_MSG_(FLAKE_MSG_ResetRect);
+	FLAKE_MSG_(FLAKE_MSG_ResetPercentRect);
 
-	FLAKE_MSG_(FLAKE_MSG_OpenPercentRect)
-	FLAKE_MSG_(FLAKE_MSG_ClosePercentRect)
+	FLAKE_MSG_(FLAKE_MSG_OpenPercentRect);
+	FLAKE_MSG_(FLAKE_MSG_ClosePercentRect);
 
-	FLAKE_MSG_(FLAKE_MSG_LButtonClick)
-	FLAKE_MSG_(FLAKE_MSG_RButtonClick)
+	FLAKE_MSG_(FLAKE_MSG_LButtonClick);
+	FLAKE_MSG_(FLAKE_MSG_RButtonClick);
 
-	FLAKE_MSG_(FLAKE_MSG_SetFloor)
-	FLAKE_MSG_(FLAKE_MSG_SetTitle)
+	FLAKE_MSG_(FLAKE_MSG_SetFloor);
+	FLAKE_MSG_(FLAKE_MSG_SetTitle);
 
-	FLAKE_MSG_(FLAKE_MSG_SetBackColor)
-	FLAKE_MSG_(FLAKE_MSG_SetMaskColor)
-	FLAKE_MSG_(FLAKE_MSG_SetBackImage)
-	FLAKE_MSG_(FLAKE_MSG_SetMaskImage)
+	FLAKE_MSG_(FLAKE_MSG_SetBackColor);
+	FLAKE_MSG_(FLAKE_MSG_SetMaskColor);
+	FLAKE_MSG_(FLAKE_MSG_SetBackImage);
+	FLAKE_MSG_(FLAKE_MSG_SetMaskImage);
 
-	FLAKE_MSG_(FLAKE_MSG_SetWords)
-	FLAKE_MSG_(FLAKE_MSG_SetTitleSize)
-	FLAKE_MSG_(FLAKE_MSG_SetTitleColor)
+	FLAKE_MSG_(FLAKE_MSG_SetWords);
+	FLAKE_MSG_(FLAKE_MSG_SetTitleSize);
+	FLAKE_MSG_(FLAKE_MSG_SetTitleColor);
 		
-	FLAKE_MSG_(FLAKE_MSG_GetTitleSize)
+	FLAKE_MSG_(FLAKE_MSG_GetTitleSize);
 
 
 	/**************************************************************

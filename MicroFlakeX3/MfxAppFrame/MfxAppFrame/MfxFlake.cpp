@@ -119,9 +119,9 @@ void MicroFlakeX::MfxFlake::MfxRegMessages()
 
 	FLAKE_ADDRECV_FLAKEMSG(MSG_FlakeEvent, MfxFlake, __OnFlakeEvent);
 
-	FLAKE_ADDRECV_FLAKEMSG(UI_MSG_RemoveFlakeEvent, MfxFlake, __OnRemoveFlakeEvent);
-	FLAKE_ADDRECV_FLAKEMSG(UI_MSG_PushBackFlakeEvent, MfxFlake, __OnPushBackFlakeEvent);
-	FLAKE_ADDRECV_FLAKEMSG(UI_MSG_PushFrontFlakeEvent, MfxFlake, __OnPushFrontFlakeEvent);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_RemoveFlakeEvent, MfxFlake, __OnRemoveFlakeEvent);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PushBackFlakeEvent, MfxFlake, __OnPushBackFlakeEvent);
+	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PushFrontFlakeEvent, MfxFlake, __OnPushFrontFlakeEvent);
 }
 
 void MicroFlakeX::MfxFlake::MfxFlakeInitData()
@@ -311,7 +311,7 @@ MfxReturn MicroFlakeX::MfxFlake::PushFrontFlakeMessage(MfxMessage message, Flake
 MfxReturn MicroFlakeX::MfxFlake::RemoveFlakeEvent(FlakeEvent_Info flakeEvent, MfxString recvFuncName)
 {
 	MfxParam msgParam;
-	msgParam.push_back(UI_MSG_RemoveFlakeEvent);
+	msgParam.push_back(FLAKE_MSG_RemoveFlakeEvent);
 	msgParam.push_back(flakeEvent);
 	msgParam.push_back(recvFuncName);
 	return Send_Message(msgParam);
@@ -320,7 +320,7 @@ MfxReturn MicroFlakeX::MfxFlake::RemoveFlakeEvent(FlakeEvent_Info flakeEvent, Mf
 MfxReturn MicroFlakeX::MfxFlake::PushBackFlakeEvent(FlakeEvent_Info flakeEvent, Flake_RecvFunc_Infor recvInfo)
 {
 	MfxParam msgParam;
-	msgParam.push_back(UI_MSG_PushBackFlakeEvent);
+	msgParam.push_back(FLAKE_MSG_PushBackFlakeEvent);
 	msgParam.push_back(flakeEvent);
 	msgParam.push_back(recvInfo);
 	return Send_Message(msgParam);
@@ -329,7 +329,7 @@ MfxReturn MicroFlakeX::MfxFlake::PushBackFlakeEvent(FlakeEvent_Info flakeEvent, 
 MfxReturn MicroFlakeX::MfxFlake::PushFrontFlakeEvent(FlakeEvent_Info flakeEvent, Flake_RecvFunc_Infor recvInfo)
 {
 	MfxParam msgParam;
-	msgParam.push_back(UI_MSG_PushFrontFlakeEvent);
+	msgParam.push_back(FLAKE_MSG_PushFrontFlakeEvent);
 	msgParam.push_back(flakeEvent);
 	msgParam.push_back(recvInfo);
 	return Send_Message(msgParam);
@@ -1157,7 +1157,10 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(MfxParam param)
 				myMouseFloat = true;
 				myLButtonPress = false;
 				myLButtonClickFlag = false;
-				//FLAKE_POSTMSG_UITHREAD(FLAKE_MSG_LButtonClick, wParam, lParam);
+				MfxParam msgParam;
+				msgParam.push_back(MSG_FlakeEvent);
+				msgParam.push_back(FlakeEvent_Info(this, FLAKE_MSG_LButtonClick));
+				myUI ? myUI->Send_Message(msgParam) : 0;
 			}
 			else
 			{
@@ -1255,7 +1258,10 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(MfxParam param)
 				myMouseFloat = true;
 				myRButtonPress = false;
 				myRButtonClickFlag = false;
-				//FLAKE_POSTMSG_UITHREAD(FLAKE_MSG_RButtonClick, wParam, lParam);
+				MfxParam msgParam;
+				msgParam.push_back(MSG_FlakeEvent);
+				msgParam.push_back(FlakeEvent_Info(this, FLAKE_MSG_RButtonClick));
+				myUI ? myUI->Send_Message(msgParam) : 0;
 			}
 			else
 			{

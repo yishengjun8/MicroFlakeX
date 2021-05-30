@@ -10,8 +10,9 @@ class MyUI :
     MfxObject;
 public:
     MyUI();
-    MfxReturn MfxCallBack(Test__000);
-    
+    MfxReturn MfxCallBack(Test__00);
+    MfxReturn MfxCallBack(Test__01);
+
     MfxFlake myFlake;
 };
 

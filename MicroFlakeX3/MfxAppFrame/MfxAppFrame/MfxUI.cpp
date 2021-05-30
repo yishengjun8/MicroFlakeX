@@ -1232,16 +1232,16 @@ MfxReturn MicroFlakeX::MfxUI::__OnInsertWin32Timer(MfxParam param)
 MfxReturn MicroFlakeX::MfxUI::__OnRemoveWin32Timer(MfxParam param)
 {
     auto tRet = Mfx_Return_Fail;
-    Win32_Timer_Info tTimer = GetParam_Safe(param, Win32_Timer_Info, 1);
+    ULONG tTimer = GetParam_Safe(param, ULONG, 1);
 
     myMemberLock.WaitLock(&myTimerMap);
 
-    auto iter = myTimerMap.find(tTimer.myID);
+    auto iter = myTimerMap.find(tTimer);
     if (iter != myTimerMap.end())
     {
-        KillTimer(myWnd, tTimer.myID);
+        KillTimer(myWnd, tTimer);
 
-        myTimerMap.erase(tTimer.myID);
+        myTimerMap.erase(tTimer);
 
         tRet = Mfx_Return_Fine;
     }

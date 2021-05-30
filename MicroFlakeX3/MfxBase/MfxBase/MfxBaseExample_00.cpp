@@ -55,16 +55,10 @@ MfxObject_EndInit(MfxBaseExample_00, MfxBase, \
 MicroFlakeX::MfxBaseExample_00::MfxBaseExample_00()
 {
 	myData = 0;
-	std::cout << std::endl;
-	std::cout << MfxText(">> MfxBaseExample_00 Creat <<");
-	std::cout << std::endl;
 }
 
 MicroFlakeX::MfxBaseExample_00::~MfxBaseExample_00()
 {
-	std::cout << std::endl;
-	std::cout << MfxText(">> MfxBaseExample_00 Release <<");
-	std::cout << std::endl;
 }
 
 /***************************************************************

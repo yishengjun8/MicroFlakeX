@@ -238,17 +238,6 @@ namespace MicroFlakeX
 	****************************************************************/
 	MFX_PORT MfxReturn MfxBeginNewThread_Widely(pThreadFunc pThreadFunc, MfxParam mParam);
 
-
-	/***************************************************************
-	* 参数一：返回一个计时器ID
-	* 参数二：回调函数指针
-	* 参数三：传递给回调方法的MfxParam
-	* 参数四：计时器每个多长时间调用一次，单位为ms，若为0，则调用一次结束
-	* 参数五：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
-	* 参数六：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
-	****************************************************************/
-	MFX_PORT MfxReturn MfxBeginNewTimer_Widely(PTP_TIMER& pTimer, pThreadFunc pThreadFunc, MfxParam mParam, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
-	
 	/***************************************************************
 	* 参数一：返回一个计时器ID
 	* 参数二：回调对象指针
@@ -259,6 +248,16 @@ namespace MicroFlakeX
 	* 参数七：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
 	****************************************************************/
 	MFX_PORT MfxReturn MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, MfxParam mParam, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
+
+	/***************************************************************
+	* 参数一：返回一个计时器ID
+	* 参数二：回调函数指针
+	* 参数三：传递给回调方法的MfxParam
+	* 参数四：计时器每个多长时间调用一次，单位为ms，若为0，则调用一次结束
+	* 参数五：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
+	* 参数六：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
+	****************************************************************/
+	MFX_PORT MfxReturn MfxBeginNewTimer_Widely(PTP_TIMER& pTimer, pThreadFunc pThreadFunc, MfxParam mParam, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
 
 	/***************************************************************
 	* 参数一：计时器ID，根据id删除对应的计时器
@@ -301,7 +300,15 @@ namespace MicroFlakeX
 		template<typename ...Args>
 		void UnLock(void* first, Args... rest)
 		{
-			LeaveCriticalSection(&myMutexResour[first]);
+			auto tFind = myMutexResour.find(first);
+			if (tFind == myMutexResour.end())
+			{
+				InsertMemberLock(first);
+			}
+			else
+			{
+				LeaveCriticalSection(&myMutexResour[first]);
+			}
 
 			UnLock(rest...);
 		}
@@ -404,6 +411,7 @@ namespace MicroFlakeX
 		};
 
 	public:
+		MfxSignal() {};
 		MfxSignal(const MfxSignal& rhs);
 		void RemoveReceiver(MfxBase* recvObject, MfxString recvFunc);
 		void PushBackReceiver(MfxBase* recvObject, MfxString recvFunc);
@@ -817,6 +825,7 @@ namespace __MicroFlakeX
 	MFX_PORT VOID CALLBACK MfxThreadCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val);
 
 	MFX_PORT VOID CALLBACK MfxTimerCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
+	MFX_PORT VOID CALLBACK MfxTimerCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
 
 	class MFX_PORT MfxFactoryHand
 	{
