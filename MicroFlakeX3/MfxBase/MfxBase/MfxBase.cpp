@@ -9,23 +9,17 @@ using namespace __MicroFlakeX;
 *
 *
 ****************************************************************/
-#include <fstream>
-std::wofstream mycout("DebugOut.txt");
 
 __MicroFlakeX::MfxFactoryHand::MfxFactoryHand(MfxString object)
 {
 	myObjectName = object;
 	MfxRegisterObject(myObjectName, this);
-	std::wcout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Register") << std::endl;
-	mycout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Register") << std::endl;
 }
 
 
 __MicroFlakeX::MfxFactoryHand::~MfxFactoryHand()
 {
 	MfxRemoveObject(myObjectName);
-	std::wcout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Remove") << std::endl;
-	mycout << MfxText("ClassHand <") << myObjectName << MfxText("> Is Remove") << std::endl;
 }
 
 
