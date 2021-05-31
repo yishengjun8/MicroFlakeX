@@ -166,7 +166,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="MfxApp.cpp" />
     <ClCompile Include="MfxAppFrame.cpp" />
     <ClCompile Include="MfxFlake.cpp" />
     <ClCompile Include="MfxUI.cpp" />

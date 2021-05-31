@@ -8,7 +8,7 @@
 *
 *	MfxAppFrame.h	提供了	MicroFlakeX	的UI框架
 *
-*	包含了MfxApp、MfxUI、MfxFlake
+*	包含了MfxUI、MfxFlake
 *
 **************************************************************/
 
@@ -28,11 +28,9 @@
 
 namespace MicroFlakeX
 {
-	class MFX_PORT MfxApp;
 	class MFX_PORT MfxUI;
 	class MFX_PORT MfxFlake;
 
-	typedef MfxApp* pMfxApp;
 	typedef MfxUI* pMfxUI;
 	typedef MfxFlake* pMfxFlake;
 
@@ -315,49 +313,31 @@ namespace MicroFlakeX
 	enum UI_WINDOWS_STYLE
 	{
 		UI_WINDOWS_STYLE_AntiFlicker = WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
-		UI_WINDOWS_STYLE_Normal = WS_OVERLAPPED | WS_CAPTION | WS_THICKFRAME | WS_VISIBLE
+		UI_WINDOWS_STYLE_Normal = WS_OVERLAPPED | WS_CAPTION | WS_THICKFRAME
 	};
 }
 
 namespace MicroFlakeX
 {
+#define MAKE_WIN32_PARAM(name, msg, hwnd, wParam, lParam) \
+	MfxParam name(msg);\
+	name.push_back(hwnd);\
+	name.push_back(wParam);\
+	name.push_back(lParam);\
 
-	/**************************************************************
-	*	MfxApp - 单例模式
-	*		这个类型在每个程序中，仅允许同时存在1个实例化的对象。
-	*	这个对象会在程序开始执行之前自动创建，若要使用这个对象，
-	*	请使用 MfxApp::g_pApp 或者 MFXAPP 宏
-	*	使用 MFXAPP->Run(); 才能开始整个程序。
-	*	当 MFXAPP->Run(); 返回时，程序结束，返回值为结束标志。
-	***************************************************************/
-	class MfxApp
-	{
-	private:
-		MfxApp();
-		virtual ~MfxApp();
+#define GetHWND(param) GetParam_Safe(param, HWND, 0)
+#define GetWPARAM(param) GetParam_Safe(param, WPARAM, 1)
+#define GetLPARAM(param) GetParam_Safe(param, LPARAM, 2)
 
-	public:
-		WPARAM Run();
-	public:	
-		static MfxApp* const g_pApp;
-		static HINSTANCE const g_hInstance;
+	MFX_PORT WPARAM MfxAppRun();
+}
 
-	private:
-		pMfxUI myBindingUI;
-	public:
-		HWND MfxCreateUIEx(pMfxUI ui, MfxRect rect, DWORD dwExStyle, DWORD dwStyle,
-			MfxString className, MfxString windowsName);
+namespace __MicroFlakeX
+{
+	MFX_PORT HWND MfxCreateWindowsEx(pMfxUI ui, pMfxUI father, MfxRect rect, DWORD dwStyle, DWORD dwExStyle,
+		MfxString className, MfxString windowsName);
 
-	private:
-		App_UI_Info_Map myUIMap;
-	public:
-		MfxReturn ForwardMessage(HWND hWnd, MfxMessage message, WPARAM wParam, LPARAM lParam);
-
-	private:
-		static LRESULT CALLBACK AppProc(HWND hWnd, MfxMessage msg, WPARAM wParam, LPARAM lParam);
-	};
-
-#define MFXAPP MicroFlakeX::MfxApp::g_pApp
+	MFX_PORT LRESULT CALLBACK MfxAppFrameProc(HWND hWnd, MfxMessage msg, WPARAM wParam, LPARAM lParam);
 }
 
 namespace MicroFlakeX
@@ -366,15 +346,11 @@ namespace MicroFlakeX
 		public MfxBase
 	{
 		MfxObject;
-		friend class MfxApp;
 	private:
 		void MfxUIInitData();
 		void MfxRegMessages();
 	public:
-		MfxUI();
-		MfxUI(MfxRect set, MfxString title);
-		MfxUI(MfxRect set, DWORD myStyle_EN, MfxString title);
-		MfxUI(MfxRect set, DWORD myStyleEx_EN, DWORD myStyle_EN, MfxString myClass, MfxString title);
+		MfxUI(MfxRect set = MfxRect(60, 60, 400, 400), MfxString title = MfxText("MfxNormalUI"), DWORD myStyle = UI_WINDOWS_STYLE_Normal, DWORD myStyleEx = WS_EX_LAYERED, MfxUI* father = nullptr);
 		virtual ~MfxUI();
 
 		MfxReturn CreateSuccess();
@@ -561,7 +537,7 @@ namespace MicroFlakeX
 		MfxReturn __OnFlakeRemove(MfxParam param);
 		MfxReturn __OnFlakeFloorChange(MfxParam param);
 
-		MfxReturn __OnTimer(MfxParam param);
+		MfxReturn __OnWin32Timer(MfxParam param);
 
 		MfxReturn __OnInsertWin32Timer(MfxParam param);
 		MfxReturn __OnRemoveWin32Timer(MfxParam param);
@@ -626,8 +602,6 @@ namespace MicroFlakeX
 		public MfxBase
 	{
 		MfxObject;
-
-		friend class MfxApp;
 		MFX_FloorCompare_Enable;
 	private:
 		void MfxRegMessages();

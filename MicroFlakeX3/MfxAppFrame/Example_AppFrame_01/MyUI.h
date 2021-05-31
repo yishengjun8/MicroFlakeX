@@ -1,5 +1,5 @@
 #pragma once
-#include "MfxAppFrame.h"
+//#include "MfxAppFrame.h"
 
 using namespace MicroFlakeX;
 

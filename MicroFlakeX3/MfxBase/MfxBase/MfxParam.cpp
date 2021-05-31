@@ -24,7 +24,19 @@ MfxParam::MfxParam()
 
 	*myUseCount = 1;
 	*myMessage = 0;
-	*myReturn = Mfx_Return_Fine;
+	*myReturn = Mfx_Return_Unknow;
+}
+
+MicroFlakeX::MfxParam::MfxParam(MfxMessage msg)
+{
+	myUseCount = new INT32;
+	myReturn = new MfxReturn;
+	myMessage = new MfxMessage;
+	myParam = new std::vector<std::any>;
+
+	*myUseCount = 1;
+	*myMessage = msg;
+	*myReturn = Mfx_Return_Unknow;
 }
 
 MicroFlakeX::MfxParam::MfxParam(const MfxParam& rhs)

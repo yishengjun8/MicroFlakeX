@@ -32,6 +32,11 @@ namespace MicroFlakeX
 
 	class MFX_PORT MfxImage;
 	class MFX_PORT MfxWords;
+
+
+	class MFX_PORT MfxEllipse;
+	class MFX_PORT MfxCircular;
+	class MFX_PORT MfxRectangle;
 }
 
 namespace MicroFlakeX

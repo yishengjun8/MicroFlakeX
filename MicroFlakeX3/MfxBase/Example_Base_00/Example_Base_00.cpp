@@ -4,25 +4,28 @@ using namespace MicroFlakeX;
 
 int main()
 {
+    AutoExample myAutoExample;
+    typedef AutoExample* pAutoExample;
+
     int param1 = 1;
     char param2 = 'c';
     double param3 = 55.55;
 
     MfxParam myParam1, myParam2;
 
-    myParam1.push_back(param1);
+    myParam1.push_back(&myAutoExample);
     myParam1.push_back(myParam2);
     myParam1.push_back(param2);
 
-    GetParam(myParam1, MfxParam, 1).push_back(param3);
-    GetParam(myParam1, MfxParam, 1).push_back((int)99);
+    //GetParam(myParam1, MfxParam, 1).push_back(param3);
+    //GetParam(myParam1, MfxParam, 1).push_back((int)99);
 
-    std::cout << GetParam(myParam1, int, 0) << std::endl;
+    std::cout << GetParam(myParam1, pMfxBase, 0) << std::endl;
 
-    std::cout << GetParam(GetParam(myParam1, MfxParam, 1), double, 0) << std::endl;
-    std::cout << GetParam(GetParam(myParam1, MfxParam, 1), int, 1) << std::endl;
+    //std::cout << GetParam(GetParam(myParam1, MfxParam, 1), double, 0) << std::endl;
+    //std::cout << GetParam(GetParam(myParam1, MfxParam, 1), int, 1) << std::endl;
 
-    AutoExample myAutoExample;
+
 
     MfxSignal mySignal;
 

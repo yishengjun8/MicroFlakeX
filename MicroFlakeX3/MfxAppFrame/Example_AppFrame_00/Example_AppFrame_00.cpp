@@ -8,19 +8,22 @@ int main()
 {
     cout << "\nHello MicroFlakeX!\n";
 
-    MfxUI* myUI_00 = nullptr;
-    MfxFlake* myFlake_01 = nullptr;
-
-    MfxFactory(MfxText("MfxUI"), (MfxBase**)&myUI_00);
-    MfxFactory(MfxText("MfxFlake"), (MfxBase**)&myFlake_01);
-
-    MfxSize uiSize(400, 400);
+    MfxUI* myUI_Father = new MfxUI;
+    MfxSize uiSize(900, 600);
     //myUI_00->SetSize(&uiSize);
     //myUI_00->AutoFunc(L"SetSize", &uiSize);
-    ((MfxBase*)(myUI_00))->AutoFunc(L"SetSize", &uiSize);
+    ((MfxBase*)(myUI_Father))->AutoFunc(L"SetSize", &uiSize);
+
+    MfxUI* myUI_00 = new MfxUI(MfxRect(60, 60, 400, 400), L"MfxChild", UI_WINDOWS_STYLE_Normal, NULL, nullptr);
+    MfxFlake* myFlake_01 = nullptr;
+
+    //MfxFactory(MfxText("MfxUI"), (MfxBase**)&myUI_00);
+    MfxFactory(MfxText("MfxFlake"), (MfxBase**)&myFlake_01);
+
+   
 
 
-    MfxColor uiColor(255, 0, 255, 255);
+    MfxColor uiColor(255, 255, 0, 0);
     myUI_00->SetBackColor(&uiColor);
 
 
@@ -98,5 +101,6 @@ int main()
 
     myGlide.Begin();
 
-    return MFXAPP->Run();
+    myUI_00->SetUI_Show();
+    return MfxAppRun();
 }

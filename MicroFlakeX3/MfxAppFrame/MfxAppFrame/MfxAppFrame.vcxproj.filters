@@ -29,9 +29,6 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MfxApp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MfxAppFrame.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

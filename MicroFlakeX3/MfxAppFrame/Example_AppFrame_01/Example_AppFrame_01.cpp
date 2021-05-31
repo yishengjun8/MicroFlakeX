@@ -8,5 +8,5 @@ int main()
 
     std::cout << "Hello World!\n";
 
-    return MFXAPP->Run();
+    return MfxAppRun();
 }

@@ -12,8 +12,6 @@
 *	3、任何添加到 AutoFunc 的方法，不允许重载、不允许使用右值引用、不允许使用引用传递。
 * 
 *	1、每次调用方法之后，都判断 MfxReturn，是否成功
-*	2、实现类的 'operator==' ，以方便判断两个对象是否相等
-* 
 * 
 *	关于AutoFunc的继承处理
 *			如果子类实现了一个和父类同名的方法，并且都注册了 AutoFunc，
@@ -78,6 +76,8 @@ namespace MicroFlakeX
 
 #define Mfx_Return_Fine ((MfxReturn)0)
 #define Mfx_Return_Fail ((MfxReturn)-1)
+#define Mfx_Return_NotFind ((MfxReturn)1)
+#define Mfx_Return_Unknow ((MfxReturn)2)
 
 #define Mfx_Failed(MR) (MfxReturn)(((MfxReturn)(MR)) < 0)
 #define Mfx_Seccess(MR) (MfxReturn)(((MfxReturn)(MR)) >= 0)
@@ -204,6 +204,7 @@ namespace MicroFlakeX
 		std::vector<std::any>* myParam;
 	public:
 		MfxParam();
+		MfxParam(MfxMessage msg);
 		MfxParam(const MfxParam& rhs);
 		~MfxParam();
 
