@@ -17,72 +17,55 @@ void* MicroFlakeX::MfxParam::operator new[](size_t)
 
 MfxParam::MfxParam()
 {
+	myUseCount = new INT32;
 	myReturn = new MfxReturn;
-	myUseCount = new int;
+	myMessage = new MfxMessage;
 	myParam = new std::vector<std::any>;
-	myCriticalSection = new CRITICAL_SECTION;
 
-	InitializeCriticalSection(myCriticalSection);
 	*myUseCount = 1;
+	*myMessage = 0;
 	*myReturn = Mfx_Return_Fine;
 }
 
 MicroFlakeX::MfxParam::MfxParam(const MfxParam& rhs)
 {
-	EnterCriticalSection(rhs.myCriticalSection);
-
-	myCriticalSection = rhs.myCriticalSection;
-	myUseCount = rhs.myUseCount;
 	myParam = rhs.myParam;
 	myReturn = rhs.myReturn;
-	(*myUseCount)++;
+	myMessage = rhs.myMessage;
+	myUseCount = rhs.myUseCount;
 
-	LeaveCriticalSection(myCriticalSection);
+	(*myUseCount)++;
 }
 
 MicroFlakeX::MfxParam::~MfxParam()
 {
-	EnterCriticalSection(myCriticalSection);
 	(*myUseCount)--;
 	if (*myUseCount <= 0)
 	{
 		SafeDelete(myParam);
 		SafeDelete(myReturn);
+		SafeDelete(myMessage);
 		SafeDelete(myUseCount);
-		DeleteCriticalSection(myCriticalSection);
-		SafeDelete(myCriticalSection);
-	}
-	else
-	{
-		LeaveCriticalSection(myCriticalSection);
 	}
 }
 
 MfxParam& MicroFlakeX::MfxParam::operator=(const MfxParam& rhs)
 {
-	EnterCriticalSection(myCriticalSection);
 	(*myUseCount)--;
 	if (*myUseCount <= 0)
 	{
 		SafeDelete(myParam);
 		SafeDelete(myReturn);
+		SafeDelete(myMessage);
 		SafeDelete(myUseCount);
-		DeleteCriticalSection(myCriticalSection);
-		SafeDelete(myCriticalSection);
-	}
-	else
-	{
-		LeaveCriticalSection(myCriticalSection);
 	}
 
-	myCriticalSection = rhs.myCriticalSection;
-
-	EnterCriticalSection(myCriticalSection);
-	myUseCount = rhs.myUseCount;
 	myParam = rhs.myParam;
 	myReturn = rhs.myReturn;
+	myMessage = rhs.myMessage;
+	myUseCount = rhs.myUseCount;
+
 	(*myUseCount)++;
-	LeaveCriticalSection(myCriticalSection);
 
 	return *this;
 }
@@ -94,23 +77,35 @@ std::any& MicroFlakeX::MfxParam::operator[](int i)
 
 bool MicroFlakeX::MfxParam::IsSafe(int i)
 {
-	return myParam->size() > i;
+	return myParam->size() > i && (*this)[i].has_value();
 }
 
-MfxReturn MicroFlakeX::MfxParam::GetReturn()
+MfxNum MicroFlakeX::MfxParam::GetParamSize()
+{
+	return myParam->size();
+}
+
+MfxReturn MicroFlakeX::MfxParam::NowReturn()
 {
 	return *myReturn;
 }
 
-MfxReturn MicroFlakeX::MfxParam::GetParamSize()
+MfxMessage MicroFlakeX::MfxParam::NowMessage()
 {
-	return myParam->size();
+	return *myMessage;
 }
 
 MfxReturn MicroFlakeX::MfxParam::SetReturn(MfxReturn set)
 {
 	MfxReturn ret = *myReturn;
 	*myReturn = set;
+	return ret;
+}
+
+MfxMessage MicroFlakeX::MfxParam::SetMessage(MfxMessage set)
+{
+	MfxMessage ret = *myMessage;
+	*myMessage = set;
 	return ret;
 }
 

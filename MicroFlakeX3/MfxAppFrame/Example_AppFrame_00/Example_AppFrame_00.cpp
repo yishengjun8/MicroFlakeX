@@ -15,7 +15,9 @@ int main()
     MfxFactory(MfxText("MfxFlake"), (MfxBase**)&myFlake_01);
 
     MfxSize uiSize(400, 400);
-    myUI_00->SetSize(&uiSize);
+    //myUI_00->SetSize(&uiSize);
+    //myUI_00->AutoFunc(L"SetSize", &uiSize);
+    ((MfxBase*)(myUI_00))->AutoFunc(L"SetSize", &uiSize);
 
 
     MfxColor uiColor(255, 0, 255, 255);

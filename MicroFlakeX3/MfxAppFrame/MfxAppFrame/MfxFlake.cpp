@@ -1229,7 +1229,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDown(MfxParam param)
 
 MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDouble(MfxParam param)
 {
-	return MfxReturn();
+	return Mfx_Return_Fine;
 }
 
 

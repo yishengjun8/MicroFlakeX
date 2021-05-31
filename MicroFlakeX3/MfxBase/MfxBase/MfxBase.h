@@ -67,7 +67,14 @@ namespace MicroFlakeX
 ****************************************************************/
 namespace MicroFlakeX
 {
-	typedef long MfxReturn;
+	typedef INT32 MfxNum;
+	typedef INT32 MfxFloor;
+	typedef INT32 MfxReturn;
+
+	typedef UINT64 MfxTime;
+	typedef UINT32 MfxMessage;
+
+	typedef std::uint64_t MfxHash;
 
 #define Mfx_Return_Fine ((MfxReturn)0)
 #define Mfx_Return_Fail ((MfxReturn)-1)
@@ -75,9 +82,7 @@ namespace MicroFlakeX
 #define Mfx_Failed(MR) (MfxReturn)(((MfxReturn)(MR)) < 0)
 #define Mfx_Seccess(MR) (MfxReturn)(((MfxReturn)(MR)) >= 0)
 
-#define M_S __MfxString
 #define MfxString __MfxString
-#define M_T(str) __MfxText(str)
 #define MfxText(str) __MfxText(str)
 
 #ifdef UNICODE
@@ -89,8 +94,6 @@ namespace MicroFlakeX
 #define __MfxText(str) str
 #define __MfxString std::string;
 #endif
-
-	typedef long MfxFloor;
 
 	template<class lhsT, class rhsT = lhsT>
 	bool pFloorCompare(lhsT* lhs, rhsT* rhs)
@@ -110,7 +113,7 @@ namespace MicroFlakeX
 	template<class lhsT, class rhsT>\
 	friend bool FloorCompare(lhsT& lhs, rhsT& rhs);
 
-	typedef std::uint64_t MfxHash;
+
 
 	constexpr MfxHash MfxGetHash_StrA(char const* str)
 	{
@@ -169,7 +172,10 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	class MFX_PORT MfxParam;
+	class MFX_PORT MfxMemberLock;
 	class MFX_PORT MfxCriticalLock;
+
+	typedef MfxMemberLock* pMfxMemberLock;
 
 	class MfxCriticalLock
 	{
@@ -192,10 +198,10 @@ namespace MicroFlakeX
 		static void* operator new(size_t);
 		static void* operator new[](size_t);
 	protected:
-		int* myUseCount;
+		INT32* myUseCount;
 		MfxReturn* myReturn;
+		MfxMessage* myMessage;
 		std::vector<std::any>* myParam;
-		CRITICAL_SECTION* myCriticalSection;
 	public:
 		MfxParam();
 		MfxParam(const MfxParam& rhs);
@@ -204,11 +210,15 @@ namespace MicroFlakeX
 		std::any& operator [] (int i);
 		MfxParam& operator=(const MfxParam& rhs);
 
-		bool  IsSafe(int i);
+		bool IsSafe(int i);
 
-		MfxReturn GetReturn();
-		MfxReturn GetParamSize();
+		MfxNum GetParamSize();
+
+		MfxReturn NowReturn();
+		MfxMessage NowMessage();
+
 		MfxReturn SetReturn(MfxReturn set);
+		MfxMessage SetMessage(MfxMessage set);
 
 		template<class T>
 		void push_back(T&& val)
@@ -221,64 +231,6 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-	typedef MfxReturn(*pThreadFunc)(MfxParam);
-
-	/***************************************************************
-	* 异步线程请勿传入局部变量指针。
-	* 参数一：回调对象指针
-	* 参数二：回调对象方法名字
-	* 参数三：传递给回调方法的MfxParam。
-	****************************************************************/
-	MFX_PORT MfxReturn MfxBeginNewThread(MfxBase* object, MfxString recvFunc, MfxParam mParam);
-
-
-	/***************************************************************
-	* 参数一：回调函数指针
-	* 参数二：传递给回调方法的MfxParam
-	****************************************************************/
-	MFX_PORT MfxReturn MfxBeginNewThread_Widely(pThreadFunc pThreadFunc, MfxParam mParam);
-
-	/***************************************************************
-	* 参数一：返回一个计时器ID
-	* 参数二：回调对象指针
-	* 参数三：回调对象方法名字
-	* 参数四：传递给回调方法的MfxParam
-	* 参数五：计时器每个多长时间调用一次，单位为ms，若为0，则调用一次结束
-	* 参数六：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
-	* 参数七：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
-	****************************************************************/
-	MFX_PORT MfxReturn MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, MfxParam mParam, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
-
-	/***************************************************************
-	* 参数一：返回一个计时器ID
-	* 参数二：回调函数指针
-	* 参数三：传递给回调方法的MfxParam
-	* 参数四：计时器每个多长时间调用一次，单位为ms，若为0，则调用一次结束
-	* 参数五：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
-	* 参数六：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
-	****************************************************************/
-	MFX_PORT MfxReturn MfxBeginNewTimer_Widely(PTP_TIMER& pTimer, pThreadFunc pThreadFunc, MfxParam mParam, DWORD delay = 0, LONGLONG begin = -10000000, DWORD randTime = 0);
-
-	/***************************************************************
-	* 参数一：计时器ID，根据id删除对应的计时器
-	****************************************************************/
-	MFX_PORT MfxReturn MfxCloseTimer(PTP_TIMER& pTimer);
-
-	/***************************************************************
-	*	MicroFlakeX 工厂 - 通过字符串创建对象
-	*	1、该子类必须声明了 MfxObject 宏
-	*	2、该子类必须实现了 MfxObject_Init(object) 和 MfxObject_EndInit(object, father)辅助宏
-	****************************************************************/
-	MFX_PORT MfxReturn MfxFactory(MfxString object, MfxBase** ret);
-}
-
-
-namespace MicroFlakeX
-{
-	class MFX_PORT MfxMemberLock;
-	typedef MfxMemberLock* pMfxMemberLock;
-
-
 	/***************************************************************
 	*	MfxMemberLock Mfx参数锁。
 	****************************************************************/
@@ -356,6 +308,18 @@ namespace MicroFlakeX
 	};
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 /***************************************************************
 *	MicroFlakeX 基类声明
 ****************************************************************/
@@ -384,7 +348,77 @@ namespace MicroFlakeX
 		CRITICAL_SECTION myCriticalSection;
 	};
 }
-/**************************************************************************************************************************************************************************************************/
+
+
+
+
+
+
+
+
+
+
+namespace MicroFlakeX
+{
+	/***************************************************************
+	*  MicroFlakeX 线程回调指针格式
+	****************************************************************/
+	typedef MfxReturn(*pThreadFunc)(MfxParam);
+
+	/***************************************************************
+	*  MicroFlakeX 回调函数辅助声明 - 返回值必须为MfxReturn
+	*  例：MfxReturn MfxCallBack(MyCallBackFunc);
+	****************************************************************/
+#define MfxCallBack(funcName) funcName(MfxParam param)
+
+	/***************************************************************
+	* 异步线程请勿传入局部变量指针。
+	* 参数一：回调对象指针
+	* 参数二：回调对象方法名字
+	* 参数三：传递给回调方法的MfxParam。
+	****************************************************************/
+	MFX_PORT MfxReturn MfxBeginNewThread(MfxBase* object, MfxString recvFunc, MfxParam mParam);
+
+
+	/***************************************************************
+	* 参数一：回调函数指针
+	* 参数二：传递给回调方法的MfxParam
+	****************************************************************/
+	MFX_PORT MfxReturn MfxBeginNewThread_Widely(pThreadFunc pThreadFunc, MfxParam mParam);
+
+	/***************************************************************
+	* 参数一：返回一个计时器ID
+	* 参数二：回调对象指针
+	* 参数三：回调对象方法名字
+	* 参数四：传递给回调方法的MfxParam
+	* 参数五：计时器每个多长时间调用一次，单位为ms，若为0，则调用一次结束
+	* 参数六：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
+	* 参数七：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
+	****************************************************************/
+	MFX_PORT MfxReturn MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, MfxParam mParam, MfxTime delay = 0, LONGLONG begin = -10000000, MfxTime randTime = 0);
+
+	/***************************************************************
+	* 参数一：返回一个计时器ID
+	* 参数二：回调函数指针
+	* 参数三：传递给回调方法的MfxParam
+	* 参数四：计时器每个多长时间调用一次，单位为ms，若为0，则调用一次结束
+	* 参数五：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
+	* 参数六：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
+	****************************************************************/
+	MFX_PORT MfxReturn MfxBeginNewTimer_Widely(PTP_TIMER& pTimer, pThreadFunc pThreadFunc, MfxParam mParam, MfxTime delay = 0, LONGLONG begin = -10000000, MfxTime randTime = 0);
+
+	/***************************************************************
+	* 参数一：计时器ID，根据id删除对应的计时器
+	****************************************************************/
+	MFX_PORT MfxReturn MfxCloseTimer(PTP_TIMER& pTimer);
+
+	/***************************************************************
+	*	MicroFlakeX 工厂 - 通过字符串创建对象
+	*	1、该子类必须声明了 MfxObject 宏
+	*	2、该子类必须实现了 MfxObject_Init(object) 和 MfxObject_EndInit(object, father)辅助宏
+	****************************************************************/
+	MFX_PORT MfxReturn MfxFactory(MfxString object, MfxBase** ret);
+}
 
 
 
@@ -818,7 +852,6 @@ namespace __MicroFlakeX
 	*		MfxRegisterObject - 注册工厂
 	*
 	****************************************************************/
-
 	using namespace MicroFlakeX;
 
 	MFX_PORT VOID CALLBACK MfxThreadCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val);
@@ -840,6 +873,9 @@ namespace __MicroFlakeX
 	MFX_PORT MfxReturn MfxRemoveObject(MfxString object);
 	MFX_PORT MfxReturn MfxRegisterObject(MfxString object, MfxFactoryHand* hand);
 }
+
+
+
 
 
 

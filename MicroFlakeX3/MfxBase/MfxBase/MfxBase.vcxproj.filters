@@ -21,9 +21,6 @@
     <ClInclude Include="MfxBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MfxBaseExample_00.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -33,9 +30,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MfxBase.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MfxBaseExample_00.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MfxThread.cpp">
@@ -51,6 +45,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MfxMemberLock.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MfxFactory.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

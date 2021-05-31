@@ -32,7 +32,6 @@ namespace MicroFlakeX
 	class MFX_PORT MfxUI;
 	class MFX_PORT MfxFlake;
 
-
 	typedef MfxApp* pMfxApp;
 	typedef MfxUI* pMfxUI;
 	typedef MfxFlake* pMfxFlake;
@@ -40,12 +39,6 @@ namespace MicroFlakeX
 	typedef std::unordered_set<pMfxFlake> MfxFlake_Set;
 	typedef std::deque<pMfxFlake> MfxFlake_Deque;
 	typedef std::vector<pMfxFlake> MfxFlake_Vector;
-
-
-	/**************************************************************
-	*	MfxMessage	为Mfx框架使用的消息标识号，是一个UINT类型
-	**************************************************************/
-	typedef UINT MfxMessage;
 
 	/**************************************************************
 	*	App_UI_Info 映射了从win32的hwnd句柄到MfxUI指针
@@ -621,14 +614,6 @@ namespace MicroFlakeX
 * 为UI添加一个来自定时器的消息映射
 *********************************************************************************/
 #define UI_ADDRECV_TIMER(timerID, delay, recvFunc) InsertWin32Timer(timerID, delay, (pUIRecvFunc)&recvFunc)
-
-
-/********************************************************************************
-* Mfx消息回调函数
-*********************************************************************************/
-#define MfxCallBack(funcName) funcName(MfxParam param)
-
-
 
 }
 

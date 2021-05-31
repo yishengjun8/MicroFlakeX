@@ -99,7 +99,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>..\..\MfxBase\MfxBase\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\lib_Debug</AdditionalLibraryDirectories>
+      <OutputFile>..\..\lib_Debug\$(TargetName)$(TargetExt)</OutputFile>
+      <ImportLibrary>..\..\lib_Debug\$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -121,7 +123,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>..\..\MfxBase\MfxBase\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\lib_Release</AdditionalLibraryDirectories>
+      <OutputFile>..\..\lib_Release\$(TargetName)$(TargetExt)</OutputFile>
+      <ImportLibrary>..\..\lib_Release\$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

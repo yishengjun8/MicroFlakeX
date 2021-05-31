@@ -300,7 +300,6 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam myParam)
 
 			if (tFind->second.myThroughTime > tKeyObjectType.second.front().time)
 			{
-				myBindObject->AutoFunc(tFind->second.setObjectFuncName, tKeyObjectType.second.front().key);
 				myBindObject->AutoFunc(tFind->second.getObjectFuncName, tFind->second.myGetObject_Begin);
 
 				tFind->second.myBeginTime = clock();

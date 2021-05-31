@@ -55,7 +55,7 @@ MfxReturn MicroFlakeX::MfxBeginNewThread_Widely(pThreadFunc pThreadFunc, MfxPara
 	return TrySubmitThreadpoolCallback(&MfxThreadCallBack_Widely, tWork, NULL) ? Mfx_Return_Fine : Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, MfxParam mParam, DWORD delay, LONGLONG begin, DWORD randTime)
+MfxReturn MicroFlakeX::MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, MfxParam mParam, MfxTime delay, LONGLONG begin, MfxTime randTime)
 {
 	MfxWork_AutoFunc* tWork = new MfxWork_AutoFunc(object, recvFunc, mParam);
 
@@ -77,7 +77,7 @@ MfxReturn MicroFlakeX::MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxS
 	return Mfx_Return_Fine;
 }
 
-MFX_PORT MfxReturn MicroFlakeX::MfxBeginNewTimer_Widely(PTP_TIMER& pTimer, pThreadFunc pThreadFunc, MfxParam mParam, DWORD delay, LONGLONG begin, DWORD randTime)
+MFX_PORT MfxReturn MicroFlakeX::MfxBeginNewTimer_Widely(PTP_TIMER& pTimer, pThreadFunc pThreadFunc, MfxParam mParam, MfxTime delay, LONGLONG begin, MfxTime randTime)
 {
 	MfxWork_Widel* tWork = new MfxWork_Widel(pThreadFunc, mParam);
 
