@@ -136,7 +136,7 @@ void MicroFlakeX::MfxUI::MfxRegMessages()
 
 void MicroFlakeX::MfxUI::MfxUIInitData()
 {
-    myGlobeAlphaMode = LWA_ALPHA; //LWA_COLORKEY
+    myGlobeAlphaMode = LWA_COLORKEY; //LWA_COLORKEY  LWA_ALPHA
 
     myWnd = nullptr;
 
@@ -855,7 +855,8 @@ MfxReturn MicroFlakeX::MfxUI::__OnCreate(MfxParam param)
 
     //SetWindowLong(myWnd, GWL_EXSTYLE, GetWindowLong(myWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
 
-    SetGlobeAlpha(&myBackColor);
+    MfxColor tColor;
+    SetGlobeAlpha(&tColor);
 
     return Mfx_Return_Fine;
 }

@@ -358,6 +358,7 @@ namespace MicroFlakeX
 		virtual ~MfxRectangle();
 
 		MfxReturn Clone(MfxRectangle** ret) const;
+
 	protected:
 		MfxCanvas* myCanvas;
 		ID2D1RenderTarget* myRenderTarget;
@@ -385,6 +386,20 @@ namespace MicroFlakeX
 		MfxReturn GetFillColor(MfxColor* ret);
 		MfxReturn GetFrameColor(MfxColor* ret);
 
+	protected:
+		double myRounded_X;
+		double myRounded_Y;
+		bool myRoundedFlage;
+	public:
+		MfxReturn SetRounded_X(double set);
+		MfxReturn SetRounded_Y(double set);
+	public:
+		MfxReturn GetRounded_X(double* ret);
+		MfxReturn GetRounded_Y(double* ret);
+	public:
+		MfxReturn OpenRounded();
+		MfxReturn CloseRounded();
+	
 	public:
 		MfxReturn GetReallyRect(MfxRect* ret)const;
 	public:

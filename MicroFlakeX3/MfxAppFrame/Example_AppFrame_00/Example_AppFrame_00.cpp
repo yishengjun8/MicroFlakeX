@@ -90,7 +90,7 @@ int main()
     myGlide.MfxAddKeyframe(MfxText("group_3"), &keyColor, 1500);
     keyColor.Reset(255, 0, 0, 255);
     myGlide.MfxAddKeyframe(MfxText("group_3"), &keyColor, 1500);
-    keyColor.Reset(255, 0, 0, 0);
+    keyColor.Reset(255, 50, 50, 50);
     myGlide.MfxAddKeyframe(MfxText("group_3"), &keyColor, 1500);
     keyColor.Reset(255, 255, 0, 0);
     myGlide.MfxAddKeyframe(MfxText("group_3"), &keyColor, 1500);
