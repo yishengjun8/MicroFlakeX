@@ -252,8 +252,6 @@ namespace MicroFlakeX
 
 	UI_MSG_(UI_MSG_SetBackColor);
 	UI_MSG_(UI_MSG_SetMaskColor);
-	UI_MSG_(UI_MSG_SetBackImage);
-	UI_MSG_(UI_MSG_SetMaskImage);
 
 	UI_MSG_(UI_MSG_OpenPercentRect);
 	UI_MSG_(UI_MSG_ClosePercentRect);
@@ -295,8 +293,8 @@ namespace MicroFlakeX
 
 	FLAKE_MSG_(FLAKE_MSG_SetBackColor);
 	FLAKE_MSG_(FLAKE_MSG_SetMaskColor);
-	FLAKE_MSG_(FLAKE_MSG_SetBackImage);
-	FLAKE_MSG_(FLAKE_MSG_SetMaskImage);
+	FLAKE_MSG_(FLAKE_MSG_SetBackFrameSize);
+	FLAKE_MSG_(FLAKE_MSG_SetMaskFrameSize);
 
 	FLAKE_MSG_(FLAKE_MSG_SetWords);
 	FLAKE_MSG_(FLAKE_MSG_SetTitleSize);
@@ -342,6 +340,7 @@ namespace __MicroFlakeX
 
 namespace MicroFlakeX
 {
+	/* 延迟初始化MfxUI - 暂时还没想好怎么做 */
 	class MfxUI :
 		public MfxBase
 	{
@@ -437,7 +436,7 @@ namespace MicroFlakeX
 	private:
 		MfxRect myInvalidateRect;
 	public:
-		MfxReturn UnionInvalidateRect(MfxRect* set);
+		MfxReturn UnionInvalidateRect(MfxRect set, double inflate = 1);
 
 		/********************************************************************************
 		*
@@ -464,8 +463,8 @@ namespace MicroFlakeX
 		MfxColor myBackColor;
 		MfxColor myMaskColor;
 
-		MfxImage* myBackImage;
-		MfxImage* myMaskImage;
+		MfxRectangle myBackRectangle;
+		MfxRectangle myMaskRectangle;
 	public:
 		MfxReturn GetRect(MfxRect* ret);
 		MfxReturn GetSize(MfxSize* ret);
@@ -474,9 +473,6 @@ namespace MicroFlakeX
 		MfxReturn GetBackColor(MfxColor* ret);
 		MfxReturn GetMaskColor(MfxColor* ret);
 
-		MfxReturn GetBackImage(MfxImage** ret);
-		MfxReturn GetMaskImage(MfxImage** ret);
-
 	public:
 		MfxReturn SetRect(MfxRect* set);
 		MfxReturn SetSize(MfxSize* set);
@@ -484,9 +480,6 @@ namespace MicroFlakeX
 
 		MfxReturn SetBackColor(MfxColor* set);
 		MfxReturn SetMaskColor(MfxColor* set);
-
-		MfxReturn SetBackImage(MfxImage* set);
-		MfxReturn SetMaskImage(MfxImage* set);
 
 	public:
 		MfxReturn SetBigIcon(MfxImage* set);
@@ -553,8 +546,6 @@ namespace MicroFlakeX
 
 		MfxReturn __OnSetBackColor(MfxParam param);
 		MfxReturn __OnSetMaskColor(MfxParam param);
-		MfxReturn __OnSetBackImage(MfxParam param);
-		MfxReturn __OnSetMaskImage(MfxParam param);
 
 
 
@@ -674,6 +665,13 @@ namespace MicroFlakeX
 		MfxColor myBackColor;
 		MfxColor myMaskColor;
 		MfxColor myTitleColor;
+		double myBackFrameSize;
+		double myMaskFrameSize;
+
+		MfxWords* myWords;
+		MfxRectangle myBackRectangle;
+		MfxRectangle myMaskRectangle;
+
 	public:
 		MfxReturn GetRect(MfxRect* ret);
 		MfxReturn GetSize(MfxSize* ret);
@@ -683,9 +681,13 @@ namespace MicroFlakeX
 		MfxReturn GetTitle(MfxString* ret);
 		MfxReturn GetTitleSize(DOUBLE* ret);
 
+		MfxReturn GetWords(MfxWords** ret);
 		MfxReturn GetBackColor(MfxColor* ret);
 		MfxReturn GetMaskColor(MfxColor* ret);
 		MfxReturn GetTitleColor(MfxColor* ret);
+
+		MfxReturn GetBackFrameSize(double* ret);
+		MfxReturn GetMaskFrameSize(double* ret);
 
 	public:
 		MfxReturn SetRect(MfxRect* set);
@@ -694,12 +696,15 @@ namespace MicroFlakeX
 		MfxReturn SetEdgeRect(MfxRect* set);
 
 		MfxReturn SetTitle(MfxString set);
-
 		MfxReturn SetTitleSize(DOUBLE set);
 
+		MfxReturn SetWords(MfxWords* set);
 		MfxReturn SetBackColor(MfxColor* set);
 		MfxReturn SetMaskColor(MfxColor* set);
 		MfxReturn SetTitleColor(MfxColor* set);
+
+		MfxReturn SetBackFrameSize(double set);
+		MfxReturn SetMaskFrameSize(double set);
 
 
 		/********************************************************************************
@@ -728,27 +733,6 @@ namespace MicroFlakeX
 
 		MfxReturn OpenRButtonMove();
 		MfxReturn CloseRButtonMove();
-
-
-		/********************************************************************************
-		*
-		*
-		*
-		*
-		*********************************************************************************/
-	private:
-		MfxWords* myWords;
-		MfxImage* myBackImage;
-		MfxImage* myMaskImage;
-	public:
-		MfxReturn GetWords(MfxWords** ret);
-		MfxReturn GetBackImage(MfxImage** ret);
-		MfxReturn GetMaskImage(MfxImage** ret);
-
-		MfxReturn SetWords(MfxWords * set);
-		MfxReturn SetBackImage(MfxImage* set);
-		MfxReturn SetMaskImage(MfxImage* set);
-
 
 		/********************************************************************************
 		*
@@ -807,9 +791,10 @@ private:
 		MfxReturn __OnSetMaskColor(MfxParam param);
 		MfxReturn __OnSetTitleColor(MfxParam param);
 
+		MfxReturn __OnSetBackFrameSize(MfxParam param);
+		MfxReturn __OnSetMaskFrameSize(MfxParam param);
+
 		MfxReturn __OnSetWords(MfxParam param);
-		MfxReturn __OnSetBackImage(MfxParam param);
-		MfxReturn __OnSetMaskImage(MfxParam param);
 
 		MfxReturn __OnFlakeEvent(MfxParam param);
 

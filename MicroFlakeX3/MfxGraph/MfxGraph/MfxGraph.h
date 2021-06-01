@@ -72,8 +72,6 @@ namespace MicroFlakeX
 
 		/**************************************************************
 		*
-		*
-		*
 		***************************************************************/
 		MfxObject;
 
@@ -98,7 +96,7 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	class MfxCanvas :
-		public MfxGraph
+		public MfxBase
 	{
 		MfxObject;
 	public:
@@ -154,10 +152,14 @@ namespace MicroFlakeX
 		MfxReturn SetRect(MfxRect* set);
 		MfxReturn SetSize(MfxSize* set);
 		MfxReturn SetPoint(MfxPoint* set);
-
+	public:
+		MfxReturn GetRect(MfxRect* ret)const;
+		MfxReturn GetSize(MfxSize* ret)const;
+		MfxReturn GetPoint(MfxPoint* ret)const;
 	protected:
 		HDC myDC;
 		HWND myWnd;
+		MfxRect myRect;
 
 		MfxRect myClipRect;
 		MfxColor myBackColor;
@@ -215,6 +217,7 @@ namespace MicroFlakeX
 		IWICBitmap* myIWICBitmap;
 		ID2D1Bitmap* myID2D1Bitmap;
 
+		bool myBitmapUpdateFlage;
 	public:
 		MfxReturn Paint();
 
@@ -225,21 +228,19 @@ namespace MicroFlakeX
 		MfxReturn FromColor(MfxColor* color, MfxSize* set);
 
 	public:
-		MfxReturn GetIWICBitmap(IWICBitmap** ret)const;
-		MfxReturn GetID2D1Bitmap(ID2D1Bitmap** ret)const;
+		MfxReturn GetIWICBitmap(IWICBitmap** ret);
+		MfxReturn GetID2D1Bitmap(ID2D1Bitmap** ret);
 
-		MfxReturn GetGdipBitmap(Gdiplus::Bitmap** ret)const;
+		MfxReturn GetGdipBitmap(Gdiplus::Bitmap** ret);
 
-		MfxReturn GetHICON(HICON* ret)const;
-		MfxReturn GetHBITMAP(MfxColor* set, HBITMAP* ret)const;
+		MfxReturn GetHICON(HICON* ret);
+		MfxReturn GetHBITMAP(MfxColor* set, HBITMAP* ret);
 
 	public:
 		MfxReturn SetIWICBitmap(IWICBitmap* set);
 
 	public:
 		MfxReturn Update_Canvas();
-
-		MfxReturn ResetID2D1Bitmap();
 
 		MfxReturn ResetIWICBitmapFromFile(const MfxString* path, const MfxSize* set);
 		MfxReturn ResetIWICBitmapFromColor(const MfxColor* color, const MfxSize *set);
@@ -295,6 +296,7 @@ namespace MicroFlakeX
 		MfxString myText;
 		MfxColor myColor;
 		ID2D1SolidColorBrush* myTextBrush;
+		bool myTextBrushUpdateFlage;
 		IDWriteTextFormat* myTextFormat;
 		IDWriteTextLayout* myTextLayout;
 
@@ -340,4 +342,53 @@ namespace MicroFlakeX
 	};
 }
 
+namespace MicroFlakeX
+{
+	class MfxRectangle :
+		public MfxGraph
+	{
+		MfxObject;
+	public:
+		MfxRectangle();
+
+		MfxRectangle(const MfxRect* set, MfxColor fillColor = MfxColor(255, 255, 0, 0), MfxColor frameColor = MfxColor(255, 0, 0, 255));
+		MfxRectangle(const MfxRect& set) :MfxRectangle(&set) {};
+		MfxRectangle(const MfxRect&& set) :MfxRectangle(&set) {};
+
+		virtual ~MfxRectangle();
+
+		MfxReturn Clone(MfxRectangle** ret) const;
+	protected:
+		MfxCanvas* myCanvas;
+		ID2D1RenderTarget* myRenderTarget;
+
+		MfxColor myFillColor;
+		MfxColor myFrameColor;
+
+		ID2D1SolidColorBrush* myFillBrush;
+		ID2D1SolidColorBrush* myFrameBrush;
+
+		bool myColorUpdateFlage;
+		double myFrameSize;
+	public:
+		MfxReturn Paint();
+
+		MfxReturn SetCanvas(MfxCanvas* set);
+		MfxReturn GetCanvas(MfxCanvas** ret);
+
+	public:
+		MfxReturn SetFrameSize(double set);
+		MfxReturn SetFillColor(MfxColor* set);
+		MfxReturn SetFrameColor(MfxColor* set);
+	public:
+		MfxReturn GetFrameSize(double* ret);
+		MfxReturn GetFillColor(MfxColor* ret);
+		MfxReturn GetFrameColor(MfxColor* ret);
+
+	public:
+		MfxReturn GetReallyRect(MfxRect* ret)const;
+	public:
+		MfxReturn Update_Canvas();
+	};
+}
 

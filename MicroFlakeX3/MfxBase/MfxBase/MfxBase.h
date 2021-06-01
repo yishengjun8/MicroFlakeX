@@ -126,33 +126,39 @@ namespace MicroFlakeX
 	}
 
 	template<class Interface>
-	inline void SafeRelease(Interface*& pInterfaceToRelease)
+	inline bool SafeRelease(Interface*& pInterfaceToRelease)
 	{
 		if (pInterfaceToRelease != nullptr)
 		{
 			pInterfaceToRelease->Release();
 			pInterfaceToRelease = nullptr;
+			return 1;
 		}
+		return 0;
 	}
 
 	template<class Pointer>
-	inline void SafeDelete(Pointer*& pPointerToDelete)
+	inline bool SafeDelete(Pointer*& pPointerToDelete)
 	{
 		if (pPointerToDelete != nullptr)
 		{
 			delete pPointerToDelete;
 			pPointerToDelete = nullptr;
+			return 1;
 		}
+		return 0;
 	}
 
 	template<class Pointer>
-	inline void SafeDeleteL(Pointer*& pPointerToDelete)
+	inline bool SafeDeleteL(Pointer*& pPointerToDelete)
 	{
 		if (pPointerToDelete != nullptr)
 		{
 			delete[] pPointerToDelete;
 			pPointerToDelete = nullptr;
+			return 1;
 		}
+		return 0;
 	}
 }
 
@@ -253,14 +259,14 @@ namespace MicroFlakeX
 		template<typename ...Args>
 		void UnLock(void* first, Args... rest)
 		{
-			auto tFind = myMutexResour.find(first);
+			auto tFind = myMutexResour.find(const_cast<void*>(first));
 			if (tFind == myMutexResour.end())
 			{
-				InsertMemberLock(first);
+				InsertMemberLock(const_cast<void*>(first));
 			}
 			else
 			{
-				LeaveCriticalSection(&myMutexResour[first]);
+				LeaveCriticalSection(&myMutexResour[const_cast<void*>(first)]);
 			}
 
 			UnLock(rest...);
@@ -276,11 +282,11 @@ namespace MicroFlakeX
 		bool TryLock(void* first, Args... rest)
 		{
 			bool ret = false;
-			auto tFind = myMutexResour.find(first);
+			auto tFind = myMutexResour.find(const_cast<void*>(first));
 			if (tFind == myMutexResour.end())
 			{
-				InsertMemberLock(first);
-				ret = TryEnterCriticalSection(&myMutexResour[first]);
+				InsertMemberLock(const_cast<void*>(first));
+				ret = TryEnterCriticalSection(&myMutexResour[const_cast<void*>(first)]);
 			}
 			else
 			{
@@ -297,7 +303,7 @@ namespace MicroFlakeX
 				}
 				else
 				{
-					LeaveCriticalSection(&myMutexResour[first]);
+					LeaveCriticalSection(&myMutexResour[const_cast<void*>(first)]);
 					return false;
 				}
 			}

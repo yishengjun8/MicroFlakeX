@@ -5,7 +5,7 @@ MfxObject_Init(MfxCanvas)
 {
 	//添加一些需要提前初始化的代码
 }
-MfxObject_EndInit(MfxCanvas, MfxGraph, \
+MfxObject_EndInit(MfxCanvas, MfxBase, \
 	1, GetDC, \
 	1, GetWnd, \
 	1, GetBackColor, \
@@ -22,7 +22,12 @@ MfxObject_EndInit(MfxCanvas, MfxGraph, \
 	\
 	1, SetRect, \
 	1, SetSize, \
-	1, SetPoint);
+	1, SetPoint, \
+	\
+	1, GetRect, \
+	1, GetSize, \
+	1, GetPoint \
+);
 
 MicroFlakeX::MfxCanvas::MfxCanvas()
 {
@@ -64,7 +69,7 @@ MicroFlakeX::MfxCanvas::MfxCanvas(const HDC setDC, const MfxRect* setRect)
 	myDC = setDC;
 	myRect = setRect;
 
-	GetID2D1DCRenderTarget(&myRenderTarget, myDC, myRect);
+	MfxGraph::GetID2D1DCRenderTarget(&myRenderTarget, myDC, myRect);
 }
 
 MicroFlakeX::MfxCanvas::MfxCanvas(const HWND setWnd, const MfxRect* setRect)
@@ -77,7 +82,7 @@ MicroFlakeX::MfxCanvas::MfxCanvas(const HWND setWnd, const MfxRect* setRect)
 	myWnd = setWnd;
 	myRect = setRect;
 
-	GetID2D1HwndRenderTarget(&myRenderTarget, myWnd, MfxSize(myRect));
+	MfxGraph::GetID2D1HwndRenderTarget(&myRenderTarget, myWnd, MfxSize(myRect));
 }
 
 
@@ -128,7 +133,7 @@ MfxReturn MicroFlakeX::MfxCanvas::SetDC(HDC set)
 
 	myDC = set;
 
-	GetID2D1DCRenderTarget(&myRenderTarget, set, myRect);
+	MfxGraph::GetID2D1DCRenderTarget(&myRenderTarget, set, myRect);
 
 	return Mfx_Return_Fine;
 }
@@ -142,7 +147,7 @@ MfxReturn MicroFlakeX::MfxCanvas::SetWnd(HWND set)
 
 	myWnd = set;
 
-	GetID2D1HwndRenderTarget(&myRenderTarget, set, MfxSize(myRect));
+	MfxGraph::GetID2D1HwndRenderTarget(&myRenderTarget, set, MfxSize(myRect));
 
 	return Mfx_Return_Fine;
 }
@@ -301,4 +306,25 @@ MfxReturn MicroFlakeX::MfxCanvas::SetPoint(MfxPoint* set)
 	}
 
 	return Mfx_Return_Fail;
+}
+
+MfxReturn MicroFlakeX::MfxCanvas::GetRect(MfxRect* set)const
+{
+	myRect.GetRect(set);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxCanvas::GetSize(MfxSize* set)const
+{
+	myRect.GetSize(set);
+
+	return Mfx_Return_Fine;
+}
+
+MfxReturn MicroFlakeX::MfxCanvas::GetPoint(MfxPoint* set)const
+{
+	myRect.GetPoint(set);
+
+	return Mfx_Return_Fine;
 }

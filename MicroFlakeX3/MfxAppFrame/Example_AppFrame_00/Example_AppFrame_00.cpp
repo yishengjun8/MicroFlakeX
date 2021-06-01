@@ -6,42 +6,37 @@ using namespace MicroFlakeX;
 
 int main()
 {
-    cout << "\nHello MicroFlakeX!\n";
+    MfxBase* myUI_00 = nullptr;
+    MfxBase* myColor = nullptr;
+    MfxBase* myFlake_01 = nullptr;
 
-    MfxUI* myUI_Father = new MfxUI;
-    MfxSize uiSize(900, 600);
-    //myUI_00->SetSize(&uiSize);
-    //myUI_00->AutoFunc(L"SetSize", &uiSize);
-    ((MfxBase*)(myUI_Father))->AutoFunc(L"SetSize", &uiSize);
+    MfxFactory(MfxText("MfxUI"), &myUI_00);
+    MfxFactory(MfxText("MfxColor"), &myColor);
+    MfxFactory(MfxText("MfxFlake"), &myFlake_01);
 
-    MfxUI* myUI_00 = new MfxUI(MfxRect(60, 60, 400, 400), L"MfxChild", UI_WINDOWS_STYLE_Normal, NULL, nullptr);
-    MfxFlake* myFlake_01 = nullptr;
+    MfxSignal mySignal;
+    mySignal.PushBackReceiver(myUI_00, MfxText("SetSize"));
 
-    //MfxFactory(MfxText("MfxUI"), (MfxBase**)&myUI_00);
-    MfxFactory(MfxText("MfxFlake"), (MfxBase**)&myFlake_01);
+    MfxSize uiSize(600, 600);
+    mySignal.SendSignal(&uiSize);
 
-   
+    myColor->AutoFunc(MfxText("Reset"), 255, 0, 255, 0);
+    myUI_00->AutoFunc(MfxText("SetBackColor"), myColor);
 
+    myColor->AutoFunc(MfxText("Reset"), 255, 255, 255, 255);
+    myFlake_01->AutoFunc(MfxText("SetBackColor"), myColor);
 
-    MfxColor uiColor(255, 255, 0, 0);
-    myUI_00->SetBackColor(&uiColor);
-
-
-
-
-    MfxColor flake_bkColor(255, 255, 255, 255);
-    myFlake_01->SetBackColor(&flake_bkColor);
-
-    MfxColor flake_txColor(255, 0, 0, 0);
-    myFlake_01->SetTitleColor(&flake_txColor);
+    myColor->AutoFunc(MfxText("Reset"), 255, 0, 0, 0);
+    myFlake_01->AutoFunc(MfxText("SetTitleColor"), myColor);
 
     MfxRect flakeRect(0, 0, 100, 100);
-    myFlake_01->SetRect(&flakeRect);
+    myFlake_01->AutoFunc(MfxText("SetRect"), &flakeRect);
 
-    myFlake_01->SetTitle(L"MFX");
-    myFlake_01->OpenRButtonMove();
+    myFlake_01->AutoFunc(MfxText("SetTitle"), MfxString(MfxText("MFX")));
+    myFlake_01->AutoFunc(MfxText("OpenRButtonMove"));
+    myFlake_01->AutoFunc(MfxText("OpenLButtonMove"));
 
-    myUI_00->InsertFlake(myFlake_01);
+    myUI_00->AutoFunc(MfxText("InsertFlake"), myFlake_01);
 
     MfxGlide myGlide;
 
@@ -72,6 +67,16 @@ int main()
     myGlide.Add_GetSetFuncName(MfxText("group_4"), MfxText("GetG"), MfxText("SetG"));
     myGlide.Add_GetSetFuncName(MfxText("group_4"), MfxText("GetB"), MfxText("SetB"));
 
+    MfxSize keySize(300, 300);
+    myGlide.MfxAddKeyframe(MfxText("group_1"), &keySize, 1500);
+    keySize.Reset(100, 100);
+    myGlide.MfxAddKeyframe(MfxText("group_1"), &keySize, 1500);
+    keySize.Reset(300, 300);
+    myGlide.MfxAddKeyframe(MfxText("group_1"), &keySize, 1500);
+    keySize.Reset(100, 100);
+    myGlide.MfxAddKeyframe(MfxText("group_1"), &keySize, 1500);
+
+
     MfxPoint keyPoint(300, 0);
     myGlide.MfxAddKeyframe(MfxText("group_2"), &keyPoint, 1500);
     keyPoint.Reset(300, 300);
@@ -81,13 +86,13 @@ int main()
     keyPoint.Reset(0, 0);
     myGlide.MfxAddKeyframe(MfxText("group_2"), &keyPoint, 1500);
 
-    MfxColor keyColor(255, 255, 255, 0);
+    MfxColor keyColor(255, 0, 255, 255);
     myGlide.MfxAddKeyframe(MfxText("group_3"), &keyColor, 1500);
-    keyColor.Reset(255, 255, 0, 0);
+    keyColor.Reset(255, 0, 0, 255);
     myGlide.MfxAddKeyframe(MfxText("group_3"), &keyColor, 1500);
     keyColor.Reset(255, 0, 0, 0);
     myGlide.MfxAddKeyframe(MfxText("group_3"), &keyColor, 1500);
-    keyColor.Reset(255, 0, 0, 255);
+    keyColor.Reset(255, 255, 0, 0);
     myGlide.MfxAddKeyframe(MfxText("group_3"), &keyColor, 1500);
 
     keyColor.Reset(255, 0, 0, 255);
@@ -101,6 +106,6 @@ int main()
 
     myGlide.Begin();
 
-    myUI_00->SetUI_Show();
+    myUI_00->AutoFunc(MfxText("SetUI_Show"));
     return MfxAppRun();
 }

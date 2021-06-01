@@ -17,7 +17,7 @@ MfxObject_EndInit(MfxImage, MfxGraph, \
 	\
 	1, SetIWICBitmap, \
 	\
-	0, ResetID2D1Bitmap, \
+	0, Update_Canvas, \
 	2, ResetIWICBitmapFromFile, \
 	2, ResetIWICBitmapFromColor);
 
@@ -27,6 +27,7 @@ MicroFlakeX::MfxImage::MfxImage()
 	myRenderTarget = nullptr;
 	myIWICBitmap = nullptr;
 	myID2D1Bitmap = nullptr;
+	myBitmapUpdateFlage = false;
 }
 
 MicroFlakeX::MfxImage::MfxImage(const MfxString* path, const MfxRect* set)
@@ -35,6 +36,7 @@ MicroFlakeX::MfxImage::MfxImage(const MfxString* path, const MfxRect* set)
 	myRenderTarget = nullptr;
 	myIWICBitmap = nullptr;
 	myID2D1Bitmap = nullptr;
+	myBitmapUpdateFlage = false;
 
 	set->GetRect(&myRect);
 
@@ -48,6 +50,7 @@ MicroFlakeX::MfxImage::MfxImage(const MfxColor* color, const MfxRect* set)
 	myRenderTarget = nullptr;
 	myIWICBitmap = nullptr;
 	myID2D1Bitmap = nullptr;
+	myBitmapUpdateFlage = false;
 
 	set->GetRect(&myRect);
 
@@ -61,6 +64,7 @@ MicroFlakeX::MfxImage::MfxImage(IWICBitmap* tIWICBitmap, const MfxRect* set)
 	myRenderTarget = nullptr;
 	myIWICBitmap = nullptr;
 	myID2D1Bitmap = nullptr;
+	myBitmapUpdateFlage = false;
 
 	set->GetRect(&myRect);
 
@@ -88,27 +92,19 @@ MfxReturn MicroFlakeX::MfxImage::Clone(MfxImage** ret) const
 ***************************************************************/
 MfxReturn MicroFlakeX::MfxImage::Paint()
 {
-	if (myCanvas)
+	Update_Canvas();
+
+	myMemberLock.TryWaitLock(&myRenderTarget, &myRect, &myID2D1Bitmap);
+
+	bool IsEmpty = false;
+	myRect.IsEmpty(&IsEmpty);
+	if (myRenderTarget && !IsEmpty && myID2D1Bitmap)
 	{
-		ID2D1RenderTarget* tRenderTarget = nullptr;
-		myCanvas->GetRenderTarget(&tRenderTarget);
-
-		if (myRenderTarget != tRenderTarget)
-		{
-			myRenderTarget = tRenderTarget;
-			ResetID2D1Bitmap();
-		}
-
-		if (myRenderTarget && (myRenderTarget == tRenderTarget))
-		{
-			bool IsEmpty = false;
-			myRect.IsEmpty(&IsEmpty);
-			if (!IsEmpty)
-			{
-				myRenderTarget->DrawBitmap(myID2D1Bitmap, myRect);
-			}
-		}
+		myRenderTarget->DrawBitmap(myID2D1Bitmap, myRect);
 	}
+
+	myMemberLock.UnLock(&myRenderTarget, &myRect, &myID2D1Bitmap);
+
 	return Mfx_Return_Fine;
 }
 
@@ -135,30 +131,34 @@ MfxReturn MicroFlakeX::MfxImage::FromColor(MfxColor* color, MfxSize* set)
 MfxReturn MicroFlakeX::MfxImage::GetCanvas(MfxCanvas** ret)const
 {
 	*ret = myCanvas;
-
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxImage::GetIWICBitmap(IWICBitmap** ret)const
+MfxReturn MicroFlakeX::MfxImage::GetIWICBitmap(IWICBitmap** ret)
 {
-	CopyIWICBitmap(ret, myIWICBitmap);
+	myMemberLock.TryWaitLock(&myIWICBitmap);
+	MfxReturn tRet = CopyIWICBitmap(ret, myIWICBitmap);
+	myMemberLock.TryWaitLock(&myIWICBitmap);
 
-	return Mfx_Return_Fine;
+	return tRet;
 }
 
-MfxReturn MicroFlakeX::MfxImage::GetID2D1Bitmap(ID2D1Bitmap** ret)const
+MfxReturn MicroFlakeX::MfxImage::GetID2D1Bitmap(ID2D1Bitmap** ret)
 {
 	*ret = myID2D1Bitmap;
-
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxImage::GetGdipBitmap(Gdiplus::Bitmap** ret)const
+MfxReturn MicroFlakeX::MfxImage::GetGdipBitmap(Gdiplus::Bitmap** ret)
 {
-	return GdipBitmapFromIWICBitmap(ret, myIWICBitmap, MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
+	myMemberLock.TryWaitLock(&myIWICBitmap, &myRect);
+	MfxReturn tRet = GdipBitmapFromIWICBitmap(ret, myIWICBitmap, MfxRect(0, 0, myRect.myWidth, myRect.myHeight));
+	myMemberLock.UnLock(&myIWICBitmap, &myRect);
+
+	return tRet;
 }
 
-MfxReturn MicroFlakeX::MfxImage::GetHICON(HICON* ret)const
+MfxReturn MicroFlakeX::MfxImage::GetHICON(HICON* ret)
 {
 	Gdiplus::Bitmap* tBitmap = nullptr;
 
@@ -168,11 +168,12 @@ MfxReturn MicroFlakeX::MfxImage::GetHICON(HICON* ret)const
 	}
 
 	tBitmap->GetHICON(ret);
+	SafeDelete(tBitmap);
 
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxImage::GetHBITMAP(MfxColor* set, HBITMAP* ret)const
+MfxReturn MicroFlakeX::MfxImage::GetHBITMAP(MfxColor* set, HBITMAP* ret)
 {
 	Gdiplus::Bitmap* tBitmap = nullptr;
 
@@ -185,6 +186,7 @@ MfxReturn MicroFlakeX::MfxImage::GetHBITMAP(MfxColor* set, HBITMAP* ret)const
 	set->GetGdipColor(&tColor);
 
 	tBitmap->GetHBITMAP(tColor, ret);
+	SafeDelete(tBitmap);
 
 	return Mfx_Return_Fine;
 }
@@ -197,23 +199,24 @@ MfxReturn MicroFlakeX::MfxImage::GetHBITMAP(MfxColor* set, HBITMAP* ret)const
 ***************************************************************/
 MfxReturn MicroFlakeX::MfxImage::SetCanvas(MfxCanvas* set)
 {
+	myMemberLock.WaitLock(&myCanvas);
 	myCanvas = set;
+	myMemberLock.UnLock(&myCanvas);
 
-	if (myCanvas)
-	{
-		ResetID2D1Bitmap();
-	}
+	Update_Canvas();
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxImage::SetIWICBitmap(IWICBitmap* set)
 {
+	myMemberLock.TryWaitLock(&myIWICBitmap, &myBitmapUpdateFlage);
+
 	SafeRelease(myIWICBitmap);
-
 	myIWICBitmap = set;
+	myBitmapUpdateFlage = true;
 
-	ResetID2D1Bitmap();
+	myMemberLock.UnLock(&myIWICBitmap, &myBitmapUpdateFlage);
 
 	return Mfx_Return_Fine;
 }
@@ -221,7 +224,36 @@ MfxReturn MicroFlakeX::MfxImage::SetIWICBitmap(IWICBitmap* set)
 
 MfxReturn MicroFlakeX::MfxImage::Update_Canvas()
 {
-	return MfxReturn();
+	myMemberLock.WaitLock(&myCanvas);
+	if (myCanvas)
+	{
+		ID2D1RenderTarget* tID2D1RenderTarget;
+		myCanvas->GetRenderTarget(&tID2D1RenderTarget);
+
+		myMemberLock.UnLock(&myCanvas);
+		myMemberLock.TryWaitLock(&myRenderTarget, &myID2D1Bitmap, &myIWICBitmap, &myBitmapUpdateFlage);
+
+		if (myBitmapUpdateFlage || (myRenderTarget != tID2D1RenderTarget))
+		{
+			SafeRelease(myID2D1Bitmap);
+			(tID2D1RenderTarget && myIWICBitmap) ? ID2D1BitmapFromIWICBitmap(&myID2D1Bitmap, tID2D1RenderTarget, myIWICBitmap, MfxSize()) : 0;
+		}
+		myRenderTarget = tID2D1RenderTarget;
+		myBitmapUpdateFlage = myID2D1Bitmap ? false : true;
+
+		myMemberLock.UnLock(&myRenderTarget, &myID2D1Bitmap, &myIWICBitmap, &myBitmapUpdateFlage);
+	}
+	else
+	{
+		myMemberLock.UnLock(&myCanvas);
+		myMemberLock.TryWaitLock(&myRenderTarget, &myID2D1Bitmap);
+
+		SafeRelease(myID2D1Bitmap);
+		myRenderTarget = nullptr;
+
+		myMemberLock.UnLock(&myRenderTarget, &myID2D1Bitmap);
+	}
+	return Mfx_Return_Fine;
 }
 
 /**************************************************************
@@ -229,48 +261,28 @@ MfxReturn MicroFlakeX::MfxImage::Update_Canvas()
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxImage::ResetID2D1Bitmap()
-{
-	if (myIWICBitmap && myCanvas)
-	{
-		SafeRelease(myID2D1Bitmap);
-		myCanvas->GetRenderTarget(&myRenderTarget);
-
-		if (myRenderTarget)
-		{
-			ID2D1BitmapFromIWICBitmap(&myID2D1Bitmap, myRenderTarget,
-				myIWICBitmap, MfxSize());
-		}
-	}
-	else
-	{
-		SafeRelease(myID2D1Bitmap);
-	}
-
-	return Mfx_Return_Fine;
-}
-
 MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromFile(const MfxString* path, const  MfxSize* set)
 {
+	myMemberLock.TryWaitLock(&myIWICBitmap, &myBitmapUpdateFlage);
+
 	SafeRelease(myIWICBitmap);
-
 	IWICBitmapFromFile(&myIWICBitmap, *path, set);
+	myBitmapUpdateFlage = true;
 
-	ResetID2D1Bitmap();
+	myMemberLock.UnLock(&myIWICBitmap, &myBitmapUpdateFlage);
 
 	return Mfx_Return_Fine;
 }
 
 MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromColor(const MfxColor* color, const  MfxSize* set)
 {
-	myMemberLock.WaitLock(&myIWICBitmap);
+	myMemberLock.TryWaitLock(&myIWICBitmap, &myBitmapUpdateFlage);
 
 	SafeRelease(myIWICBitmap);
 	IWICBitmapFromColor(&myIWICBitmap, color, set);
+	myBitmapUpdateFlage = true;
 
-	myMemberLock.UnLock(&myIWICBitmap);
-
-	ResetID2D1Bitmap();
+	myMemberLock.UnLock(&myIWICBitmap, &myBitmapUpdateFlage);
 
 	return Mfx_Return_Fine;
 }

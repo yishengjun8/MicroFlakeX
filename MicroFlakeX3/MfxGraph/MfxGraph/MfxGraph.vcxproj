@@ -178,6 +178,7 @@
     </ClCompile>
     <ClCompile Include="MfxGraph.cpp" />
     <ClCompile Include="MfxCanvas.cpp" />
+    <ClCompile Include="MfxRectangle.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
