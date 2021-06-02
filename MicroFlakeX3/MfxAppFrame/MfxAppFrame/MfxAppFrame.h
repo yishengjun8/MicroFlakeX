@@ -166,21 +166,21 @@ namespace MicroFlakeX
 	***************************************************************/
 	struct Paper_Infor
 	{
-		Paper_Infor(pMfxUI setUI, HWND setWnd, MfxCanvas* setCanvas)
+		Paper_Infor(pMfxBase father, HWND setWnd, MfxCanvas* setCanvas)
 		{
-			myUI = setUI;
+			myFather = father;
 			myWnd = setWnd;
 			myCanvas = setCanvas;
 		}
 		Paper_Infor()
 		{
 			myWnd = NULL;
-			myUI = nullptr;
+			myFather = nullptr;
 			myCanvas = nullptr;
 		}
 
 		HWND myWnd;
-		pMfxUI myUI;
+		pMfxBase myFather;
 		MfxCanvas* myCanvas;
 
 	};
@@ -220,87 +220,103 @@ namespace MicroFlakeX
 	typedef Flake_FlakeEvent_Map::value_type Flake_FlakeEvent_Map_Elem;
 }
 
+namespace __MicroFlakeX
+{
+	using namespace MicroFlakeX;
+
+	MFX_PORT constexpr MfxMessage MSG_COUNT();
+	MFX_PORT constexpr MfxMessage MSG_COUNT_RESET();
+}
+
 namespace MicroFlakeX
 {
-	/**************************************************************
-	*	MFX_MSG定义了每个类型允许使用的消息范围
-	***************************************************************/
-	const MfxMessage UI_MSG_BEGIN = 0xBFFF;
-	const MfxMessage UI_MSG_END = UI_MSG_BEGIN - 256;
+	const MfxMessage MFX_MSG_RESET = __MicroFlakeX::MSG_COUNT_RESET();
+#define MFX_MSG(MSG) const MfxMessage MSG = __MicroFlakeX::MSG_COUNT()
+#define UI_MSG(MSG) const MfxMessage MSG = __MicroFlakeX::MSG_COUNT()
+#define FLAKE_MSG(MSG) const MfxMessage MSG = __MicroFlakeX::MSG_COUNT()
 
-	const MfxMessage FLAKE_MSG_BEGIN = UI_MSG_END;
-	const MfxMessage FLAKE_MSG_END = FLAKE_MSG_BEGIN - 256;
-
-
-	/**************************************************************
-	*	UI_MSG定义了MfxUI类型所产生的消息
-	***************************************************************/
-	const int UI_MSG_COUNT = __COUNTER__;
-#define UI_MSG_(MSG) const MfxMessage MSG = UI_MSG_BEGIN - MFX_COUNT(UI_MSG_COUNT)
-	UI_MSG_(UI_MSG_PaintBack);
-	UI_MSG_(UI_MSG_PaintMask);
-
-	UI_MSG_(UI_MSG_FlakeInsert);
-	UI_MSG_(UI_MSG_FlakeRemove);
-
-	UI_MSG_(UI_MSG_RemoveFlakeEvent);
-	UI_MSG_(UI_MSG_PushBackFlakeEvent);
-	UI_MSG_(UI_MSG_PushFrontFlakeEvent);
-
-	UI_MSG_(UI_MSG_RemoveWin32Timer);
-	UI_MSG_(UI_MSG_InsertWin32Timer);
-
-	UI_MSG_(UI_MSG_SetBackColor);
-	UI_MSG_(UI_MSG_SetMaskColor);
-
-	UI_MSG_(UI_MSG_OpenPercentRect);
-	UI_MSG_(UI_MSG_ClosePercentRect);
-
-	UI_MSG_(MSG_FlakeEvent);
-
-	UI_MSG_(UI_MSG_FlakeFloorChange);
-
+#define MFX_EVENT(MSG) const MfxMessage MSG = __MicroFlakeX::MSG_COUNT()
+#define UI_EVENT(MSG) const MfxMessage MSG = __MicroFlakeX::MSG_COUNT()
+#define FLAKE_EVENT(MSG) const MfxMessage MSG = __MicroFlakeX::MSG_COUNT()
 
 	/**************************************************************
-	*	FLAKE_MSG定义了MfxFlake类型所产生的消息
+	*	MFX消息
 	***************************************************************/
-	const int FLAKE_MSG_COUNT = __COUNTER__;
-#define FLAKE_MSG_(MSG) const MfxMessage MSG = FLAKE_MSG_BEGIN - MFX_COUNT(FLAKE_MSG_COUNT)
-	FLAKE_MSG_(FLAKE_MSG_RemoveFlakeEvent);
-	FLAKE_MSG_(FLAKE_MSG_PushBackFlakeEvent);
-	FLAKE_MSG_(FLAKE_MSG_PushFrontFlakeEvent);
+	MFX_MSG(MSG_FlakeInsert);
+	MFX_MSG(MSG_FlakeRemove);
 
-	FLAKE_MSG_(FLAKE_MSG_SetPaper);
-	FLAKE_MSG_(FLAKE_MSG_RemovePaper);
+	MFX_MSG(MSG_UIEvent);
+	MFX_MSG(MSG_FlakeEvent);
 
-	FLAKE_MSG_(FLAKE_MSG_PaintBack);
-	FLAKE_MSG_(FLAKE_MSG_PaintMask);
+	MFX_MSG(MSG_FlakeFloorChange);
+	/**************************************************************
+	*	UI消息
+	***************************************************************/
+	UI_MSG(UI_MSG_PaintBack);
+	UI_MSG(UI_MSG_PaintMask);
 
-	FLAKE_MSG_(FLAKE_MSG_Rect);
-	FLAKE_MSG_(FLAKE_MSG_PercentRect);
+	UI_MSG(UI_MSG_RemoveFlakeEvent);
+	UI_MSG(UI_MSG_PushBackFlakeEvent);
+	UI_MSG(UI_MSG_PushFrontFlakeEvent);
 
-	FLAKE_MSG_(FLAKE_MSG_ResetRect);
-	FLAKE_MSG_(FLAKE_MSG_ResetPercentRect);
+	UI_MSG(UI_MSG_RemoveWin32Timer);
+	UI_MSG(UI_MSG_InsertWin32Timer);
 
-	FLAKE_MSG_(FLAKE_MSG_OpenPercentRect);
-	FLAKE_MSG_(FLAKE_MSG_ClosePercentRect);
+	UI_MSG(UI_MSG_OpenPercentRect);
+	UI_MSG(UI_MSG_ClosePercentRect);
 
-	FLAKE_MSG_(FLAKE_MSG_LButtonClick);
-	FLAKE_MSG_(FLAKE_MSG_RButtonClick);
+	UI_MSG(UI_MSG_SetBackColor);
+	UI_MSG(UI_MSG_SetMaskColor);
 
-	FLAKE_MSG_(FLAKE_MSG_SetFloor);
-	FLAKE_MSG_(FLAKE_MSG_SetTitle);
+	/**************************************************************
+	*	Flake消息
+	***************************************************************/
+	FLAKE_MSG(FLAKE_MSG_PaintBack);
+	FLAKE_MSG(FLAKE_MSG_PaintMask);
 
-	FLAKE_MSG_(FLAKE_MSG_SetBackColor);
-	FLAKE_MSG_(FLAKE_MSG_SetMaskColor);
-	FLAKE_MSG_(FLAKE_MSG_SetBackFrameSize);
-	FLAKE_MSG_(FLAKE_MSG_SetMaskFrameSize);
+	FLAKE_MSG(FLAKE_MSG_RemoveFlakeEvent);
+	FLAKE_MSG(FLAKE_MSG_PushBackFlakeEvent);
+	FLAKE_MSG(FLAKE_MSG_PushFrontFlakeEvent);
 
-	FLAKE_MSG_(FLAKE_MSG_SetWords);
-	FLAKE_MSG_(FLAKE_MSG_SetTitleSize);
-	FLAKE_MSG_(FLAKE_MSG_SetTitleColor);
-		
-	FLAKE_MSG_(FLAKE_MSG_GetTitleSize);
+	FLAKE_MSG(FLAKE_MSG_SetPaper);
+	FLAKE_MSG(FLAKE_MSG_RemovePaper);
+
+	FLAKE_MSG(FLAKE_MSG_OpenPercentRect);
+	FLAKE_MSG(FLAKE_MSG_ClosePercentRect);
+
+	FLAKE_MSG(FLAKE_MSG_Rect);
+	FLAKE_MSG(FLAKE_MSG_PercentRect);
+
+	FLAKE_MSG(FLAKE_MSG_ResetRect);
+	FLAKE_MSG(FLAKE_MSG_ResetPercentRect);
+
+	FLAKE_MSG(FLAKE_MSG_SetFloor);
+
+	FLAKE_MSG(FLAKE_MSG_SetWords);
+	FLAKE_MSG(FLAKE_MSG_SetTitle);
+	FLAKE_MSG(FLAKE_MSG_SetTitleSize);
+	FLAKE_MSG(FLAKE_MSG_SetTitleColor);
+
+	FLAKE_MSG(FLAKE_MSG_SetBackColor);
+	FLAKE_MSG(FLAKE_MSG_SetMaskColor);
+	FLAKE_MSG(FLAKE_MSG_SetBackFrameSize);
+	FLAKE_MSG(FLAKE_MSG_SetMaskFrameSize);
+
+	/**************************************************************
+	*	MFX事件
+	***************************************************************/
+	FLAKE_MSG(FLAKE_EVENT_MouseMove);
+
+	FLAKE_MSG(FLAKE_EVENT_LButtonClick);
+	FLAKE_MSG(FLAKE_EVENT_RButtonClick);
+
+	/**************************************************************
+	*	UI事件
+	***************************************************************/
+
+	/**************************************************************
+	*	Flake事件
+	***************************************************************/
 
 
 	/**************************************************************
@@ -323,6 +339,7 @@ namespace MicroFlakeX
 	name.push_back(wParam);\
 	name.push_back(lParam);\
 
+#define GetMSG(param) param.NowMessage()
 #define GetHWND(param) GetParam_Safe(param, HWND, 0)
 #define GetWPARAM(param) GetParam_Safe(param, WPARAM, 1)
 #define GetLPARAM(param) GetParam_Safe(param, LPARAM, 2)
@@ -640,13 +657,13 @@ namespace MicroFlakeX
 
 	private:
 		HWND myWnd;
-		pMfxUI myUI;
+		pMfxBase myFather;
 		MfxFloor myFloor;
 		MfxCanvas* myCanvas;
 	public:
 		MfxReturn GetWnd(HWND* ret);
-		MfxReturn GetUI(pMfxUI* ret);
 		MfxReturn GetFloor(MfxFloor* ret);
+		MfxReturn GetFather(pMfxBase* ret);
 		MfxReturn GetCanvas(MfxCanvas** ret);
 
 		MfxReturn SetFloor(MfxFloor floor);
@@ -802,9 +819,6 @@ private:
 /********************************************************************************
 * 为Flake添加一个来自Flake的消息映射
 *********************************************************************************/
-#define FLAKE_ADDRECV_FLAKEMSG(Msg, myClass, recvFunc) \
-	PushBackFlakeMessage(Msg, Flake_RecvFunc_Infor(\
-		(pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc))\
-		);
+#define FLAKE_ADDRECV_FLAKEMSG(Msg, myClass, recvFunc) PushBackFlakeMessage(Msg, Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
 
 }

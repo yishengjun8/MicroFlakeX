@@ -35,7 +35,6 @@ namespace MicroFlakeX
 
 
 	class MFX_PORT MfxEllipse;
-	class MFX_PORT MfxCircular;
 	class MFX_PORT MfxRectangle;
 }
 
@@ -407,3 +406,70 @@ namespace MicroFlakeX
 	};
 }
 
+/**
+namespace MicroFlakeX
+{
+	class MfxEllipse :
+		public MfxGraph
+	{
+		MfxObject;
+	public:
+		MfxEllipse();
+
+		MfxEllipse(const MfxRect* set, MfxColor fillColor = MfxColor(255, 255, 0, 0), MfxColor frameColor = MfxColor(255, 0, 0, 255));
+		MfxEllipse(const MfxRect& set) :MfxEllipse(&set) {};
+		MfxEllipse(const MfxRect&& set) :MfxEllipse(&set) {};
+
+		virtual ~MfxEllipse();
+
+		MfxReturn Clone(MfxEllipse** ret) const;
+
+	protected:
+		MfxCanvas* myCanvas;
+		ID2D1RenderTarget* myRenderTarget;
+
+		MfxColor myFillColor;
+		MfxColor myFrameColor;
+
+		ID2D1SolidColorBrush* myFillBrush;
+		ID2D1SolidColorBrush* myFrameBrush;
+
+		bool myColorUpdateFlage;
+		double myFrameSize;
+	public:
+		MfxReturn Paint();
+
+		MfxReturn SetCanvas(MfxCanvas* set);
+		MfxReturn GetCanvas(MfxCanvas** ret);
+
+	public:
+		MfxReturn SetFrameSize(double set);
+		MfxReturn SetFillColor(MfxColor* set);
+		MfxReturn SetFrameColor(MfxColor* set);
+	public:
+		MfxReturn GetFrameSize(double* ret);
+		MfxReturn GetFillColor(MfxColor* ret);
+		MfxReturn GetFrameColor(MfxColor* ret);
+
+	protected:
+		double myRounded_X;
+		double myRounded_Y;
+		bool myRoundedFlage;
+	public:
+		MfxReturn SetRounded_X(double set);
+		MfxReturn SetRounded_Y(double set);
+	public:
+		MfxReturn GetRounded_X(double* ret);
+		MfxReturn GetRounded_Y(double* ret);
+	public:
+		MfxReturn OpenRounded();
+		MfxReturn CloseRounded();
+
+	public:
+		MfxReturn GetReallyRect(MfxRect* ret)const;
+	public:
+		MfxReturn Update_Canvas();
+	};
+}
+
+/**/

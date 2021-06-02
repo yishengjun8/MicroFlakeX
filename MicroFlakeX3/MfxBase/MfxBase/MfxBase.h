@@ -452,11 +452,16 @@ namespace MicroFlakeX
 		};
 
 	public:
-		MfxSignal() {};
+		MfxSignal();
 		MfxSignal(const MfxSignal& rhs);
+		static void ReceiverDelete(MfxBase* recvObject);
+		virtual ~MfxSignal();
+
+		void RemoveReceiver(MfxBase* recvObject);
 		void RemoveReceiver(MfxBase* recvObject, MfxString recvFunc);
 		void PushBackReceiver(MfxBase* recvObject, MfxString recvFunc);
 		void PushFrontReceiver(MfxBase* recvObject, MfxString recvFunc);
+
 	protected:
 		std::deque<MfxReceiver_Info> myReceiver;
 

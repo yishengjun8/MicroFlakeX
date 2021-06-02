@@ -12,6 +12,7 @@ MicroFlakeX::MfxBase::MfxBase()
 
 MicroFlakeX::MfxBase::~MfxBase()
 {
+	MfxSignal::ReceiverDelete(this);
 	DeleteCriticalSection(&myCriticalSection);
 }
 

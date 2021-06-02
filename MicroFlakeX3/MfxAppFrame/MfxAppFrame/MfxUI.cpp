@@ -114,9 +114,9 @@ void MicroFlakeX::MfxUI::MfxRegMessages()
     UI_ADDRECV_UIMSG(UI_MSG_PaintBack, MfxUI, __OnPaintBackDC);
     UI_ADDRECV_UIMSG(UI_MSG_PaintMask, MfxUI, __OnPaintMaskDC);
 
-    UI_ADDRECV_UIMSG(UI_MSG_FlakeInsert, MfxUI, __OnFlakeInsert);
-    UI_ADDRECV_UIMSG(UI_MSG_FlakeRemove, MfxUI, __OnFlakeRemove);
-    UI_ADDRECV_UIMSG(UI_MSG_FlakeFloorChange, MfxUI, __OnFlakeFloorChange);
+    UI_ADDRECV_UIMSG(MSG_FlakeInsert, MfxUI, __OnFlakeInsert);
+    UI_ADDRECV_UIMSG(MSG_FlakeRemove, MfxUI, __OnFlakeRemove);
+    UI_ADDRECV_UIMSG(MSG_FlakeFloorChange, MfxUI, __OnFlakeFloorChange);
 
     UI_ADDRECV_UIMSG(UI_MSG_RemoveWin32Timer, MfxUI, __OnRemoveWin32Timer);
     UI_ADDRECV_UIMSG(UI_MSG_InsertWin32Timer, MfxUI, __OnInsertWin32Timer);
@@ -196,7 +196,7 @@ MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxParam param)
 
     myMemberLock.WaitLock(&myMessageMap);
 
-    auto t_Iter = myMessageMap.find(param.NowMessage());
+    auto t_Iter = myMessageMap.find(GetMSG(param));
     if (t_Iter != myMessageMap.end())
     {
         if (!t_Iter->second.empty())
@@ -209,7 +209,7 @@ MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxParam param)
     }
     else
     {
-        tRet = DefWindowProc(GetHWND(param), param.NowMessage(), GetWPARAM(param), GetLPARAM(param));
+        tRet = DefWindowProc(GetHWND(param), GetMSG(param), GetWPARAM(param), GetLPARAM(param));
     }
 
     myMemberLock.UnLock(&myMessageMap);
@@ -264,14 +264,14 @@ MfxReturn MicroFlakeX::MfxUI::Post_Message(MfxParam param)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::RemoveFlake(pMfxFlake set)
 {
-    MfxParam msgParam(UI_MSG_FlakeRemove);
+    MfxParam msgParam(MSG_FlakeRemove);
     msgParam.push_back(set);
     return Send_Message(msgParam);
 }
 
 MfxReturn MicroFlakeX::MfxUI::InsertFlake(pMfxFlake set)
 {
-    MfxParam msgParam(UI_MSG_FlakeInsert);
+    MfxParam msgParam(MSG_FlakeInsert);
     msgParam.push_back(set);
     return Send_Message(msgParam);
 }
@@ -905,7 +905,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnSize(MfxParam param)
 
     DeleteObject(tRNG);
 
-    return DefWindowProc(myWnd, param.NowMessage(), GetWPARAM(param), GetLPARAM(param));
+    return DefWindowProc(myWnd, GetMSG(param), GetWPARAM(param), GetLPARAM(param));
 }
 
 MfxReturn MicroFlakeX::MfxUI::__OnMove(MfxParam param)
@@ -914,7 +914,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnMove(MfxParam param)
     GetWorldRect(&myRect);
     myMemberLock.UnLock(&myRect);
 
-    return DefWindowProc(myWnd, param.NowMessage(), GetWPARAM(param), GetLPARAM(param));
+    return DefWindowProc(myWnd, GetMSG(param), GetWPARAM(param), GetLPARAM(param));
 }
 
 
@@ -1020,7 +1020,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeInsert(MfxParam param)
 
             myMemberLock.UnLock(&myWnd, &myCanvas);
 
-            PostMessage(myWnd, UI_MSG_FlakeFloorChange, NULL, NULL);
+            PostMessage(myWnd, MSG_FlakeFloorChange, NULL, NULL);
 
             myMemberLock.WaitLock(&myRect);
             MfxSize tSize;
@@ -1062,7 +1062,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnFlakeRemove(MfxParam param)
                     myFlakeSet.erase(tpFlake);
                     myMemberLock.UnLock(&myFlakeSet);
 
-                    PostMessage(myWnd, UI_MSG_FlakeFloorChange, NULL, NULL);
+                    PostMessage(myWnd, MSG_FlakeFloorChange, NULL, NULL);
 
                     InvalidateRect(myWnd, nullptr, TRUE);
 
@@ -1102,7 +1102,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnWin32Timer(MfxParam param)
     auto t_Iter = myTimerMap.find(GetWPARAM(param));
     if (t_Iter != myTimerMap.end())
     {
-        MfxParam msgParam(param.NowMessage());
+        MfxParam msgParam(GetMSG(param));
         msgParam.push_back(t_Iter->second);
         tRet = (this->*t_Iter->second.recvFunc)(msgParam);
     }
@@ -1342,7 +1342,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnNCActivate(MfxParam param)
 
 MfxReturn MicroFlakeX::MfxUI::__OnNCHitTest(MfxParam param)
 {
-    MfxReturn ret = DefWindowProc(myWnd, param.NowMessage(), GetWPARAM(param), GetLPARAM(param));
+    MfxReturn ret = DefWindowProc(myWnd, GetMSG(param), GetWPARAM(param), GetLPARAM(param));
 
     if (ret == HTHELP
         || ret == HTCLOSE

@@ -10,9 +10,10 @@ int main()
     MfxBase* myColor = nullptr;
     MfxBase* myFlake_01 = nullptr;
 
+    MfxFactory(MfxText("MfxFlake"), &myFlake_01);
     MfxFactory(MfxText("MfxUI"), &myUI_00);
     MfxFactory(MfxText("MfxColor"), &myColor);
-    MfxFactory(MfxText("MfxFlake"), &myFlake_01);
+
 
     MfxSignal mySignal;
     mySignal.PushBackReceiver(myUI_00, MfxText("SetSize"));

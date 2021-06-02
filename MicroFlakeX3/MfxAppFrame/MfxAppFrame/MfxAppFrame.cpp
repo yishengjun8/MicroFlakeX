@@ -4,7 +4,6 @@
 using namespace MicroFlakeX;
 using namespace __MicroFlakeX;
 
-
 const auto g_Handle = GetModuleHandle(NULL);
 
 App_UI_Info_Map myUIMap;
@@ -64,4 +63,17 @@ ForwardMessageBegin:
 		return ret;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+
+MfxMessage _MSG_COUNT = 0xBFFF;
+constexpr MfxMessage __MicroFlakeX::MSG_COUNT()
+{
+	return _MSG_COUNT--;
+}
+
+constexpr MFX_PORT MfxMessage __MicroFlakeX::MSG_COUNT_RESET()
+{
+	_MSG_COUNT = 0xBFFF;
+	return _MSG_COUNT;
 }
