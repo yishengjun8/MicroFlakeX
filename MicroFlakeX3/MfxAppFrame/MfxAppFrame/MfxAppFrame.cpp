@@ -72,8 +72,8 @@ constexpr MfxMessage __MicroFlakeX::MSG_COUNT()
 	return _MSG_COUNT--;
 }
 
-constexpr MFX_PORT MfxMessage __MicroFlakeX::MSG_COUNT_RESET()
+constexpr MFX_PORT MfxMessage __MicroFlakeX::MSG_COUNT_RESET(MfxMessage num)
 {
-	_MSG_COUNT = 0xBFFF;
-	return _MSG_COUNT;
+	_MSG_COUNT = num;
+	return num;
 }

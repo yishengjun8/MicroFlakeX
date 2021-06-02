@@ -59,71 +59,74 @@ MfxObject_EndInit(MfxFlake, MfxBase, \
 	0, CloseRButtonMove \
 );
 
+
+#define MfxFlake_AddRecv(msg, func) FLAKE_ADDRECV_FLAKEMSG(msg, MfxFlake, __OnNCMouseMove)
+
 void MicroFlakeX::MfxFlake::MfxRegMessages()
 {
-	FLAKE_ADDRECV_FLAKEMSG(WM_NCMOUSEMOVE, MfxFlake, __OnNCMouseMove);
-	FLAKE_ADDRECV_FLAKEMSG(WM_NCMOUSEHOVER, MfxFlake, __OnNCMouseHover);
+	MfxFlake_AddRecv(WM_NCMOUSEMOVE, __OnNCMouseMove);
+	MfxFlake_AddRecv(WM_NCMOUSEHOVER, __OnNCMouseHover);
 
-	FLAKE_ADDRECV_FLAKEMSG(WM_NCLBUTTONUP, MfxFlake, __OnNCLButtonUp);
-	FLAKE_ADDRECV_FLAKEMSG(WM_NCLBUTTONDOWN, MfxFlake, __OnNCLButtonDown);
-	FLAKE_ADDRECV_FLAKEMSG(WM_NCLBUTTONDBLCLK, MfxFlake, __OnNCLButtonDouble);
+	MfxFlake_AddRecv(WM_NCLBUTTONUP, __OnNCLButtonUp);
+	MfxFlake_AddRecv(WM_NCLBUTTONDOWN, __OnNCLButtonDown);
+	MfxFlake_AddRecv(WM_NCLBUTTONDBLCLK, __OnNCLButtonDouble);
 
-	FLAKE_ADDRECV_FLAKEMSG(WM_NCRBUTTONUP, MfxFlake, __OnNCRButtonUp);
-	FLAKE_ADDRECV_FLAKEMSG(WM_NCRBUTTONDOWN, MfxFlake, __OnNCRButtonDown);
-	FLAKE_ADDRECV_FLAKEMSG(WM_NCRBUTTONDBLCLK, MfxFlake, __OnNCRButtonDouble);
+	MfxFlake_AddRecv(WM_NCRBUTTONUP, __OnNCRButtonUp);
+	MfxFlake_AddRecv(WM_NCRBUTTONDOWN, __OnNCRButtonDown);
+	MfxFlake_AddRecv(WM_NCRBUTTONDBLCLK, __OnNCRButtonDouble);
 
 	/********************************************************************************
 	*
 	*********************************************************************************/
-	FLAKE_ADDRECV_FLAKEMSG(WM_MOUSEMOVE, MfxFlake, __OnMouseMove);
-	FLAKE_ADDRECV_FLAKEMSG(WM_MOUSEHOVER, MfxFlake, __OnMouseHover);
+	MfxFlake_AddRecv(WM_MOUSEMOVE, __OnMouseMove);
+	MfxFlake_AddRecv(WM_MOUSEHOVER, __OnMouseHover);
 
-	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONUP, MfxFlake, __OnLButtonUp);
-	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONDOWN, MfxFlake, __OnLButtonDown);
-	FLAKE_ADDRECV_FLAKEMSG(WM_LBUTTONDBLCLK, MfxFlake, __OnLButtonDouble);
+	MfxFlake_AddRecv(WM_LBUTTONUP, __OnLButtonUp);
+	MfxFlake_AddRecv(WM_LBUTTONDOWN, __OnLButtonDown);
+	MfxFlake_AddRecv(WM_LBUTTONDBLCLK, __OnLButtonDouble);
 
-	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONUP, MfxFlake, __OnRButtonUp);
-	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONDOWN, MfxFlake, __OnRButtonDown);
-	FLAKE_ADDRECV_FLAKEMSG(WM_RBUTTONDBLCLK, MfxFlake, __OnRButtonDouble);
+	MfxFlake_AddRecv(WM_RBUTTONUP, __OnRButtonUp);
+	MfxFlake_AddRecv(WM_RBUTTONDOWN, __OnRButtonDown);
+	MfxFlake_AddRecv(WM_RBUTTONDBLCLK, __OnRButtonDouble);
 
 	/********************************************************************************
 	*
 	*
 	*********************************************************************************/
-	FLAKE_ADDRECV_FLAKEMSG(WM_SIZE, MfxFlake, __OnUISize);
+	MfxFlake_AddRecv(WM_SIZE, __OnUISize);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetPaper, MfxFlake, __OnSetPaper);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_RemovePaper, MfxFlake, __OnRemovePaper);
+	MfxFlake_AddRecv(FLAKE_MSG_SetPaper, __OnSetPaper);
+	MfxFlake_AddRecv(FLAKE_MSG_RemovePaper, __OnRemovePaper);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetFloor, MfxFlake, __OnSetFloor);
+	MfxFlake_AddRecv(FLAKE_MSG_SetFloor, __OnSetFloor);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PaintBack, MfxFlake, __OnPaintBackDC);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PaintMask, MfxFlake, __OnPaintMaskDC);
+	MfxFlake_AddRecv(FLAKE_MSG_PaintBack, __OnPaintBackDC);
+	MfxFlake_AddRecv(FLAKE_MSG_PaintMask, __OnPaintMaskDC);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_Rect, MfxFlake, __OnRect);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PercentRect, MfxFlake, __OnPercentRect);
+	MfxFlake_AddRecv(FLAKE_MSG_Rect, __OnRect);
+	MfxFlake_AddRecv(FLAKE_MSG_PercentRect, __OnPercentRect);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_ResetRect, MfxFlake, __OnResetRect);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_ResetPercentRect, MfxFlake, __OnResetPercentRect);
+	MfxFlake_AddRecv(FLAKE_MSG_ResetRect, __OnResetRect);
+	MfxFlake_AddRecv(FLAKE_MSG_ResetPercentRect, __OnResetPercentRect);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_OpenPercentRect, MfxFlake, __OnOpenPercentRect);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_ClosePercentRect, MfxFlake, __OnClosePercentRect);
+	MfxFlake_AddRecv(FLAKE_MSG_OpenPercentRect, __OnOpenPercentRect);
+	MfxFlake_AddRecv(FLAKE_MSG_ClosePercentRect, __OnClosePercentRect);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetTitle, MfxFlake, __OnSetTitle);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetBackColor, MfxFlake, __OnSetBackColor);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetMaskColor, MfxFlake, __OnSetMaskColor);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetTitleColor, MfxFlake, __OnSetTitleColor);
+	MfxFlake_AddRecv(FLAKE_MSG_SetTitle, __OnSetTitle);
+	MfxFlake_AddRecv(FLAKE_MSG_SetBackColor, __OnSetBackColor);
+	MfxFlake_AddRecv(FLAKE_MSG_SetMaskColor, __OnSetMaskColor);
+	MfxFlake_AddRecv(FLAKE_MSG_SetTitleColor, __OnSetTitleColor);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetBackFrameSize, MfxFlake, __OnSetBackFrameSize);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetMaskFrameSize, MfxFlake, __OnSetMaskFrameSize);
+	MfxFlake_AddRecv(FLAKE_MSG_SetBackFrameSize, __OnSetBackFrameSize);
+	MfxFlake_AddRecv(FLAKE_MSG_SetMaskFrameSize, __OnSetMaskFrameSize);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_SetWords, MfxFlake, __OnSetWords);
+	MfxFlake_AddRecv(FLAKE_MSG_SetWords, __OnSetWords);
 
-	FLAKE_ADDRECV_FLAKEMSG(MSG_FlakeEvent, MfxFlake, __OnFlakeEvent);
+	MfxFlake_AddRecv(MSG_FlakeEvent, __OnFlakeEvent);
 
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_RemoveFlakeEvent, MfxFlake, __OnRemoveFlakeEvent);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PushBackFlakeEvent, MfxFlake, __OnPushBackFlakeEvent);
-	FLAKE_ADDRECV_FLAKEMSG(FLAKE_MSG_PushFrontFlakeEvent, MfxFlake, __OnPushFrontFlakeEvent);
+	MfxFlake_AddRecv(FLAKE_MSG_RemoveFlakeEvent, __OnRemoveFlakeEvent);
+	MfxFlake_AddRecv(FLAKE_MSG_PushBackFlakeEvent, __OnPushBackFlakeEvent);
+	MfxFlake_AddRecv(FLAKE_MSG_PushFrontFlakeEvent, __OnPushFrontFlakeEvent);
 }
 
 void MicroFlakeX::MfxFlake::MfxFlakeInitData()

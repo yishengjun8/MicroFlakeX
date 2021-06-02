@@ -225,7 +225,7 @@ namespace __MicroFlakeX
 	using namespace MicroFlakeX;
 
 	MFX_PORT constexpr MfxMessage MSG_COUNT();
-	MFX_PORT constexpr MfxMessage MSG_COUNT_RESET();
+	MFX_PORT constexpr MfxMessage MSG_COUNT_RESET(MfxMessage num = 0xBFFF);
 }
 
 namespace MicroFlakeX
