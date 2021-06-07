@@ -19,7 +19,8 @@ int main()
     mySignal.PushBackReceiver(myUI_00, MfxText("SetSize"));
 
     MfxSize uiSize(600, 600);
-    mySignal.SendSignal(&uiSize);
+    myUI_00->AutoFunc(MfxText("SetSize"), &uiSize);
+    //mySignal.SendSignal(&uiSize);
 
     myColor->AutoFunc(MfxText("Reset"), 255, 0, 255, 0);
     myUI_00->AutoFunc(MfxText("SetBackColor"), myColor);
@@ -74,7 +75,7 @@ int main()
     myGlide.MfxAddKeyframe(MfxText("group_1"), &keySize, 1500);
     keySize.Reset(300, 300);
     myGlide.MfxAddKeyframe(MfxText("group_1"), &keySize, 1500);
-    keySize.Reset(100, 100);
+    keySize.Reset(300, 300);
     myGlide.MfxAddKeyframe(MfxText("group_1"), &keySize, 1500);
 
 

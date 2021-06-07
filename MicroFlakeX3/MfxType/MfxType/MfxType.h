@@ -267,12 +267,16 @@ namespace MicroFlakeX
 
     public:
         /* 和 */
-        MfxReturn Union(const MfxRect* set, MfxRect* ret);
+        MfxReturn Union(const MfxRect* set, MfxRect* ret)const;
         MfxReturn Union_Widely(MfxBase* set, MfxRect* ret);
 
         /* 交 */
-        MfxReturn Intersect(const MfxRect* set, MfxRect* ret);
+        MfxReturn Intersect(const MfxRect* set, MfxRect* ret)const;
         MfxReturn Intersect_Widely(MfxBase* set, MfxRect* ret);
+
+        /* 移动到最近的内部矩形 */
+        MfxReturn InsideRect(const MfxRect* set, MfxRect* ret)const;
+        //MfxReturn InsideRect_Widely(MfxBase* set, MfxRect* ret);
 
     public:
         /* 偏移 */
@@ -283,13 +287,13 @@ namespace MicroFlakeX
 
     public:
         /* 判断是否为空 */
-        MfxReturn IsEmpty(bool* ret);
+        MfxReturn IsEmpty(bool* ret)const;
 
         /* 判断矩形是否在矩形内 */
-        MfxReturn IsRectInside(const MfxRect* set, bool* ret);
+        MfxReturn IsRectInside(const MfxRect* set, bool* ret) const;
 
         /* 判断点是否在矩形内 */
-        MfxReturn IsPointInside(const MfxPoint* set, bool* ret);
+        MfxReturn IsPointInside(const MfxPoint* set, bool* ret)const;
 
     public:
         LONG myX;

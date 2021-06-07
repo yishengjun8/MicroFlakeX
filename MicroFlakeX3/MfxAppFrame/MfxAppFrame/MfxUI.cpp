@@ -6,7 +6,6 @@ MfxObject_EndInit(MfxUI, MfxBase, \
     \
     0, CreateSuccess, \
     \
-    1, ProcMessage, \
     1, ProcFlakesMessage, \
     1, RProcFlakesMessage, \
     \
@@ -75,63 +74,60 @@ MfxObject_EndInit(MfxUI, MfxBase, \
 
 );
 
+#define UI_AddRecv(msg, func) UI_ADDRECV_UIMSG(msg, MfxUI, func)
 
-/********************************************************************************
-*
-*
-*********************************************************************************/
 void MicroFlakeX::MfxUI::MfxRegMessages()
 {
-    UI_ADDRECV_UIMSG(WM_NCPAINT, MfxUI, __OnNCPaint);
-    UI_ADDRECV_UIMSG(WM_NCHITTEST, MfxUI, __OnNCHitTest);
-    UI_ADDRECV_UIMSG(WM_NCACTIVATE, MfxUI, __OnNCActivate);
+    UI_AddRecv(WM_NCPAINT, __OnNCPaint);
+    UI_AddRecv(WM_NCHITTEST, __OnNCHitTest);
+    UI_AddRecv(WM_NCACTIVATE, __OnNCActivate);
 
-    UI_ADDRECV_UIMSG(WM_NCMOUSEMOVE, MfxUI, __OnNCMouseMove);
-    UI_ADDRECV_UIMSG(WM_NCMOUSEHOVER, MfxUI, __OnNCMouseHover);
+    UI_AddRecv(WM_NCMOUSEMOVE, __OnNCMouseMove);
+    UI_AddRecv(WM_NCMOUSEHOVER, __OnNCMouseHover);
 
-    UI_ADDRECV_UIMSG(WM_NCLBUTTONUP, MfxUI, __OnNCLButtonUp);
-    UI_ADDRECV_UIMSG(WM_NCLBUTTONDOWN, MfxUI, __OnNCLButtonDown);
-    UI_ADDRECV_UIMSG(WM_NCLBUTTONDBLCLK, MfxUI, __OnNCLButtonDouble);
+    UI_AddRecv(WM_NCLBUTTONUP, __OnNCLButtonUp);
+    UI_AddRecv(WM_NCLBUTTONDOWN, __OnNCLButtonDown);
+    UI_AddRecv(WM_NCLBUTTONDBLCLK, __OnNCLButtonDouble);
 
-    UI_ADDRECV_UIMSG(WM_NCRBUTTONUP, MfxUI, __OnNCRButtonUp);
-    UI_ADDRECV_UIMSG(WM_NCRBUTTONDOWN, MfxUI, __OnNCRButtonDown);
-    UI_ADDRECV_UIMSG(WM_NCRBUTTONDBLCLK, MfxUI, __OnNCRButtonDouble);
+    UI_AddRecv(WM_NCRBUTTONUP, __OnNCRButtonUp);
+    UI_AddRecv(WM_NCRBUTTONDOWN, __OnNCRButtonDown);
+    UI_AddRecv(WM_NCRBUTTONDBLCLK, __OnNCRButtonDouble);
 
     /********************************************************************************
     *
     *********************************************************************************/
-    UI_ADDRECV_UIMSG(WM_CREATE, MfxUI, __OnCreate);
-    UI_ADDRECV_UIMSG(WM_DESTROY, MfxUI, __OnDestroy);
+    UI_AddRecv(WM_CREATE, __OnCreate);
+    UI_AddRecv(WM_DESTROY, __OnDestroy);
 
-    UI_ADDRECV_UIMSG(WM_SIZE, MfxUI, __OnSize);
-    UI_ADDRECV_UIMSG(WM_MOVE, MfxUI, __OnMove);
+    UI_AddRecv(WM_SIZE, __OnSize);
+    UI_AddRecv(WM_MOVE, __OnMove);
 
-    UI_ADDRECV_UIMSG(WM_TIMER, MfxUI, __OnWin32Timer);
+    UI_AddRecv(WM_TIMER, __OnWin32Timer);
 
-    UI_ADDRECV_UIMSG(WM_PAINT, MfxUI, __OnPaint);
-    UI_ADDRECV_UIMSG(WM_ERASEBKGND, MfxUI, __OnEraseBackGrand);
+    UI_AddRecv(WM_PAINT, __OnPaint);
+    UI_AddRecv(WM_ERASEBKGND, __OnEraseBackGrand);
 
-    UI_ADDRECV_UIMSG(UI_MSG_PaintBack, MfxUI, __OnPaintBackDC);
-    UI_ADDRECV_UIMSG(UI_MSG_PaintMask, MfxUI, __OnPaintMaskDC);
+    UI_AddRecv(UI_MSG_PaintBack, __OnPaintBackDC);
+    UI_AddRecv(UI_MSG_PaintMask, __OnPaintMaskDC);
 
-    UI_ADDRECV_UIMSG(MSG_FlakeInsert, MfxUI, __OnFlakeInsert);
-    UI_ADDRECV_UIMSG(MSG_FlakeRemove, MfxUI, __OnFlakeRemove);
-    UI_ADDRECV_UIMSG(MSG_FlakeFloorChange, MfxUI, __OnFlakeFloorChange);
+    UI_AddRecv(MSG_FlakeInsert, __OnFlakeInsert);
+    UI_AddRecv(MSG_FlakeRemove, __OnFlakeRemove);
+    UI_AddRecv(MSG_FlakeFloorChange, __OnFlakeFloorChange);
 
-    UI_ADDRECV_UIMSG(UI_MSG_RemoveWin32Timer, MfxUI, __OnRemoveWin32Timer);
-    UI_ADDRECV_UIMSG(UI_MSG_InsertWin32Timer, MfxUI, __OnInsertWin32Timer);
+    UI_AddRecv(UI_MSG_RemoveWin32Timer, __OnRemoveWin32Timer);
+    UI_AddRecv(UI_MSG_InsertWin32Timer, __OnInsertWin32Timer);
 
-    UI_ADDRECV_UIMSG(MSG_FlakeEvent, MfxUI, __OnFlakeEvent);
+    UI_AddRecv(MSG_FlakeEvent, __OnFlakeEvent);
 
-    UI_ADDRECV_UIMSG(UI_MSG_RemoveFlakeEvent, MfxUI, __OnRemoveFlakeEvent);
-    UI_ADDRECV_UIMSG(UI_MSG_PushBackFlakeEvent, MfxUI, __OnPushBackFlakeEvent);
-    UI_ADDRECV_UIMSG(UI_MSG_PushFrontFlakeEvent, MfxUI, __OnPushFrontFlakeEvent);
+    UI_AddRecv(UI_MSG_RemoveFlakeEvent, __OnRemoveFlakeEvent);
+    UI_AddRecv(UI_MSG_PushBackFlakeEvent, __OnPushBackFlakeEvent);
+    UI_AddRecv(UI_MSG_PushFrontFlakeEvent, __OnPushFrontFlakeEvent);
 
-    UI_ADDRECV_UIMSG(UI_MSG_OpenPercentRect, MfxUI, __OnOpenPercentRect);
-    UI_ADDRECV_UIMSG(UI_MSG_ClosePercentRect, MfxUI, __OnClosePercentRect);
+    UI_AddRecv(UI_MSG_OpenPercentRect, __OnOpenPercentRect);
+    UI_AddRecv(UI_MSG_ClosePercentRect, __OnClosePercentRect);
 
-    UI_ADDRECV_UIMSG(UI_MSG_SetBackColor, MfxUI, __OnSetBackColor);
-    UI_ADDRECV_UIMSG(UI_MSG_SetMaskColor, MfxUI, __OnSetMaskColor);
+    UI_AddRecv(UI_MSG_SetBackColor, __OnSetBackColor);
+    UI_AddRecv(UI_MSG_SetMaskColor, __OnSetMaskColor);
 }
 
 void MicroFlakeX::MfxUI::MfxUIInitData()
@@ -188,7 +184,7 @@ MfxReturn MicroFlakeX::MfxUI::CreateSuccess()
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxParam param)
+MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxParam& param)
 {
     /* 这里添加识别 - 耗时的全部移交到UI线程内处理 */
     MfxReturn tRet = Mfx_Return_Fail;
@@ -252,7 +248,7 @@ MfxReturn MicroFlakeX::MfxUI::Send_Message(MfxParam param)
 
 MfxReturn MicroFlakeX::MfxUI::Post_Message(MfxParam param)
 {
-    return MfxBeginNewThread(this, MfxText("ProcMessage"), param);
+    return MfxBeginNewThread(this, MfxText("Send_Message"), param);
 }
 
 
@@ -905,6 +901,9 @@ MfxReturn MicroFlakeX::MfxUI::__OnSize(MfxParam param)
 
     DeleteObject(tRNG);
 
+    param.SetMessage(MSG_FatherSize);
+    ProcFlakesMessage(param);
+
     return DefWindowProc(myWnd, GetMSG(param), GetWPARAM(param), GetLPARAM(param));
 }
 
@@ -913,6 +912,9 @@ MfxReturn MicroFlakeX::MfxUI::__OnMove(MfxParam param)
     myMemberLock.WaitLock(&myRect);
     GetWorldRect(&myRect);
     myMemberLock.UnLock(&myRect);
+
+    param.SetMessage(MSG_FatherPoint);
+    ProcFlakesMessage(param);
 
     return DefWindowProc(myWnd, GetMSG(param), GetWPARAM(param), GetLPARAM(param));
 }

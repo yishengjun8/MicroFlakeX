@@ -224,8 +224,10 @@ namespace __MicroFlakeX
 {
 	using namespace MicroFlakeX;
 
+	const MfxMessage MSG_COUNT_RESET_BEGIN = 0xBFFF;
+	const MfxMessage MSG_COUNT_BUTTON_BEGIN = 0xBFFF - 256;
 	MFX_PORT constexpr MfxMessage MSG_COUNT();
-	MFX_PORT constexpr MfxMessage MSG_COUNT_RESET(MfxMessage num = 0xBFFF);
+	MFX_PORT constexpr MfxMessage MSG_COUNT_RESET(MfxMessage num = MSG_COUNT_RESET_BEGIN);
 }
 
 namespace MicroFlakeX
@@ -249,6 +251,9 @@ namespace MicroFlakeX
 	MFX_MSG(MSG_FlakeEvent);
 
 	MFX_MSG(MSG_FlakeFloorChange);
+
+	MFX_MSG(MSG_FatherSize);
+	MFX_MSG(MSG_FatherPoint);
 	/**************************************************************
 	*	UI消息
 	***************************************************************/
@@ -287,8 +292,8 @@ namespace MicroFlakeX
 	FLAKE_MSG(FLAKE_MSG_Rect);
 	FLAKE_MSG(FLAKE_MSG_PercentRect);
 
-	FLAKE_MSG(FLAKE_MSG_ResetRect);
-	FLAKE_MSG(FLAKE_MSG_ResetPercentRect);
+	FLAKE_MSG(FLAKE_MSG_RecalculatRect);
+	FLAKE_MSG(FLAKE_MSG_RecalculatPercentRect);
 
 	FLAKE_MSG(FLAKE_MSG_SetFloor);
 
@@ -371,7 +376,7 @@ namespace MicroFlakeX
 
 		MfxReturn CreateSuccess();
 	private:
-		MfxReturn ProcMessage(MfxParam param);
+		MfxReturn ProcMessage(MfxParam& param);
 		MfxReturn ProcFlakesMessage(MfxParam param);
 		MfxReturn RProcFlakesMessage(MfxParam param);
 	
@@ -582,20 +587,36 @@ namespace MicroFlakeX
 		MfxReturn __OnNCRButtonDouble(MfxParam param);
 	};
 
+
 /********************************************************************************
-* 为UI添加一个来自控件的消息映射
+*	添加一个UI消息映射
 *********************************************************************************/
-#define UI_ADDRECV_FLAKEMSG(Flake, Event, myClass, recvFunc) PushBackFlakeEvent(FlakeEvent_Info(Flake, Event), UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#recvFunc)));
-
-
+#define UI_ADDRECV_UIMSG(Msg, myClass, recvFunc) PushBackUIMessage(Msg, UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
 /********************************************************************************
-* 为UI添加一个来自窗口的消息映射
+*	添加一个UI消息映射
 *********************************************************************************/
-#define UI_ADDRECV_UIMSG(Msg, myClass, recvFunc) PushBackUIMessage(Msg, UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#recvFunc)));
+#define UI_PFRECV_UIMSG(Msg, myClass, recvFunc) PushFrontUIMessage(Msg, UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+/********************************************************************************
+*	移除一个UI消息映射
+*********************************************************************************/
+#define UI_DELRECV_UIMSG(Msg, myClass, recvFunc) RemoveUIMessage(Msg, MfxText(#myClass#recvFunc)));
+
+/********************************************************************************
+*	添加一个FlakeEvent映射
+*********************************************************************************/
+#define UI_ADDRECV_FLAKEMSG(Flake, Event, myClass, recvFunc) PushBackFlakeEvent(FlakeEvent_Info(Flake, Event), UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+/********************************************************************************
+*	添加一个FlakeEvent映射
+*********************************************************************************/
+#define UI_PFRECV_FLAKEMSG(Flake, Event, myClass, recvFunc) PushFrontFlakeEvent(FlakeEvent_Info(Flake, Event), UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+/********************************************************************************
+*	移除一个FlakeEvent映射
+*********************************************************************************/
+#define UI_DELRECV_FLAKEMSG(Flake, Event, myClass, recvFunc) RemoveFlakeEvent(FlakeEvent_Info(Flake, Event), MfxText(#myClass#recvFunc)));
 
 
 /********************************************************************************
-* 为UI添加一个来自定时器的消息映射
+*	添加Win32计时器
 *********************************************************************************/
 #define UI_ADDRECV_TIMER(timerID, delay, recvFunc) InsertWin32Timer(timerID, delay, (pUIRecvFunc)&recvFunc)
 
@@ -615,12 +636,11 @@ namespace MicroFlakeX
 		void MfxRegMessages();
 		void MfxFlakeInitData();
 	public:
-		MfxFlake();
-		MfxFlake(MfxRect set);
+		MfxFlake(MfxRect set = MfxRect(60, 60, 100, 100));
 		virtual ~MfxFlake();
 
 	private:
-		MfxReturn ProcMessage(MfxParam param);
+		MfxReturn ProcMessage(MfxParam& param);
 
 	public:
 		MfxReturn Send_Message(MfxParam param);
@@ -655,7 +675,7 @@ namespace MicroFlakeX
 		MfxReturn ClosePercentRect();
 		MfxReturn ChickPercentRect();
 
-	private:
+	protected:
 		HWND myWnd;
 		pMfxBase myFather;
 		MfxFloor myFloor;
@@ -754,7 +774,7 @@ namespace MicroFlakeX
 		*
 		*********************************************************************************/
 		MfxReturn __OnTest001(MfxParam param);
-private:
+	private:
 		MfxReturn __OnSetPaper(MfxParam param);
 		MfxReturn __OnRemovePaper(MfxParam param);
 
@@ -763,13 +783,13 @@ private:
 		MfxReturn __OnPaintBackDC(MfxParam param);
 		MfxReturn __OnPaintMaskDC(MfxParam param);
 
-		MfxReturn __OnUISize(MfxParam param);
+		MfxReturn __OnFatherSize(MfxParam param);
 
 		MfxReturn __OnRect(MfxParam param);
 		MfxReturn __OnPercentRect(MfxParam param);
 
-		MfxReturn __OnResetRect(MfxParam param);
-		MfxReturn __OnResetPercentRect(MfxParam param);
+		MfxReturn __OnRecalculatRect(MfxParam param);
+		MfxReturn __OnRecalculatPercentRect(MfxParam param);
 
 		MfxReturn __OnOpenPercentRect(MfxParam param);
 		MfxReturn __OnClosePercentRect(MfxParam param);
@@ -817,8 +837,32 @@ private:
 	};
 
 /********************************************************************************
-* 为Flake添加一个来自Flake的消息映射
+*	添加Flake消息映射
 *********************************************************************************/
 #define FLAKE_ADDRECV_FLAKEMSG(Msg, myClass, recvFunc) PushBackFlakeMessage(Msg, Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+/********************************************************************************
+*	添加Flake消息映射
+*********************************************************************************/
+#define FLAKE_PFRECV_FLAKEMSG(Msg, myClass, recvFunc) PushFrontFlakeMessage(Msg, Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+/********************************************************************************
+*	移除消息映射
+*********************************************************************************/
+#define FLAKE_DELRECV_FLAKEMSG(Msg, myClass, recvFunc) RemoveFlakeMessage(Msg, MfxText(#myClass#recvFunc)));
+
+
+/********************************************************************************
+*	添加一个FlakeEvent映射
+*********************************************************************************/
+#define FLAKE_ADDRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) PushBackFlakeEvent(FlakeEvent_Info(Flake, Event), Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+/********************************************************************************
+*	添加一个FlakeEvent映射
+*********************************************************************************/
+#define FLAKE_PFRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) PushFrontFlakeEvent(FlakeEvent_Info(Flake, Event), Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+/********************************************************************************
+*	移除一个FlakeEvent映射
+*********************************************************************************/
+#define FLAKE_DELRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) RemoveFlakeEvent(FlakeEvent_Info(Flake, Event), MfxText(#myClass#recvFunc)));
+
+
 
 }
