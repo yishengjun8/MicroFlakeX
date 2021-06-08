@@ -297,7 +297,6 @@ namespace MicroFlakeX
 
 	FLAKE_MSG(FLAKE_MSG_SetFloor);
 
-	FLAKE_MSG(FLAKE_MSG_SetWords);
 	FLAKE_MSG(FLAKE_MSG_SetTitle);
 	FLAKE_MSG(FLAKE_MSG_SetTitleSize);
 	FLAKE_MSG(FLAKE_MSG_SetTitleColor);
@@ -705,7 +704,7 @@ namespace MicroFlakeX
 		double myBackFrameSize;
 		double myMaskFrameSize;
 
-		MfxWords* myWords;
+		MfxWords myWords;
 		MfxRectangle myBackRectangle;
 		MfxRectangle myMaskRectangle;
 
@@ -718,7 +717,6 @@ namespace MicroFlakeX
 		MfxReturn GetTitle(MfxString* ret);
 		MfxReturn GetTitleSize(DOUBLE* ret);
 
-		MfxReturn GetWords(MfxWords** ret);
 		MfxReturn GetBackColor(MfxColor* ret);
 		MfxReturn GetMaskColor(MfxColor* ret);
 		MfxReturn GetTitleColor(MfxColor* ret);
@@ -735,7 +733,6 @@ namespace MicroFlakeX
 		MfxReturn SetTitle(MfxString set);
 		MfxReturn SetTitleSize(DOUBLE set);
 
-		MfxReturn SetWords(MfxWords* set);
 		MfxReturn SetBackColor(MfxColor* set);
 		MfxReturn SetMaskColor(MfxColor* set);
 		MfxReturn SetTitleColor(MfxColor* set);
@@ -826,8 +823,6 @@ namespace MicroFlakeX
 
 		MfxReturn __OnSetBackFrameSize(MfxParam param);
 		MfxReturn __OnSetMaskFrameSize(MfxParam param);
-
-		MfxReturn __OnSetWords(MfxParam param);
 
 		MfxReturn __OnFlakeEvent(MfxParam param);
 

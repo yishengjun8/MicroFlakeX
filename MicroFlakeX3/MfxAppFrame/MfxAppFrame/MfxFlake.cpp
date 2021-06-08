@@ -29,7 +29,6 @@ MfxObject_EndInit(MfxFlake, MfxBase, \
 	1, GetTitle, \
 	1, GetTitleSize, \
 	\
-	1, GetWords, \
 	1, GetBackColor, \
 	1, GetMaskColor, \
 	1, GetTitleColor, \
@@ -44,7 +43,6 @@ MfxObject_EndInit(MfxFlake, MfxBase, \
 	1, SetTitle, \
 	1, SetTitleSize, \
 	\
-	1, SetWords, \
 	1, SetBackColor, \
 	1, SetMaskColor, \
 	1, SetTitleColor, \
@@ -118,8 +116,6 @@ void MicroFlakeX::MfxFlake::MfxRegMessages()
 	Flake_AddRecv(FLAKE_MSG_SetBackFrameSize, __OnSetBackFrameSize);
 	Flake_AddRecv(FLAKE_MSG_SetMaskFrameSize, __OnSetMaskFrameSize);
 
-	Flake_AddRecv(FLAKE_MSG_SetWords, __OnSetWords);
-
 	Flake_AddRecv(MSG_FlakeEvent, __OnFlakeEvent);
 
 	Flake_AddRecv(FLAKE_MSG_RemoveFlakeEvent, __OnRemoveFlakeEvent);
@@ -160,16 +156,20 @@ void MicroFlakeX::MfxFlake::MfxFlakeInitData()
 	myBackFrameSize = 2;
 	myMaskFrameSize = 2;
 
+	myBackRectangle.SetRect(&myRect);
+	myMaskRectangle.SetRect(&myRect);
+
 	myBackRectangle.SetFillColor(&myBackColor);
 	myMaskRectangle.SetFillColor(&myMaskColor);
 
 	myBackRectangle.SetFrameSize(myBackFrameSize);
 	myMaskRectangle.SetFrameSize(myMaskFrameSize);
 
-	myWords = new MfxWords(myTitle, &myRect);
-	myWords->SetTextAlignmentX(TextAlignmentX::DWRITE_TEXT_ALIGNMENT_CENTER);
-	myWords->SetTextAlignmentY(TextAlignmentY::DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-	myWords->SetTextColor(&myTitleColor);
+	myWords.SetRect(&myRect);
+	myWords.SetText(myTitle);
+	myWords.SetTextAlignmentX(TextAlignmentX::DWRITE_TEXT_ALIGNMENT_CENTER);
+	myWords.SetTextAlignmentY(TextAlignmentY::DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	myWords.SetTextColor(&myTitleColor);
 }
 
 MicroFlakeX::MfxFlake::MfxFlake(MfxRect set)
@@ -187,10 +187,6 @@ MicroFlakeX::MfxFlake::~MfxFlake()
 	myMemberLock.WaitLock(&myFather);
 	myFather ? myFather->AutoFunc(MfxText("Send_Message"), msgParam) : 0;
 	myMemberLock.UnLock(&myFather);
-
-	myMemberLock.TryWaitLock(&myWords);
-	SafeDelete(myWords);
-	myMemberLock.UnLock(&myWords);
 }
 
 
@@ -627,29 +623,6 @@ MfxReturn MicroFlakeX::MfxFlake::CloseRButtonMove()
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxFlake::GetWords(MfxWords** ret)
-{
-	myMemberLock.WaitLock(&myWords);
-	auto tRet = myWords ? myWords->Clone(ret) : Mfx_Return_Fail;
-	myMemberLock.UnLock(&myWords);
-
-	return tRet;
-}
-
-
-/********************************************************************************
-*
-*
-*
-*
-*********************************************************************************/
-MfxReturn MicroFlakeX::MfxFlake::SetWords(MfxWords* set)
-{
-	MfxParam msgParam(FLAKE_MSG_SetWords);
-	msgParam.push_back(MfxWords(set));
-	return Send_Message(msgParam);
-}
-
 MfxReturn MicroFlakeX::MfxFlake::__OnTest001(MfxParam param)
 {
 	MessageBox(myWnd, L"__OnTest001", L"__OnTest001", 0);
@@ -687,7 +660,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetPaper(MfxParam param)
 	myMemberLock.UnLock(&myMaskRectangle);
 
 	myMemberLock.WaitLock(&myWords);
-	myWords ? myWords->SetCanvas(myCanvas) : 0;
+	myWords.SetCanvas(myCanvas);
 	myMemberLock.UnLock(&myWords);
 
 	myMemberLock.UnLock(&myCanvas);
@@ -718,7 +691,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRemovePaper(MfxParam param)
 	myMemberLock.UnLock(&myMaskRectangle);
 
 	myMemberLock.WaitLock(&myWords);
-	myWords ? myWords->SetCanvas(myCanvas) : 0;
+	myWords.SetCanvas(myCanvas);
 	myMemberLock.UnLock(&myWords);
 
 	myMemberLock.UnLock(&myCanvas);
@@ -754,7 +727,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnPaintBackDC(MfxParam param)
 	myMemberLock.UnLock(&myBackRectangle);
 
 	myMemberLock.WaitLock(&myWords);
-	myWords ? myWords->Paint() : 0;
+	myWords.Paint();
 	myMemberLock.UnLock(&myWords);
 
 	return Mfx_Return_Fine;
@@ -818,7 +791,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRect(MfxParam param)
 	myMemberLock.UnLock(&myMaskRectangle);
 
 	myMemberLock.WaitLock(&myWords);
-	myWords ? myWords->SetRect(&tSetRect) : 0;
+	myWords.SetRect(&tSetRect);
 	myMemberLock.UnLock(&myWords);
 
 
@@ -1286,7 +1259,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetTitle(MfxParam param)
 
 	myTitle = GetParam_Safe(param, MfxString, 0);
 
-	myWords ? myWords->SetText(myTitle) : 0;
+	myWords.SetText(myTitle);
 
 	myMemberLock.UnLock(&myTitle, &myWords);
 
@@ -1342,11 +1315,10 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetMaskColor(MfxParam param)
 MfxReturn MicroFlakeX::MfxFlake::__OnSetTitleColor(MfxParam param)
 {
 	myMemberLock.TryWaitLock(&myWords, &myTitleColor, &myCanvas);
+
 	myTitleColor = GetParam_Safe(param, MfxColor, 0);
-	if (myWords)
-	{
-		myWords->SetTextColor(&myTitleColor);
-	}
+	myWords.SetTextColor(&myTitleColor);
+
 	myMemberLock.UnLock(&myWords, &myTitleColor, &myCanvas);
 
 
@@ -1398,24 +1370,6 @@ MfxReturn MicroFlakeX::MfxFlake::__OnSetMaskFrameSize(MfxParam param)
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxFlake::__OnSetWords(MfxParam param)
-{
-	myMemberLock.TryWaitLock(&myWords, &myRect, &myCanvas);
-
-	SafeDelete(myWords);
-	GetParam_Safe(param, MfxWords, 0).Clone(&myWords);
-	myWords->SetRect(&myRect);
-	myWords->SetCanvas(myCanvas);
-
-	myMemberLock.UnLock(&myWords, &myRect, &myCanvas);
-
-	myMemberLock.TryWaitLock(&myFather, &myRect);
-	myFather ? myFather->AutoFunc(MfxText("UnionInvalidateRect"), myRect) : 0;
-	myMemberLock.UnLock(&myFather, &myRect);
-
-	return Mfx_Return_Fine;
-}
-
 MfxReturn MicroFlakeX::MfxFlake::__OnFlakeEvent(MfxParam param)
 {
 	MfxReturn tRet = Mfx_Return_Fail;
