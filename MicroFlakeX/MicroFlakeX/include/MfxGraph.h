@@ -12,6 +12,13 @@ namespace MicroFlakeX
 
 	class MFX_PORT MfxEllipse;
 	class MFX_PORT MfxRectangle;
+
+
+	typedef MfxCanvas* pMfxCanvas;
+	typedef MfxImage* pMfxImage;
+	typedef MfxWords* pMfxWords;
+	typedef MfxEllipse* pMfxEllipse;
+	typedef MfxRectangle* pMfxRectangle;
 }
 
 namespace MicroFlakeX

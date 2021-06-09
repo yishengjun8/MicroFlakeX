@@ -801,8 +801,6 @@ namespace MicroFlakeX
 }
 
 
-
-
 namespace __MicroFlakeX
 {	
 	/***************************************************************
@@ -812,8 +810,8 @@ namespace __MicroFlakeX
 	*	MicroFlakeX辅助函数
 	*
 	*		MicroFlakeX的子类通过 MfxFactoryHand 来注册工厂创建。
-	*		MfxRemoveObject - 移除注册
-	*		MfxRegisterObject - 注册工厂
+	*		RemoveObject - 移除注册
+	*		RegisterObject - 注册工厂
 	*
 	****************************************************************/
 	using namespace MicroFlakeX;
@@ -832,12 +830,12 @@ namespace __MicroFlakeX
 		virtual MfxReturn Creat(MicroFlakeX::MfxBase** ret) = 0;
 		virtual ~MfxFactoryHand();
 	public:
-		MfxReturn MfxRemoveObject(MfxString object);
-		MfxReturn MfxRegisterObject(MfxString object, MfxFactoryHand* hand);
+		MfxReturn RemoveObject(MfxString object);
+		MfxReturn RegisterObject(MfxString object, MfxFactoryHand* hand);
 
 	private:
 		MfxString myObjectName;
-		static std::unordered_map<MfxString, MfxFactoryHand*> MfxFactoryMap;
+		static std::unordered_map<MfxString, MfxFactoryHand*> MfxFactoryHand_Map;
 	};
 
 }

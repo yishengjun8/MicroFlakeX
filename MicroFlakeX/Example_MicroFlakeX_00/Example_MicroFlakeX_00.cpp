@@ -12,7 +12,6 @@ int main()
 
     MfxFactory(MfxText("MfxUI"), &myUI_00);
     MfxFactory(MfxText("MfxFlake"), &myFlake_01);
-
     MfxFactory(MfxText("MfxColor"), &myColor);
 
 

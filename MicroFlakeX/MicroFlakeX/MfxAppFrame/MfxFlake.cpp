@@ -56,74 +56,74 @@ MfxObject_EndInit(MfxFlake, MfxBase, \
 );
 
 
-#define Flake_AddRecv(msg, func) FLAKE_ADDRECV_FLAKEMSG(msg, MfxFlake, func)
+#define FLAKE_RECV(msg, func) FLAKE_ADDRECV_FLAKEMSG(msg, MfxFlake, func)
 
-void MicroFlakeX::MfxFlake::MfxRegMessages()
+void MicroFlakeX::MfxFlake::RegisterRecvFunc()
 {
-	Flake_AddRecv(WM_NCMOUSEMOVE, __OnNCMouseMove);
-	Flake_AddRecv(WM_NCMOUSEHOVER, __OnNCMouseHover);
+	FLAKE_RECV(WM_NCMOUSEMOVE, __OnNCMouseMove);
+	FLAKE_RECV(WM_NCMOUSEHOVER, __OnNCMouseHover);
 
-	Flake_AddRecv(WM_NCLBUTTONUP, __OnNCLButtonUp);
-	Flake_AddRecv(WM_NCLBUTTONDOWN, __OnNCLButtonDown);
-	Flake_AddRecv(WM_NCLBUTTONDBLCLK, __OnNCLButtonDouble);
+	FLAKE_RECV(WM_NCLBUTTONUP, __OnNCLButtonUp);
+	FLAKE_RECV(WM_NCLBUTTONDOWN, __OnNCLButtonDown);
+	FLAKE_RECV(WM_NCLBUTTONDBLCLK, __OnNCLButtonDouble);
 
-	Flake_AddRecv(WM_NCRBUTTONUP, __OnNCRButtonUp);
-	Flake_AddRecv(WM_NCRBUTTONDOWN, __OnNCRButtonDown);
-	Flake_AddRecv(WM_NCRBUTTONDBLCLK, __OnNCRButtonDouble);
+	FLAKE_RECV(WM_NCRBUTTONUP, __OnNCRButtonUp);
+	FLAKE_RECV(WM_NCRBUTTONDOWN, __OnNCRButtonDown);
+	FLAKE_RECV(WM_NCRBUTTONDBLCLK, __OnNCRButtonDouble);
 
 	/********************************************************************************
 	*
 	*********************************************************************************/
-	Flake_AddRecv(WM_MOUSEMOVE, __OnMouseMove);
-	Flake_AddRecv(WM_MOUSEHOVER, __OnMouseHover);
+	FLAKE_RECV(WM_MOUSEMOVE, __OnMouseMove);
+	FLAKE_RECV(WM_MOUSEHOVER, __OnMouseHover);
 
-	Flake_AddRecv(WM_LBUTTONUP, __OnLButtonUp);
-	Flake_AddRecv(WM_LBUTTONDOWN, __OnLButtonDown);
-	Flake_AddRecv(WM_LBUTTONDBLCLK, __OnLButtonDouble);
+	FLAKE_RECV(WM_LBUTTONUP, __OnLButtonUp);
+	FLAKE_RECV(WM_LBUTTONDOWN, __OnLButtonDown);
+	FLAKE_RECV(WM_LBUTTONDBLCLK, __OnLButtonDouble);
 
-	Flake_AddRecv(WM_RBUTTONUP, __OnRButtonUp);
-	Flake_AddRecv(WM_RBUTTONDOWN, __OnRButtonDown);
-	Flake_AddRecv(WM_RBUTTONDBLCLK, __OnRButtonDouble);
+	FLAKE_RECV(WM_RBUTTONUP, __OnRButtonUp);
+	FLAKE_RECV(WM_RBUTTONDOWN, __OnRButtonDown);
+	FLAKE_RECV(WM_RBUTTONDBLCLK, __OnRButtonDouble);
 
 	/********************************************************************************
 	*
 	*
 	*********************************************************************************/
-	Flake_AddRecv(MSG_FatherSize, __OnFatherSize);
+	FLAKE_RECV(MSG_FatherSize, __OnFatherSize);
 
-	Flake_AddRecv(FLAKE_MSG_SetPaper, __OnSetPaper);
-	Flake_AddRecv(FLAKE_MSG_RemovePaper, __OnRemovePaper);
+	FLAKE_RECV(FLAKE_MSG_SetPaper, __OnSetPaper);
+	FLAKE_RECV(FLAKE_MSG_RemovePaper, __OnRemovePaper);
 
-	Flake_AddRecv(FLAKE_MSG_SetFloor, __OnSetFloor);
+	FLAKE_RECV(FLAKE_MSG_SetFloor, __OnSetFloor);
 
-	Flake_AddRecv(FLAKE_MSG_PaintBack, __OnPaintBackDC);
-	Flake_AddRecv(FLAKE_MSG_PaintMask, __OnPaintMaskDC);
+	FLAKE_RECV(FLAKE_MSG_PaintBack, __OnPaintBackDC);
+	FLAKE_RECV(FLAKE_MSG_PaintMask, __OnPaintMaskDC);
 
-	Flake_AddRecv(FLAKE_MSG_Rect, __OnRect);
-	Flake_AddRecv(FLAKE_MSG_PercentRect, __OnPercentRect);
+	FLAKE_RECV(FLAKE_MSG_Rect, __OnRect);
+	FLAKE_RECV(FLAKE_MSG_PercentRect, __OnPercentRect);
 
-	Flake_AddRecv(FLAKE_MSG_RecalculatRect, __OnRecalculatRect);
-	Flake_AddRecv(FLAKE_MSG_RecalculatPercentRect, __OnRecalculatPercentRect);
+	FLAKE_RECV(FLAKE_MSG_RecalculatRect, __OnRecalculatRect);
+	FLAKE_RECV(FLAKE_MSG_RecalculatPercentRect, __OnRecalculatPercentRect);
 
-	Flake_AddRecv(FLAKE_MSG_OpenPercentRect, __OnOpenPercentRect);
-	Flake_AddRecv(FLAKE_MSG_ClosePercentRect, __OnClosePercentRect);
+	FLAKE_RECV(FLAKE_MSG_OpenPercentRect, __OnOpenPercentRect);
+	FLAKE_RECV(FLAKE_MSG_ClosePercentRect, __OnClosePercentRect);
 
-	Flake_AddRecv(FLAKE_MSG_SetTitle, __OnSetTitle);
-	Flake_AddRecv(FLAKE_MSG_SetBackColor, __OnSetBackColor);
-	Flake_AddRecv(FLAKE_MSG_SetMaskColor, __OnSetMaskColor);
-	Flake_AddRecv(FLAKE_MSG_SetTitleColor, __OnSetTitleColor);
+	FLAKE_RECV(FLAKE_MSG_SetTitle, __OnSetTitle);
+	FLAKE_RECV(FLAKE_MSG_SetBackColor, __OnSetBackColor);
+	FLAKE_RECV(FLAKE_MSG_SetMaskColor, __OnSetMaskColor);
+	FLAKE_RECV(FLAKE_MSG_SetTitleColor, __OnSetTitleColor);
 
-	Flake_AddRecv(FLAKE_MSG_SetBackFrameSize, __OnSetBackFrameSize);
-	Flake_AddRecv(FLAKE_MSG_SetMaskFrameSize, __OnSetMaskFrameSize);
+	FLAKE_RECV(FLAKE_MSG_SetBackFrameSize, __OnSetBackFrameSize);
+	FLAKE_RECV(FLAKE_MSG_SetMaskFrameSize, __OnSetMaskFrameSize);
 
-	Flake_AddRecv(MSG_FlakeEvent, __OnFlakeEvent);
+	FLAKE_RECV(MSG_FlakeEvent, __OnFlakeEvent);
 
-	Flake_AddRecv(FLAKE_MSG_RemoveFlakeEvent, __OnRemoveFlakeEvent);
-	Flake_AddRecv(FLAKE_MSG_PushBackFlakeEvent, __OnPushBackFlakeEvent);
-	Flake_AddRecv(FLAKE_MSG_PushFrontFlakeEvent, __OnPushFrontFlakeEvent);
+	FLAKE_RECV(FLAKE_MSG_RemoveFlakeEvent, __OnRemoveFlakeEvent);
+	FLAKE_RECV(FLAKE_MSG_PushBackFlakeEvent, __OnPushBackFlakeEvent);
+	FLAKE_RECV(FLAKE_MSG_PushFrontFlakeEvent, __OnPushFrontFlakeEvent);
 }
 
-void MicroFlakeX::MfxFlake::MfxFlakeInitData()
+void MicroFlakeX::MfxFlake::InitData_Flake()
 {
 	/********************************************************************************
 	* 
@@ -165,24 +165,31 @@ void MicroFlakeX::MfxFlake::MfxFlakeInitData()
 	myBackRectangle.SetFrameSize(myBackFrameSize);
 	myMaskRectangle.SetFrameSize(myMaskFrameSize);
 
+
 	myWords.SetRect(&myRect);
 	myWords.SetText(myTitle);
+	myWords.SetTextColor(&myTitleColor);
+
 	myWords.SetTextAlignmentX(TextAlignmentX::DWRITE_TEXT_ALIGNMENT_CENTER);
 	myWords.SetTextAlignmentY(TextAlignmentY::DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-	myWords.SetTextColor(&myTitleColor);
 }
 
-MicroFlakeX::MfxFlake::MfxFlake(MfxRect set)
+MicroFlakeX::MfxFlake::MfxFlake(MfxRect set, pMfxBase father)
 {
 	myRect = set;
-	MfxFlake::MfxFlakeInitData();
-	MfxFlake::MfxRegMessages();
+	MfxFlake::InitData_Flake();
+	MfxFlake::RegisterRecvFunc();
+
+
+	MfxParam msgParam(MSG_FlakeInsert);
+	msgParam.push_back(this);
+	father ? father->AutoFunc(MfxText("Send_Message"), msgParam) : 0;
 }
 
 MicroFlakeX::MfxFlake::~MfxFlake()
 {
 	MfxParam msgParam(MSG_FlakeRemove);
-	msgParam.push_back((pMfxFlake)this);
+	msgParam.push_back(this);
 
 	myMemberLock.WaitLock(&myFather);
 	myFather ? myFather->AutoFunc(MfxText("Send_Message"), msgParam) : 0;
@@ -1013,7 +1020,11 @@ MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(MfxParam param)
 
 		if (t_Conctrol == this) //获取互斥焦点成功
 		{
-			myMouseFloat = true; //成功悬浮 - 发送消息
+			myMouseFloat = true; //成功悬浮
+
+			MfxParam msgParam(MSG_FlakeEvent);
+			msgParam.push_back(FlakeEvent_Info(this, FLAKE_EVENT_MouseFloat));
+			myFather ? myFather->AutoFunc(MfxText("Post_Message"), msgParam) : 0;
 		}
 		else
 		{
@@ -1026,6 +1037,10 @@ MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(MfxParam param)
 		myMouseFloat = false;
 		myLButtonClickFlag = false;
 		myRButtonClickFlag = false;
+
+		MfxParam msgParam(MSG_FlakeEvent);
+		msgParam.push_back(FlakeEvent_Info(this, FLAKE_EVENT_MouseFloatOver));
+		myFather ? myFather->AutoFunc(MfxText("Post_Message"), msgParam) : 0;
 	}
 
 	//开始移动
@@ -1068,6 +1083,10 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(MfxParam param)
 
 	myFather ? myFather->AutoFunc(MfxText("GetLocalMousePos"), &mousePos) : 0;
 
+	MfxParam msgParam2(MSG_FlakeEvent);
+	msgParam2.push_back(FlakeEvent_Info(this, FLAKE_EVENT_LButtonPressOver));
+	myFather ? myFather->AutoFunc(MfxText("Post_Message"), msgParam2) : 0;
+
 	myMemberLock.WaitLock(&myRect);
 	MfxRect t_Rect = myRect;
 	myMemberLock.UnLock(&myRect);
@@ -1084,12 +1103,12 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(MfxParam param)
 		{
 			if (myLButtonClickFlag) //点击成功
 			{
-				myMouseFloat = true;
 				myLButtonPress = false;
 				myLButtonClickFlag = false;
-				MfxParam msgParam(MSG_FlakeEvent);
-				msgParam.push_back(FlakeEvent_Info(this, FLAKE_EVENT_LButtonClick));
-				myFather ? myFather->AutoFunc(MfxText("Post_Message"), msgParam) : 0;
+
+				MfxParam msgParam1(MSG_FlakeEvent);
+				msgParam1.push_back(FlakeEvent_Info(this, FLAKE_EVENT_LButtonClick));
+				myFather ? myFather->AutoFunc(MfxText("Post_Message"), msgParam1) : 0;
 			}
 			else
 			{
@@ -1104,10 +1123,8 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(MfxParam param)
 	else
 	{
 	myFailed:
-		myMouseFloat = false;
 		myLButtonPress = false;
 		myLButtonClickFlag = false;
-		myRButtonClickFlag = false;
 	}
 
 	return Mfx_Return_Fine;
@@ -1135,9 +1152,12 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDown(MfxParam param)
 		{
 			myButtonMoveBegin = mousePos;
 			myFather->AutoFunc(MfxText("SetKeyboardFocus"), this); //设置键盘焦点
-			myMouseFloat = true;
 			myLButtonPress = true;
 			myLButtonClickFlag = true;
+
+			MfxParam msgParam1(MSG_FlakeEvent);
+			msgParam1.push_back(FlakeEvent_Info(this, FLAKE_EVENT_LButtonPress));
+			myFather ? myFather->AutoFunc(MfxText("Post_Message"), msgParam1) : 0;
 		}
 		else
 		{
@@ -1147,10 +1167,12 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDown(MfxParam param)
 	else
 	{
 	myFailed:
-		myMouseFloat = false;
 		myLButtonPress = false;
 		myLButtonClickFlag = false;
-		myRButtonClickFlag = false;
+
+		MfxParam msgParam2(MSG_FlakeEvent);
+		msgParam2.push_back(FlakeEvent_Info(this, FLAKE_EVENT_LButtonPressOver));
+		myFather ? myFather->AutoFunc(MfxText("Post_Message"), msgParam2) : 0;
 	}
 
 	return Mfx_Return_Fine;
@@ -1168,6 +1190,10 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(MfxParam param)
 
 	myFather ? myFather->AutoFunc(MfxText("GetLocalMousePos"), &mousePos) : 0;
 
+	MfxParam msgParam2(MSG_FlakeEvent);
+	msgParam2.push_back(FlakeEvent_Info(this, FLAKE_EVENT_RButtonPressOver));
+	myFather ? myFather->AutoFunc(MfxText("Post_Message"), msgParam2) : 0;
+
 	myMemberLock.WaitLock(&myRect);
 	MfxRect t_Rect = myRect;
 	myMemberLock.UnLock(&myRect);
@@ -1184,12 +1210,12 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(MfxParam param)
 		{
 			if (myRButtonClickFlag) //点击成功
 			{
-				myMouseFloat = true;
 				myRButtonPress = false;
 				myRButtonClickFlag = false;
-				MfxParam msgParam(MSG_FlakeEvent);
-				msgParam.push_back(FlakeEvent_Info(this, FLAKE_EVENT_RButtonClick));
-				myFather ? myFather->AutoFunc(MfxText("Post_Message"), msgParam) : 0;
+
+				MfxParam msgParam1(MSG_FlakeEvent);
+				msgParam1.push_back(FlakeEvent_Info(this, FLAKE_EVENT_RButtonClick));
+				myFather ? myFather->AutoFunc(MfxText("Post_Message"), msgParam1) : 0;
 			}
 			else
 			{
@@ -1204,10 +1230,8 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(MfxParam param)
 	else
 	{
 	myFailed:
-		myMouseFloat = false;
 		myRButtonPress = false;
 		myRButtonClickFlag = false;
-		myLButtonClickFlag = false;
 	}
 
 	return Mfx_Return_Fine;
@@ -1234,9 +1258,12 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDown(MfxParam param)
 		if (t_Conctrol == this) //获取互斥焦点成功
 		{
 			myButtonMoveBegin = mousePos;
-			myMouseFloat = true;
 			myRButtonPress = true;
 			myRButtonClickFlag = true;
+
+			MfxParam msgParam1(MSG_FlakeEvent);
+			msgParam1.push_back(FlakeEvent_Info(this, FLAKE_EVENT_RButtonPress));
+			myFather ? myFather->AutoFunc(MfxText("Post_Message"), msgParam1) : 0;
 		}
 		else
 		{
@@ -1246,10 +1273,12 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDown(MfxParam param)
 	else
 	{
 	myFailed:
-		myMouseFloat = false;
 		myRButtonPress = false;
 		myRButtonClickFlag = false;
-		myLButtonClickFlag = false;
+
+		MfxParam msgParam2(MSG_FlakeEvent);
+		msgParam2.push_back(FlakeEvent_Info(this, FLAKE_EVENT_RButtonPressOver));
+		myFather ? myFather->AutoFunc(MfxText("Post_Message"), msgParam2) : 0;
 	}
 
 	return Mfx_Return_Fine;
@@ -1263,9 +1292,6 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDouble(MfxParam param)
 
 
 /********************************************************************************
-*
-*
-*
 *
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::__OnSetTitle(MfxParam param)

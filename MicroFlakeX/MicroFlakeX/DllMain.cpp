@@ -16,7 +16,7 @@ IWICImagingFactory*& MfxGraph::myIWICImagingFactory = gIWICImagingFactory;
 
 
 std::vector<MfxSignal*> MicroFlakeX::MfxSignal::MfxSignal_Vector;
-std::unordered_map<MfxString, MfxFactoryHand*> __MicroFlakeX::MfxFactoryHand::MfxFactoryMap;
+std::unordered_map<MfxString, __MicroFlakeX::MfxFactoryHand*> __MicroFlakeX::MfxFactoryHand::MfxFactoryHand_Map;
 
 
 BOOL APIENTRY DllMain(HMODULE hModule,
@@ -67,17 +67,17 @@ BOOL APIENTRY DllMain(HMODULE hModule,
         tempWC.style = CS_HREDRAW | CS_VREDRAW;
 
         tempWC.lpfnWndProc = MfxAppFrameProc;
-        tempWC.cbClsExtra = 0;               // no extra class memory 
-        tempWC.cbWndExtra = 0;                // no extra window memory
-        tempWC.hInstance = GetModuleHandle(NULL);		//获取程序实例句柄
+        tempWC.cbClsExtra = 0;
+        tempWC.cbWndExtra = 0;
+        tempWC.hInstance = GetModuleHandle(NULL);
 
-        tempWC.hIcon = LoadIcon(NULL, IDI_APPLICATION);             // predefined app. icon 
-        tempWC.hCursor = LoadCursor(NULL, IDC_ARROW);                // predefined arrow 
+        tempWC.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+        tempWC.hCursor = LoadCursor(NULL, IDC_ARROW);
         tempWC.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
 
-        tempWC.lpszMenuName = 0;     // name of menu resource
-        tempWC.lpszClassName = MfxText("MfxNormalUI");  // name of window class
-        tempWC.hIconSm = LoadIcon(NULL, IDI_APPLICATION);  // small class icon 
+        tempWC.lpszMenuName = 0;
+        tempWC.lpszClassName = MfxText("MfxNormalUI");
+        tempWC.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
         if (!RegisterClassEx(&tempWC))
         {

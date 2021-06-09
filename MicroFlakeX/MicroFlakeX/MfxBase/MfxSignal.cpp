@@ -1,10 +1,6 @@
 #include "pch.h"
 #include "MfxBase.h"
 
-using namespace MicroFlakeX;
-using namespace __MicroFlakeX;
-
-
 MicroFlakeX::MfxSignal::MfxSignal()
 {
 	MfxSignal_Vector.push_back(this);
@@ -22,9 +18,9 @@ MicroFlakeX::MfxSignal::MfxSignal(const MfxSignal& rhs)
 
 void MicroFlakeX::MfxSignal::ReceiverDelete(MfxBase* recvObject)
 {
-	for (auto i : MfxSignal_Vector)
+	for (auto i = MfxSignal_Vector.begin(); i != MfxSignal_Vector.end(); i++)
 	{
-		i->RemoveReceiver(recvObject);
+		(*i)->RemoveReceiver(recvObject);
 	}
 }
 

@@ -28,6 +28,12 @@
     <Filter Include="头文件\include">
       <UniqueIdentifier>{bfb31a54-1f98-48f3-aa3a-5e3dff5597c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Flakes">
+      <UniqueIdentifier>{40b1865a-f83b-49cf-8d45-ffe30c1bf9e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\MfxButton">
+      <UniqueIdentifier>{180be3b9-6afd-4243-833f-2082fd768697}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -47,6 +53,9 @@
     </ClInclude>
     <ClInclude Include="include\MicroFlakeX.h">
       <Filter>头文件\include</Filter>
+    </ClInclude>
+    <ClInclude Include="MfxButton\MfxButton.h">
+      <Filter>头文件\Flakes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -121,6 +130,9 @@
     </ClCompile>
     <ClCompile Include="MfxAppFrame\MfxUI.cpp">
       <Filter>源文件\MfxAppFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="MfxButton\MfxButton.cpp">
+      <Filter>源文件\MfxButton</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

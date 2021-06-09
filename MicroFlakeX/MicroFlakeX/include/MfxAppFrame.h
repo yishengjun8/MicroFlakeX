@@ -268,6 +268,15 @@ namespace MicroFlakeX
 	const MfxMessage FLAKE_EVENT_LButtonClick = WM_APP + 41;
 	const MfxMessage FLAKE_EVENT_RButtonClick = WM_APP + 42;
 
+	const MfxMessage FLAKE_EVENT_MouseFloat = WM_APP + 43;
+	const MfxMessage FLAKE_EVENT_MouseFloatOver = WM_APP + 44;
+
+	const MfxMessage FLAKE_EVENT_LButtonPress = WM_APP + 45;
+	const MfxMessage FLAKE_EVENT_LButtonPressOver = WM_APP + 46;
+
+	const MfxMessage FLAKE_EVENT_RButtonPress = WM_APP + 47;
+	const MfxMessage FLAKE_EVENT_RButtonPressOver = WM_APP + 48;
+
 	/**************************************************************
 	*	UIÊÂ¼þ
 	***************************************************************/
@@ -321,8 +330,8 @@ namespace MicroFlakeX
 	{
 		MfxObject;
 	private:
-		void MfxUIInitData();
-		void MfxRegMessages();
+		void InitData_UI();
+		void RegisterRecvFunc();
 	public:
 		MfxUI(MfxRect set = MfxRect(60, 60, 400, 400), MfxString title = MfxText("MfxNormalUI"), DWORD myStyle = UI_WINDOWS_STYLE_Normal, DWORD myStyleEx = WS_EX_LAYERED, MfxUI* father = nullptr);
 		virtual ~MfxUI();
@@ -586,10 +595,10 @@ namespace MicroFlakeX
 		MfxObject;
 		MFX_FloorCompare_Enable;
 	private:
-		void MfxRegMessages();
-		void MfxFlakeInitData();
+		void InitData_Flake();
+		void RegisterRecvFunc();
 	public:
-		MfxFlake(MfxRect set = MfxRect(60, 60, 100, 100));
+		MfxFlake(MfxRect set = MfxRect(60, 60, 100, 100), pMfxBase father = nullptr);
 		virtual ~MfxFlake();
 
 	private:
@@ -645,7 +654,7 @@ namespace MicroFlakeX
 		/********************************************************************************
 		*
 		*********************************************************************************/
-	private:
+	protected:
 		MfxRect myRect;
 		MfxRect myEdgeRect;
 		MfxRect myPercentRect;
@@ -699,7 +708,7 @@ namespace MicroFlakeX
 		*
 		*
 		*********************************************************************************/
-	protected:
+	private:
 		bool myMouseFloat;
 		bool myMouseHover;
 
@@ -711,7 +720,7 @@ namespace MicroFlakeX
 
 		bool myLButtonMoveFlag;
 		bool myRButtonMoveFlag;
-	protected:
+	private:
 		MfxPoint myButtonMoveBegin;
 	public:
 		MfxReturn OpenLButtonMove();

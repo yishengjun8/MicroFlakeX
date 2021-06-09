@@ -74,63 +74,63 @@ MfxObject_EndInit(MfxUI, MfxBase, \
 
 );
 
-#define UI_AddRecv(msg, func) UI_ADDRECV_UIMSG(msg, MfxUI, func)
+#define UI_RECV(msg, func) UI_ADDRECV_UIMSG(msg, MfxUI, func)
 
-void MicroFlakeX::MfxUI::MfxRegMessages()
+void MicroFlakeX::MfxUI::RegisterRecvFunc()
 {
-    UI_AddRecv(WM_NCPAINT, __OnNCPaint);
-    UI_AddRecv(WM_NCHITTEST, __OnNCHitTest);
-    UI_AddRecv(WM_NCACTIVATE, __OnNCActivate);
+    UI_RECV(WM_NCPAINT, __OnNCPaint);
+    UI_RECV(WM_NCHITTEST, __OnNCHitTest);
+    UI_RECV(WM_NCACTIVATE, __OnNCActivate);
 
-    UI_AddRecv(WM_NCMOUSEMOVE, __OnNCMouseMove);
-    UI_AddRecv(WM_NCMOUSEHOVER, __OnNCMouseHover);
+    UI_RECV(WM_NCMOUSEMOVE, __OnNCMouseMove);
+    UI_RECV(WM_NCMOUSEHOVER, __OnNCMouseHover);
 
-    UI_AddRecv(WM_NCLBUTTONUP, __OnNCLButtonUp);
-    UI_AddRecv(WM_NCLBUTTONDOWN, __OnNCLButtonDown);
-    UI_AddRecv(WM_NCLBUTTONDBLCLK, __OnNCLButtonDouble);
+    UI_RECV(WM_NCLBUTTONUP, __OnNCLButtonUp);
+    UI_RECV(WM_NCLBUTTONDOWN, __OnNCLButtonDown);
+    UI_RECV(WM_NCLBUTTONDBLCLK, __OnNCLButtonDouble);
 
-    UI_AddRecv(WM_NCRBUTTONUP, __OnNCRButtonUp);
-    UI_AddRecv(WM_NCRBUTTONDOWN, __OnNCRButtonDown);
-    UI_AddRecv(WM_NCRBUTTONDBLCLK, __OnNCRButtonDouble);
+    UI_RECV(WM_NCRBUTTONUP, __OnNCRButtonUp);
+    UI_RECV(WM_NCRBUTTONDOWN, __OnNCRButtonDown);
+    UI_RECV(WM_NCRBUTTONDBLCLK, __OnNCRButtonDouble);
 
     /********************************************************************************
     *
     *********************************************************************************/
-    UI_AddRecv(WM_CREATE, __OnCreate);
-    UI_AddRecv(WM_DESTROY, __OnDestroy);
+    UI_RECV(WM_CREATE, __OnCreate);
+    UI_RECV(WM_DESTROY, __OnDestroy);
 
-    UI_AddRecv(WM_SIZE, __OnSize);
-    UI_AddRecv(WM_MOVE, __OnMove);
+    UI_RECV(WM_SIZE, __OnSize);
+    UI_RECV(WM_MOVE, __OnMove);
 
-    UI_AddRecv(WM_TIMER, __OnWin32Timer);
+    UI_RECV(WM_TIMER, __OnWin32Timer);
 
-    UI_AddRecv(WM_PAINT, __OnPaint);
-    UI_AddRecv(WM_ERASEBKGND, __OnEraseBackGrand);
+    UI_RECV(WM_PAINT, __OnPaint);
+    UI_RECV(WM_ERASEBKGND, __OnEraseBackGrand);
 
-    UI_AddRecv(UI_MSG_PaintBack, __OnPaintBackDC);
-    UI_AddRecv(UI_MSG_PaintMask, __OnPaintMaskDC);
+    UI_RECV(UI_MSG_PaintBack, __OnPaintBackDC);
+    UI_RECV(UI_MSG_PaintMask, __OnPaintMaskDC);
 
-    UI_AddRecv(MSG_FlakeInsert, __OnFlakeInsert);
-    UI_AddRecv(MSG_FlakeRemove, __OnFlakeRemove);
-    UI_AddRecv(MSG_FlakeFloorChange, __OnFlakeFloorChange);
+    UI_RECV(MSG_FlakeInsert, __OnFlakeInsert);
+    UI_RECV(MSG_FlakeRemove, __OnFlakeRemove);
+    UI_RECV(MSG_FlakeFloorChange, __OnFlakeFloorChange);
 
-    UI_AddRecv(UI_MSG_RemoveWin32Timer, __OnRemoveWin32Timer);
-    UI_AddRecv(UI_MSG_InsertWin32Timer, __OnInsertWin32Timer);
+    UI_RECV(UI_MSG_RemoveWin32Timer, __OnRemoveWin32Timer);
+    UI_RECV(UI_MSG_InsertWin32Timer, __OnInsertWin32Timer);
 
-    UI_AddRecv(MSG_FlakeEvent, __OnFlakeEvent);
+    UI_RECV(MSG_FlakeEvent, __OnFlakeEvent);
 
-    UI_AddRecv(UI_MSG_RemoveFlakeEvent, __OnRemoveFlakeEvent);
-    UI_AddRecv(UI_MSG_PushBackFlakeEvent, __OnPushBackFlakeEvent);
-    UI_AddRecv(UI_MSG_PushFrontFlakeEvent, __OnPushFrontFlakeEvent);
+    UI_RECV(UI_MSG_RemoveFlakeEvent, __OnRemoveFlakeEvent);
+    UI_RECV(UI_MSG_PushBackFlakeEvent, __OnPushBackFlakeEvent);
+    UI_RECV(UI_MSG_PushFrontFlakeEvent, __OnPushFrontFlakeEvent);
 
-    UI_AddRecv(UI_MSG_OpenPercentRect, __OnOpenPercentRect);
-    UI_AddRecv(UI_MSG_ClosePercentRect, __OnClosePercentRect);
+    UI_RECV(UI_MSG_OpenPercentRect, __OnOpenPercentRect);
+    UI_RECV(UI_MSG_ClosePercentRect, __OnClosePercentRect);
 
-    UI_AddRecv(UI_MSG_SetBackColor, __OnSetBackColor);
-    UI_AddRecv(UI_MSG_SetMaskColor, __OnSetMaskColor);
+    UI_RECV(UI_MSG_SetBackColor, __OnSetBackColor);
+    UI_RECV(UI_MSG_SetMaskColor, __OnSetMaskColor);
 }
 
-void MicroFlakeX::MfxUI::MfxUIInitData()
+void MicroFlakeX::MfxUI::InitData_UI()
 {
     myGlobeAlphaMode = LWA_COLORKEY; //LWA_COLORKEY  LWA_ALPHA
 
@@ -155,8 +155,8 @@ void MicroFlakeX::MfxUI::MfxUIInitData()
 *********************************************************************************/
 MicroFlakeX::MfxUI::MfxUI(MfxRect set, MfxString title, DWORD myStyle, DWORD myStyleEx, MfxUI* father)
 {
-    MfxUIInitData();
-    MfxRegMessages();
+    InitData_UI();
+    RegisterRecvFunc();
 
     MfxCreateWindowsEx(this, father, set, myStyle, myStyleEx | WS_EX_LAYERED, MfxText("MfxNormalUI"), title);
 }

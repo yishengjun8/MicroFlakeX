@@ -35,6 +35,7 @@ struct MfxWork_Widel
 	pThreadFunc mypThreadFunc;
 };
 
+/* 这里需要优化，取消这俩全局变量，但是目前还不知道怎么做 */
 std::map<PTP_TIMER, MfxWork_AutoFunc*> MfxThreadServer_Map;
 std::map<PTP_TIMER, MfxWork_Widel*> MfxThreadServer_Widel_Map;
 

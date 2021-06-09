@@ -164,6 +164,7 @@
     <ClInclude Include="include\MfxGraph.h" />
     <ClInclude Include="include\MfxType.h" />
     <ClInclude Include="include\MicroFlakeX.h" />
+    <ClInclude Include="MfxButton\MfxButton.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +180,7 @@
     <ClCompile Include="MfxBase\MfxSignal.cpp" />
     <ClCompile Include="MfxBase\MfxThread.cpp" />
     <ClCompile Include="MfxBase\MfxThreadPool.cpp" />
+    <ClCompile Include="MfxButton\MfxButton.cpp" />
     <ClCompile Include="MfxGraph\MfxCanvas.cpp" />
     <ClCompile Include="MfxGraph\MfxGraph.cpp" />
     <ClCompile Include="MfxGraph\MfxImage.cpp" />

@@ -1,15 +1,6 @@
 #include "pch.h"
 #include "MfxAppFrame.h"
 
-using namespace MicroFlakeX;
-using namespace __MicroFlakeX;
-
-const auto g_Handle = GetModuleHandle(NULL);
-
-App_UI_Info_Map myUIMap;
-
-pMfxUI myBindingUI = nullptr;
-
 WPARAM MicroFlakeX::MfxAppRun()
 {
 	MSG tMsg;
@@ -25,42 +16,41 @@ WPARAM MicroFlakeX::MfxAppRun()
 HWND __MicroFlakeX::MfxCreateWindowsEx(pMfxUI ui, pMfxUI father, MfxRect rect,
 	DWORD dwStyle, DWORD dwExStyle, MfxString className, MfxString windowsName)
 {
-	while (myBindingUI);
-
-	myBindingUI = ui;
-
 	HWND f_hWnd = NULL;
 	father ? father->GetWnd(&f_hWnd) : 0;
 
 	return CreateWindowEx(dwExStyle, className.c_str(), windowsName.c_str(), dwStyle,
-		rect.myX, rect.myY, rect.myWidth, rect.myHeight, f_hWnd, NULL, g_Handle, NULL
+		rect.myX, rect.myY, rect.myWidth, rect.myHeight, f_hWnd, NULL, GetModuleHandle(NULL), ui
 	);
 }
 
 LRESULT CALLBACK __MicroFlakeX::MfxAppFrameProc(HWND hWnd, MfxMessage message, WPARAM wParam, LPARAM lParam)
 {
-ForwardMessageBegin:
+	static App_UI_Info_Map myUIMap;
+
 	auto t_Itera = myUIMap.find(hWnd);
 	if (t_Itera == myUIMap.end())
 	{
-		if (myBindingUI)
+		if (message != WM_CREATE)
 		{
-			myUIMap.insert(App_UI_Info_Map_Elem(hWnd, App_UI_Info(hWnd, myBindingUI)));
-			myBindingUI = nullptr;
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
+		else
+		{
+			pMfxUI myBind = (pMfxUI)((LPCREATESTRUCTA)lParam)->lpCreateParams;
+			myUIMap.insert(App_UI_Info_Map_Elem(hWnd, App_UI_Info(hWnd, myBind)));
 
-			goto ForwardMessageBegin;
+			MAKE_WIN32_PARAM(win32, message, hWnd, wParam, lParam);
+			return myBind->Send_Message(win32);
 		}
 	}
 	else
 	{
 		MAKE_WIN32_PARAM(win32, message, hWnd, wParam, lParam);
+		MfxReturn ret = t_Itera->second.myUI->Send_Message(win32);
 
-		auto ret = t_Itera->second.myUI->Send_Message(win32);
-		if (message == WM_DESTROY)
-		{
-			myUIMap.erase(t_Itera);
-		}
+		message == WM_DESTROY ? myUIMap.erase(t_Itera)->first : 0;
+
 		return ret;
 	}
-	return DefWindowProc(hWnd, message, wParam, lParam);
 }

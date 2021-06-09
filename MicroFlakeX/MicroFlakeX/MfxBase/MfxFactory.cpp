@@ -1,25 +1,23 @@
 #include "pch.h"
 #include "MfxBase.h"
-using namespace MicroFlakeX;
-using namespace __MicroFlakeX;
 
-typedef std::unordered_map<MfxString, MfxFactoryHand*>::value_type MfxFactoryValue;
+typedef std::unordered_map<MfxString, __MicroFlakeX::MfxFactoryHand*>::value_type MfxFactoryValue;
 
 __MicroFlakeX::MfxFactoryHand::MfxFactoryHand(MfxString object)
 {
 	myObjectName = object;
-	MfxRegisterObject(myObjectName, this);
+	RegisterObject(myObjectName, this);
 }
 
 __MicroFlakeX::MfxFactoryHand::~MfxFactoryHand()
 {
-	MfxRemoveObject(myObjectName);
+	RemoveObject(myObjectName);
 }
 
-MfxReturn MicroFlakeX::MfxFactory(MfxString object, MfxBase** ret)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxFactory(MfxString object, MfxBase** ret)
 {
-	auto iter = __MicroFlakeX::MfxFactoryHand::MfxFactoryMap.find(object);
-	if (iter != __MicroFlakeX::MfxFactoryHand::MfxFactoryMap.end())
+	auto iter = __MicroFlakeX::MfxFactoryHand::MfxFactoryHand_Map.find(object);
+	if (iter != __MicroFlakeX::MfxFactoryHand::MfxFactoryHand_Map.end())
 	{
 		return iter->second->Creat(ret);
 	}
@@ -27,18 +25,18 @@ MfxReturn MicroFlakeX::MfxFactory(MfxString object, MfxBase** ret)
 	return Mfx_Return_Fail;
 }
 
-MfxReturn __MicroFlakeX::MfxFactoryHand::MfxRemoveObject(MfxString object)
+MicroFlakeX::MfxReturn __MicroFlakeX::MfxFactoryHand::RemoveObject(MfxString object)
 {
-	auto tIter = MfxFactoryMap.find(object);
-	if (tIter != MfxFactoryMap.end())
+	auto tIter = MfxFactoryHand_Map.find(object);
+	if (tIter != MfxFactoryHand_Map.end())
 	{
-		MfxFactoryMap.erase(tIter);
+		MfxFactoryHand_Map.erase(tIter);
 	}
 	return Mfx_Return_Fine;
 }
 
-MfxReturn __MicroFlakeX::MfxFactoryHand::MfxRegisterObject(MfxString object, MfxFactoryHand* hand)
+MicroFlakeX::MfxReturn __MicroFlakeX::MfxFactoryHand::RegisterObject(MfxString object, MfxFactoryHand* hand)
 {
-	auto ret = MfxFactoryMap.insert(MfxFactoryValue(object, hand));
+	auto ret = MfxFactoryHand_Map.insert(MfxFactoryValue(object, hand));
 	return ret.second ? Mfx_Return_Fine : Mfx_Return_Fail;
 }
