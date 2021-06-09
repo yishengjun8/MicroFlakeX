@@ -1059,7 +1059,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(MfxParam param)
 			myMemberLock.UnLock(&myButtonMoveBegin);
 
 			MfxParam msgParam(MSG_FlakeEvent);
-			msgParam.push_back(FlakeEvent_Info(this, FLAKE_EVENT_MouseMove));
+			msgParam.push_back(FlakeEvent_Info(this, FLAKE_EVENT_FollowTheMouse));
 			msgParam.push_back(t_Point);
 			myFather ? myFather->AutoFunc(MfxText("Post_Message"), msgParam) : 0;
 		}

@@ -263,7 +263,7 @@ namespace MicroFlakeX
 	/**************************************************************
 	*	MFXÊÂ¼þ
 	***************************************************************/
-	const MfxMessage FLAKE_EVENT_MouseMove = WM_APP + 40;
+	const MfxMessage FLAKE_EVENT_FollowTheMouse = WM_APP + 40;
 
 	const MfxMessage FLAKE_EVENT_LButtonClick = WM_APP + 41;
 	const MfxMessage FLAKE_EVENT_RButtonClick = WM_APP + 42;
