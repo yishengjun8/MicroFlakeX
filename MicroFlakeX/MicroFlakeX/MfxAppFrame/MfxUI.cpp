@@ -66,11 +66,11 @@ MfxObject_EndInit(MfxUI, MfxBase, \
     1, SetGlobeAlpha, \
     1, SetGlobeAlphaMode, \
     \
-    0, SetUI_Max, \
-    0, SetUI_Min, \
-    0, SetUI_Show, \
-    0, SetUI_Hide, \
-    0, SetUI_Normal \
+    0, MAX, \
+    0, MIN, \
+    0, SHOW, \
+    0, HIDE, \
+    0, NORMAL \
 
 );
 
@@ -762,27 +762,27 @@ MfxReturn MicroFlakeX::MfxUI::SetGlobeAlphaMode(UINT set)
 *
 *
 *********************************************************************************/
-MfxReturn MicroFlakeX::MfxUI::SetUI_Max()
+MfxReturn MicroFlakeX::MfxUI::MAX()
 {
     return ShowWindow(myWnd, SW_MAXIMIZE) ? Mfx_Return_Fine : Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxUI::SetUI_Min()
+MfxReturn MicroFlakeX::MfxUI::MIN()
 {
     return ShowWindow(myWnd, SW_MINIMIZE) ? Mfx_Return_Fine : Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxUI::SetUI_Show()
+MfxReturn MicroFlakeX::MfxUI::SHOW()
 {
     return ShowWindow(myWnd, SW_SHOW) ? Mfx_Return_Fine : Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxUI::SetUI_Hide()
+MfxReturn MicroFlakeX::MfxUI::HIDE()
 {
     return ShowWindow(myWnd, SW_HIDE) ? Mfx_Return_Fine : Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxUI::SetUI_Normal()
+MfxReturn MicroFlakeX::MfxUI::NORMAL()
 {
     return ShowWindow(myWnd, SW_NORMAL) ? Mfx_Return_Fine : Mfx_Return_Fail;
 }

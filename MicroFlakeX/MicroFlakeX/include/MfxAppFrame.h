@@ -483,11 +483,11 @@ namespace MicroFlakeX
 		MfxReturn SetGlobeAlphaMode(UINT set);
 
 	public:
-		MfxReturn SetUI_Max();
-		MfxReturn SetUI_Min();
-		MfxReturn SetUI_Show();
-		MfxReturn SetUI_Hide();
-		MfxReturn SetUI_Normal();
+		MfxReturn MAX();
+		MfxReturn MIN();
+		MfxReturn SHOW();
+		MfxReturn HIDE();
+		MfxReturn NORMAL();
 
 		/********************************************************************************
 		*
