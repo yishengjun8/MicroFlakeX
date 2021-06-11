@@ -15,7 +15,9 @@ IDWriteFactory*& MfxGraph::myIDWriteFactory = gIDWriteFactory;
 IWICImagingFactory*& MfxGraph::myIWICImagingFactory = gIWICImagingFactory;
 
 
-std::vector<MfxSignal*> MicroFlakeX::MfxSignal::MfxSignal_Vector;
+
+std::vector<MfxSignal_Link*> MicroFlakeX::MfxSignal_Link::MfxSignal_Link_Vector;
+std::vector<MfxSignal_UnLink*> MicroFlakeX::MfxSignal_UnLink::MfxSignal_UnLink_Vector;
 std::unordered_map<MfxString, __MicroFlakeX::MfxFactoryHand*> __MicroFlakeX::MfxFactoryHand::MfxFactoryHand_Map;
 
 

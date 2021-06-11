@@ -34,6 +34,9 @@
     <Filter Include="源文件\MfxButton">
       <UniqueIdentifier>{180be3b9-6afd-4243-833f-2082fd768697}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\MfxExplain">
+      <UniqueIdentifier>{f594bc94-d287-485b-8c56-cb721b3ebb1c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -56,6 +59,9 @@
     </ClInclude>
     <ClInclude Include="MfxButton\MfxButton.h">
       <Filter>头文件\Flakes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MfxExplain.h">
+      <Filter>头文件\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -90,9 +96,6 @@
       <Filter>源文件\MfxBase</Filter>
     </ClCompile>
     <ClCompile Include="MfxType\MfxColor.cpp">
-      <Filter>源文件\MfxType</Filter>
-    </ClCompile>
-    <ClCompile Include="MfxType\MfxGlide.cpp">
       <Filter>源文件\MfxType</Filter>
     </ClCompile>
     <ClCompile Include="MfxType\MfxPoint.cpp">
@@ -133,6 +136,12 @@
     </ClCompile>
     <ClCompile Include="MfxButton\MfxButton.cpp">
       <Filter>源文件\MfxButton</Filter>
+    </ClCompile>
+    <ClCompile Include="MfxExplain\MfxGlide.cpp">
+      <Filter>源文件\MfxExplain</Filter>
+    </ClCompile>
+    <ClCompile Include="MfxExplain\MfxExplain.cpp">
+      <Filter>源文件\MfxExplain</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

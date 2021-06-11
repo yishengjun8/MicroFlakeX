@@ -47,6 +47,7 @@
 #include "MfxBase.h"
 #include "MfxType.h"
 #include "MfxGraph.h"
+#include "MfxExplain.h"
 #include "MfxAppFrame.h"
 
 #pragma comment(lib, "MicroFlakeX_A.0.1.1.lib")

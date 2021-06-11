@@ -12,11 +12,12 @@ MicroFlakeX::MfxBase::MfxBase()
 
 MicroFlakeX::MfxBase::~MfxBase()
 {
-	MfxSignal::ReceiverDelete(this);
+	MfxSignal_Link::ReceiverDelete(this);
+	MfxSignal_UnLink::ReceiverDelete(this);
 	DeleteCriticalSection(&myCriticalSection);
 }
 
-MfxReturn MicroFlakeX::MfxBase::Clone(MfxBase** ret) const
+MfxReturn MicroFlakeX::MfxBase::Clone(pMfxBase* ret) const
 {
 	*ret = nullptr;
 

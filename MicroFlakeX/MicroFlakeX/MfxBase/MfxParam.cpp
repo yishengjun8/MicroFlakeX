@@ -17,11 +17,27 @@ void* MicroFlakeX::MfxParam::operator new[](size_t)
 
 MfxParam::MfxParam()
 {
+	myPVOID = new PVOID;
 	myUseCount = new INT32;
 	myReturn = new MfxReturn;
 	myMessage = new MfxMessage;
 	myParam = new std::vector<std::any>;
 
+	*myPVOID = nullptr;
+	*myUseCount = 1;
+	*myMessage = 0;
+	*myReturn = Mfx_Return_Unknow;
+}
+
+MicroFlakeX::MfxParam::MfxParam(PVOID pvoid)
+{
+	myPVOID = new PVOID;
+	myUseCount = new INT32;
+	myReturn = new MfxReturn;
+	myMessage = new MfxMessage;
+	myParam = new std::vector<std::any>;
+
+	*myPVOID = pvoid;
 	*myUseCount = 1;
 	*myMessage = 0;
 	*myReturn = Mfx_Return_Unknow;
@@ -29,11 +45,13 @@ MfxParam::MfxParam()
 
 MicroFlakeX::MfxParam::MfxParam(MfxMessage msg)
 {
+	myPVOID = new PVOID;
 	myUseCount = new INT32;
 	myReturn = new MfxReturn;
 	myMessage = new MfxMessage;
 	myParam = new std::vector<std::any>;
 
+	*myPVOID = nullptr;
 	*myUseCount = 1;
 	*myMessage = msg;
 	*myReturn = Mfx_Return_Unknow;
@@ -41,6 +59,7 @@ MicroFlakeX::MfxParam::MfxParam(MfxMessage msg)
 
 MicroFlakeX::MfxParam::MfxParam(const MfxParam& rhs)
 {
+	myPVOID = rhs.myPVOID;
 	myParam = rhs.myParam;
 	myReturn = rhs.myReturn;
 	myMessage = rhs.myMessage;
@@ -54,6 +73,7 @@ MicroFlakeX::MfxParam::~MfxParam()
 	(*myUseCount)--;
 	if (*myUseCount <= 0)
 	{
+		SafeDelete(myPVOID);
 		SafeDelete(myParam);
 		SafeDelete(myReturn);
 		SafeDelete(myMessage);
@@ -66,12 +86,14 @@ MfxParam& MicroFlakeX::MfxParam::operator=(const MfxParam& rhs)
 	(*myUseCount)--;
 	if (*myUseCount <= 0)
 	{
+		SafeDelete(myPVOID);
 		SafeDelete(myParam);
 		SafeDelete(myReturn);
 		SafeDelete(myMessage);
 		SafeDelete(myUseCount);
 	}
 
+	myPVOID = rhs.myPVOID;
 	myParam = rhs.myParam;
 	myReturn = rhs.myReturn;
 	myMessage = rhs.myMessage;
@@ -97,24 +119,36 @@ MfxNum MicroFlakeX::MfxParam::GetParamSize()
 	return myParam->size();
 }
 
-MfxReturn MicroFlakeX::MfxParam::NowReturn()
+PVOID MicroFlakeX::MfxParam::GetPVOID()
+{
+	return *myPVOID;
+}
+
+MfxReturn MicroFlakeX::MfxParam::GetRETURN()
 {
 	return *myReturn;
 }
 
-MfxMessage MicroFlakeX::MfxParam::NowMessage()
+MfxMessage MicroFlakeX::MfxParam::GetMESSAGE()
 {
 	return *myMessage;
 }
 
-MfxReturn MicroFlakeX::MfxParam::SetReturn(MfxReturn set)
+PVOID MicroFlakeX::MfxParam::SetPVOID(PVOID set)
+{
+	PVOID ret = myPVOID;
+	*myPVOID = set;
+	return ret;
+}
+
+MfxReturn MicroFlakeX::MfxParam::SetRETURN(MfxReturn set)
 {
 	MfxReturn ret = *myReturn;
 	*myReturn = set;
 	return ret;
 }
 
-MfxMessage MicroFlakeX::MfxParam::SetMessage(MfxMessage set)
+MfxMessage MicroFlakeX::MfxParam::SetMESSAGE(MfxMessage set)
 {
 	MfxMessage ret = *myMessage;
 	*myMessage = set;

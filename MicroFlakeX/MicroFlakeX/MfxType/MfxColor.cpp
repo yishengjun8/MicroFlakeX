@@ -97,7 +97,7 @@ MicroFlakeX::MfxColor::~MfxColor()
 {
 }
 
-MfxReturn MicroFlakeX::MfxColor::Clone(MfxBase** ret)const
+MfxReturn MicroFlakeX::MfxColor::Clone(pMfxBase* ret)const
 {
 	*ret = new MfxColor(this);
 

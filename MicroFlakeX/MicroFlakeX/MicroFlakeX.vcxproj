@@ -165,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="include\MfxAppFrame.h" />
     <ClInclude Include="include\MfxBase.h" />
+    <ClInclude Include="include\MfxExplain.h" />
     <ClInclude Include="include\MfxGraph.h" />
     <ClInclude Include="include\MfxType.h" />
     <ClInclude Include="include\MicroFlakeX.h" />
@@ -185,13 +186,14 @@
     <ClCompile Include="MfxBase\MfxThread.cpp" />
     <ClCompile Include="MfxBase\MfxThreadPool.cpp" />
     <ClCompile Include="MfxButton\MfxButton.cpp" />
+    <ClCompile Include="MfxExplain\MfxExplain.cpp" />
+    <ClCompile Include="MfxExplain\MfxGlide.cpp" />
     <ClCompile Include="MfxGraph\MfxCanvas.cpp" />
     <ClCompile Include="MfxGraph\MfxGraph.cpp" />
     <ClCompile Include="MfxGraph\MfxImage.cpp" />
     <ClCompile Include="MfxGraph\MfxRectangle.cpp" />
     <ClCompile Include="MfxGraph\MfxWords.cpp" />
     <ClCompile Include="MfxType\MfxColor.cpp" />
-    <ClCompile Include="MfxType\MfxGlide.cpp" />
     <ClCompile Include="MfxType\MfxPoint.cpp" />
     <ClCompile Include="MfxType\MfxRect.cpp" />
     <ClCompile Include="MfxType\MfxSize.cpp" />

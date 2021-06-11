@@ -95,7 +95,7 @@ MicroFlakeX::MfxSize::~MfxSize()
 {
 }
 
-MfxReturn MicroFlakeX::MfxSize::Clone(MfxBase** ret)const
+MfxReturn MicroFlakeX::MfxSize::Clone(pMfxBase* ret)const
 {
 	*ret = new MfxSize(*this);
 	return Mfx_Return_Fine;

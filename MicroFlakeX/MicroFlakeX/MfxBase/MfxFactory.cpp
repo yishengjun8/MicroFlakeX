@@ -14,7 +14,7 @@ __MicroFlakeX::MfxFactoryHand::~MfxFactoryHand()
 	RemoveObject(myObjectName);
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxFactory(MfxString object, MfxBase** ret)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxFactory(MfxString object, pMfxBase* ret)
 {
 	auto iter = __MicroFlakeX::MfxFactoryHand::MfxFactoryHand_Map.find(object);
 	if (iter != __MicroFlakeX::MfxFactoryHand::MfxFactoryHand_Map.end())

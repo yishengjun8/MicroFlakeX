@@ -201,7 +201,7 @@ MicroFlakeX::MfxRect::~MfxRect()
 {
 }
 
-MfxReturn MicroFlakeX::MfxRect::Clone(MfxBase** ret)
+MfxReturn MicroFlakeX::MfxRect::Clone(pMfxBase* ret)
 {
 	*ret = new MfxRect(*this);
 
@@ -1380,7 +1380,7 @@ MfxReturn MicroFlakeX::MfxRect::Union(const MfxRect* set, MfxRect* ret)const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::Union_Widely(MfxBase* set, MfxRect* ret)
+MfxReturn MicroFlakeX::MfxRect::Union_Widely(pMfxBase set, MfxRect* ret)
 {
 	LONG tT = 0, tL = 0, tR = 0, tB = 0;
 	LONG tRT = 0, tRL = 0, tRR = 0, tRB = 0;
@@ -1441,7 +1441,7 @@ MfxReturn MicroFlakeX::MfxRect::Intersect(const MfxRect* set, MfxRect* ret)const
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxRect::Intersect_Widely(MfxBase* set, MfxRect* ret)
+MfxReturn MicroFlakeX::MfxRect::Intersect_Widely(pMfxBase set, MfxRect* ret)
 {
 	LONG tT = 0, tL = 0, tR = 0, tB = 0;
 	LONG tST = 0, tSL = 0, tSR = 0, tSB = 0;

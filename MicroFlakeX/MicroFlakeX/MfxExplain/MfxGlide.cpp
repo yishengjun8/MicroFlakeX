@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "MfxType.h"
+#include "MfxExplain.h"
 
 MfxObject_Init(MfxGlide)
 MfxObject_EndInit(MfxGlide, MfxBase, \
@@ -58,7 +58,7 @@ MicroFlakeX::MfxGlide::~MfxGlide()
 	}
 }
 
-MfxReturn MicroFlakeX::MfxGlide::Clone(MfxBase** ret)const
+MfxReturn MicroFlakeX::MfxGlide::Clone(pMfxBase* ret)const
 {
 	*ret = new MfxGlide(this);
 
@@ -143,7 +143,7 @@ MfxReturn MicroFlakeX::MfxGlide::GetFPS(UINT* ret)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGlide::GetBindObject(MfxBase** object)
+MfxReturn MicroFlakeX::MfxGlide::GetBindObject(pMfxBase* object)
 {
 	*object = myBindObject;
 
@@ -157,7 +157,7 @@ MfxReturn MicroFlakeX::MfxGlide::SetFPS(const UINT set)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGlide::BindObject(MfxBase* object)
+MfxReturn MicroFlakeX::MfxGlide::BindObject(pMfxBase object)
 {
 	myBindObject = object;
 
@@ -317,13 +317,13 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam myParam)
 	return Mfx_Return_Fine;
 }
 
-MfxReturn MicroFlakeX::MfxGlide::MfxAddKeyframe(MfxString groupName, MfxBase* set, LONGLONG delay)
+MfxReturn MicroFlakeX::MfxGlide::MfxAddKeyframe(MfxString groupName, pMfxBase set, LONGLONG delay)
 {
 	Begin:
 	auto tFind = myBindObjectType_Keyframe.find(groupName);
 	if (tFind != myBindObjectType_Keyframe.end())
 	{
-		MfxBase* tObject = nullptr;
+		pMfxBase tObject = nullptr;
 		set->Clone(&tObject);
 		tFind->second.push(MfxGulid_Keyframe(tObject, delay));
 	}

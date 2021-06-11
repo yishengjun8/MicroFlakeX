@@ -14,12 +14,14 @@ int main()
     MfxFactory(MfxText("MfxFlake"), &myFlake_01);
     MfxFactory(MfxText("MfxColor"), &myColor);
 
-
-    MfxSignal mySignal;
-    mySignal.PushBackReceiver(myUI_00, MfxText("SetSize"));
+    /**/
+    MfxSignal_UnLink mySignal;
+    mySignal.PushBackReceiver(myUI_00);
 
     MfxSize uiSize(600, 600);
-    mySignal.SendSignal(&uiSize);
+    mySignal.PostSignal(MfxText("SetSize"), &uiSize);
+
+    //Sleep(1);
 
     myColor->AutoFunc(MfxText("Reset"), 255, 0, 255, 0);
     myUI_00->AutoFunc(MfxText("SetBackColor"), myColor);
@@ -107,6 +109,6 @@ int main()
 
     myGlide.Begin();
 
-    myUI_00->AutoFunc(MfxText("SetUI_Show"));
+    myUI_00->AutoFunc(MfxText("SHOW"));
     return MfxAppRun();
 }

@@ -34,19 +34,15 @@ namespace MicroFlakeX
 
 #define MfxString __MfxString
 #define MfxText(str) __MfxText(str)
-#define MfxStrHash(str) __MfxStrHash(str)
 
 #ifdef UNICODE
 #define __MfxCout std::wcout
 #define __MfxText(str) L##str
 #define __MfxString std::wstring
-#define __MfxStrHash(str) MfxGetHash_StrW(str)
-
 #elif 
 #define __MfxCout std::cout
 #define __MfxText(str) str
 #define __MfxString std::string;
-#define __MfxStrHash(str) MfxGetHash_StrA(MfxText(str))
 #endif
 
 	template<class lhsT, class rhsT = lhsT>
@@ -402,12 +398,8 @@ namespace MicroFlakeX
 {
 	class MFX_PORT MfxSignal_Link;
 	class MFX_PORT MfxSignal_UnLink;
-
-	typedef MfxSignal_Link MfxSignal;
-	typedef MfxSignal_UnLink MfxSignalEx;
-
 	typedef MfxSignal_Link* pMfxSignal_Link;
-	typedef MfxSignal_UnLink* pMfxSignal_UnLink;
+	typedef MfxSignal_Link* pMfxSignal_UnLink;
 
 	class MfxSignal_Link
 	{
@@ -453,14 +445,15 @@ namespace MicroFlakeX
 
 		void PostSignal()
 		{
-			MfxParam tParam(this);
+			MfxParam tParam;
+			tParam.push_back(this);
 			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_0), tParam);
 		}
 
 	private:
 		static MfxReturn ThreadSignal_0(MfxParam myParam)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)myParam.GetPVOID();
+			MfxSignal_Link* tThis = GetParam(myParam, MfxSignal_Link*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->AutoFunc(iter.recvFunc);
@@ -487,7 +480,8 @@ namespace MicroFlakeX
 		template<typename T1>
 		void PostSignal(T1&& A1)
 		{
-			MfxParam tParam(this);
+			MfxParam tParam;
+			tParam.push_back(this);
 			tParam.push_back(std::forward<T1>(A1));
 			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_Template<T1>), tParam);
 		}
@@ -495,11 +489,11 @@ namespace MicroFlakeX
 		template<typename T1>
 		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)myParam.GetPVOID();
+			MfxSignal_Link* tThis = GetParam(myParam, MfxSignal_Link*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->AutoFunc(iter.recvFunc, 
-					GetParam(myParam, T1, 0)
+					GetParam(myParam, T1, 1)
 				);
 			}
 			return Mfx_Return_Fine;
@@ -524,7 +518,8 @@ namespace MicroFlakeX
 		template<class T1, class T2>
 		void PostSignal(T1&& A1, T2&& A2)
 		{
-			MfxParam tParam(this);
+			MfxParam tParam;
+			tParam.push_back(this);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_Template<T1, T2>), tParam);
 		}
@@ -533,11 +528,12 @@ namespace MicroFlakeX
 		template<class T1, class T2>
 		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)myParam.GetPVOID();
+			MfxSignal_Link* tThis = GetParam(myParam, MfxSignal_Link*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter.recvObject->AutoFunc(iter.recvFunc,
-					GetParam(myParam, T1, 0), GetParam(myParam, T2, 1)
+				iter.recvObject->AutoFunc(
+					iter.recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2)
 				);
 			}
 			return Mfx_Return_Fine;
@@ -562,7 +558,8 @@ namespace MicroFlakeX
 		template<class T1, class T2, class T3>
 		void PostSignal(T1&& A1, T2&& A2, T3&& A3)
 		{
-			MfxParam tParam(this);
+			MfxParam tParam;
+			tParam.push_back(this);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3));
 			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_Template<T1, T2, T3>), tParam);
@@ -572,12 +569,13 @@ namespace MicroFlakeX
 		template<class T1, class T2, class T3>
 		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)myParam.GetPVOID();
+			MfxSignal_Link* tThis = GetParam(myParam, MfxSignal_Link*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter.recvObject->AutoFunc(iter.recvFunc,
-					GetParam(myParam, T1, 0), GetParam(myParam, T2, 1),
-					GetParam(myParam, T3, 2)
+				iter.recvObject->AutoFunc(
+					iter.recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2),
+					GetParam(myParam, T3, 3)
 				);
 			}
 			return Mfx_Return_Fine;
@@ -602,7 +600,8 @@ namespace MicroFlakeX
 		template<class T1, class T2, class T3, class T4>
 		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4)
 		{
-			MfxParam tParam(this);
+			MfxParam tParam;
+			tParam.push_back(this);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
 			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_Template<T1, T2, T3, T4>), tParam);
@@ -612,12 +611,13 @@ namespace MicroFlakeX
 		template<class T1, class T2, class T3, class T4>
 		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)myParam.GetPVOID();
+			MfxSignal_Link* tThis = GetParam(myParam, MfxSignal_Link*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter.recvObject->AutoFunc(iter.recvFunc,
-					GetParam(myParam, T1, 0), GetParam(myParam, T2, 1),
-					GetParam(myParam, T3, 2), GetParam(myParam, T4, 3)
+				iter.recvObject->AutoFunc(
+					iter.recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2),
+					GetParam(myParam, T3, 3), GetParam(myParam, T4, 4)
 				);
 			}
 			return Mfx_Return_Fine;
@@ -644,7 +644,8 @@ namespace MicroFlakeX
 		template<class T1, class T2, class T3, class T4, class T5>
 		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5)
 		{
-			MfxParam tParam(this);
+			MfxParam tParam;
+			tParam.push_back(this);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
 			tParam.push_back(std::forward<T5>(A5));
@@ -655,13 +656,14 @@ namespace MicroFlakeX
 		template<class T1, class T2, class T3, class T4, class T5>
 		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)myParam.GetPVOID();
+			MfxSignal_Link* tThis = GetParam(myParam, MfxSignal_Link*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter.recvObject->AutoFunc(iter.recvFunc,
-					GetParam(myParam, T1, 0), GetParam(myParam, T2, 1),
-					GetParam(myParam, T3, 2), GetParam(myParam, T4, 3),
-					GetParam(myParam, T5, 4)
+				iter.recvObject->AutoFunc(
+					iter.recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2),
+					GetParam(myParam, T3, 3), GetParam(myParam, T4, 4),
+					GetParam(myParam, T5, 5)
 				);
 			}
 			return Mfx_Return_Fine;
@@ -687,7 +689,8 @@ namespace MicroFlakeX
 		template<class T1, class T2, class T3, class T4, class T5, class T6>
 		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6)
 		{
-			MfxParam tParam(this);
+			MfxParam tParam;
+			tParam.push_back(this);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
 			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
@@ -698,13 +701,14 @@ namespace MicroFlakeX
 		template<class T1, class T2, class T3, class T4, class T5, class T6>
 		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)myParam.GetPVOID();
+			MfxSignal_Link* tThis = GetParam(myParam, MfxSignal_Link*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter.recvObject->AutoFunc(iter.recvFunc,
-					GetParam(myParam, T1, 0), GetParam(myParam, T2, 1),
-					GetParam(myParam, T3, 2), GetParam(myParam, T4, 3),
-					GetParam(myParam, T5, 4), GetParam(myParam, T6, 5)
+				iter.recvObject->AutoFunc(
+					iter.recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2),
+					GetParam(myParam, T3, 3), GetParam(myParam, T4, 4),
+					GetParam(myParam, T5, 5), GetParam(myParam, T6, 6)
 				);
 			}
 			return Mfx_Return_Fine;
@@ -731,7 +735,8 @@ namespace MicroFlakeX
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
 		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7)
 		{
-			MfxParam tParam(this);
+			MfxParam tParam;
+			tParam.push_back(this);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
 			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
@@ -743,14 +748,15 @@ namespace MicroFlakeX
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
 		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)myParam.GetPVOID();
+			MfxSignal_Link* tThis = GetParam(myParam, MfxSignal_Link*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter.recvObject->AutoFunc(iter.recvFunc,
-					GetParam(myParam, T1, 0), GetParam(myParam, T2, 1),
-					GetParam(myParam, T3, 2), GetParam(myParam, T4, 3),
-					GetParam(myParam, T5, 4), GetParam(myParam, T6, 5),
-					GetParam(myParam, T7, 6)
+				iter.recvObject->AutoFunc(
+					iter.recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2),
+					GetParam(myParam, T3, 3), GetParam(myParam, T4, 4),
+					GetParam(myParam, T5, 5), GetParam(myParam, T6, 6),
+					GetParam(myParam, T7, 7)
 				);
 			}
 			return Mfx_Return_Fine;
@@ -777,7 +783,8 @@ namespace MicroFlakeX
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
 		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7, T8&& A8)
 		{
-			MfxParam tParam(this);
+			MfxParam tParam;
+			tParam.push_back(this);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
 			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
@@ -789,14 +796,15 @@ namespace MicroFlakeX
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
 		static MfxReturn ThreadSignal_Template(MfxParam myParam)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)myParam.GetPVOID();
+			MfxSignal_Link* tThis = GetParam(myParam, MfxSignal_Link*, 0);
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter.recvObject->AutoFunc(iter.recvFunc,
-					GetParam(myParam, T1, 0), GetParam(myParam, T2, 1),
-					GetParam(myParam, T3, 2), GetParam(myParam, T4, 3),
-					GetParam(myParam, T5, 4), GetParam(myParam, T6, 5),
-					GetParam(myParam, T7, 6), GetParam(myParam, T8, 7)
+				iter.recvObject->AutoFunc(
+					iter.recvFunc,
+					GetParam(myParam, T1, 1), GetParam(myParam, T2, 2),
+					GetParam(myParam, T3, 3), GetParam(myParam, T4, 4),
+					GetParam(myParam, T5, 5), GetParam(myParam, T6, 6),
+					GetParam(myParam, T7, 7), GetParam(myParam, T8, 8)
 				);
 			}
 			return Mfx_Return_Fine;
@@ -1528,36 +1536,51 @@ public:\
 OBJ##FactoryHand OBJ##Hand(MfxText(#OBJ));\
 MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 {\
+	static volatile bool OBJ##isFirst = true;\
+	static volatile bool OBJ##isReging = false;\
 	MfxReturn ret = Mfx_Return_Fail;\
 	va_list argc;\
 	va_start(argc, recvFunc);\
+	auto iter = Mfx##OBJ##FuncMap.end();\
+	if(OBJ##isFirst)\
+	{\
+		OBJ##isFirst = false; \
+		OBJ##isReging = true; \
+		goto REG_##GOTO_BEGIN; \
+	}\
+	while (OBJ##isReging); \
+	\
 	BeginSwitch:\
-	switch (MfxStrHash(recvFunc.c_str()))\
-	{
+	iter = Mfx##OBJ##FuncMap.find(recvFunc);\
+	if(iter != Mfx##OBJ##FuncMap.end())\
+	{\
+		switch (iter->second)\
+		{
 
 
 	/***************************************************************
-	* 
+	*
+	*
+	*
 	****************************************************************/
 #define __MfxObject_Init_2(OBJ, FATHER_OBJ) \
-		case MfxStrHash(MfxText("AUTOFUNC_NOTFOUND")):\
+		case MfxGetHash_StrW(MfxText("AUTOFUNC_NOTFOUND")):\
 		{\
 			recvFunc = va_arg(argc, MfxString);\
 			argc = va_arg(argc, va_list);\
 			goto BeginSwitch;\
-		}\
-		case MfxStrHash(MfxText("AutoFunc")):\
-		{\
-			recvFunc = va_arg(argc, MfxString);\
-			argc = va_arg(argc, va_list);\
+			REG_END:\
+				Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText("AUTOFUNC_NOTFOUND"), MfxGetHash_StrW(MfxText("AUTOFUNC_NOTFOUND"))));\
+				OBJ##isReging = false;\
 			goto BeginSwitch;\
 		}\
-		default:\
-		{\
-			ret = FATHER_OBJ::AutoFunc(MfxText("AUTOFUNC_NOTFOUND"), recvFunc, argc); \
-			va_end(argc);\
-			return ret;\
 		}\
+	}\
+	else\
+	{\
+		ret = FATHER_OBJ::AutoFunc(MfxText("AUTOFUNC_NOTFOUND"), recvFunc, argc); \
+		va_end(argc);\
+		return ret;\
 	}\
 }
 
@@ -1567,34 +1590,52 @@ MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 ****************************************************************/
 
 #define __MfxAutoFunc_0(OBJ, AUTO_FUNC, GOTO_NEXT) \
-	case MfxStrHash(MfxText(#AUTO_FUNC)):\
+case MfxGetHash_StrW(MfxText(#AUTO_FUNC)):\
+{\
 	{\
 		ret = AUTO_FUNC(); \
 		va_end(argc);\
 		return ret;\
-	}
+	}\
+	REG_##AUTO_FUNC:\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrW(MfxText(#AUTO_FUNC))));\
+	goto REG_##GOTO_NEXT;\
+}\
 
 #define __MfxAutoFunc_1(OBJ, AUTO_FUNC, GOTO_NEXT) \
-	case MfxStrHash(MfxText(#AUTO_FUNC)):\
+case MfxGetHash_StrW(MfxText(#AUTO_FUNC)):\
+{\
 	{\
-		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
-		ret = AUTO_FUNC(A1);\
+		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC))); \
+		ret = AUTO_FUNC(A1); \
 		va_end(argc);\
 		return ret;\
-	}
+	}\
+	\
+	REG_##AUTO_FUNC:\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrW(MfxText(#AUTO_FUNC))));\
+	goto REG_##GOTO_NEXT;\
+}\
 
 #define __MfxAutoFunc_2(OBJ, AUTO_FUNC, GOTO_NEXT) \
-	case MfxStrHash(MfxText(#AUTO_FUNC)):\
+case MfxGetHash_StrW(MfxText(#AUTO_FUNC)):\
+{\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
 		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
 		ret = AUTO_FUNC(A1, A2);\
 		va_end(argc);\
 		return ret;\
-	}
+	}\
+	\
+	REG_##AUTO_FUNC:\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrW(MfxText(#AUTO_FUNC))));\
+	goto REG_##GOTO_NEXT;\
+}\
 
 #define __MfxAutoFunc_3(OBJ, AUTO_FUNC, GOTO_NEXT) \
-	case MfxStrHash(MfxText(#AUTO_FUNC)):\
+case MfxGetHash_StrW(MfxText(#AUTO_FUNC)):\
+{\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
 		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
@@ -1602,10 +1643,16 @@ MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 		ret = AUTO_FUNC(A1, A2, A3);\
 		va_end(argc);\
 		return ret;\
-	}
+	}\
+	\
+	REG_##AUTO_FUNC:\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrW(MfxText(#AUTO_FUNC))));\
+	goto REG_##GOTO_NEXT;\
+}\
 
 #define __MfxAutoFunc_4(OBJ, AUTO_FUNC, GOTO_NEXT) \
-	case MfxStrHash(MfxText(#AUTO_FUNC)):\
+case MfxGetHash_StrW(MfxText(#AUTO_FUNC)):\
+{\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
 		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
@@ -1614,10 +1661,16 @@ MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 		ret = AUTO_FUNC(A1, A2, A3, A4);\
 		va_end(argc);\
 		return ret;\
-	}
+	}\
+	\
+	REG_##AUTO_FUNC:\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrW(MfxText(#AUTO_FUNC))));\
+	goto REG_##GOTO_NEXT;\
+}\
 
 #define __MfxAutoFunc_5(OBJ, AUTO_FUNC, GOTO_NEXT) \
-	case MfxStrHash(MfxText(#AUTO_FUNC)):\
+case MfxGetHash_StrW(MfxText(#AUTO_FUNC)):\
+{\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
 		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
@@ -1627,10 +1680,16 @@ MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 		ret = AUTO_FUNC(A1, A2, A3, A4, A5);\
 		va_end(argc);\
 		return ret;\
-	}
+	}\
+	\
+	REG_##AUTO_FUNC:\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrW(MfxText(#AUTO_FUNC))));\
+	goto REG_##GOTO_NEXT;\
+}\
 
 #define __MfxAutoFunc_6(OBJ, AUTO_FUNC, GOTO_NEXT) \
-	case MfxStrHash(MfxText(#AUTO_FUNC)):\
+case MfxGetHash_StrW(MfxText(#AUTO_FUNC)):\
+{\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
 		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
@@ -1641,11 +1700,17 @@ MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 		ret = AUTO_FUNC(A1, A2, A3, A4, A5, A6);\
 		va_end(argc);\
 		return ret;\
-	}
+	}\
+	\
+	REG_##AUTO_FUNC:\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrW(MfxText(#AUTO_FUNC))));\
+	goto REG_##GOTO_NEXT;\
+}\
 
 
 #define __MfxAutoFunc_7(OBJ, AUTO_FUNC, GOTO_NEXT) \
-	case MfxStrHash(MfxText(#AUTO_FUNC)):\
+case MfxGetHash_StrW(MfxText(#AUTO_FUNC)):\
+{\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
 		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
@@ -1657,10 +1722,16 @@ MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 		ret = AUTO_FUNC(A1, A2, A3, A4, A5, A6, A7);\
 		va_end(argc);\
 		return ret;\
-	}
+	}\
+	\
+	REG_##AUTO_FUNC:\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrW(MfxText(#AUTO_FUNC))));\
+	goto REG_##GOTO_NEXT;\
+}\
 
 #define __MfxAutoFunc_8(OBJ, AUTO_FUNC, GOTO_NEXT) \
-	case MfxStrHash(MfxText(#AUTO_FUNC)):\
+case MfxGetHash_StrW(MfxText(#AUTO_FUNC)):\
+{\
 	{\
 		auto A1 = va_arg(argc, decltype(Mfx_GetFuncArgv_1(&OBJ::AUTO_FUNC)));\
 		auto A2 = va_arg(argc, decltype(Mfx_GetFuncArgv_2(&OBJ::AUTO_FUNC)));\
@@ -1673,7 +1744,12 @@ MfxReturn OBJ::AutoFunc(MfxString recvFunc...)\
 		ret = AUTO_FUNC(A1, A2, A3, A4, A5, A6, A7, A8);\
 		va_end(argc);\
 		return ret;\
-	}
+	}\
+	\
+	REG_##AUTO_FUNC:\
+		Mfx##OBJ##FuncMap.insert(Mfx##OBJ##FuncMapValue(MfxText(#AUTO_FUNC), MfxGetHash_StrW(MfxText(#AUTO_FUNC))));\
+	goto REG_##GOTO_NEXT;\
+}
 
 }
 

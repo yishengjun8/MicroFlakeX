@@ -102,7 +102,7 @@ MicroFlakeX::MfxPoint::~MfxPoint()
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxPoint::Clone(MfxBase** ret)const
+MfxReturn MicroFlakeX::MfxPoint::Clone(pMfxBase* ret)const
 {
 	*ret = new MfxPoint(*this);
 

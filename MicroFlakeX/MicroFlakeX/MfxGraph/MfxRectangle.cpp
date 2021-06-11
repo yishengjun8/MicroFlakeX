@@ -36,7 +36,7 @@ MicroFlakeX::MfxRectangle::MfxRectangle()
 	myFrameBrush = nullptr;
 	myRenderTarget = nullptr;
 
-	myRoundedFlage = true;
+	myRoundedFlage = false;
 	myColorUpdateFlage = false;
 
 	myFrameSize = 1;
@@ -55,7 +55,7 @@ MicroFlakeX::MfxRectangle::MfxRectangle(const MfxRect* set, MfxColor fillColor, 
 	myFrameBrush = nullptr;
 	myRenderTarget = nullptr;
 
-	myRoundedFlage = true;
+	myRoundedFlage = false;
 	myColorUpdateFlage = false;
 
 	myFrameSize = 1;

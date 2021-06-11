@@ -10,26 +10,52 @@ using namespace std;
 int main()
 {
     int a = clock();
-    MfxSignal mySignal;
     MfxTest myTest;
+
+
+    MfxSignal_Link mySignal;
+    MfxSignal_UnLink mySignalEx;
+    
     mySignal.PushBackReceiver(&myTest, L"test001");
+    mySignalEx.PushBackReceiver(&myTest);
+
+    long long times = 20000000;
+    int begin, out, fo = 0;
 
 
-    int begin = clock();
-    for (int i = 0; i < 10000000; i++)
+
+    while (fo < 4)
     {
-        myTest.test001(10);
+        cout << "\n————————————————————\ntimes = " << times << endl;
+        begin = clock();
+        for (int i = 0; i < times; i++)
+        {
+            myTest.test001(10);
+        }
+        out = clock() - begin;
+        cout << out << endl;
+
+        begin = clock();
+        for (int i = 0; i < times; i++)
+        {
+            mySignal.SendSignal(10);
+        }
+        out = clock() - begin;
+        cout << "MfxSignal_Link:" << out << endl;
+
+        begin = clock();
+        for (int i = 0; i < times; i++)
+        {
+            mySignalEx.SendSignal(L"test001", 10);
+        }
+        out = clock() - begin;
+        cout << "MfxSignal_UnLink:" << out << endl;
+
+        fo++;
+        times *= 2;
     }
-    cout << clock() - begin << endl;
-
-    begin = clock();
-    for (int i = 0; i < 10000000; i++)
-    {
-        mySignal.SendSignal(10);
-    }
-    cout << clock() - begin << endl;
-
-
+    int tta;
+    cin >> tta;
     return clock() - a;
 }
 

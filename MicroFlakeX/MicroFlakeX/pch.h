@@ -46,6 +46,7 @@
 #include "MfxBase.h"
 #include "MfxType.h"
 #include "MfxGraph.h"
+#include "MfxExplain.h"
 #include "MfxAppFrame.h"
 
 

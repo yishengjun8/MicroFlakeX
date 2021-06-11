@@ -678,17 +678,17 @@ MfxReturn MicroFlakeX::MfxUI::GetMaskColor(MfxColor* ret)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::SetRect(MfxRect* set)
 {
-    return SetWindowPos(myWnd, nullptr, set->myX, set->myY, set->myWidth, set->myHeight, SWP_NOZORDER) ? Mfx_Return_Fine : Mfx_Return_Fail;;
+    return SetWindowPos(myWnd, nullptr, set->myX, set->myY, set->myWidth, set->myHeight, SWP_NOZORDER) ? Mfx_Return_Fine : Mfx_Return_Fail;
 }
 
 MfxReturn MicroFlakeX::MfxUI::SetSize(MfxSize* set)
 {
-    return SetWindowPos(myWnd, nullptr, 0, 0, set->myWidth, set->myHeight, SWP_NOMOVE | SWP_NOZORDER) ? Mfx_Return_Fine : Mfx_Return_Fail;;
+    return SetWindowPos(myWnd, nullptr, 0, 0, set->myWidth, set->myHeight, SWP_NOMOVE | SWP_NOZORDER) ? Mfx_Return_Fine : Mfx_Return_Fail;
 }
 
 MfxReturn MicroFlakeX::MfxUI::SetPoint(MfxPoint* set)
 {
-    return SetWindowPos(myWnd, nullptr, set->myX, set->myY, 0, 0, SWP_NOSIZE | SWP_NOZORDER) ? Mfx_Return_Fine : Mfx_Return_Fail;;
+    return SetWindowPos(myWnd, nullptr, set->myX, set->myY, 0, 0, SWP_NOSIZE | SWP_NOZORDER) ? Mfx_Return_Fine : Mfx_Return_Fail;
 }
 
 MfxReturn MicroFlakeX::MfxUI::SetBackColor(MfxColor* set)
@@ -901,7 +901,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnSize(MfxParam param)
 
     DeleteObject(tRNG);
 
-    param.SetMessage(MSG_FatherSize);
+    param.SetMESSAGE(MSG_FatherSize);
     ProcFlakesMessage(param);
 
     return DefWindowProc(myWnd, GetMSG(param), GetWPARAM(param), GetLPARAM(param));
@@ -913,7 +913,7 @@ MfxReturn MicroFlakeX::MfxUI::__OnMove(MfxParam param)
     GetWorldRect(&myRect);
     myMemberLock.UnLock(&myRect);
 
-    param.SetMessage(MSG_FatherPoint);
+    param.SetMESSAGE(MSG_FatherPoint);
     ProcFlakesMessage(param);
 
     return DefWindowProc(myWnd, GetMSG(param), GetWPARAM(param), GetLPARAM(param));

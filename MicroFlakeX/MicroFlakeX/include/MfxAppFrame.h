@@ -306,7 +306,7 @@ namespace MicroFlakeX
 	name.push_back(wParam);\
 	name.push_back(lParam);\
 
-#define GetMSG(param) param.NowMessage()
+#define GetMSG(param) param.GetMESSAGE()
 #define GetHWND(param) GetParam_Safe(param, HWND, 0)
 #define GetWPARAM(param) GetParam_Safe(param, WPARAM, 1)
 #define GetLPARAM(param) GetParam_Safe(param, LPARAM, 2)
