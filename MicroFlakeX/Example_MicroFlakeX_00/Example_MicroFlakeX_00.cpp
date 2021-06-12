@@ -23,23 +23,23 @@ int main()
     MfxSize uiSize(600, 600);
     mySignalEx.PostSignal(MfxText("SetSize"), &uiSize);
 
-    myColor->AutoFunc(MfxText("Reset"), 255, 0, 255, 0);
+    myColor->Reflection(MfxText("Reset"), 255, 0, 255, 0);
     mySignal.SendSignal(myColor);
 
-    myColor->AutoFunc(MfxText("Reset"), 255, 255, 255, 255);
-    myFlake_01->AutoFunc(MfxText("SetBackColor"), myColor);
+    myColor->Reflection(MfxText("Reset"), 255, 255, 255, 255);
+    myFlake_01->Reflection(MfxText("SetBackColor"), myColor);
 
-    myColor->AutoFunc(MfxText("Reset"), 255, 0, 0, 0);
-    myFlake_01->AutoFunc(MfxText("SetTitleColor"), myColor);
+    myColor->Reflection(MfxText("Reset"), 255, 0, 0, 0);
+    myFlake_01->Reflection(MfxText("SetTitleColor"), myColor);
 
     MfxRect flakeRect(0, 0, 100, 100);
-    myFlake_01->AutoFunc(MfxText("SetRect"), &flakeRect);
+    myFlake_01->Reflection(MfxText("SetRect"), &flakeRect);
 
-    myFlake_01->AutoFunc(MfxText("SetTitle"), MfxString(MfxText("MFX")));
-    myFlake_01->AutoFunc(MfxText("OpenRButtonMove"));
-    myFlake_01->AutoFunc(MfxText("OpenLButtonMove"));
+    myFlake_01->Reflection(MfxText("SetTitle"), MfxString(MfxText("MFX")));
+    myFlake_01->Reflection(MfxText("OpenRButtonMove"));
+    myFlake_01->Reflection(MfxText("OpenLButtonMove"));
 
-    myUI_00->AutoFunc(MfxText("InsertFlake"), myFlake_01);
+    myUI_00->Reflection(MfxText("InsertFlake"), myFlake_01);
 
     MfxGlide myGlide;
 
@@ -109,6 +109,6 @@ int main()
 
     myGlide.Begin();
 
-    myUI_00->AutoFunc(MfxText("SHOW"));
+    myUI_00->Reflection(MfxText("SHOW"));
     return MfxAppRun();
 }

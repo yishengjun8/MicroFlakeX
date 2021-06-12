@@ -59,10 +59,10 @@ MicroFlakeX::MfxColor::MfxColor(MfxBase& set)
 {
 	LONG tSA = 0, tSR = 0, tSG = 0, tSB = 0;
 
-	set.AutoFunc(MfxText("GetA"), &tSA);
-	set.AutoFunc(MfxText("GetR"), &tSR);
-	set.AutoFunc(MfxText("GetG"), &tSG);
-	set.AutoFunc(MfxText("GetB"), &tSB);
+	set.Reflection(MfxText("GetA"), &tSA);
+	set.Reflection(MfxText("GetR"), &tSR);
+	set.Reflection(MfxText("GetG"), &tSG);
+	set.Reflection(MfxText("GetB"), &tSB);
 
 	SetA(tSA);
 	SetR(tSR);
@@ -114,19 +114,19 @@ MfxBase& MicroFlakeX::MfxColor::operator=(MfxBase& rhs)
 {
 	LONG tRA = 0, tRR = 0, tRG = 0, tRB = 0;
 
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetA"), &tRA)))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetA"), &tRA)))
 	{
 		SetA(tRA);
 	}
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetR"), &tRR)))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetR"), &tRR)))
 	{
 		SetR(tRR);
 	}
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetG"), &tRG)))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetG"), &tRG)))
 	{
 		SetG(tRG);
 	}
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetB"), &tRB)))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetB"), &tRB)))
 	{
 		SetB(tRB);
 	}
@@ -201,10 +201,10 @@ bool MicroFlakeX::MfxColor::operator==(MfxBase& rhs)
 	GetG(&tG);
 	GetB(&tB);
 
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetA"), &tRA))
-		&& Mfx_Seccess(rhs.AutoFunc(MfxText("GetR"), &tRR))
-		&& Mfx_Seccess(rhs.AutoFunc(MfxText("GetG"), &tRG))
-		&& Mfx_Seccess(rhs.AutoFunc(MfxText("GetB"), &tRB))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetA"), &tRA))
+		&& Mfx_Seccess(rhs.Reflection(MfxText("GetR"), &tRR))
+		&& Mfx_Seccess(rhs.Reflection(MfxText("GetG"), &tRG))
+		&& Mfx_Seccess(rhs.Reflection(MfxText("GetB"), &tRB))
 		)
 	{
 		return tA == tRA && tR == tRR && tG == tRG && tB == tRB;

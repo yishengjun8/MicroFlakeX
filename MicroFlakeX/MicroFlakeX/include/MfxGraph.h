@@ -18,7 +18,7 @@ namespace MicroFlakeX
 	typedef MfxImage* pMfxImage;
 	typedef MfxWords* pMfxWords;
 	typedef MfxEllipse* pMfxEllipse;
-	typedef MfxRectangle* pMfxRectangle;
+	typedef MfxRectangle* pMfxRectangleangle;
 }
 
 namespace MicroFlakeX

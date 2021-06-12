@@ -118,7 +118,7 @@ MfxReturn MicroFlakeX::MfxCloseTimer(PTP_TIMER& pTimer)
 VOID CALLBACK __MicroFlakeX::MfxThreadCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val)
 {
 	MfxWork_AutoFunc* tWork = (MfxWork_AutoFunc*)val;
-	tWork->object->AutoFunc(tWork->recvFunc, tWork->myParam);
+	tWork->object->Reflection(tWork->recvFunc, tWork->myParam);
 
 	delete tWork;
 }
@@ -136,7 +136,7 @@ VOID CALLBACK __MicroFlakeX::MfxThreadCallBack_Widely(PTP_CALLBACK_INSTANCE inst
 VOID CALLBACK __MicroFlakeX::MfxTimerCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer)
 {
 	MfxWork_AutoFunc* tWork = (MfxWork_AutoFunc*)val;
-	tWork->object->AutoFunc(tWork->recvFunc, tWork->myParam);
+	tWork->object->Reflection(tWork->recvFunc, tWork->myParam);
 
 	if (tWork->delay == 0)
 	{

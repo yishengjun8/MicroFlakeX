@@ -56,8 +56,8 @@ MicroFlakeX::MfxPoint::MfxPoint(MfxBase& set)
 {
 	LONG tSX = 0, tSY = 0;
 
-	set.AutoFunc(MfxText("GetX"), &tSX);
-	set.AutoFunc(MfxText("GetY"), &tSY);
+	set.Reflection(MfxText("GetX"), &tSX);
+	set.Reflection(MfxText("GetY"), &tSY);
 
 	SetY(tSY);
 	SetX(tSX);
@@ -113,11 +113,11 @@ MfxBase& MicroFlakeX::MfxPoint::operator=(MfxBase& rhs)
 {
 	LONG tRX = 0, tRY = 0;
 
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetX"), &tRX)))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetX"), &tRX)))
 	{
 		SetX(tRX);
 	}
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetY"), &tRY)))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetY"), &tRY)))
 	{
 		SetY(tRY);
 	}
@@ -216,8 +216,8 @@ bool MicroFlakeX::MfxPoint::operator==(MfxBase& rhs)
 	GetX(&tX);
 	GetY(&tY);
 
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetX"), &tRX))
-		&& Mfx_Seccess(rhs.AutoFunc(MfxText("GetY"), &tRY))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetX"), &tRX))
+		&& Mfx_Seccess(rhs.Reflection(MfxText("GetY"), &tRY))
 		)
 	{
 		return tX == tRX && tY == tRY;

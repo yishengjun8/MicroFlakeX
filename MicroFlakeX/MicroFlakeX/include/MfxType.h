@@ -7,7 +7,6 @@ namespace MicroFlakeX
     class MFX_PORT MfxPoint;
 
     class MFX_PORT MfxColor;
-
     /***************************************************************
     *	MfxType	³£ÓÃÈÝÆ÷
     ****************************************************************/

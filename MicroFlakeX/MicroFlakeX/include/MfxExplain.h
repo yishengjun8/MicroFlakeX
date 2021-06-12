@@ -44,7 +44,7 @@ namespace MicroFlakeX
     typedef std::vector<MfxGulid_GetSet_FuncName> MfxGulid_GetSet_FuncName_Vector;
 
     typedef std::queue<MfxGulid_Keyframe> MfxGulid_BindObjectType_Keyframe_Queue;
-
+ 
     typedef std::map<MfxString, MfxGulid_BindObjectType_Keyframe_Queue> MfxGulid_BindObjectType_Keyframe_Queue_Map;
     typedef MfxGulid_BindObjectType_Keyframe_Queue_Map::value_type MfxGulid_BindObjectType_Keyframe_Queue_Map_Pair;
 
@@ -131,9 +131,9 @@ namespace MicroFlakeX
     *   MfxGlide 赖于 MfxBase 的 AutoFunc。
     *
     *   MfxGlide 允许绑定一个 MfxBase 对象，每帧根据给定参数
-        自动调用 MfxBase::AutoFunc(MfxText("BindObjec"), XXX);
+        自动调用 MfxBase::Reflection(MfxText("BindObjec"), XXX);
     *
-    *   如果对象未注册 AutoFunc 的 BindObjec ，则会调用失败。
+    *   如果对象未注册 Reflection 的 BindObjec ，则会调用失败。
     *   对象必须可以Clone
     *
     ***************************************************************/

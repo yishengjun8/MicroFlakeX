@@ -56,8 +56,8 @@ MicroFlakeX::MfxSize::MfxSize(MfxBase& set)
 {
 	LONG tSW = 0, tSH = 0;
 
-	set.AutoFunc(MfxText("GetWidth"), &tSW);
-	set.AutoFunc(MfxText("GetHeight"), &tSH);
+	set.Reflection(MfxText("GetWidth"), &tSW);
+	set.Reflection(MfxText("GetHeight"), &tSH);
 
 	SetWidth(tSW);
 	SetHeight(tSH);
@@ -111,11 +111,11 @@ MfxBase& MicroFlakeX::MfxSize::operator=(MfxBase& rhs)
 {
 	LONG tRW = 0, tRH = 0;
 
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetWidth"), &tRW)))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetWidth"), &tRW)))
 	{
 		SetWidth(tRW);
 	}
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetHeight"), &tRH)))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetHeight"), &tRH)))
 	{
 		SetHeight(tRH);
 	}
@@ -215,8 +215,8 @@ bool MicroFlakeX::MfxSize::operator==(MfxBase& rhs)
 	GetWidth(&tW);
 	GetHeight(&tH);
 
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetWidth"), &tRW))
-		&& Mfx_Seccess(rhs.AutoFunc(MfxText("GetHeight"), &tRH))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetWidth"), &tRW))
+		&& Mfx_Seccess(rhs.Reflection(MfxText("GetHeight"), &tRH))
 		)
 	{
 		return tW == tRW && tH == tRH;

@@ -120,10 +120,10 @@ MicroFlakeX::MfxRect::MfxRect(MfxBase& set)
 {
 	LONG tSX = 0, tSY = 0, tSW = 0, tSH = 0;
 
-	set.AutoFunc(MfxText("GetX"), &tSX);
-	set.AutoFunc(MfxText("GetY"), &tSY);
-	set.AutoFunc(MfxText("GetWidth"), &tSW);
-	set.AutoFunc(MfxText("GetHeight"), &tSH);
+	set.Reflection(MfxText("GetX"), &tSX);
+	set.Reflection(MfxText("GetY"), &tSY);
+	set.Reflection(MfxText("GetWidth"), &tSW);
+	set.Reflection(MfxText("GetHeight"), &tSH);
 
 	SetY(tSY);
 	SetX(tSX);
@@ -218,19 +218,19 @@ MfxBase& MicroFlakeX::MfxRect::operator=(MfxBase& rhs)
 {
 	LONG tRX = 0, tRY = 0, tRW = 0, tRH = 0;
 
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetX"), &tRX)))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetX"), &tRX)))
 	{
 		SetX(tRX);
 	}
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetY"), &tRY)))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetY"), &tRY)))
 	{
 		SetY(tRY);
 	}
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetWidth"), &tRW)))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetWidth"), &tRW)))
 	{
 		SetWidth(tRW);
 	}
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetHeight"), &tRH)))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetHeight"), &tRH)))
 	{
 		SetHeight(tRH);
 	}
@@ -383,10 +383,10 @@ bool MicroFlakeX::MfxRect::operator==(MfxBase& rhs)
 	GetWidth(&tW);
 	GetHeight(&tH);
 
-	if (Mfx_Seccess(rhs.AutoFunc(MfxText("GetX"), &tRX))
-		&& Mfx_Seccess(rhs.AutoFunc(MfxText("GetY"), &tRY))
-		&& Mfx_Seccess(rhs.AutoFunc(MfxText("GetWidth"), &tRW))
-		&& Mfx_Seccess(rhs.AutoFunc(MfxText("GetHeight"), &tRH))
+	if (Mfx_Seccess(rhs.Reflection(MfxText("GetX"), &tRX))
+		&& Mfx_Seccess(rhs.Reflection(MfxText("GetY"), &tRY))
+		&& Mfx_Seccess(rhs.Reflection(MfxText("GetWidth"), &tRW))
+		&& Mfx_Seccess(rhs.Reflection(MfxText("GetHeight"), &tRH))
 		)
 	{
 		return tX == tRX && tY == tRY && tW == tRW && tH == tRH;
@@ -1390,18 +1390,18 @@ MfxReturn MicroFlakeX::MfxRect::Union_Widely(pMfxBase set, MfxRect* ret)
 	GetRight(&tR);
 	GetBottom(&tB);
 
-	if (Mfx_Seccess(set->AutoFunc(MfxText("GetTop"), (&tRT))))
+	if (Mfx_Seccess(set->Reflection(MfxText("GetTop"), (&tRT))))
 	{
 		ret->SetTop(min(tT, tRT));
-		if (Mfx_Seccess(set->AutoFunc(MfxText("GetBottom"), (&tRB))))
+		if (Mfx_Seccess(set->Reflection(MfxText("GetBottom"), (&tRB))))
 		{
 			ret->SetHeight(max(tB, tRB) - min(tT, tRT));
 		}
 	}
-	if (Mfx_Seccess(set->AutoFunc(MfxText("GetLeft"), (&tRL))))
+	if (Mfx_Seccess(set->Reflection(MfxText("GetLeft"), (&tRL))))
 	{
 		ret->SetLeft(min(tL, tRL));
-		if (Mfx_Seccess(set->AutoFunc(MfxText("GetRight"), (&tRR))))
+		if (Mfx_Seccess(set->Reflection(MfxText("GetRight"), (&tRR))))
 		{
 			ret->SetWidth(max(tR, tRR) - min(tL, tRL));
 		}
@@ -1451,10 +1451,10 @@ MfxReturn MicroFlakeX::MfxRect::Intersect_Widely(pMfxBase set, MfxRect* ret)
 	GetRight(&tR);
 	GetBottom(&tB);
 
-	if (Mfx_Seccess(set->AutoFunc(MfxText("GetTop"), &tST))
-		&& Mfx_Seccess(set->AutoFunc(MfxText("GetLeft"), &tSL))
-		&& Mfx_Seccess(set->AutoFunc(MfxText("GetRight"), &tSR))
-		&& Mfx_Seccess(set->AutoFunc(MfxText("GetBottom"), &tSB))
+	if (Mfx_Seccess(set->Reflection(MfxText("GetTop"), &tST))
+		&& Mfx_Seccess(set->Reflection(MfxText("GetLeft"), &tSL))
+		&& Mfx_Seccess(set->Reflection(MfxText("GetRight"), &tSR))
+		&& Mfx_Seccess(set->Reflection(MfxText("GetBottom"), &tSB))
 		)
 	{
 		LONG tTop = max(tT, tST);

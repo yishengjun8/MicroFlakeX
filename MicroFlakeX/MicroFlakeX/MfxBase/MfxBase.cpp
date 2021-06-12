@@ -46,18 +46,12 @@ bool MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 *
 *
 ****************************************************************/
-MfxReturn MicroFlakeX::MfxBase::AutoFunc(MfxString recvFunc ...)
+MfxReturn MicroFlakeX::MfxBase::Reflection(MfxString recvFunc ...)
 {
 	return Mfx_Return_Fail;
 }
 
-MfxReturn MicroFlakeX::MfxBase::FuncName(MfxString* ret)
-{
-	*ret = MfxText("");
-	return Mfx_Return_Fine;
-}
-
-MfxReturn MicroFlakeX::MfxBase::ObjectName(MfxString* ret)
+MfxReturn MicroFlakeX::MfxBase::GetObjectName(MfxString* ret)
 {
 	*ret = MfxText("MfxBase");
 	return Mfx_Return_Fine;

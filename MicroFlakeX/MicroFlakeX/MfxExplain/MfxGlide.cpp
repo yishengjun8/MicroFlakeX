@@ -213,7 +213,7 @@ MfxReturn MicroFlakeX::MfxGlide::Begin()
 		for (auto& iter : myWidelyTypeMap)
 		{
 			iter.second.myBeginTime = clock();
-			myBindObject->AutoFunc(iter.second.getObjectFuncName, iter.second.myGetObject_Begin);
+			myBindObject->Reflection(iter.second.getObjectFuncName, iter.second.myGetObject_Begin);
 		}
 	}
 
@@ -286,21 +286,21 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam myParam)
 
 			for (int i = 0; i < tFind->second.myGulidTypePair.size(); i++)
 			{
-				tFind->second.myGetObject_Begin->AutoFunc(tFind->second.myGulidTypePair[i].myGetFuncName, &tBg);
+				tFind->second.myGetObject_Begin->Reflection(tFind->second.myGulidTypePair[i].myGetFuncName, &tBg);
 
-				tKeyObjectType.second.front().key->AutoFunc(tFind->second.myGulidTypePair[i].myGetFuncName, &tTo);
+				tKeyObjectType.second.front().key->Reflection(tFind->second.myGulidTypePair[i].myGetFuncName, &tTo);
 
 				tNow = tBg + (tTo - tBg) * tFind->second.myGulidTypePair[i].myEaseGulid((double)tFind->second.myThroughTime / (double)tKeyObjectType.second.front().time);
 
-				tFind->second.myGetObject_Set->AutoFunc(tFind->second.myGulidTypePair[i].mySetFuncName, tNow);
+				tFind->second.myGetObject_Set->Reflection(tFind->second.myGulidTypePair[i].mySetFuncName, tNow);
 			}
 
-			myBindObject->AutoFunc(tFind->second.setObjectFuncName, tFind->second.myGetObject_Set);
+			myBindObject->Reflection(tFind->second.setObjectFuncName, tFind->second.myGetObject_Set);
 
 
 			if (tFind->second.myThroughTime > tKeyObjectType.second.front().time)
 			{
-				myBindObject->AutoFunc(tFind->second.getObjectFuncName, tFind->second.myGetObject_Begin);
+				myBindObject->Reflection(tFind->second.getObjectFuncName, tFind->second.myGetObject_Begin);
 
 				tFind->second.myBeginTime = clock();
 

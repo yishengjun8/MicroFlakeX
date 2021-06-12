@@ -8,7 +8,7 @@ int main()
 
     std::cout << "Hello World!\n";
 
-    myUI.SetUI_Show();
+    myUI.SHOW();
 
     return MfxAppRun();
 }

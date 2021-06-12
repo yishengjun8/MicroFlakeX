@@ -1,13 +1,145 @@
 ﻿// Example_MicroFlakeX_02.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 
 #include <iostream>
-
+#include <functional>
 #include "MfxTest.h"
 
 using namespace std;
+using namespace MicroFlakeX;
+using namespace __MicroFlakeX;
+
 
 
 int main()
+{
+    MfxBase* tes = new MfxRect;
+
+    MfxString name;
+
+    tes->GetObjectName(&name);
+
+    //auto fun = &(tes->Reflection);
+
+    wcout << name;
+
+    return 0;
+}
+
+
+int ccout(int a)
+{
+    cout << "ccout" << a << endl;
+    return a;
+}
+
+int cccout(int a, int b)
+{
+    cout << "ccout" << a << " " << b << endl;
+    return a;
+}
+
+int ccccout(int a, int b, int c)
+{
+    cout << "cccout" << a << " " << b << " " << c << endl;
+    return a;
+}
+
+template<typename T, typename TT>
+class BIND
+{
+public:
+    BIND(T func, TT arg)
+    {
+        myFunc = func;
+        argc = arg;
+        is = 0;
+    }
+
+    ~BIND()
+    {
+        if (is)
+        {
+        //    (*this)();
+        }
+    }
+
+    T myFunc;
+    TT argc;
+    int is;
+
+    template<typename T1, typename T2>
+    int operator()(T1 t1, T2 t2)
+    {
+        return (*myFunc)(argc, t1, t2);
+    }
+
+    template<typename T1>
+    int operator()(T1 t1)
+    {
+        return (*myFunc)(argc, t1);
+    }
+
+    int operator()()
+    {
+        return (*myFunc)(argc);
+    }
+
+    //operator
+
+};
+template<typename T>
+void RUNIT(T set)
+{
+    (*set)();
+}
+
+template<typename T>
+void BINDFOR(T set, int num, int arg)
+{
+    if (num == 1)
+    {
+        BIND myBind(set, arg);
+        RUNIT(&myBind);
+    }
+    else
+    {
+        BIND myBind(set, arg);
+        BINDFOR(&myBind, num - 1, arg * 100);
+    }
+}
+
+
+int test2()
+{
+    using namespace std::placeholders;
+    cout << Mfx_GetFuncArgc(ccout) << endl;
+
+    //for (int i = 0; i < Mfx_GetFuncArgc(ccout); i++)
+    {
+        //auto myBind = new BIND(ccout, 100);
+    }
+
+    //BINDFOR(ccout, 1, 200);
+
+    BIND myBind(ccout, 100);
+    cout << myBind() << endl;
+
+    BIND myBind2(cccout, 100);
+    BIND myBind2_(&myBind2, 200);
+    cout << myBind2_() << endl;
+
+
+    BIND myBind3(ccccout, 100);
+    BIND myBind3_(&myBind3, 200);
+    BIND myBind3__(&myBind3_, 300);
+    cout << myBind3__() << endl;
+
+    return 66;
+
+}
+
+
+int test1()
 {
     int a = clock();
     MfxTest myTest;
