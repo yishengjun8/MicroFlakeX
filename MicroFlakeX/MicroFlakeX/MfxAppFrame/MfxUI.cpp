@@ -186,11 +186,10 @@ MfxReturn MicroFlakeX::MfxUI::CreateSuccess()
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::ProcMessage(MfxParam& param)
 {
-    /* 这里添加识别 - 耗时的全部移交到UI线程内处理 */
     MfxReturn tRet = Mfx_Return_Fail;
-    ProcFlakesMessage(param);
+    myMemberLock.TryWaitLock(&myMessageMap);
 
-    myMemberLock.WaitLock(&myMessageMap);
+    ProcFlakesMessage(param);
 
     auto t_Iter = myMessageMap.find(GetMSG(param));
     if (t_Iter != myMessageMap.end())
@@ -218,12 +217,10 @@ MfxReturn MicroFlakeX::MfxUI::ProcFlakesMessage(MfxParam param)
     MfxReturn t_Ret = Mfx_Return_Fail;
     pMfxFlake t_FloatFocus = myMutexFocus;
     myMutexFocus = myMutexFocusLockFlag ? myMutexFocus : nullptr;
-
     for (auto t_Iter : myFlakeDeque)
     {
         t_Ret = t_Iter->Send_Message(param);
     }
-
     return t_Ret;
 }
 
@@ -232,12 +229,10 @@ MfxReturn MicroFlakeX::MfxUI::RProcFlakesMessage(MfxParam param)
     MfxReturn t_Ret = Mfx_Return_Fail;
     pMfxFlake t_FloatFocus = myMutexFocus;
     myMutexFocus = myMutexFocusLockFlag ? myMutexFocus : nullptr;
-
     for (int i = myFlakeDeque.size() - 1; i >= 0; i--)
     {
         t_Ret = myFlakeDeque[i]->Send_Message(param);
     }
-
     return t_Ret;
 }
 
@@ -431,7 +426,7 @@ MfxReturn MicroFlakeX::MfxUI::LockMutexFocus(pMfxFlake set)
 
     if (myMutexFocusLockFlag)
     {
-        tRet = myMutexFocus == set ? Mfx_Return_Fine : Mfx_Return_Fail;
+        tRet = (myMutexFocus == set) ? Mfx_Return_Fine : Mfx_Return_Fail;
     }
     else
     {
@@ -448,9 +443,8 @@ MfxReturn MicroFlakeX::MfxUI::LockMutexFocus(pMfxFlake set)
 MfxReturn MicroFlakeX::MfxUI::UnLockMutexFocus()
 {
     myMemberLock.WaitLock(&myMutexFocusLockFlag);
-
+    myMutexFocus = nullptr;
     myMutexFocusLockFlag = false;
-
     myMemberLock.UnLock(&myMutexFocusLockFlag);
 
     return Mfx_Return_Fine;
@@ -473,7 +467,7 @@ MfxReturn MicroFlakeX::MfxUI::SetMutexFocus(pMfxFlake set)
     }
     else
     {
-        tRet = Mfx_Return_Fail;
+        tRet = (myMutexFocus == set) ? Mfx_Return_Fine : Mfx_Return_Fail;
     }
 
     myMemberLock.UnLock(&myMutexFocusLockFlag, &myMutexFocus);
@@ -484,9 +478,7 @@ MfxReturn MicroFlakeX::MfxUI::SetMutexFocus(pMfxFlake set)
 MfxReturn MicroFlakeX::MfxUI::GetMutexFocus(pMfxFlake* ret)
 {
     myMemberLock.WaitLock(&myMutexFocus);
-
     *ret = myMutexFocus;
-
     myMemberLock.UnLock(&myMutexFocus);
 
     return Mfx_Return_Fine;
@@ -499,19 +491,19 @@ MfxReturn MicroFlakeX::MfxUI::SetKeyboardFocus(pMfxFlake set)
 {
     auto tRet = Mfx_Return_Fail;
 
-    myMemberLock.TryWaitLock(&myMutexFocusLockFlag, &myKeyboardFocus);
+    myMemberLock.TryWaitLock(&myKeyboardFocusLockFlag, &myKeyboardFocus);
 
-    if (!myMutexFocusLockFlag)
+    if (!myKeyboardFocus && !myKeyboardFocusLockFlag)
     {
         myKeyboardFocus = set;
         tRet = Mfx_Return_Fine;
     }
     else
     {
-        tRet = Mfx_Return_Fail;
+        tRet = myKeyboardFocus == set ? Mfx_Return_Fine : Mfx_Return_Fail;
     }
 
-    myMemberLock.UnLock(&myMutexFocusLockFlag, &myKeyboardFocus);
+    myMemberLock.UnLock(&myKeyboardFocusLockFlag, &myKeyboardFocus);
 
     return tRet;
 }
@@ -1365,20 +1357,12 @@ MfxReturn MicroFlakeX::MfxUI::__OnNCHitTest(MfxParam param)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::__OnNCMouseMove(MfxParam param)
 {
-    if (myMutexFocus)
-    {
-        return 0;
-    }
-    return DefWindowProc(myWnd, WM_NCMOUSEMOVE, GetWPARAM(param), GetLPARAM(param));
+    return myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCMOUSEMOVE, GetWPARAM(param), GetLPARAM(param));
 }
 
 MfxReturn MicroFlakeX::MfxUI::__OnNCMouseHover(MfxParam param)
 {
-    if (myMutexFocus)
-    {
-        return 0;
-    }
-    return DefWindowProc(myWnd, WM_NCMOUSEHOVER, GetWPARAM(param), GetLPARAM(param));
+    return myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCMOUSEHOVER, GetWPARAM(param), GetLPARAM(param));
 }
 
 

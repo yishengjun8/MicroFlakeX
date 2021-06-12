@@ -26,14 +26,14 @@ int main()
 
     while (fo < 4)
     {
-        cout << "\n————————————————————\ntimes = " << times << endl;
+        cout << "————————————————————\ntimes = " << times << endl;
         begin = clock();
         for (int i = 0; i < times; i++)
         {
             myTest.test001(10);
         }
         out = clock() - begin;
-        cout << out << endl;
+        cout << "Direct:" << out << endl;
 
         begin = clock();
         for (int i = 0; i < times; i++)

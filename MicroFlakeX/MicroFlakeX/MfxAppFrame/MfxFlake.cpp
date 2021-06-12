@@ -1013,12 +1013,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnMouseMove(MfxParam param)
 	t_Rect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
-		MfxFlake* t_Conctrol = nullptr;
-
-		myFather ? myFather->AutoFunc(MfxText("SetMutexFocus"), this) : 0;
-		myFather ? myFather->AutoFunc(MfxText("GetMutexFocus"), &t_Conctrol) : 0;
-
-		if (t_Conctrol == this) //获取互斥焦点成功
+		if (Mfx_Seccess(myFather ? myFather->AutoFunc(MfxText("SetMutexFocus"), this) : Mfx_Return_Fail)) //获取互斥焦点成功
 		{
 			myMouseFloat = true; //成功悬浮
 
@@ -1095,11 +1090,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(MfxParam param)
 	t_Rect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
-		MfxFlake* t_Conctrol = nullptr;
-		myFather->AutoFunc(MfxText("SetMutexFocus"), this);
-		myFather->AutoFunc(MfxText("GetMutexFocus"), &t_Conctrol);
-
-		if (t_Conctrol == this) //获取互斥焦点成功
+		if (Mfx_Seccess(myFather ? myFather->AutoFunc(MfxText("SetMutexFocus"), this) : Mfx_Return_Fail)) //获取互斥焦点成功
 		{
 			if (myLButtonClickFlag) //点击成功
 			{
@@ -1124,7 +1115,9 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonUp(MfxParam param)
 	{
 	myFailed:
 		myLButtonPress = false;
+
 		myLButtonClickFlag = false;
+		myRButtonClickFlag = false;
 	}
 
 	return Mfx_Return_Fine;
@@ -1144,11 +1137,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDown(MfxParam param)
 	t_Rect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
-		MfxFlake* t_Conctrol = nullptr;
-		myFather->AutoFunc(MfxText("SetMutexFocus"), this);
-		myFather->AutoFunc(MfxText("GetMutexFocus"), &t_Conctrol);
-
-		if (t_Conctrol == this) //获取互斥焦点成功
+		if (Mfx_Seccess(myFather ? myFather->AutoFunc(MfxText("SetMutexFocus"), this) : Mfx_Return_Fail)) //获取互斥焦点成功
 		{
 			myButtonMoveBegin = mousePos;
 			myFather->AutoFunc(MfxText("SetKeyboardFocus"), this); //设置键盘焦点
@@ -1168,7 +1157,9 @@ MfxReturn MicroFlakeX::MfxFlake::__OnLButtonDown(MfxParam param)
 	{
 	myFailed:
 		myLButtonPress = false;
+
 		myLButtonClickFlag = false;
+		myRButtonClickFlag = false;
 
 		MfxParam msgParam2(MSG_FlakeEvent);
 		msgParam2.push_back(FlakeEvent_Info(this, FLAKE_EVENT_LButtonPressOver));
@@ -1202,11 +1193,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(MfxParam param)
 	t_Rect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
-		MfxFlake* t_Conctrol = nullptr;
-		myFather->AutoFunc(MfxText("SetMutexFocus"), this);
-		myFather->AutoFunc(MfxText("GetMutexFocus"), &t_Conctrol);
-
-		if (t_Conctrol == this) //获取互斥焦点成功
+		if (Mfx_Seccess(myFather ? myFather->AutoFunc(MfxText("SetMutexFocus"), this) : Mfx_Return_Fail)) //获取互斥焦点成功
 		{
 			if (myRButtonClickFlag) //点击成功
 			{
@@ -1231,6 +1218,8 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonUp(MfxParam param)
 	{
 	myFailed:
 		myRButtonPress = false;
+
+		myLButtonClickFlag = false;
 		myRButtonClickFlag = false;
 	}
 
@@ -1251,11 +1240,7 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDown(MfxParam param)
 	t_Rect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
-		MfxFlake* t_Conctrol = nullptr;
-		myFather->AutoFunc(MfxText("SetMutexFocus"), this);
-		myFather->AutoFunc(MfxText("GetMutexFocus"), &t_Conctrol);
-
-		if (t_Conctrol == this) //获取互斥焦点成功
+		if (Mfx_Seccess(myFather ? myFather->AutoFunc(MfxText("SetMutexFocus"), this) : Mfx_Return_Fail)) //获取互斥焦点成功
 		{
 			myButtonMoveBegin = mousePos;
 			myRButtonPress = true;
@@ -1274,6 +1259,8 @@ MfxReturn MicroFlakeX::MfxFlake::__OnRButtonDown(MfxParam param)
 	{
 	myFailed:
 		myRButtonPress = false;
+
+		myLButtonClickFlag = false;
 		myRButtonClickFlag = false;
 
 		MfxParam msgParam2(MSG_FlakeEvent);

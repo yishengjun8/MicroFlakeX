@@ -14,17 +14,17 @@ int main()
     MfxFactory(MfxText("MfxFlake"), &myFlake_01);
     MfxFactory(MfxText("MfxColor"), &myColor);
 
-    /**/
-    MfxSignal_UnLink mySignal;
-    mySignal.PushBackReceiver(myUI_00);
+    MfxSignal mySignal;
+    MfxSignalEx mySignalEx;
+
+    mySignal.PushBackReceiver(myUI_00, MfxText("SetBackColor"));
+    mySignalEx.PushBackReceiver(myUI_00);
 
     MfxSize uiSize(600, 600);
-    mySignal.PostSignal(MfxText("SetSize"), &uiSize);
-
-    //Sleep(1);
+    mySignalEx.PostSignal(MfxText("SetSize"), &uiSize);
 
     myColor->AutoFunc(MfxText("Reset"), 255, 0, 255, 0);
-    myUI_00->AutoFunc(MfxText("SetBackColor"), myColor);
+    mySignal.SendSignal(myColor);
 
     myColor->AutoFunc(MfxText("Reset"), 255, 255, 255, 255);
     myFlake_01->AutoFunc(MfxText("SetBackColor"), myColor);
