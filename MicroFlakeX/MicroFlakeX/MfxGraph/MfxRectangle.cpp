@@ -3,29 +3,29 @@
 
 MfxObject_Init(MfxRectangle)
 MfxObject_EndInit(MfxRectangle, MfxGraph, \
-	0, Paint, \
+	Paint, \
 	\
-	1, SetCanvas, \
-	1, GetCanvas, \
+	SetCanvas, \
+	GetCanvas, \
 	\
-	1, SetFrameSize, \
-	1, SetFillColor, \
-	1, SetFrameColor, \
+	SetFrameSize, \
+	SetFillColor, \
+	SetFrameColor, \
 	\
-	1, GetFrameSize, \
-	1, GetFillColor, \
-	1, GetFrameColor, \
+	GetFrameSize, \
+	GetFillColor, \
+	GetFrameColor, \
 	\
-	1, GetReallyRect, \
+	GetReallyRect, \
 	\
-	1, SetRounded_X, \
-	1, SetRounded_Y, \
+	SetRounded_X, \
+	SetRounded_Y, \
 	\
-	1, GetRounded_X, \
-	1, GetRounded_Y, \
+	GetRounded_X, \
+	GetRounded_Y, \
 	\
-	0, OpenRounded, \
-	0, CloseRounded \
+	OpenRounded, \
+	CloseRounded \
 	);
 
 
@@ -45,7 +45,7 @@ MicroFlakeX::MfxRectangle::MfxRectangle()
 	myRounded_Y = 20;
 
 	myFillColor.Reset(255, 255, 0, 0);
-	myFrameColor.Reset(255, 0, 0, 255);
+	myFrameColor.Reset(0, 255, 255, 0);
 }
 
 MicroFlakeX::MfxRectangle::MfxRectangle(const MfxRect* set, MfxColor fillColor, MfxColor frameColor)

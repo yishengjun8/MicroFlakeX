@@ -3,40 +3,40 @@
 
 MfxObject_Init(MfxSize)
 MfxObject_EndInit(MfxSize, MfxBase, \
-	2, Reset, \
+	Reset, \
 	\
-	1, GetSize,\
+	GetSize,\
 	\
-	1, GetSIZE, \
+	GetSIZE, \
 	\
-	1, GetGdipSize, \
-	1, GetGdipSizeF, \
+	GetGdipSize, \
+	GetGdipSizeF, \
 	\
-	1, GetD2D1SizeF, \
-	1, GetD2D1SizeU, \
-	\
-	\
-	1, SetSize, \
-	\
-	1, SetSIZE, \
-	\
-	1, SetGdipSize, \
-	1, SetGdipSizeF, \
-	\
-	1, SetD2D1SizeF, \
-	1, SetD2D1SizeU, \
+	GetD2D1SizeF, \
+	GetD2D1SizeU, \
 	\
 	\
-	1, GetWidth, \
-	1, GetHeight, \
+	SetSize, \
 	\
-	1, SetWidth, \
-	1, SetHeight, \
+	SetSIZE, \
+	\
+	SetGdipSize, \
+	SetGdipSizeF, \
+	\
+	SetD2D1SizeF, \
+	SetD2D1SizeU, \
 	\
 	\
-	2, Inflate, \
+	GetWidth, \
+	GetHeight, \
 	\
-	1, IsEmpty);
+	SetWidth, \
+	SetHeight, \
+	\
+	\
+	Inflate, \
+	\
+	IsEmpty);
 
 
 /**************************************************************

@@ -3,23 +3,23 @@
 
 MfxObject_Init(MfxImage)
 MfxObject_EndInit(MfxImage, MfxGraph, \
-	0, Paint, \
+	Paint, \
 	\
-	1, SetCanvas, \
-	1, GetCanvas, \
+	SetCanvas, \
+	GetCanvas, \
 	\
-	2, FromFile, \
-	2, FromColor, \
+	FromFile, \
+	FromColor, \
 	\
-	1, GetIWICBitmap, \
-	1, GetID2D1Bitmap, \
-	1, GetGdipBitmap, \
+	GetIWICBitmap, \
+	GetID2D1Bitmap, \
+	GetGdipBitmap, \
 	\
-	1, SetIWICBitmap, \
+	SetIWICBitmap, \
 	\
-	0, Update_Canvas, \
-	2, ResetIWICBitmapFromFile, \
-	2, ResetIWICBitmapFromColor);
+	Update_Canvas, \
+	ResetIWICBitmapFromFile, \
+	ResetIWICBitmapFromColor);
 
 MicroFlakeX::MfxImage::MfxImage()
 {

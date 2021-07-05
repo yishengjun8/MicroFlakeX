@@ -3,33 +3,33 @@
 
 MfxObject_Init(MfxWords)
 MfxObject_EndInit(MfxWords, MfxGraph, \
-	0, Paint, \
+	Paint, \
 	\
-	1, SetCanvas, \
-	1, GetCanvas, \
+	SetCanvas, \
+	GetCanvas, \
 	\
-	1, GetText, \
-	1, GetTextSize, \
+	GetText, \
+	GetTextSize, \
 	\
-	1, GetFontName, \
-	1, GetTextColor, \
-	1, GetTextFormat, \
-	1, GetTextAlignmentX, \
-	1, GetTextAlignmentY, \
+	GetFontName, \
+	GetTextColor, \
+	GetTextFormat, \
+	GetTextAlignmentX, \
+	GetTextAlignmentY, \
 	\
-	1, SetRect, \
-	1, SetSize, \
+	SetRect, \
+	SetSize, \
 	\
-	1, SetText, \
-	1, SetTextSize, \
-	1, SetFontName, \
-	1, SetTextColor, \
-	1, SetTextFormat, \
-	1, SetTextAlignmentX, \
-	1, SetTextAlignmentY, \
+	SetText, \
+	SetTextSize, \
+	SetFontName, \
+	SetTextColor, \
+	SetTextFormat, \
+	SetTextAlignmentX, \
+	SetTextAlignmentY, \
 	\
-	0, Update_Canvas, \
-	0, ResetTextLayout);
+	Update_Canvas, \
+	ResetTextLayout);
 
 IDWriteTextFormat* MfxWords::gDefTextFormat = nullptr;
 

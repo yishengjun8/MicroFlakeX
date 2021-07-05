@@ -1,65 +1,80 @@
 #include "pch.h"
 #include "MfxAppFrame.h"
 
+
 MfxObject_Init(MfxFlake)
 MfxObject_EndInit(MfxFlake, MfxBase, \
-	1, Send_Message, \
-	1, Post_Message, \
+	Send_Message, \
+	Post_Message, \
 	\
-	2, RemoveFlakeEvent, \
-	2, PushBackFlakeEvent, \
-	2, PushFrontFlakeEvent, \
+	RemoveFlakeEvent, \
+	PushBackFlakeEvent, \
+	PushFrontFlakeEvent, \
 	\
-	0, OpenPercentRect, \
-	0, ClosePercentRect, \
-	0, ChickPercentRect, \
+	OpenPercentRect, \
+	ClosePercentRect, \
+	ChickPercentRect, \
 	\
-	1, GetFather, \
-	1, GetWnd, \
-	1, GetFloor, \
-	1, GetCanvas, \
+	GetFather, \
+	GetWnd, \
+	GetFloor, \
+	GetCanvas, \
 	\
-	1, SetFloor, \
+	SetFloor, \
 	\
-	1, GetRect, \
-	1, GetSize, \
-	1, GetPoint, \
-	1, GetEdgeRect, \
+	GetRect, \
+	GetSize, \
+	GetPoint, \
+	GetEdgeRect, \
 	\
-	1, GetTitle, \
-	1, GetTitleSize, \
+	GetTitle, \
+	GetTitleSize, \
 	\
-	1, GetBackColor, \
-	1, GetMaskColor, \
-	1, GetTitleColor, \
-	1, GetBackFrameSize, \
-	1, GetMaskFrameSize, \
+	GetBackColor, \
+	GetMaskColor, \
+	GetTitleColor, \
+	GetBackFrameSize, \
+	GetMaskFrameSize, \
 	\
-	1, SetRect, \
-	1, SetSize, \
-	1, SetPoint, \
-	1, SetEdgeRect, \
+	SetRect, \
+	SetSize, \
+	SetPoint, \
+	SetEdgeRect, \
 	\
-	1, SetTitle, \
-	1, SetTitleSize, \
+	SetTitle, \
+	SetTitleSize, \
 	\
-	1, SetBackColor, \
-	1, SetMaskColor, \
-	1, SetTitleColor, \
-	1, SetBackFrameSize, \
-	1, SetMaskFrameSize, \
+	SetBackColor, \
+	SetMaskColor, \
+	SetTitleColor, \
+	SetBackFrameSize, \
+	SetMaskFrameSize, \
 	\
-	0, OpenLButtonMove, \
-	0, CloseLButtonMove, \
-	0, OpenRButtonMove, \
-	0, CloseRButtonMove \
+	OpenLButtonMove, \
+	CloseLButtonMove, \
+	OpenRButtonMove, \
+	CloseRButtonMove \
 );
 
 
 #define FLAKE_RECV(msg, func) FLAKE_ADDRECV_FLAKEMSG(msg, MfxFlake, func)
 
+
+
+
 void MicroFlakeX::MfxFlake::RegisterRecvFunc()
 {
+	//MfxReFuncCaseEx(, );
+
+
+#define TestArgs(...) __VA_ARGS__
+
+
+
+	//std::cout << GET_ARGS_NUM(TestArgs(2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)) << std::endl;
+
+	Mfx_GetFuncArgc(&MfxFlake::CloseRButtonMove);
+
 	FLAKE_RECV(WM_NCMOUSEMOVE, __OnNCMouseMove);
 	FLAKE_RECV(WM_NCMOUSEHOVER, __OnNCMouseHover);
 

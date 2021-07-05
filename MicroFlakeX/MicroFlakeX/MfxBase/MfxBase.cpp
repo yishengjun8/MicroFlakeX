@@ -40,7 +40,6 @@ bool MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 	return false;
 }
 
-
 /***************************************************************
 *
 *

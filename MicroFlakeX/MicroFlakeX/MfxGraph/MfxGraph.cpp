@@ -3,15 +3,15 @@
 
 MfxObject_Init(MfxGraph)
 MfxObject_EndInit(MfxGraph, MfxBase, \
-	1, SetRect, \
-	1, SetSize, \
-	1, SetPoint, \
+	SetRect, \
+	SetSize, \
+	SetPoint, \
 	\
-	1, GetRect, \
-	1, GetSize, \
-	1, GetPoint, \
+	GetRect, \
+	GetSize, \
+	GetPoint, \
 	\
-	2, IntersectWith);
+	IntersectWith);
 
 
 /**************************************************************

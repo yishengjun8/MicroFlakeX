@@ -3,27 +3,27 @@
 
 MfxObject_Init(MfxColor)
 MfxObject_EndInit(MfxColor, MfxBase, \
-	4, Reset, \
+	Reset, \
 	\
-	1, GetPRGB, \
-	2, GetRGB, \
+	GetPRGB, \
+	GetRGB, \
 	\
-	1, GetD2D1ColorF, \
+	GetD2D1ColorF, \
 	\
-	1, SetPRGB, \
-	2, SetRGB, \
+	SetPRGB, \
+	SetRGB, \
 	\
-	1, SetD2D1ColorF, \
+	SetD2D1ColorF, \
 	\
-	1, GetA, \
-	1, GetR, \
-	1, GetG, \
-	1, GetB, \
+	GetA, \
+	GetR, \
+	GetG, \
+	GetB, \
 	\
-	1, SetA, \
-	1, SetR, \
-	1, SetG, \
-	1, SetB);
+	SetA, \
+	SetR, \
+	SetG, \
+	SetB);
 
 
 /**************************************************************

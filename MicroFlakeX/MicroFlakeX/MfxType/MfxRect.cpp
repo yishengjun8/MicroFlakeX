@@ -3,102 +3,102 @@
 
 MfxObject_Init(MfxRect)
 MfxObject_EndInit(MfxRect, MfxBase, \
-	4, Reset, \
+	Reset, \
 	\
-	1, GetRect, \
-	1, GetSize, \
-	1, GetPoint, \
+	GetRect, \
+	GetSize, \
+	GetPoint, \
 	\
-	1, GetRECT, \
-	1, GetSIZE, \
-	1, GetPOINT, \
+	GetRECT, \
+	GetSIZE, \
+	GetPOINT, \
 	\
-	1, GetGdipRect, \
-	1, GetGdipRectF, \
+	GetGdipRect, \
+	GetGdipRectF, \
 	\
-	1, GetGdipSize, \
-	1, GetGdipSizeF, \
+	GetGdipSize, \
+	GetGdipSizeF, \
 	\
-	1, GetGdipPoint, \
-	1, GetGdipPointF, \
+	GetGdipPoint, \
+	GetGdipPointF, \
 	\
-	1, GetD2D1RectL, \
-	1, GetD2D1RectU, \
-	1, GetD2D1RectF, \
+	GetD2D1RectL, \
+	GetD2D1RectU, \
+	GetD2D1RectF, \
 	\
-	1, GetD2D1SizeU, \
-	1, GetD2D1SizeF, \
+	GetD2D1SizeU, \
+	GetD2D1SizeF, \
 	\
-	1, GetD2D1Point2L, \
-	1, GetD2D1Point2U, \
-	1, GetD2D1Point2F, \
+	GetD2D1Point2L, \
+	GetD2D1Point2U, \
+	GetD2D1Point2F, \
 	\
-	1, SetRect, \
-	1, SetSize, \
-	1, SetPoint, \
+	SetRect, \
+	SetSize, \
+	SetPoint, \
 	\
-	1, SetRECT, \
-	1, SetSIZE, \
-	1, SetPOINT, \
+	SetRECT, \
+	SetSIZE, \
+	SetPOINT, \
 	\
-	1, SetGdipRect, \
-	1, SetGdipRectF, \
+	SetGdipRect, \
+	SetGdipRectF, \
 	\
-	1, SetGdipSize, \
-	1, SetGdipSizeF, \
+	SetGdipSize, \
+	SetGdipSizeF, \
 	\
-	1, SetGdipPoint, \
-	1, SetGdipPointF, \
+	SetGdipPoint, \
+	SetGdipPointF, \
 	\
-	1, SetD2D1RectL, \
-	1, SetD2D1RectU, \
-	1, SetD2D1RectF, \
+	SetD2D1RectL, \
+	SetD2D1RectU, \
+	SetD2D1RectF, \
 	\
-	1, SetD2D1SizeU, \
-	1, SetD2D1SizeF, \
+	SetD2D1SizeU, \
+	SetD2D1SizeF, \
 	\
-	1, SetD2D1Point2L, \
-	1, SetD2D1Point2U, \
-	1, SetD2D1Point2F, \
-	\
-	\
-	1, GetX, \
-	1, GetY, \
-	1, GetWidth, \
-	1, GetHeight, \
-	\
-	1, GetTop, \
-	1, GetLeft, \
-	1, GetRight, \
-	1, GetBottom, \
-	\
-	1, GetCenter, \
-	2, GetPointPosition, \
+	SetD2D1Point2L, \
+	SetD2D1Point2U, \
+	SetD2D1Point2F, \
 	\
 	\
-	1, SetX, \
-	1, SetY, \
-	1, SetWidth, \
-	1, SetHeight, \
+	GetX, \
+	GetY, \
+	GetWidth, \
+	GetHeight, \
 	\
-	1, SetTop, \
-	1, SetLeft, \
-	1, SetRight, \
-	1, SetBottom, \
+	GetTop, \
+	GetLeft, \
+	GetRight, \
+	GetBottom, \
 	\
-	1, SetCenter, \
-	2, SetPointPosition, \
+	GetCenter, \
+	GetPointPosition, \
 	\
-	2, Union, \
-	2, Union_Widely, \
-	2, Intersect, \
-	2, Intersect_Widely, \
 	\
-	2, Offset, \
-	2, Inflate, \
+	SetX, \
+	SetY, \
+	SetWidth, \
+	SetHeight, \
 	\
-	1, IsEmpty, \
-	2, IsPointInside);
+	SetTop, \
+	SetLeft, \
+	SetRight, \
+	SetBottom, \
+	\
+	SetCenter, \
+	SetPointPosition, \
+	\
+	Union, \
+	Union_Widely, \
+	Intersect, \
+	Intersect_Widely, \
+	\
+	Offset, \
+	Inflate, \
+	\
+	IsEmpty, \
+	IsPointInside);
 
 
 /**************************************************************

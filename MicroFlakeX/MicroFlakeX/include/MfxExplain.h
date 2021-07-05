@@ -182,7 +182,7 @@ namespace MicroFlakeX
         MfxReturn Clear();
 
     public:
-        MfxReturn EachFrame(MfxParam myParam);
+        MfxReturn EachFrame(MfxParam param);
 
     public:
         MfxReturn MfxAddKeyframe(MfxString groupName, pMfxBase set, LONGLONG delay);
@@ -201,3 +201,24 @@ namespace MicroFlakeX
 
     };
 }
+
+
+namespace MicroFlakeX
+{
+    class MFX_PORT MfxTransitions;
+    class MFX_PORT MfxTransitionsEx;
+}
+
+namespace MicroFlakeX
+{
+    class MfxTransitions :
+        public MfxBase
+    {
+        MfxObject;
+    public:
+        MfxTransitions();
+
+    };
+
+}
+

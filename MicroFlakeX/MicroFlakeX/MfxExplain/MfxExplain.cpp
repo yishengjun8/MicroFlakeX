@@ -206,3 +206,5 @@ MFX_PORT double MicroFlakeX::MfxEaseInOutBounce(double x)
         ? (1 - MfxEaseOutBounce(1 - 2 * x)) / 2
         : (1 + MfxEaseOutBounce(2 * x - 1)) / 2);
 }
+
+

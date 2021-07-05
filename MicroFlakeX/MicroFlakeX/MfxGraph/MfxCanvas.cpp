@@ -6,27 +6,27 @@ MfxObject_Init(MfxCanvas)
 	//添加一些需要提前初始化的代码
 }
 MfxObject_EndInit(MfxCanvas, MfxBase, \
-	1, GetDC, \
-	1, GetWnd, \
-	1, GetBackColor, \
+	GetDC, \
+	GetWnd, \
+	GetBackColor, \
 	\
-	1, SetDC, \
-	1, SetWnd, \
-	1, SetBackColor, \
+	SetDC, \
+	SetWnd, \
+	SetBackColor, \
 	\
-	1, PaintBegin, \
-	0, PaintFinish, \
-	1, PaintCheck, \
+	PaintBegin, \
+	PaintFinish, \
+	PaintCheck, \
 	\
-	1, GetRenderTarget, \
+	GetRenderTarget, \
 	\
-	1, SetRect, \
-	1, SetSize, \
-	1, SetPoint, \
+	SetRect, \
+	SetSize, \
+	SetPoint, \
 	\
-	1, GetRect, \
-	1, GetSize, \
-	1, GetPoint \
+	GetRect, \
+	GetSize, \
+	GetPoint \
 );
 
 MicroFlakeX::MfxCanvas::MfxCanvas()

@@ -333,7 +333,7 @@ namespace MicroFlakeX
 	public:
 		MfxRectangle();
 
-		MfxRectangle(const MfxRect* set, MfxColor fillColor = MfxColor(255, 255, 0, 0), MfxColor frameColor = MfxColor(255, 0, 0, 255));
+		MfxRectangle(const MfxRect* set, MfxColor fillColor = MfxColor(255, 255, 0, 0), MfxColor frameColor = MfxColor(255, 255, 0, 0));
 		MfxRectangle(const MfxRect& set) :MfxRectangle(&set) {};
 		MfxRectangle(const MfxRect&& set) :MfxRectangle(&set) {};
 
@@ -399,7 +399,7 @@ namespace MicroFlakeX
 	public:
 		MfxEllipse();
 
-		MfxEllipse(const MfxRect* set, MfxColor fillColor = MfxColor(255, 255, 0, 0), MfxColor frameColor = MfxColor(255, 0, 0, 255));
+		MfxEllipse(const MfxRect* set, MfxColor fillColor = MfxColor(255, 255, 0), MfxColor frameColor = MfxColor(255, 255));
 		MfxEllipse(const MfxRect& set) :MfxEllipse(&set) {};
 		MfxEllipse(const MfxRect&& set) :MfxEllipse(&set) {};
 

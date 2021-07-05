@@ -3,40 +3,40 @@
 
 MfxObject_Init(MfxPoint)
 MfxObject_EndInit(MfxPoint, MfxBase, \
-	2, Reset, \
+	Reset, \
 	\
-	1, GetPoint, \
+	GetPoint, \
 	\
-	1, GetPOINT, \
+	GetPOINT, \
 	\
-	1, GetGdipPoint, \
-	1, GetGdipPointF, \
+	GetGdipPoint, \
+	GetGdipPointF, \
 	\
-	1, GetD2D1Point2L, \
-	1, GetD2D1Point2U, \
-	1, GetD2D1Point2F, \
-	\
-	\
-	1, SetPoint, \
-	\
-	1, SetPOINT, \
-	\
-	1, SetGdipPoint, \
-	1, SetGdipPointF, \
-	\
-	1, SetD2D1Point2L, \
-	1, SetD2D1Point2U, \
-	1, SetD2D1Point2F, \
+	GetD2D1Point2L, \
+	GetD2D1Point2U, \
+	GetD2D1Point2F, \
 	\
 	\
-	1, GetX, \
-	1, GetY, \
+	SetPoint, \
 	\
-	1, SetX, \
-	1, SetY, \
+	SetPOINT, \
+	\
+	SetGdipPoint, \
+	SetGdipPointF, \
+	\
+	SetD2D1Point2L, \
+	SetD2D1Point2U, \
+	SetD2D1Point2F, \
 	\
 	\
-	2, Offset);
+	GetX, \
+	GetY, \
+	\
+	SetX, \
+	SetY, \
+	\
+	\
+	Offset);
 
 
 /**************************************************************

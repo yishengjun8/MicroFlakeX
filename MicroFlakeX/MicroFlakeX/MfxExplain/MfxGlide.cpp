@@ -3,21 +3,21 @@
 
 MfxObject_Init(MfxGlide)
 MfxObject_EndInit(MfxGlide, MfxBase, \
-	1, SetFPS, \
-	1, BindObject, \
-	2, BindObjectName, \
-	3, Add_GetSetFuncName, \
+	SetFPS, \
+	BindObject, \
+	BindObjectName, \
+	Add_GetSetFuncName, \
 	\
-	1, GetFPS, \
-	1, GetBindObject, \
+	GetFPS, \
+	GetBindObject, \
 	\
-	0, Stop, \
-	0, Begin, \
-	0, Pause, \
-	0, Clear, \
+	Stop, \
+	Begin, \
+	Pause, \
+	Clear, \
 	\
-	1, EachFrame, \
-	3, MfxAddKeyframe);
+	EachFrame, \
+	MfxAddKeyframe);
 
 MicroFlakeX::MfxGlide::MfxGlide()
 {
@@ -237,7 +237,7 @@ MfxReturn MicroFlakeX::MfxGlide::Clear()
 	return MfxReturn();
 }
 
-MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam myParam)
+MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam param)
 {
 	if (myPTP_TIMER == 0)
 	{

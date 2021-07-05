@@ -3,74 +3,73 @@
 
 MfxObject_Init(MfxUI)
 MfxObject_EndInit(MfxUI, MfxBase, \
+    CreateSuccess, \
     \
-    0, CreateSuccess, \
+    ProcFlakesMessage, \
+    RProcFlakesMessage, \
     \
-    1, ProcFlakesMessage, \
-    1, RProcFlakesMessage, \
+    Send_Message, \
+    Post_Message, \
     \
-    1, Send_Message, \
-    1, Post_Message, \
+    RemoveFlake, \
+    InsertFlake, \
     \
-    1, RemoveFlake, \
-    1, InsertFlake, \
+    RemoveWin32Timer, \
+    InsertWin32Timer, \
     \
-    1, RemoveWin32Timer, \
-    1, InsertWin32Timer, \
+    RemoveUIMessage, \
+    PushBackUIMessage, \
+    PushFrontUIMessage, \
     \
-    2, RemoveUIMessage, \
-    2, PushBackUIMessage, \
-    2, PushFrontUIMessage, \
+    OpenPercentRect, \
+    ClosePercentRect, \
+    ChickPercentRect, \
     \
-    0, OpenPercentRect, \
-    0, ClosePercentRect, \
-    1, ChickPercentRect, \
+    RemoveFlakeEvent, \
+    PushBackFlakeEvent, \
+    PushFrontFlakeEvent, \
     \
-    2, RemoveFlakeEvent, \
-    2, PushBackFlakeEvent, \
-    2, PushFrontFlakeEvent, \
+    LockMutexFocus, \
+    UnLockMutexFocus, \
     \
-    1, LockMutexFocus, \
-    0, UnLockMutexFocus, \
+    SetMutexFocus, \
+    GetMutexFocus, \
+    SetKeyboardFocus, \
+    GetKeyboardFocus, \
     \
-    1, SetMutexFocus, \
-    1, GetMutexFocus, \
-    1, SetKeyboardFocus, \
-    1, GetKeyboardFocus, \
+    UnionInvalidateRect, \
     \
-    2, UnionInvalidateRect, \
+    GetWnd, \
+    GetCanvas, \
     \
-    1, GetWnd, \
-    1, GetCanvas, \
-    \
-    1, GetWorldRect, \
-    1, GetLocalMousePos, \
-    2, TransWorldRectToLocalRect, \
-    2, TransWorldPointToLocalPoint, \
+    GetWorldRect, \
+    GetLocalMousePos, \
+    TransWorldRectToLocalRect, \
+    TransWorldPointToLocalPoint, \
     \
     \
-    1, GetRect, \
-    1, GetSize, \
-    1, GetPoint, \
-    1, GetBackColor, \
-    1, GetMaskColor, \
+    GetRect, \
+    GetSize, \
+    GetPoint, \
+    GetBackColor, \
+    GetMaskColor, \
     \
-    1, SetRect, \
-    1, SetSize, \
-    1, SetPoint, \
-    1, SetBackColor, \
-    1, SetMaskColor, \
+    SetRect, \
+    SetSize, \
+    SetPoint, \
+    SetBackColor, \
+    SetMaskColor, \
     \
-    1, GetGlobeAlpha, \
-    1, GetGlobeAlphaMode, \
-    1, SetGlobeAlpha, \
-    1, SetGlobeAlphaMode, \
+    GetGlobeAlpha, \
+    GetGlobeAlphaMode, \
+    SetGlobeAlpha, \
+    SetGlobeAlphaMode, \
     \
-    0, MAX, \
-    0, MIN, \
-    0, SHOW, \
-    0, HIDE, \
-    0, NORMAL \
+    MAX, \
+    MIN, \
+    SHOW, \
+    HIDE, \
+    NORMAL \
 
 );
 
@@ -828,10 +827,13 @@ MfxReturn MicroFlakeX::MfxUI::__OnCreate(MfxParam param)
 
     myMemberLock.TryWaitLock(&myBackColor, &myBackRectangle, &myMaskColor, &myMaskRectangle);
 
+    MfxColor tColor;
     myBackRectangle.SetSize(&tSize);
     myMaskRectangle.SetSize(&tSize);
     myBackRectangle.SetCanvas(&myCanvas);
     myMaskRectangle.SetCanvas(&myCanvas);
+    myBackRectangle.SetFrameColor(&tColor);
+    myMaskRectangle.SetFrameColor(&tColor);
     myBackRectangle.SetFillColor(&myBackColor);
     myMaskRectangle.SetFillColor(&myMaskColor);
 
@@ -843,7 +845,6 @@ MfxReturn MicroFlakeX::MfxUI::__OnCreate(MfxParam param)
 
     //SetWindowLong(myWnd, GWL_EXSTYLE, GetWindowLong(myWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
 
-    MfxColor tColor;
     SetGlobeAlpha(&tColor);
 
     return Mfx_Return_Fine;
