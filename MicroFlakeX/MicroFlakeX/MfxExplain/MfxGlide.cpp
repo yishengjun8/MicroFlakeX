@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "MfxExplain.h"
 
-MfxObject_Init(MfxGlide)
-MfxObject_EndInit(MfxGlide, MfxBase, \
+MFXOBJ_REFLECTION_INIT(MfxGlide)
+MFXOBJ_REFLECTION_ENDINIT(MfxGlide, MfxBase, \
 	SetFPS, \
 	BindObject, \
 	BindObjectName, \
@@ -58,11 +58,11 @@ MicroFlakeX::MfxGlide::~MfxGlide()
 	}
 }
 
-MfxReturn MicroFlakeX::MfxGlide::Clone(pMfxBase* ret)const
+MfxReturn MicroFlakeX::MfxGlide::Clone(MfxBase** ret)const
 {
 	*ret = new MfxGlide(this);
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxBase& MicroFlakeX::MfxGlide::operator=(MfxBase& rhs)
@@ -140,28 +140,28 @@ MfxReturn MicroFlakeX::MfxGlide::GetFPS(UINT* ret)
 {
 	*ret = myFPS;
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
-MfxReturn MicroFlakeX::MfxGlide::GetBindObject(pMfxBase* object)
+MfxReturn MicroFlakeX::MfxGlide::GetBindObject(MfxBase** object)
 {
 	*object = myBindObject;
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::SetFPS(const UINT set)
 {
 	myFPS = set;
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
-MfxReturn MicroFlakeX::MfxGlide::BindObject(pMfxBase object)
+MfxReturn MicroFlakeX::MfxGlide::BindObject(MfxBase* object)
 {
 	myBindObject = object;
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::BindObjectName(MfxString groupName, MfxGulid_WidelyType value)
@@ -174,7 +174,7 @@ MfxReturn MicroFlakeX::MfxGlide::BindObjectName(MfxString groupName, MfxGulid_Wi
 	MfxFactory(myWidelyTypeMap[groupName].setObjectName, &(myWidelyTypeMap[groupName].myGetObject_Set));
 	MfxFactory(myWidelyTypeMap[groupName].getObjectName, &(myWidelyTypeMap[groupName].myGetObject_Begin));
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::Add_GetSetFuncName(MfxString groupName, MfxString getFuncName, MfxString setFuncName, pEaseGulid easeGulid)
@@ -186,7 +186,7 @@ MfxReturn MicroFlakeX::MfxGlide::Add_GetSetFuncName(MfxString groupName, MfxStri
 		tFind->second.myGulidTypePair.push_back(MfxGulid_GetSet_FuncName(getFuncName, setFuncName, easeGulid));
 	}
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::Stop()
@@ -197,14 +197,14 @@ MfxReturn MicroFlakeX::MfxGlide::Stop()
 		myPTP_TIMER = 0;
 	}
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::Begin()
 {
 	if (!myBindObject || !myBindObjectType_Keyframe.size())
 	{
-		return Mfx_Return_Fail;
+		return MfxReturn_Failed;
 	}
 
 	if (!myBegin)
@@ -219,7 +219,7 @@ MfxReturn MicroFlakeX::MfxGlide::Begin()
 
 	MfxBeginNewTimer(myPTP_TIMER, this, MfxText("EachFrame"), MfxParam(), 1000 / myFPS);
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::Pause()
@@ -229,7 +229,7 @@ MfxReturn MicroFlakeX::MfxGlide::Pause()
 		MfxCloseTimer(myPTP_TIMER);
 		myPTP_TIMER = 0;
 	}
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::Clear()
@@ -241,7 +241,7 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam param)
 {
 	if (myPTP_TIMER == 0)
 	{
-		return Mfx_Return_Fine;
+		return MfxReturn_Seccess;
 	}
 
 	int i = myBindObjectType_Keyframe.size();
@@ -260,7 +260,7 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam param)
 			MfxCloseTimer(myPTP_TIMER);
 			myPTP_TIMER = 0;
 		}
-		return Mfx_Return_Fine;
+		return MfxReturn_Seccess;
 	}
 
 	for (auto& tKeyObjectType : myBindObjectType_Keyframe)
@@ -314,16 +314,16 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam param)
 			tKeyObjectType.second.pop();
 		}
 	}
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
-MfxReturn MicroFlakeX::MfxGlide::MfxAddKeyframe(MfxString groupName, pMfxBase set, LONGLONG delay)
+MfxReturn MicroFlakeX::MfxGlide::MfxAddKeyframe(MfxString groupName, MfxBase* set, LONGLONG delay)
 {
 	Begin:
 	auto tFind = myBindObjectType_Keyframe.find(groupName);
 	if (tFind != myBindObjectType_Keyframe.end())
 	{
-		pMfxBase tObject = nullptr;
+		MfxBase* tObject = nullptr;
 		set->Clone(&tObject);
 		tFind->second.push(MfxGulid_Keyframe(tObject, delay));
 	}
@@ -333,5 +333,5 @@ MfxReturn MicroFlakeX::MfxGlide::MfxAddKeyframe(MfxString groupName, pMfxBase se
 		goto Begin;
 	}
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }

@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "MfxGraph.h"
 
-MfxObject_Init(MfxCanvas)
+MFXOBJ_REFLECTION_INIT(MfxCanvas)
 {
 	//添加一些需要提前初始化的代码
 }
-MfxObject_EndInit(MfxCanvas, MfxBase, \
+MFXOBJ_REFLECTION_ENDINIT(MfxCanvas, MfxBase, \
 	GetDC, \
 	GetWnd, \
 	GetBackColor, \
@@ -101,21 +101,21 @@ MfxReturn MicroFlakeX::MfxCanvas::GetDC(HDC* ret)const
 {
 	*ret = myDC;
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetWnd(HWND* ret)const
 {
 	*ret = myWnd;
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetBackColor(MfxColor* ret)const
 {
 	myBackColor.GetColor(ret);
 	
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 
@@ -128,35 +128,35 @@ MfxReturn MicroFlakeX::MfxCanvas::SetDC(HDC set)
 {
 	if (myDC || myWnd)
 	{
-		return Mfx_Return_Fail;
+		return MfxReturn_Failed;
 	}
 
 	myDC = set;
 
 	MfxGraph::GetID2D1DCRenderTarget(&myRenderTarget, set, myRect);
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::SetWnd(HWND set)
 {
 	if (myDC || myWnd)
 	{
-		return Mfx_Return_Fail;
+		return MfxReturn_Failed;
 	}
 
 	myWnd = set;
 
 	MfxGraph::GetID2D1HwndRenderTarget(&myRenderTarget, set, MfxSize(myRect));
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::SetBackColor(MfxColor* set)
 {
 	myBackColor = set;
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 
@@ -188,10 +188,10 @@ MfxReturn MicroFlakeX::MfxCanvas::PaintBegin(MfxRect* clip)
 
 		myPaintFlag = true;
 
-		return Mfx_Return_Fine;
+		return MfxReturn_Seccess;
 	}
 
-	return Mfx_Return_Fail;
+	return MfxReturn_Failed;
 
 }
 
@@ -212,17 +212,17 @@ MfxReturn MicroFlakeX::MfxCanvas::PaintFinish()
 
 		myPaintFlag = false;
 
-		return Mfx_Return_Fine;
+		return MfxReturn_Seccess;
 	}
 
-	return Mfx_Return_Fail;
+	return MfxReturn_Failed;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::PaintCheck(bool* ret)const
 {
 	*ret = myPaintFlag;
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 
@@ -235,7 +235,7 @@ MfxReturn MicroFlakeX::MfxCanvas::GetRenderTarget(ID2D1RenderTarget** ret)const
 {
 	*ret = myRenderTarget;
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 
@@ -254,7 +254,7 @@ MfxReturn MicroFlakeX::MfxCanvas::SetRect(MfxRect* set)
 		myRect.GetD2D1SizeU(&tSize);
 		((ID2D1HwndRenderTarget*)myRenderTarget)->Resize(tSize);
 
-		return Mfx_Return_Fine;
+		return MfxReturn_Seccess;
 	}
 	else if (myDC)
 	{
@@ -262,10 +262,10 @@ MfxReturn MicroFlakeX::MfxCanvas::SetRect(MfxRect* set)
 		myRect.GetRECT(&rc);
 		((ID2D1DCRenderTarget*)myRenderTarget)->BindDC(myDC, &rc);
 
-		return Mfx_Return_Fine;
+		return MfxReturn_Seccess;
 	}
 
-	return Mfx_Return_Fail;
+	return MfxReturn_Failed;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize* set)
@@ -278,7 +278,7 @@ MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize* set)
 		myRect.GetD2D1SizeU(&tSize);
 		((ID2D1HwndRenderTarget*)myRenderTarget)->Resize(tSize);
 
-		return Mfx_Return_Fine;
+		return MfxReturn_Seccess;
 	}
 	else if (myDC)
 	{
@@ -286,10 +286,10 @@ MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize* set)
 		myRect.GetRECT(&rc);
 		((ID2D1DCRenderTarget*)myRenderTarget)->BindDC(myDC, &rc);
 
-		return Mfx_Return_Fine;
+		return MfxReturn_Seccess;
 	}
 
-	return Mfx_Return_Fail;
+	return MfxReturn_Failed;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::SetPoint(MfxPoint* set)
@@ -302,29 +302,29 @@ MfxReturn MicroFlakeX::MfxCanvas::SetPoint(MfxPoint* set)
 		myRect.GetRECT(&rc);
 		((ID2D1DCRenderTarget*)myRenderTarget)->BindDC(myDC, &rc);
 
-		return Mfx_Return_Fine;
+		return MfxReturn_Seccess;
 	}
 
-	return Mfx_Return_Fail;
+	return MfxReturn_Failed;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetRect(MfxRect* set)const
 {
 	myRect.GetRect(set);
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetSize(MfxSize* set)const
 {
 	myRect.GetSize(set);
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetPoint(MfxPoint* set)const
 {
 	myRect.GetPoint(set);
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }

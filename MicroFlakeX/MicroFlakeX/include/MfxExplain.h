@@ -13,12 +13,12 @@ namespace MicroFlakeX
 
     struct MfxGulid_Keyframe
     {
-        MfxGulid_Keyframe(pMfxBase setKey, LONGLONG sTime)
+        MfxGulid_Keyframe(MfxBase* setKey, LONGLONG sTime)
         {
             key = setKey;
             time = sTime;
         }
-        pMfxBase key;
+        MfxBase* key;
         LONGLONG time;
     };
 
@@ -76,8 +76,8 @@ namespace MicroFlakeX
 
         LONGLONG myBeginTime;
         LONGLONG myThroughTime;
-        pMfxBase myGetObject_Set;
-        pMfxBase myGetObject_Begin;
+        MfxBase* myGetObject_Set;
+        MfxBase* myGetObject_Begin;
         MfxGulid_GetSet_FuncName_Vector myGulidTypePair;
 
     };
@@ -140,7 +140,7 @@ namespace MicroFlakeX
     class MfxGlide :
         public MfxBase
     {
-        MfxObject;
+        MFXOBJ_ENABLE_REFLECTION;
     public:
         MfxGlide();
 
@@ -150,7 +150,7 @@ namespace MicroFlakeX
 
         ~MfxGlide();
 
-        MfxReturn Clone(pMfxBase* ret)const;
+        MfxReturn Clone(MfxBase** ret)const;
 
         MfxBase& operator=(MfxBase& rhs);
 
@@ -167,13 +167,13 @@ namespace MicroFlakeX
     public:
         MfxReturn SetFPS(const UINT set);
 
-        MfxReturn BindObject(pMfxBase object);
+        MfxReturn BindObject(MfxBase* object);
         MfxReturn BindObjectName(MfxString groupName, MfxGulid_WidelyType value);
         MfxReturn Add_GetSetFuncName(MfxString groupName, MfxString getFuncName, MfxString setFuncName, pEaseGulid easeGulid = MfxEaseInOutQuad);
 
     public:
         MfxReturn GetFPS(UINT* ret);
-        MfxReturn GetBindObject(pMfxBase* object);
+        MfxReturn GetBindObject(MfxBase** object);
 
     public:
         MfxReturn Stop();
@@ -185,7 +185,7 @@ namespace MicroFlakeX
         MfxReturn EachFrame(MfxParam param);
 
     public:
-        MfxReturn MfxAddKeyframe(MfxString groupName, pMfxBase set, LONGLONG delay);
+        MfxReturn MfxAddKeyframe(MfxString groupName, MfxBase* set, LONGLONG delay);
 
     private:
         UINT myFPS;
@@ -193,7 +193,7 @@ namespace MicroFlakeX
         PTP_TIMER myPTP_TIMER;
 
     private:
-        pMfxBase myBindObject;
+        MfxBase* myBindObject;
         MfxGulid_WidelyType_Map myWidelyTypeMap;
 
     private:
@@ -214,7 +214,7 @@ namespace MicroFlakeX
     class MfxTransitions :
         public MfxBase
     {
-        MfxObject;
+        MFXOBJ_ENABLE_REFLECTION;
     public:
         MfxTransitions();
 

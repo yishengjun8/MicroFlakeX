@@ -7,22 +7,22 @@ namespace MicroFlakeX
 	typedef MfxUI* pMfxUI;
 	typedef MfxFlake* pMfxFlake;
 
-	typedef std::unordered_set<pMfxFlake> MfxFlake_Set;
-	typedef std::deque<pMfxFlake> MfxFlake_Deque;
-	typedef std::vector<pMfxFlake> MfxFlake_Vector;
+	typedef std::unordered_set<MfxFlake*> MfxFlake_Set;
+	typedef std::deque<MfxFlake*> MfxFlake_Deque;
+	typedef std::vector<MfxFlake*> MfxFlake_Vector;
 
 	/**************************************************************
 	*	App_UI_Info 映射了从win32的hwnd句柄到MfxUI指针
 	**************************************************************/
 	struct App_UI_Info
 	{
-		App_UI_Info(HWND hWnd, pMfxUI pUI)
+		App_UI_Info(HWND hWnd, MfxUI* pUI)
 		{
 			myUI = pUI;
 			myWnd = hWnd;
 		}
 		HWND myWnd;
-		pMfxUI myUI;
+		MfxUI* myUI;
 	};
 
 	typedef std::unordered_map<HWND, App_UI_Info> App_UI_Info_Map;
@@ -71,12 +71,12 @@ namespace MicroFlakeX
 			myFlake = nullptr;
 			myEvent = 0;
 		}
-		FlakeEvent_Info(pMfxFlake setFlake, MfxMessage setEvent)
+		FlakeEvent_Info(MfxFlake* setFlake, MfxMessage setEvent)
 		{
 			myFlake = setFlake;
 			myEvent = setEvent;
 		}
-		pMfxFlake myFlake;
+		MfxFlake* myFlake;
 		MfxMessage myEvent;
 		MfxString recvFuncName;
 
@@ -139,7 +139,7 @@ namespace MicroFlakeX
 	***************************************************************/
 	struct Paper_Infor
 	{
-		Paper_Infor(pMfxBase father, HWND setWnd, MfxCanvas* setCanvas)
+		Paper_Infor(MfxBase* father, HWND setWnd, MfxCanvas* setCanvas)
 		{
 			myFather = father;
 			myWnd = setWnd;
@@ -153,7 +153,7 @@ namespace MicroFlakeX
 		}
 
 		HWND myWnd;
-		pMfxBase myFather;
+		MfxBase* myFather;
 		MfxCanvas* myCanvas;
 
 	};
@@ -306,21 +306,24 @@ namespace MicroFlakeX
 	name.push_back(wParam);\
 	name.push_back(lParam);\
 
-#define GetMSG(param) param.GetMESSAGE()
-#define GetHWND(param) GetParam_Safe(param, HWND, 0)
-#define GetWPARAM(param) GetParam_Safe(param, WPARAM, 1)
-#define GetLPARAM(param) GetParam_Safe(param, LPARAM, 2)
+#define getMSG param.GetMESSAGE()
+#define getHWND getParam_Safe(param, HWND, 0)
+#define getWPARAM getParam_Safe(param, WPARAM, 1)
+#define getLPARAM getParam_Safe(param, LPARAM, 2)
 
 	MFX_PORT WPARAM MfxAppRun();
 }
 
 namespace __MicroFlakeX
 {
-	MFX_PORT HWND MfxCreateWindowsEx(pMfxUI ui, pMfxUI father, MfxRect rect, DWORD dwStyle, DWORD dwExStyle,
+	MFX_PORT HWND MfxCreateWindowsEx(MfxUI* ui, MfxUI* father, MfxRect rect, DWORD dwStyle, DWORD dwExStyle,
 		MfxString className, MfxString windowsName);
 
 	MFX_PORT LRESULT CALLBACK MfxAppFrameProc(HWND hWnd, MfxMessage msg, WPARAM wParam, LPARAM lParam);
 }
+
+
+#define MFX_APPFRAME_RETURN(ret) param.SetRETURN(ret);return ret;
 
 namespace MicroFlakeX
 {
@@ -328,7 +331,7 @@ namespace MicroFlakeX
 	class MfxUI :
 		public MfxBase
 	{
-		MfxObject;
+		MFXOBJ_ENABLE_REFLECTION;
 	private:
 		void InitData_UI();
 		void RegisterRecvFunc();
@@ -338,13 +341,13 @@ namespace MicroFlakeX
 
 		MfxReturn CreateSuccess();
 	private:
-		MfxReturn ProcMessage(MfxParam& param);
-		MfxReturn ProcFlakesMessage(MfxParam param);
-		MfxReturn RProcFlakesMessage(MfxParam param);
+		MfxReturn MFX_CALLBACK(ProcMessage);
+		MfxReturn MFX_CALLBACK(ProcFlakesMessage);
+		MfxReturn MFX_CALLBACK(RProcFlakesMessage);
 	
 	public:
-		MfxReturn Send_Message(MfxParam param);
-		MfxReturn Post_Message(MfxParam param);
+		MfxReturn MFX_CALLBACK(Send_Message);
+		MfxReturn MFX_CALLBACK(Post_Message);
 
 		/********************************************************************************
 		*
@@ -353,8 +356,8 @@ namespace MicroFlakeX
 		MfxFlake_Set myFlakeSet;
 		MfxFlake_Deque myFlakeDeque;
 	public:
-		MfxReturn RemoveFlake(pMfxFlake set);
-		MfxReturn InsertFlake(pMfxFlake set);
+		MfxReturn RemoveFlake(MfxFlake* set);
+		MfxReturn InsertFlake(MfxFlake* set);
 
 		/********************************************************************************
 		*
@@ -399,20 +402,20 @@ namespace MicroFlakeX
 		*
 		*********************************************************************************/
 	private:
-		pMfxFlake myMutexFocus;
+		MfxFlake* myMutexFocus;
 		MfxFlake *myKeyboardFocus;
 
 		bool myMutexFocusLockFlag;
 		bool myKeyboardFocusLockFlag;
 	public:
-		MfxReturn LockMutexFocus(pMfxFlake set);
+		MfxReturn LockMutexFocus(MfxFlake* set);
 		MfxReturn UnLockMutexFocus();
 
-		MfxReturn SetMutexFocus(pMfxFlake set);
-		MfxReturn GetMutexFocus(pMfxFlake* ret);
+		MfxReturn SetMutexFocus(MfxFlake* set);
+		MfxReturn GetMutexFocus(MfxFlake** ret);
 
-		MfxReturn SetKeyboardFocus(pMfxFlake set);
-		MfxReturn GetKeyboardFocus(pMfxFlake* ret);
+		MfxReturn SetKeyboardFocus(MfxFlake* set);
+		MfxReturn GetKeyboardFocus(MfxFlake** ret);
 
 		/********************************************************************************
 		*
@@ -483,104 +486,104 @@ namespace MicroFlakeX
 		MfxReturn SetGlobeAlphaMode(UINT set);
 
 	public:
-		MfxReturn MAX();
-		MfxReturn MIN();
-		MfxReturn SHOW();
-		MfxReturn HIDE();
-		MfxReturn NORMAL();
+		MfxReturn WND_MAX();
+		MfxReturn WND_MIN();
+		MfxReturn WND_SHOW();
+		MfxReturn WND_HIDE();
+		MfxReturn WND_NORMAL();
 
 		/********************************************************************************
 		*
 		*
-		*
 		*********************************************************************************/
 	public:
-		MfxReturn __OnTest00(MfxParam param);
-		MfxReturn __OnTest01(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnTest00);
+		MfxReturn MFX_CALLBACK(__OnTest01);
 	private:
-		MfxReturn __OnCreate(MfxParam param);
-		MfxReturn __OnDestroy(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnCreate);
+		MfxReturn MFX_CALLBACK(__OnDestroy);
 
-		MfxReturn __OnSize(MfxParam param);
-		MfxReturn __OnMove(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnSize);
+		MfxReturn MFX_CALLBACK(__OnMove);
 
-		MfxReturn __OnPaint(MfxParam param);
-		MfxReturn __OnEraseBackGrand(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnPaint);
+		MfxReturn MFX_CALLBACK(__OnEraseBackGrand);
 
-		MfxReturn __OnPaintBackDC(MfxParam param);
-		MfxReturn __OnPaintMaskDC(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnPaintBackDC);
+		MfxReturn MFX_CALLBACK(__OnPaintMaskDC);
 
-		MfxReturn __OnFlakeInsert(MfxParam param);
-		MfxReturn __OnFlakeRemove(MfxParam param);
-		MfxReturn __OnFlakeFloorChange(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnFlakeInsert);
+		MfxReturn MFX_CALLBACK(__OnFlakeRemove);
+		MfxReturn MFX_CALLBACK(__OnFlakeFloorChange);
 
-		MfxReturn __OnWin32Timer(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnWin32Timer);
 
-		MfxReturn __OnInsertWin32Timer(MfxParam param);
-		MfxReturn __OnRemoveWin32Timer(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnInsertWin32Timer);
+		MfxReturn MFX_CALLBACK(__OnRemoveWin32Timer);
 
-		MfxReturn __OnFlakeEvent(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnFlakeEvent);
 
-		MfxReturn __OnRemoveFlakeEvent(MfxParam param);
-		MfxReturn __OnPushBackFlakeEvent(MfxParam param);
-		MfxReturn __OnPushFrontFlakeEvent(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnRemoveFlakeEvent);
+		MfxReturn MFX_CALLBACK(__OnPushBackFlakeEvent);
+		MfxReturn MFX_CALLBACK(__OnPushFrontFlakeEvent);
 
-		MfxReturn __OnOpenPercentRect(MfxParam param);
-		MfxReturn __OnClosePercentRect(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnOpenPercentRect);
+		MfxReturn MFX_CALLBACK(__OnClosePercentRect);
 
-		MfxReturn __OnSetBackColor(MfxParam param);
-		MfxReturn __OnSetMaskColor(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnSetBackColor);
+		MfxReturn MFX_CALLBACK(__OnSetMaskColor);
 
 
 
-		MfxReturn __OnNCPaint(MfxParam param);
-		MfxReturn __OnNCHitTest(MfxParam param);
-		MfxReturn __OnNCActivate(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnNCPaint);
+		MfxReturn MFX_CALLBACK(__OnNCHitTest);
+		MfxReturn MFX_CALLBACK(__OnNCActivate);
 
-		MfxReturn __OnNCMouseMove(MfxParam param);
-		MfxReturn __OnNCMouseHover(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnNCMouseMove);
+		MfxReturn MFX_CALLBACK(__OnNCMouseHover);
 
-		MfxReturn __OnNCLButtonUp(MfxParam param);
-		MfxReturn __OnNCLButtonDown(MfxParam param);
-		MfxReturn __OnNCLButtonDouble(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnNCLButtonUp);
+		MfxReturn MFX_CALLBACK(__OnNCLButtonDown);
+		MfxReturn MFX_CALLBACK(__OnNCLButtonDouble);
 
-		MfxReturn __OnNCRButtonUp(MfxParam param);
-		MfxReturn __OnNCRButtonDown(MfxParam param);
-		MfxReturn __OnNCRButtonDouble(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnNCRButtonUp);
+		MfxReturn MFX_CALLBACK(__OnNCRButtonDown);
+		MfxReturn MFX_CALLBACK(__OnNCRButtonDouble);
 	};
 
 
 /********************************************************************************
-*	添加一个UI消息映射
+*	在消息处理队列末尾添加一个UIMessage回调
+*	对于UI来说，并不区分Event和Message
 *********************************************************************************/
 #define UI_ADDRECV_UIMSG(Msg, myClass, recvFunc) PushBackUIMessage(Msg, UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
-/********************************************************************************
-*	添加一个UI消息映射
-*********************************************************************************/
-#define UI_PFRECV_UIMSG(Msg, myClass, recvFunc) PushFrontUIMessage(Msg, UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+#define UI_FRONTRECV_UIMSG(Msg, myClass, recvFunc) PushFrontUIMessage(Msg, UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+
 /********************************************************************************
 *	移除一个UI消息映射
 *********************************************************************************/
 #define UI_DELRECV_UIMSG(Msg, myClass, recvFunc) RemoveUIMessage(Msg, MfxText(#myClass#recvFunc)));
 
+
+
 /********************************************************************************
-*	添加一个FlakeEvent映射
+*	在事件处理队列末尾添加一个FlakeEvent回调
 *********************************************************************************/
-#define UI_ADDRECV_FLAKEMSG(Flake, Event, myClass, recvFunc) PushBackFlakeEvent(FlakeEvent_Info(Flake, Event), UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
-/********************************************************************************
-*	添加一个FlakeEvent映射
-*********************************************************************************/
-#define UI_PFRECV_FLAKEMSG(Flake, Event, myClass, recvFunc) PushFrontFlakeEvent(FlakeEvent_Info(Flake, Event), UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+#define UI_ADDRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) PushBackFlakeEvent(FlakeEvent_Info(Flake, Event), UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+#define UI_FRONTECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) PushFrontFlakeEvent(FlakeEvent_Info(Flake, Event), UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+
 /********************************************************************************
 *	移除一个FlakeEvent映射
 *********************************************************************************/
-#define UI_DELRECV_FLAKEMSG(Flake, Event, myClass, recvFunc) RemoveFlakeEvent(FlakeEvent_Info(Flake, Event), MfxText(#myClass#recvFunc)));
+#define UI_DELRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) RemoveFlakeEvent(FlakeEvent_Info(Flake, Event), MfxText(#myClass#recvFunc)));
+
 
 
 /********************************************************************************
 *	添加Win32计时器
 *********************************************************************************/
-#define UI_ADDRECV_TIMER(timerID, delay, recvFunc) InsertWin32Timer(timerID, delay, (pUIRecvFunc)&recvFunc)
+#define UI_ADDRECV_TIMER(timerID, delay, myClass, recvFunc) InsertWin32Timer(Win32_Timer_Info(timerID, delay, (pUIRecvFunc)&myClass::recvFunc))
+#define UI_DELRECV_TIMER(timerID) RemoveWin32Timer(timerID)
 
 }
 
@@ -592,21 +595,21 @@ namespace MicroFlakeX
 	class MfxFlake :
 		public MfxBase
 	{
-		MfxObject;
-		MFX_FloorCompare_Enable;
+		MFXOBJ_ENABLE_REFLECTION;
+		MFXOBJ_ENABLE_FLOORCOMPARE;
 	private:
 		void InitData_Flake();
 		void RegisterRecvFunc();
 	public:
-		MfxFlake(MfxRect set = MfxRect(60, 60, 100, 100), pMfxBase father = nullptr);
+		MfxFlake(MfxRect set = MfxRect(60, 60, 100, 100), MfxBase* father = nullptr);
 		virtual ~MfxFlake();
 
 	private:
-		MfxReturn ProcMessage(MfxParam& param);
+		MfxReturn MFX_CALLBACK(ProcMessage);
 
 	public:
-		MfxReturn Send_Message(MfxParam param);
-		MfxReturn Post_Message(MfxParam param);
+		MfxReturn MFX_CALLBACK(Send_Message);
+		MfxReturn MFX_CALLBACK(Post_Message);
 
 		/********************************************************************************
 		*
@@ -639,13 +642,13 @@ namespace MicroFlakeX
 
 	protected:
 		HWND myWnd;
-		pMfxBase myFather;
+		MfxBase* myFather;
 		MfxFloor myFloor;
 		MfxCanvas* myCanvas;
 	public:
 		MfxReturn GetWnd(HWND* ret);
 		MfxReturn GetFloor(MfxFloor* ret);
-		MfxReturn GetFather(pMfxBase* ret);
+		MfxReturn GetFather(MfxBase** ret);
 		MfxReturn GetCanvas(MfxCanvas** ret);
 
 		MfxReturn SetFloor(MfxFloor floor);
@@ -733,94 +736,89 @@ namespace MicroFlakeX
 		*
 		*
 		*********************************************************************************/
-		MfxReturn __OnTest001(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnTest001);
 	private:
-		MfxReturn __OnSetPaper(MfxParam param);
-		MfxReturn __OnRemovePaper(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnSetPaper);
+		MfxReturn MFX_CALLBACK(__OnRemovePaper);
 
-		MfxReturn __OnSetFloor(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnSetFloor);
 
-		MfxReturn __OnPaintBackDC(MfxParam param);
-		MfxReturn __OnPaintMaskDC(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnPaintBackDC);
+		MfxReturn MFX_CALLBACK(__OnPaintMaskDC);
 
-		MfxReturn __OnFatherSize(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnFatherSize);
 
-		MfxReturn __OnRect(MfxParam param);
-		MfxReturn __OnPercentRect(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnRect);
+		MfxReturn MFX_CALLBACK(__OnPercentRect);
 
-		MfxReturn __OnRecalculatRect(MfxParam param);
-		MfxReturn __OnRecalculatPercentRect(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnRecalculatRect);
+		MfxReturn MFX_CALLBACK(__OnRecalculatPercentRect);
 
-		MfxReturn __OnOpenPercentRect(MfxParam param);
-		MfxReturn __OnClosePercentRect(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnOpenPercentRect);
+		MfxReturn MFX_CALLBACK(__OnClosePercentRect);
 
 		//
-		MfxReturn __OnNCMouseMove(MfxParam param);
-		MfxReturn __OnNCMouseHover(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnNCMouseMove);
+		MfxReturn MFX_CALLBACK(__OnNCMouseHover);
 
-		MfxReturn __OnNCLButtonUp(MfxParam param);
-		MfxReturn __OnNCLButtonDown(MfxParam param);
-		MfxReturn __OnNCLButtonDouble(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnNCLButtonUp);
+		MfxReturn MFX_CALLBACK(__OnNCLButtonDown);
+		MfxReturn MFX_CALLBACK(__OnNCLButtonDouble);
 
-		MfxReturn __OnNCRButtonUp(MfxParam param);
-		MfxReturn __OnNCRButtonDown(MfxParam param);
-		MfxReturn __OnNCRButtonDouble(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnNCRButtonUp);
+		MfxReturn MFX_CALLBACK(__OnNCRButtonDown);
+		MfxReturn MFX_CALLBACK(__OnNCRButtonDouble);
 		//
 
-		MfxReturn __OnMouseMove(MfxParam param);
-		MfxReturn __OnMouseHover(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnMouseMove);
+		MfxReturn MFX_CALLBACK(__OnMouseHover);
 
-		MfxReturn __OnLButtonUp(MfxParam param);
-		MfxReturn __OnLButtonDown(MfxParam param);
-		MfxReturn __OnLButtonDouble(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnLButtonUp);
+		MfxReturn MFX_CALLBACK(__OnLButtonDown);
+		MfxReturn MFX_CALLBACK(__OnLButtonDouble);
 
-		MfxReturn __OnRButtonUp(MfxParam param);
-		MfxReturn __OnRButtonDown(MfxParam param);
-		MfxReturn __OnRButtonDouble(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnRButtonUp);
+		MfxReturn MFX_CALLBACK(__OnRButtonDown);
+		MfxReturn MFX_CALLBACK(__OnRButtonDouble);
 
-		MfxReturn __OnSetTitle(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnSetTitle);
 
-		MfxReturn __OnSetBackColor(MfxParam param);
-		MfxReturn __OnSetMaskColor(MfxParam param);
-		MfxReturn __OnSetTitleColor(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnSetBackColor);
+		MfxReturn MFX_CALLBACK(__OnSetMaskColor);
+		MfxReturn MFX_CALLBACK(__OnSetTitleColor);
 
-		MfxReturn __OnSetBackFrameSize(MfxParam param);
-		MfxReturn __OnSetMaskFrameSize(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnSetBackFrameSize);
+		MfxReturn MFX_CALLBACK(__OnSetMaskFrameSize);
 
-		MfxReturn __OnFlakeEvent(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnFlakeEvent);
 
-		MfxReturn __OnRemoveFlakeEvent(MfxParam param);
-		MfxReturn __OnPushBackFlakeEvent(MfxParam param);
-		MfxReturn __OnPushFrontFlakeEvent(MfxParam param);
+		MfxReturn MFX_CALLBACK(__OnRemoveFlakeEvent);
+		MfxReturn MFX_CALLBACK(__OnPushBackFlakeEvent);
+		MfxReturn MFX_CALLBACK(__OnPushFrontFlakeEvent);
 	};
 
 /********************************************************************************
-*	添加Flake消息映射
+*	在消息处理队列末尾添加一个FlakeMessage回调
+*	一般情况下，用户不需要处理FlakeMessage，只需要响应FlakeEvent即可，Message包含了大量无用的消息，Event则是翻译好的有重要意义的事件
 *********************************************************************************/
 #define FLAKE_ADDRECV_FLAKEMSG(Msg, myClass, recvFunc) PushBackFlakeMessage(Msg, Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
-/********************************************************************************
-*	添加Flake消息映射
-*********************************************************************************/
-#define FLAKE_PFRECV_FLAKEMSG(Msg, myClass, recvFunc) PushFrontFlakeMessage(Msg, Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+#define FLAKE_FRONTRECV_FLAKEMSG(Msg, myClass, recvFunc) PushFrontFlakeMessage(Msg, Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
 /********************************************************************************
 *	移除消息映射
 *********************************************************************************/
 #define FLAKE_DELRECV_FLAKEMSG(Msg, myClass, recvFunc) RemoveFlakeMessage(Msg, MfxText(#myClass#recvFunc)));
 
 
+
 /********************************************************************************
-*	添加一个FlakeEvent映射
+*	在事件处理队列末尾添加一个FlakeEvent回调
 *********************************************************************************/
 #define FLAKE_ADDRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) PushBackFlakeEvent(FlakeEvent_Info(Flake, Event), Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
-/********************************************************************************
-*	添加一个FlakeEvent映射
-*********************************************************************************/
-#define FLAKE_PFRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) PushFrontFlakeEvent(FlakeEvent_Info(Flake, Event), Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+#define FLAKE_FRONTRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) PushFrontFlakeEvent(FlakeEvent_Info(Flake, Event), Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxText(#myClass#recvFunc)));
+
 /********************************************************************************
 *	移除一个FlakeEvent映射
 *********************************************************************************/
 #define FLAKE_DELRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) RemoveFlakeEvent(FlakeEvent_Info(Flake, Event), MfxText(#myClass#recvFunc)));
-
-
 
 }

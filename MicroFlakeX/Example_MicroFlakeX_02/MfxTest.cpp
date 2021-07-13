@@ -1,9 +1,9 @@
 #include "MfxTest.h"
 
 
-MfxObject_Init(MfxTest)
-MfxObject_EndInit(MfxTest, MfxBase,
-	1, test001
+MFXOBJ_REFLECTION_INIT(MfxTest)
+MFXOBJ_REFLECTION_ENDINIT(MfxTest, MfxBase,
+	test001
 
 );
 

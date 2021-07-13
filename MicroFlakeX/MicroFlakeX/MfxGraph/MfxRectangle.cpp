@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "MfxGraph.h"
 
-MfxObject_Init(MfxRectangle)
-MfxObject_EndInit(MfxRectangle, MfxGraph, \
+MFXOBJ_REFLECTION_INIT(MfxRectangle)
+MFXOBJ_REFLECTION_ENDINIT(MfxRectangle, MfxGraph, \
 	Paint, \
 	\
 	SetCanvas, \
@@ -77,7 +77,7 @@ MicroFlakeX::MfxRectangle::~MfxRectangle()
 MfxReturn MicroFlakeX::MfxRectangle::Clone(MfxRectangle** ret) const
 {
 	*ret = new MfxRectangle(&myRect, myFillColor, myFrameColor);
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::Paint()
@@ -109,7 +109,7 @@ MfxReturn MicroFlakeX::MfxRectangle::Paint()
 
 	myMemberLock.UnLock(&myRenderTarget, &myRect, &myFillBrush, &myFrameBrush);
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::SetCanvas(MfxCanvas* set)
@@ -120,19 +120,19 @@ MfxReturn MicroFlakeX::MfxRectangle::SetCanvas(MfxCanvas* set)
 
 	Update_Canvas();
 
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::GetCanvas(MfxCanvas** ret)
 {
 	*ret = myCanvas;
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::SetFrameSize(double set)
 {
 	myFrameSize = set < 0 ? 0 : set;
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::SetFillColor(MfxColor* set)
@@ -142,7 +142,7 @@ MfxReturn MicroFlakeX::MfxRectangle::SetFillColor(MfxColor* set)
 	myMemberLock.UnLock(&myFillColor);
 
 	myColorUpdateFlage = true;
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::SetFrameColor(MfxColor* set)
@@ -152,68 +152,68 @@ MfxReturn MicroFlakeX::MfxRectangle::SetFrameColor(MfxColor* set)
 	myMemberLock.UnLock(&myFrameColor);
 
 	myColorUpdateFlage = true;
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::GetFrameSize(double* ret)
 {
 	*ret = myFrameSize;
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::GetFillColor(MfxColor* ret)
 {
 	*ret = myFillColor;
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::GetFrameColor(MfxColor* ret)
 {
 	*ret = myFrameColor;
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::SetRounded_X(double set)
 {
 	myRounded_X = set;
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::SetRounded_Y(double set)
 {
 	myRounded_Y = set;
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::GetRounded_X(double* ret)
 {
 	*ret = myRounded_X;
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::GetRounded_Y(double* ret)
 {
 	*ret = myRounded_Y;
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::OpenRounded()
 {
 	myRoundedFlage = true;
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::CloseRounded()
 {
 	myRoundedFlage = false;
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::GetReallyRect(MfxRect* ret)const
 {
 	*ret = myRect;
 	ret->Inflate(ceil(myFrameSize / 2), ceil(myFrameSize / 2));
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MfxReturn MicroFlakeX::MfxRectangle::Update_Canvas()
@@ -250,5 +250,5 @@ MfxReturn MicroFlakeX::MfxRectangle::Update_Canvas()
 
 		myMemberLock.UnLock(&myRenderTarget, &myFillBrush, &myFrameBrush);
 	}
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }

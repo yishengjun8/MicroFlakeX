@@ -138,6 +138,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -180,6 +181,7 @@
     <ClCompile Include="MfxAppFrame\MfxFlake.cpp" />
     <ClCompile Include="MfxAppFrame\MfxUI.cpp" />
     <ClCompile Include="MfxBase\MfxBase.cpp" />
+    <ClCompile Include="MfxBase\MfxClient.cpp" />
     <ClCompile Include="MfxBase\MfxCriticalLock.cpp" />
     <ClCompile Include="MfxBase\MfxFactory.cpp" />
     <ClCompile Include="MfxBase\MfxMemberLock.cpp" />

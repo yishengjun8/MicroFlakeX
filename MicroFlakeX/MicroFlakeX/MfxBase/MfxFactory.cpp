@@ -14,7 +14,7 @@ __MicroFlakeX::MfxFactoryHand::~MfxFactoryHand()
 	RemoveObject(myObjectName);
 }
 
-MicroFlakeX::MfxReturn MicroFlakeX::MfxFactory(MfxString object, pMfxBase* ret)
+MicroFlakeX::MfxReturn MicroFlakeX::MfxFactory(MfxString object, MfxBase** ret)
 {
 	auto iter = __MicroFlakeX::MfxFactoryHand::MfxFactoryHand_Map.find(object);
 	if (iter != __MicroFlakeX::MfxFactoryHand::MfxFactoryHand_Map.end())
@@ -22,7 +22,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxFactory(MfxString object, pMfxBase* ret)
 		return iter->second->Creat(ret);
 	}
 
-	return Mfx_Return_Fail;
+	return MfxReturn_Failed;
 }
 
 MicroFlakeX::MfxReturn __MicroFlakeX::MfxFactoryHand::RemoveObject(MfxString object)
@@ -32,11 +32,11 @@ MicroFlakeX::MfxReturn __MicroFlakeX::MfxFactoryHand::RemoveObject(MfxString obj
 	{
 		MfxFactoryHand_Map.erase(tIter);
 	}
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 MicroFlakeX::MfxReturn __MicroFlakeX::MfxFactoryHand::RegisterObject(MfxString object, MfxFactoryHand* hand)
 {
 	auto ret = MfxFactoryHand_Map.insert(MfxFactoryValue(object, hand));
-	return ret.second ? Mfx_Return_Fine : Mfx_Return_Fail;
+	return ret.second ? MfxReturn_Seccess : MfxReturn_Failed;
 }

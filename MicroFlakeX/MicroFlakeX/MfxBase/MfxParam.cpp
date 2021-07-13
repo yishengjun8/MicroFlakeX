@@ -26,7 +26,7 @@ MfxParam::MfxParam()
 	*myPVOID = nullptr;
 	*myUseCount = 1;
 	*myMessage = 0;
-	*myReturn = Mfx_Return_Unknow;
+	*myReturn = MfxReturn_Unknow;
 }
 
 MicroFlakeX::MfxParam::MfxParam(PVOID pvoid)
@@ -40,7 +40,7 @@ MicroFlakeX::MfxParam::MfxParam(PVOID pvoid)
 	*myPVOID = pvoid;
 	*myUseCount = 1;
 	*myMessage = 0;
-	*myReturn = Mfx_Return_Unknow;
+	*myReturn = MfxReturn_Unknow;
 }
 
 MicroFlakeX::MfxParam::MfxParam(MfxMessage msg)
@@ -54,7 +54,7 @@ MicroFlakeX::MfxParam::MfxParam(MfxMessage msg)
 	*myPVOID = nullptr;
 	*myUseCount = 1;
 	*myMessage = msg;
-	*myReturn = Mfx_Return_Unknow;
+	*myReturn = MfxReturn_Unknow;
 }
 
 MicroFlakeX::MfxParam::MfxParam(const MfxParam& rhs)

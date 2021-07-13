@@ -21,15 +21,15 @@ namespace MicroFlakeX
 	class MfxButton :
 		public MfxFlake
 	{
-		MfxObject;
+		MFXOBJ_ENABLE_REFLECTION;
 	public:
-		MfxButton(MfxRect set = MfxRect(60, 60, 100, 100), pMfxBase father = nullptr);
+		MfxButton(MfxRect set = MfxRect(60, 60, 100, 100), MfxBase* father = nullptr);
 		~MfxButton();
 
 
 	public:
-		MfxReturn HIDE();
-		MfxReturn SHOW();
+		MfxReturn WND_HIDE();
+		MfxReturn WND_SHOW();
 
 	public:
 

@@ -10,7 +10,7 @@ using namespace __MicroFlakeX;
 
 
 
-int main()
+int ccccc()
 {
     MfxBase* tes = new MfxRect;
 
@@ -139,21 +139,20 @@ int test2()
 }
 
 
-int test1()
+int main()
 {
     int a = clock();
     MfxTest myTest;
 
 
-    MfxSignal_Link mySignal;
-    MfxSignal_UnLink mySignalEx;
+    MfxSignal mySignal;
+    MfxClient myClient;
     
     mySignal.PushBackReceiver(&myTest, L"test001");
-    mySignalEx.PushBackReceiver(&myTest);
+    myClient.PushBackReceiver(&myTest);
 
     long long times = 20000000;
     int begin, out, fo = 0;
-
 
 
     while (fo < 4)
@@ -173,15 +172,15 @@ int test1()
             mySignal.SendSignal(10);
         }
         out = clock() - begin;
-        cout << "MfxSignal_Link:" << out << endl;
+        cout << "MfxSignal:" << out << endl;
 
         begin = clock();
         for (int i = 0; i < times; i++)
         {
-            mySignalEx.SendSignal(L"test001", 10);
+            myClient.SendClient(L"test001", 10);
         }
         out = clock() - begin;
-        cout << "MfxSignal_UnLink:" << out << endl;
+        cout << "MfxClient:" << out << endl;
 
         fo++;
         times *= 2;

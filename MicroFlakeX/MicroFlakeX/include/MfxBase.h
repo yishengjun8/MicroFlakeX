@@ -5,9 +5,14 @@ namespace MicroFlakeX
 	class MFX_PORT MfxBase;
 	typedef MfxBase* pMfxBase;
 
-#define MfxObject __MfxObject
-#define MfxObject_Init(OBJ) __MfxObject_Init_0(OBJ)
-#define MfxObject_EndInit(OBJ, FATHER, ...) CONNECT(__MfxObject_EndInit, (OBJ, FATHER, __VA_ARGS__, END, END))
+#define MFXOBJ_ENABLE_REFLECTION __MFXOBJ_ENABLE_REFLECTION
+
+#define MFXOBJ_REFLECTION_INIT_0(OBJ) __MFXOBJ_REFLECTION_INIT_0(OBJ)
+#define MFXOBJ_REFLECTION_INIT_1(OBJ) __MFXOBJ_REFLECTION_INIT_1(OBJ)
+#define MFXOBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ) __MFXOBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ)
+
+#define MFXOBJ_REFLECTION_INIT(OBJ) __MFXOBJ_REFLECTION_INIT_0(OBJ)
+#define MFXOBJ_REFLECTION_ENDINIT(OBJ, FATHER, ...) CONNECT(__MFXOBJ_REFLECTION_ENDINIT, (OBJ, FATHER, __VA_ARGS__, END))
 }
 
 /***************************************************************
@@ -24,13 +29,23 @@ namespace MicroFlakeX
 
 	typedef std::uint64_t MfxHash;
 
-#define Mfx_Return_Fine ((MfxReturn)0)
-#define Mfx_Return_Fail ((MfxReturn)-1)
-#define Mfx_Return_NotFind ((MfxReturn)1)
-#define Mfx_Return_Unknow ((MfxReturn)2)
+#define MfxReturn_Seccess ((MfxReturn)0)
+#define MfxReturn_Failed ((MfxReturn)-1)
+#define MfxReturn_NotFind ((MfxReturn)1)
+#define MfxReturn_Unknow ((MfxReturn)2)
+#define MfxReturn_WinAccept ((MfxReturn)0)
 
-#define Mfx_Failed(MR) (MfxReturn)(((MfxReturn)(MR)) < 0)
-#define Mfx_Seccess(MR) (MfxReturn)(((MfxReturn)(MR)) >= 0)
+#define MFX_SECCESS(MR) (((MfxReturn)(MR)) == MfxReturn_Seccess)
+#define MFX_FAILED(MR) (((MfxReturn)(MR)) == MfxReturn_Failed)
+
+#define MFX_NOTFIND(MR) (((MfxReturn)(MR)) == MfxReturn_NotFind)
+#define MFX_UNKNOW(MR) (((MfxReturn)(MR)) == MfxReturn_Unknow)
+
+#define MFX_IF_SECCESS(MR) if(MFX_SECCESS(MR))
+#define MFX_IF_FAILED(MR) if(MFX_FAILED(MR))
+#define MFX_IF_NOTFIND(MR) if(MFX_NOTFIND(MR))
+#define MFX_IF_UNKNOW(MR) if(MFX_UNKNOW(MR))
+
 
 #define MfxString __MfxString
 #define MfxText(str) __MfxText(str)
@@ -61,7 +76,7 @@ namespace MicroFlakeX
 		return lhs.myFloor < rhs.myFloor;
 	}
 
-#define MFX_FloorCompare_Enable\
+#define MFXOBJ_ENABLE_FLOORCOMPARE\
 	template<class lhsT, class rhsT>\
 	friend bool pFloorCompare(lhsT* lhs, rhsT* rhs);\
 	template<class lhsT, class rhsT>\
@@ -126,11 +141,11 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-	typedef std::set<pMfxBase> MfxBase_Set;
-	typedef std::queue<pMfxBase> MfxBase_Queue;
-	typedef std::deque<pMfxBase> MfxBase_Deque;
-	typedef std::stack<pMfxBase> MfxBase_Stack;
-	typedef std::vector<pMfxBase> MfxBase_Vector;
+	typedef std::set<MfxBase*> MfxBase_Set;
+	typedef std::queue<MfxBase*> MfxBase_Queue;
+	typedef std::deque<MfxBase*> MfxBase_Deque;
+	typedef std::stack<MfxBase*> MfxBase_Stack;
+	typedef std::vector<MfxBase*> MfxBase_Vector;
 }
 
 
@@ -157,18 +172,18 @@ namespace MicroFlakeX
 		CRITICAL_SECTION* myCriticalSection;
 	};
 
-#define GetParam(param, type, place)  (std::any_cast<type&>(param[place]))
-#define GetParam_Safe(param, type, place)  (param.IsSafe(place) ? (std::any_cast<type&>(param[place])) : type())
+#define getParam(param, type, place)  (std::any_cast<type&>(param[place]))
+#define getParam_Safe(param, type, place)  (param.IsSafe(place) ? (std::any_cast<type&>(param[place])) : type())
 
-#define ParamVal_0(type) GetParam_Safe(param, type, 0) 
-#define ParamVal_1(type) GetParam_Safe(param, type, 1) 
-#define ParamVal_2(type) GetParam_Safe(param, type, 2) 
-#define ParamVal_3(type) GetParam_Safe(param, type, 3) 
-#define ParamVal_4(type) GetParam_Safe(param, type, 4) 
-#define ParamVal_5(type) GetParam_Safe(param, type, 5) 
-#define ParamVal_6(type) GetParam_Safe(param, type, 6) 
-#define ParamVal_7(type) GetParam_Safe(param, type, 7) 
-#define ParamVal_8(type) GetParam_Safe(param, type, 8) 
+#define getParam_0(type) getParam_Safe(param, type, 0) 
+#define getParam_1(type) getParam_Safe(param, type, 1) 
+#define getParam_2(type) getParam_Safe(param, type, 2) 
+#define getParam_3(type) getParam_Safe(param, type, 3) 
+#define getParam_4(type) getParam_Safe(param, type, 4) 
+#define getParam_5(type) getParam_Safe(param, type, 5) 
+#define getParam_6(type) getParam_Safe(param, type, 6) 
+#define getParam_7(type) getParam_Safe(param, type, 7) 
+#define getParam_8(type) getParam_Safe(param, type, 8) 
 
 	class MfxParam
 	{
@@ -314,7 +329,7 @@ namespace MicroFlakeX
 	public:
 		MfxBase();
 		virtual ~MfxBase();
-		virtual MfxReturn Clone(pMfxBase* ret) const;
+		virtual MfxReturn Clone(MfxBase** ret) const;
 	public:
 		virtual MfxBase& operator=(MfxBase& rhs);
 
@@ -349,9 +364,10 @@ namespace MicroFlakeX
 
 	/***************************************************************
 	*  MicroFlakeX 回调函数辅助声明 - 返回值必须为MfxReturn
-	*  例：MfxReturn MfxCallBack(MyCallBackFunc);
+	*  例：MfxReturn MFX_CALLBACK(MyCallBackFunc);
 	****************************************************************/
-#define MfxCallBack(funcName) funcName(MfxParam param)
+#define MFX_CALLBACK(funcName) funcName(MfxParam param)
+#define MFX_REFLECTION(funcName) funcName(MfxParam param)
 
 	/***************************************************************
 	* 异步线程请勿传入局部变量指针。
@@ -359,7 +375,7 @@ namespace MicroFlakeX
 	* 参数二：回调对象方法名字
 	* 参数三：传递给回调方法的MfxParam。
 	****************************************************************/
-	MFX_PORT MfxReturn MfxBeginNewThread(pMfxBase object, MfxString recvFunc, MfxParam param);
+	MFX_PORT MfxReturn MfxBeginNewThread(MfxBase* object, MfxString recvFunc, MfxParam param);
 
 
 	/***************************************************************
@@ -377,7 +393,7 @@ namespace MicroFlakeX
 	* 参数六：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
 	* 参数七：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
 	****************************************************************/
-	MFX_PORT MfxReturn MfxBeginNewTimer(PTP_TIMER& pTimer, pMfxBase object, MfxString recvFunc, MfxParam param, MfxTime delay = 0, LONGLONG begin = -10000000, MfxTime randTime = 0);
+	MFX_PORT MfxReturn MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, MfxParam param, MfxTime delay = 0, LONGLONG begin = -10000000, MfxTime randTime = 0);
 
 	/***************************************************************
 	* 参数一：返回一个计时器ID
@@ -396,10 +412,10 @@ namespace MicroFlakeX
 
 	/***************************************************************
 	*	MicroFlakeX 工厂 - 通过字符串创建对象
-	*	1、该子类必须声明了 MfxObject 宏
-	*	2、该子类必须实现了 MfxObject_Init(object) 和 MfxObject_EndInit(object, father)辅助宏
+	*	1、该子类必须声明了 MFXOBJ_ENABLE_REFLECTION 宏
+	*	2、该子类必须实现了 MFXOBJ_REFLECTION_BEGININIT(object) 和 MFXOBJ_REFLECTION_ENDINIT(object, father)辅助宏
 	****************************************************************/
-	MFX_PORT MfxReturn MfxFactory(MfxString object, pMfxBase* ret);
+	MFX_PORT MfxReturn MfxFactory(MfxString object, MfxBase** ret);
 }
 
 
@@ -409,41 +425,35 @@ namespace MicroFlakeX
 ****************************************************************/
 namespace MicroFlakeX
 {
-	class MFX_PORT MfxSignal_Link;
-	class MFX_PORT MfxSignal_UnLink;
+	class MFX_PORT MfxSignal;
+	class MFX_PORT MfxClient;
 
-	typedef MfxSignal_Link MfxSignal;
-	typedef MfxSignal_UnLink MfxSignalEx;
-
-	typedef MfxSignal_Link* pMfxSignal_Link;
-	typedef MfxSignal_UnLink* pMfxSignal_UnLink;
-
-	class MfxSignal_Link
+	class MfxSignal
 	{
 	private:
-		static std::vector<MfxSignal_Link*> MfxSignal_Link_Vector;
+		static std::vector<MfxSignal*> MfxSignal_Vector;
 	private:
 		struct MfxReceiver_Info
 		{
-			MfxReceiver_Info(pMfxBase recvObject, MfxString recvFunc)
+			MfxReceiver_Info(MfxBase* recvObject, MfxString recvFunc)
 			{
 				this->recvFunc = recvFunc;
 				this->recvObject = recvObject;
 			}
 			MfxString recvFunc;
-			pMfxBase recvObject;
+			MfxBase* recvObject;
 		};
 
 	public:
-		MfxSignal_Link();
-		MfxSignal_Link(const MfxSignal_Link& rhs);
-		static void ReceiverDelete(pMfxBase recvObject);
-		virtual ~MfxSignal_Link();
+		MfxSignal();
+		MfxSignal(const MfxSignal& rhs);
+		static void ReceiverDelete(MfxBase* recvObject);
+		virtual ~MfxSignal();
 
-		void RemoveReceiver(pMfxBase recvObject);
-		void RemoveReceiver(pMfxBase recvObject, MfxString recvFunc);
-		void PushBackReceiver(pMfxBase recvObject, MfxString recvFunc);
-		void PushFrontReceiver(pMfxBase recvObject, MfxString recvFunc);
+		void RemoveReceiver(MfxBase* recvObject);
+		void RemoveReceiver(MfxBase* recvObject, MfxString recvFunc);
+		void PushBackReceiver(MfxBase* recvObject, MfxString recvFunc);
+		void PushFrontReceiver(MfxBase* recvObject, MfxString recvFunc);
 
 	protected:
 		std::deque<MfxReceiver_Info> myReceiver;
@@ -463,19 +473,19 @@ namespace MicroFlakeX
 		void PostSignal()
 		{
 			MfxParam tParam(this);
-			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_0), tParam);
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_0), tParam);
 		}
 
 	private:
 		static MfxReturn ThreadSignal_0(MfxParam param)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)param.GetPVOID();
+			MfxSignal* tThis = (MfxSignal*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc);
 			}
 
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 
 		/***************************************************************
@@ -498,20 +508,20 @@ namespace MicroFlakeX
 		{
 			MfxParam tParam(this);
 			tParam.push_back(std::forward<T1>(A1));
-			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_Template<T1>), tParam);
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1>), tParam);
 		}
 	private:
 		template<typename T1>
 		static MfxReturn ThreadSignal_Template(MfxParam param)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)param.GetPVOID();
+			MfxSignal* tThis = (MfxSignal*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc, 
-					ParamVal_0(T1)
+					getParam_0(T1)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 
 
@@ -535,21 +545,21 @@ namespace MicroFlakeX
 		{
 			MfxParam tParam(this);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
-			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_Template<T1, T2>), tParam);
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2>), tParam);
 		}
 
 	private:
 		template<class T1, class T2>
 		static MfxReturn ThreadSignal_Template(MfxParam param)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)param.GetPVOID();
+			MfxSignal* tThis = (MfxSignal*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					ParamVal_0(T1), ParamVal_1(T2)
+					getParam_0(T1), getParam_1(T2)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 
 		/***************************************************************
@@ -574,22 +584,22 @@ namespace MicroFlakeX
 			MfxParam tParam(this);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3));
-			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_Template<T1, T2, T3>), tParam);
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3>), tParam);
 		}
 
 	private:
 		template<class T1, class T2, class T3>
 		static MfxReturn ThreadSignal_Template(MfxParam param)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)param.GetPVOID();
+			MfxSignal* tThis = (MfxSignal*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					ParamVal_0(T1), ParamVal_1(T2),
-					ParamVal_2(T3)
+					getParam_0(T1), getParam_1(T2),
+					getParam_2(T3)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 
 		/***************************************************************
@@ -614,22 +624,22 @@ namespace MicroFlakeX
 			MfxParam tParam(this);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
-			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_Template<T1, T2, T3, T4>), tParam);
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4>), tParam);
 		}
 
 	private:
 		template<class T1, class T2, class T3, class T4>
 		static MfxReturn ThreadSignal_Template(MfxParam param)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)param.GetPVOID();
+			MfxSignal* tThis = (MfxSignal*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					ParamVal_0(T1), ParamVal_1(T2),
-					ParamVal_2(T3), ParamVal_3(T4)
+					getParam_0(T1), getParam_1(T2),
+					getParam_2(T3), getParam_3(T4)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 
 
@@ -657,23 +667,23 @@ namespace MicroFlakeX
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
 			tParam.push_back(std::forward<T5>(A5));
-			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_Template<T1, T2, T3, T4, T5>), tParam);
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4, T5>), tParam);
 		}
 
 	private:
 		template<class T1, class T2, class T3, class T4, class T5>
 		static MfxReturn ThreadSignal_Template(MfxParam param)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)param.GetPVOID();
+			MfxSignal* tThis = (MfxSignal*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					ParamVal_0(T1), ParamVal_1(T2),
-					ParamVal_2(T3), ParamVal_3(T4),
-					ParamVal_4(T5)
+					getParam_0(T1), getParam_1(T2),
+					getParam_2(T3), getParam_3(T4),
+					getParam_4(T5)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 
 		/***************************************************************
@@ -700,23 +710,23 @@ namespace MicroFlakeX
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
 			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
-			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_Template<T1, T2, T3, T4, T5, T6>), tParam);
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4, T5, T6>), tParam);
 		}
 
 	private:
 		template<class T1, class T2, class T3, class T4, class T5, class T6>
 		static MfxReturn ThreadSignal_Template(MfxParam param)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)param.GetPVOID();
+			MfxSignal* tThis = (MfxSignal*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					ParamVal_0(T1), ParamVal_1(T2),
-					ParamVal_2(T3), ParamVal_3(T4),
-					ParamVal_4(T5), ParamVal_5(T6)
+					getParam_0(T1), getParam_1(T2),
+					getParam_2(T3), getParam_3(T4),
+					getParam_4(T5), ParamVal_5(T6)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 
 		/***************************************************************
@@ -745,24 +755,24 @@ namespace MicroFlakeX
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
 			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
 			tParam.push_back(std::forward<T7>(A7)); 
-			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_Template<T1, T2, T3, T4, T5, T6, T7>), tParam);
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4, T5, T6, T7>), tParam);
 		}
 
 	private:
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
 		static MfxReturn ThreadSignal_Template(MfxParam param)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)param.GetPVOID();
+			MfxSignal* tThis = (MfxSignal*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					ParamVal_0(T1), ParamVal_1(T2),
-					ParamVal_2(T3), ParamVal_3(T4),
-					ParamVal_4(T5), ParamVal_5(T6),
+					getParam_0(T1), getParam_1(T2),
+					getParam_2(T3), getParam_3(T4),
+					getParam_4(T5), ParamVal_5(T6),
 					ParamVal_6(T7)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 
 		/***************************************************************
@@ -791,61 +801,53 @@ namespace MicroFlakeX
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
 			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
 			tParam.push_back(std::forward<T7>(A7)); tParam.push_back(std::forward<T8>(A8));
-			MfxBeginNewThread_Widely(&(MfxSignal_Link::ThreadSignal_Template<T1, T2, T3, T4, T5, T6, T7, T8>), tParam);
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4, T5, T6, T7, T8>), tParam);
 		}
 
 	private:
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
 		static MfxReturn ThreadSignal_Template(MfxParam param)
 		{
-			MfxSignal_Link* tThis = (MfxSignal_Link*)param.GetPVOID();
+			MfxSignal* tThis = (MfxSignal*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					ParamVal_0(T1), ParamVal_1(T2),
-					ParamVal_2(T3), ParamVal_3(T4),
-					ParamVal_4(T5), ParamVal_5(T6),
+					getParam_0(T1), getParam_1(T2),
+					getParam_2(T3), getParam_3(T4),
+					getParam_4(T5), ParamVal_5(T6),
 					ParamVal_6(T7), ParamVal_7(T8)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 
 
 	};
 
 
-
-
-
-
-
-
-
-
-	class MfxSignal_UnLink
+	class MfxClient
 	{
 	private:
-		static std::vector<MfxSignal_UnLink*> MfxSignal_UnLink_Vector;
+		static std::vector<MfxClient*> MfxClient_Vector;
 
 	public:
-		MfxSignal_UnLink();
-		MfxSignal_UnLink(const MfxSignal_UnLink& rhs);
-		static void ReceiverDelete(pMfxBase recvObject);
-		virtual ~MfxSignal_UnLink();
+		MfxClient();
+		MfxClient(const MfxClient& rhs);
+		static void ReceiverDelete(MfxBase* recvObject);
+		virtual ~MfxClient();
 
-		void RemoveReceiver(pMfxBase recvObject);
-		void PushBackReceiver(pMfxBase recvObject);
-		void PushFrontReceiver(pMfxBase recvObject);
+		void RemoveReceiver(MfxBase* recvObject);
+		void PushBackReceiver(MfxBase* recvObject);
+		void PushFrontReceiver(MfxBase* recvObject);
 
 	protected:
-		std::deque<pMfxBase> myReceiver;
+		std::deque<MfxBase*> myReceiver;
 
 		/***************************************************************
 		*  根据参数长度不同，重载信号发送函数
 		****************************************************************/
 	public:
-		void SendSignal(MfxString recvFunc)
+		void SendClient(MfxString recvFunc)
 		{
 			for (auto& iter : myReceiver)
 			{
@@ -853,24 +855,24 @@ namespace MicroFlakeX
 			}
 		}
 
-		void PostSignal(MfxString recvFunc)
+		void PostClient(MfxString recvFunc)
 		{
 			MfxParam tParam(this);
 			tParam.push_back(recvFunc);
-			MfxBeginNewThread_Widely(&(MfxSignal_UnLink::ThreadSignal_0), tParam);
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_0), tParam);
 		}
 
 	private:
-		static MfxReturn ThreadSignal_0(MfxParam param)
+		static MfxReturn ThreadClient_0(MfxParam param)
 		{
-			MfxSignal_UnLink* tThis = (MfxSignal_UnLink*)param.GetPVOID();
+			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(ParamVal_0(MfxString)
+				iter->Reflection(getParam_0(MfxString)
 				);
 			}
 
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 
 		/***************************************************************
@@ -878,7 +880,7 @@ namespace MicroFlakeX
 		****************************************************************/
 	public:
 		template<class T1>
-		void SendSignal(MfxString recvFunc, T1&& A1)
+		void SendClient(MfxString recvFunc, T1&& A1)
 		{
 			for (auto& iter : myReceiver)
 			{
@@ -889,26 +891,26 @@ namespace MicroFlakeX
 		}
 
 		template<class T1>
-		void PostSignal(MfxString recvFunc, T1&& A1)
+		void PostClient(MfxString recvFunc, T1&& A1)
 		{
 			MfxParam tParam(this);
 			tParam.push_back(recvFunc);
 			tParam.push_back(std::forward<T1>(A1));
-			MfxBeginNewThread_Widely(&(MfxSignal_UnLink::ThreadSignal_Template<T1>), tParam);
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1>), tParam);
 		}
 
 	private:
 		template<class T1>
-		static MfxReturn ThreadSignal_Template(MfxParam param)
+		static MfxReturn ThreadClient_Template(MfxParam param)
 		{
-			MfxSignal_UnLink* tThis = (MfxSignal_UnLink*)param.GetPVOID();
+			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(ParamVal_0(MfxString),
-					ParamVal_1(T1)
+				iter->Reflection(getParam_0(MfxString),
+					getParam_1(T1)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 
 
@@ -917,7 +919,7 @@ namespace MicroFlakeX
 		****************************************************************/
 	public:
 		template<class T1, class T2>
-		void SendSignal(MfxString recvFunc, T1&& A1, T2&& A2)
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2)
 		{
 			for (auto& iter : myReceiver)
 			{
@@ -928,26 +930,26 @@ namespace MicroFlakeX
 		}
 
 		template<class T1, class T2>
-		void PostSignal(MfxString recvFunc, T1&& A1, T2&& A2)
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2)
 		{
 			MfxParam tParam(this);
 			tParam.push_back(recvFunc);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
-			MfxBeginNewThread_Widely(&(MfxSignal_UnLink::ThreadSignal_Template<T1, T2>), tParam);
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2>), tParam);
 		}
 
 	private:
 		template<class T1, class T2>
-		static MfxReturn ThreadSignal_Template(MfxParam param)
+		static MfxReturn ThreadClient_Template(MfxParam param)
 		{
-			MfxSignal_UnLink* tThis = (MfxSignal_UnLink*)param.GetPVOID();
+			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(ParamVal_0(MfxString),
-					ParamVal_1(T1), ParamVal_2(T2)
+				iter->Reflection(getParam_0(MfxString),
+					getParam_1(T1), getParam_2(T2)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 
 
@@ -956,7 +958,7 @@ namespace MicroFlakeX
 		****************************************************************/
 	public:
 		template<class T1, class T2, class T3>
-		void SendSignal(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3)
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3)
 		{
 			for (auto& iter : myReceiver)
 			{
@@ -968,35 +970,35 @@ namespace MicroFlakeX
 		}
 
 		template<class T1, class T2, class T3>
-		void PostSignal(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3)
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3)
 		{
 			MfxParam tParam(this);
 			tParam.push_back(recvFunc);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3));
-			MfxBeginNewThread_Widely(&(MfxSignal_UnLink::ThreadSignal_Template<T1, T2, T3>), tParam);
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2, T3>), tParam);
 		}
 
 	private:
 		template<class T1, class T2, class T3>
-		static MfxReturn ThreadSignal_Template(MfxParam param)
+		static MfxReturn ThreadClient_Template(MfxParam param)
 		{
-			MfxSignal_UnLink* tThis = (MfxSignal_UnLink*)param.GetPVOID();
+			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(ParamVal_0(MfxString),
-					ParamVal_1(T1), ParamVal_2(T2),
-					ParamVal_3(T3)
+				iter->Reflection(getParam_0(MfxString),
+					getParam_1(T1), getParam_2(T2),
+					getParam_3(T3)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 		/***************************************************************
 		*
 		****************************************************************/
 	public:
 		template<class T1, class T2, class T3, class T4>
-		void SendSignal(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4)
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4)
 		{
 			for (auto& iter : myReceiver)
 			{
@@ -1008,28 +1010,28 @@ namespace MicroFlakeX
 		}
 
 		template<class T1, class T2, class T3, class T4>
-		void PostSignal(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4)
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4)
 		{
 			MfxParam tParam(this);
 			tParam.push_back(recvFunc);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
-			MfxBeginNewThread_Widely(&(MfxSignal_UnLink::ThreadSignal_Template<T1, T2, T3, T4>), tParam);
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2, T3, T4>), tParam);
 		}
 
 	private:
 		template<class T1, class T2, class T3, class T4>
-		static MfxReturn ThreadSignal_Template(MfxParam param)
+		static MfxReturn ThreadClient_Template(MfxParam param)
 		{
-			MfxSignal_UnLink* tThis = (MfxSignal_UnLink*)param.GetPVOID();
+			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(ParamVal_0(MfxString),
-					ParamVal_1(T1), ParamVal_2(T2),
-					ParamVal_3(T3), ParamVal_4(T4)
+				iter->Reflection(getParam_0(MfxString),
+					getParam_1(T1), getParam_2(T2),
+					getParam_3(T3), getParam_4(T4)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 
 		/***************************************************************
@@ -1037,7 +1039,7 @@ namespace MicroFlakeX
 		****************************************************************/
 	public:
 		template<class T1, class T2, class T3, class T4, class T5>
-		void SendSignal(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5)
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5)
 		{
 			for (auto& iter : myReceiver)
 			{
@@ -1050,37 +1052,37 @@ namespace MicroFlakeX
 		}
 
 		template<class T1, class T2, class T3, class T4, class T5>
-		void PostSignal(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5)
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5)
 		{
 			MfxParam tParam(this);
 			tParam.push_back(recvFunc);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
 			tParam.push_back(std::forward<T5>(A5));
-			MfxBeginNewThread_Widely(&(MfxSignal_UnLink::ThreadSignal_Template<T1, T2, T3, T4, T5>), tParam);
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2, T3, T4, T5>), tParam);
 		}
 
 	private:
 		template<class T1, class T2, class T3, class T4, class T5>
-		static MfxReturn ThreadSignal_Template(MfxParam param)
+		static MfxReturn ThreadClient_Template(MfxParam param)
 		{
-			MfxSignal_UnLink* tThis = (MfxSignal_UnLink*)param.GetPVOID();
+			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(ParamVal_0(MfxString),
-					ParamVal_1(T1), ParamVal_2(T2),
-					ParamVal_3(T3), ParamVal_4(T4),
+				iter->Reflection(getParam_0(MfxString),
+					getParam_1(T1), getParam_2(T2),
+					getParam_3(T3), getParam_4(T4),
 					ParamVal_5(T5)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 		/***************************************************************
 		*
 		****************************************************************/
 	public:
 		template<class T1, class T2, class T3, class T4, class T5, class T6>
-		void SendSignal(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6)
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6)
 		{
 			for (auto& iter : myReceiver)
 			{
@@ -1093,37 +1095,37 @@ namespace MicroFlakeX
 		}
 
 		template<class T1, class T2, class T3, class T4, class T5, class T6>
-		void PostSignal(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6)
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6)
 		{
 			MfxParam tParam(this);
 			tParam.push_back(recvFunc);
 			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
 			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
-			MfxBeginNewThread_Widely(&(MfxSignal_UnLink::ThreadSignal_Template<T1, T2, T3, T4, T5, T6>), tParam);
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2, T3, T4, T5, T6>), tParam);
 		}
 
 	private:
 		template<class T1, class T2, class T3, class T4, class T5, class T6>
-		static MfxReturn ThreadSignal_Template(MfxParam param)
+		static MfxReturn ThreadClient_Template(MfxParam param)
 		{
-			MfxSignal_UnLink* tThis = (MfxSignal_UnLink*)param.GetPVOID();
+			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(ParamVal_0(MfxString),
-					ParamVal_1(T1), ParamVal_2(T2),
-					ParamVal_3(T3), ParamVal_4(T4),
+				iter->Reflection(getParam_0(MfxString),
+					getParam_1(T1), getParam_2(T2),
+					getParam_3(T3), getParam_4(T4),
 					ParamVal_5(T5), ParamVal_6(T6)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 		/***************************************************************
 		*
 		****************************************************************/
 	public:
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
-		void SendSignal(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7)
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7)
 		{
 			for (auto& iter : myReceiver)
 			{
@@ -1137,7 +1139,7 @@ namespace MicroFlakeX
 		}
 
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
-		void PostSignal(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7)
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7)
 		{
 			MfxParam tParam(this);
 			tParam.push_back(recvFunc);
@@ -1145,31 +1147,31 @@ namespace MicroFlakeX
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
 			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
 			tParam.push_back(std::forward<T7>(A7));
-			MfxBeginNewThread_Widely(&(MfxSignal_UnLink::ThreadSignal_Template<T1, T2, T3, T4, T5, T6, T7>), tParam);
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2, T3, T4, T5, T6, T7>), tParam);
 		}
 
 	private:
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
-		static MfxReturn ThreadSignal_Template(MfxParam param)
+		static MfxReturn ThreadClient_Template(MfxParam param)
 		{
-			MfxSignal_UnLink* tThis = (MfxSignal_UnLink*)param.GetPVOID();
+			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(ParamVal_0(MfxString),
-					ParamVal_1(T1), ParamVal_2(T2),
-					ParamVal_3(T3), ParamVal_4(T4),
+				iter->Reflection(getParam_0(MfxString),
+					getParam_1(T1), getParam_2(T2),
+					getParam_3(T3), getParam_4(T4),
 					ParamVal_5(T5), ParamVal_6(T6),
 					ParamVal_7(T7)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 		/***************************************************************
 		*
 		****************************************************************/
 	public:
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
-		void SendSignal(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7, T8&& A8)
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7, T8&& A8)
 		{
 			for (auto& iter : myReceiver)
 			{
@@ -1183,7 +1185,7 @@ namespace MicroFlakeX
 		}
 
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
-		void PostSignal(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7, T8&& A8)
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7, T8&& A8)
 		{
 			MfxParam tParam(this);
 			tParam.push_back(recvFunc);
@@ -1191,24 +1193,24 @@ namespace MicroFlakeX
 			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
 			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
 			tParam.push_back(std::forward<T7>(A7)); tParam.push_back(std::forward<T8>(A8));
-			MfxBeginNewThread_Widely(&(MfxSignal_UnLink::ThreadSignal_Template<T1, T2, T3, T4, T5, T6, T7, T8>), tParam);
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2, T3, T4, T5, T6, T7, T8>), tParam);
 		}
 
 	private:
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
-		static MfxReturn ThreadSignal_Template(MfxParam param)
+		static MfxReturn ThreadClient_Template(MfxParam param)
 		{
-			MfxSignal_UnLink* tThis = (MfxSignal_UnLink*)param.GetPVOID();
+			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(ParamVal_0(MfxString),
-					ParamVal_1(T1), ParamVal_2(T2),
-					ParamVal_3(T3), ParamVal_4(T4),
+				iter->Reflection(getParam_0(MfxString),
+					getParam_1(T1), getParam_2(T2),
+					getParam_3(T3), getParam_4(T4),
 					ParamVal_5(T5), ParamVal_6(T6),
 					ParamVal_7(T7), ParamVal_8(T8)
 				);
 			}
-			return Mfx_Return_Fine;
+			return MfxReturn_Seccess;
 		}
 	};
 }
@@ -1237,10 +1239,10 @@ namespace __MicroFlakeX
 
 	class MFX_PORT MfxFactoryHand
 	{
-		friend MfxReturn MicroFlakeX::MfxFactory(MfxString object, pMfxBase* ret);
+		friend MfxReturn MicroFlakeX::MfxFactory(MfxString object, MfxBase** ret);
 	public:
 		MfxFactoryHand(MfxString object);
-		virtual MfxReturn Creat(MicroFlakeX::pMfxBase* ret) = 0;
+		virtual MfxReturn Creat(MicroFlakeX::MfxBase** ret) = 0;
 		virtual ~MfxFactoryHand();
 	public:
 		MfxReturn RemoveObject(MfxString object);
@@ -1509,7 +1511,7 @@ namespace __MicroFlakeX
 ****************************************************************/
 namespace __MicroFlakeX
 {
-#define __MfxObject \
+#define __MFXOBJ_ENABLE_REFLECTION \
 public:\
 	MfxReturn Reflection(MfxString recvFunc...);\
 	MfxReturn GetObjectName(MfxString* ret);
@@ -1521,13 +1523,13 @@ public:\
 	*
 	*
 	****************************************************************/
-#define __MfxObject_Init_0(OBJ)\
+#define __MFXOBJ_REFLECTION_INIT_0(OBJ)\
 using namespace MicroFlakeX;\
 using namespace __MicroFlakeX;\
 MfxReturn OBJ::GetObjectName(MfxString* ret)\
 {\
 	*ret = MfxText(#OBJ);\
-	return Mfx_Return_Fine;\
+	return MfxReturn_Seccess;\
 }\
 \
 class OBJ##FactoryHand\
@@ -1544,18 +1546,18 @@ public:\
 	*
 	*
 	****************************************************************/
-#define __MfxObject_Init_1(OBJ) \
+#define __MFXOBJ_REFLECTION_INIT_1(OBJ) \
 	}\
-	MfxReturn Creat(pMfxBase* ret)\
+	MfxReturn Creat(MfxBase** ret)\
 	{\
 		*ret = new OBJ;\
-		return Mfx_Return_Fine;\
+		return MfxReturn_Seccess;\
 	}\
 };\
 OBJ##FactoryHand OBJ##Hand(MfxText(#OBJ));\
 MfxReturn OBJ::Reflection(MfxString recvFunc...)\
 {\
-	MfxReturn ret = Mfx_Return_Fail;\
+	MfxReturn ret = MfxReturn_Failed;\
 	va_list argc;\
 	va_start(argc, recvFunc);\
 	BeginSwitch:\
@@ -1566,7 +1568,7 @@ MfxReturn OBJ::Reflection(MfxString recvFunc...)\
 	/***************************************************************
 	*
 	****************************************************************/
-#define __MfxObject_Init_2(OBJ, FATHER_OBJ) \
+#define __MFXOBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ) \
 		case MfxStrHash(MfxText("Reflection")):\
 		{\
 			recvFunc = va_arg(argc, MfxString);\
@@ -1583,28 +1585,25 @@ MfxReturn OBJ::Reflection(MfxString recvFunc...)\
 }
 
 	template<typename T, typename T_This>
-	inline MicroFlakeX::MfxReturn T_MfxReFuncCaseEx(T_This pThis, T pFunc, va_list argc)
+	inline MicroFlakeX::MfxReturn __T_MFXOBJ_REFLECTIONFUNC_CASE_EX(T_This pThis, T pFunc, va_list argc)
 	{
-		MicroFlakeX::MfxReturn ret = Mfx_Return_Fail;
+		MicroFlakeX::MfxReturn ret = MfxReturn_Failed;
 		if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 0)
 		{
 			ret = (pThis->*pFunc)();
-			va_end(argc);
 			return ret;
 		}
 		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 1)
 		{
 			auto& A1 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_1(pFunc)));
-			ret = (pThis->*pFunc)(A1);
-			va_end(argc);
+			ret = (pThis->*pFunc)(std::move(A1));
 			return ret;
 		}
 		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 2)
 		{
 			auto& A1 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_1(pFunc)));
 			auto& A2 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_2(pFunc)));
-			ret = (pThis->*pFunc)(A1, A2);
-			va_end(argc);
+			ret = (pThis->*pFunc)(std::move(A1), std::move(A2));
 			return ret;
 		}
 		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 3)
@@ -1612,8 +1611,7 @@ MfxReturn OBJ::Reflection(MfxString recvFunc...)\
 			auto& A1 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_1(pFunc)));
 			auto& A2 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_2(pFunc)));
 			auto& A3 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_3(pFunc)));
-			ret = (pThis->*pFunc)(A1, A2, A3);
-			va_end(argc);
+			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3));
 			return ret;
 		}
 		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 4)
@@ -1622,8 +1620,7 @@ MfxReturn OBJ::Reflection(MfxString recvFunc...)\
 			auto& A2 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_2(pFunc)));
 			auto& A3 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_3(pFunc)));
 			auto& A4 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_4(pFunc)));
-			ret = (pThis->*pFunc)(A1, A2, A3, A4);
-			va_end(argc);
+			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4));
 			return ret;
 		}
 		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 5)
@@ -1633,8 +1630,7 @@ MfxReturn OBJ::Reflection(MfxString recvFunc...)\
 			auto& A3 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_3(pFunc)));
 			auto& A4 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_4(pFunc)));
 			auto& A5 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_5(pFunc)));
-			ret = (pThis->*pFunc)(A1, A2, A3, A4, A5);
-			va_end(argc);
+			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4), std::move(A5));
 			return ret;
 		}
 		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 6)
@@ -1645,8 +1641,7 @@ MfxReturn OBJ::Reflection(MfxString recvFunc...)\
 			auto& A4 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_4(pFunc)));
 			auto& A5 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_5(pFunc)));
 			auto& A6 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_6(pFunc)));
-			ret = (pThis->*pFunc)(A1, A2, A3, A4, A5, A6);
-			va_end(argc);
+			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4), std::move(A5), std::move(A6));
 			return ret;
 		}
 		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 7)
@@ -1658,8 +1653,7 @@ MfxReturn OBJ::Reflection(MfxString recvFunc...)\
 			auto& A5 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_5(pFunc)));
 			auto& A6 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_6(pFunc)));
 			auto& A7 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_7(pFunc)));
-			ret = (pThis->*pFunc)(A1, A2, A3, A4, A5, A6, A7);
-			va_end(argc);
+			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4), std::move(A5), std::move(A6), std::move(A7));
 			return ret;
 		}
 		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 8)
@@ -1672,32 +1666,29 @@ MfxReturn OBJ::Reflection(MfxString recvFunc...)\
 			auto& A6 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_6(pFunc)));
 			auto& A7 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_7(pFunc)));
 			auto& A8 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_8(pFunc)));
-			ret = (pThis->*pFunc)(A1, A2, A3, A4, A5, A6, A7, A8);
-			va_end(argc);
+			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4), std::move(A5), std::move(A6), std::move(A7), std::move(A8));
 			return ret;
 		}
 	}
 	/***************************************************************
-	*	MfxReFuncCaseEx注册宏
+	*	MFXOBJ_REFLECTIONFUNC_CASE_EX注册宏
 	****************************************************************/
-#define MfxReFuncCaseEx(OBJ, AUTO_FUNC)\
+#define __MFXOBJ_REFLECTIONFUNC_CASE_EX(OBJ, AUTO_FUNC)\
 	case MfxStrHash(MfxText(#AUTO_FUNC)):\
 	{\
-		ret = T_MfxReFuncCaseEx(this, &OBJ::AUTO_FUNC, argc);\
+		ret = __T_MFXOBJ_REFLECTIONFUNC_CASE_EX(this, &OBJ::AUTO_FUNC, argc);\
 		va_end(argc); \
 		return ret; \
 	}
 }
 
-#define MfxObject_Init_0(OBJ) __MfxObject_Init_0(OBJ)
-#define MfxObject_Init_1(OBJ) __MfxObject_Init_1(OBJ)
-#define MfxObject_Init_2(OBJ, FATHER_OBJ) __MfxObject_Init_2(OBJ, FATHER_OBJ)
 
 
-#define __MfxObject_EndInit(OBJ, FATHER_OBJ, ...) \
-	MfxObject_Init_1(OBJ)\
-	CONNECT(MFX_ReFunc_Spread_120(OBJ, __VA_ARGS__));\
-	MfxObject_Init_2(OBJ, FATHER_OBJ);
+
+#define __MFXOBJ_REFLECTION_ENDINIT(OBJ, FATHER_OBJ, ...) \
+	__MFXOBJ_REFLECTION_INIT_1(OBJ)\
+	CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_0(OBJ, __VA_ARGS__));\
+	__MFXOBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ);
 
 
 #define CONNECT(A, B) A##B
@@ -1706,8 +1697,7 @@ MfxReturn OBJ::Reflection(MfxString recvFunc...)\
 #define CCCCONNECT(A, B) CCCONNECT(A, B)
 #define CCCCCONNECT(A, B) CCCCONNECT(A, B)
 
-#define ARGS_NUM_(\
-N1, N2, N3, N4, N5, N6, N7, N8, N9, N10, N11, N12, N13, N14, N15, N16, \
+#define ARGS_NUM_(N1, N2, N3, N4, N5, N6, N7, N8, N9, N10, N11, N12, N13, N14, N15, N16, \
 N17, N18, N19, N20, N21, N22, N23, N24, N25, N26, N27, N28, N29, N30, N31, N32, \
 N33, N34, N35, N36, N37, N38, N39, N40, N41, N42, N43, N44, N45, N46, N47, N48, \
 N49, N50, N51, N52, N53, N54, N55, N56, N57, N58, N59, N60, N61, N62, N63, N64, \
@@ -1725,620 +1715,626 @@ N97, N98, N99, N100, N101, N102, N103, N104, N105, N106, N107, N108, N109, N110,
 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
 
 
-#define MFX_IS_END_ 0,0
-#define MFX_IS_END_END 0,0,0
-#define MFX_IS_SYMBOL_END(SYMBOL) GET_ARGS_NUM(MFX_IS_END_##SYMBOL)
+#define __MFX_IS_END_ 0,0
+#define __MFX_IS_END_END 0,0,0
+#define __MFX_IS_END(SYMBOL) GET_ARGS_NUM(__MFX_IS_END_##SYMBOL)
 
-const int ATEST = MFX_IS_SYMBOL_END(END); //3
-const int BTEST = MFX_IS_SYMBOL_END(pFunc); //1
-const int CTEST = MFX_IS_SYMBOL_END(); //2
+const int ATEST = __MFX_IS_END(END); //3
+const int BTEST = __MFX_IS_END(pFunc); //1
+const int CTEST = __MFX_IS_END(); //2
 
-#define MFX_ReFunc_Case_1(OBJ, FUNC_1) MfxReFuncCaseEx(OBJ, FUNC_1)
-#define MFX_ReFunc_Case_2(...)
-#define MFX_ReFunc_Case_3(...)
+#define __MFXOBJ_REFLECTIONFUNC_CASE_1(OBJ, FUNC_1) __MFXOBJ_REFLECTIONFUNC_CASE_EX(OBJ, FUNC_1)
+#define __MFXOBJ_REFLECTIONFUNC_CASE_2(...)
+#define __MFXOBJ_REFLECTIONFUNC_CASE_3(...)
 
-#define MFX_ReFunc_Case(OBJ, FUNC_1) CCCONNECT(MFX_ReFunc_Case_, MFX_IS_SYMBOL_END(FUNC_1))(OBJ, FUNC_1)
+#define MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1) \
+	CCCONNECT(__MFXOBJ_REFLECTIONFUNC_CASE_, __MFX_IS_END(FUNC_1))(OBJ, FUNC_1)
 
 namespace
 {
-#define MFX_ReFunc_Spread_1(OBJ, FUNC_1, FUNC_2,...)\
-	MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-
-#define MFX_ReFunc_Spread_2(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-	CONNECT(MFX_ReFunc_Spread_1(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_3(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_2(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_4(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_3(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_5(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_4(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_6(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_5(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_7(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_6(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_8(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_7(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_9(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_8(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_10(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_9(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_11(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_10(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_12(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_11(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_13(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_12(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_14(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_13(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_15(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_14(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_16(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_15(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_17(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_16(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_18(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_17(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_19(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_18(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_20(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_19(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_21(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_20(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_22(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_21(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_23(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_22(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_24(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_23(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_25(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_24(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_26(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_25(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_27(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_26(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_28(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_27(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_29(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_28(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_30(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_29(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_31(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_30(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_32(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_31(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_33(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_32(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_34(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_33(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_35(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_34(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_36(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_35(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_37(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_36(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_38(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_37(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_39(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_38(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_40(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_39(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_41(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_40(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_42(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_41(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_43(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_42(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_44(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_43(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_45(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_44(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_46(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_45(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_47(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_46(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_48(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_47(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_49(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_48(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_50(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_49(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_51(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_50(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_52(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_51(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_53(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_52(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_54(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_53(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_55(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_54(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_56(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_55(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_57(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_56(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_58(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_57(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_59(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_58(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_60(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_59(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_61(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_60(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_62(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_61(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_63(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_62(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_64(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_63(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_65(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_64(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_66(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_65(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_67(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_66(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_68(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_67(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_69(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_68(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_70(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_69(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_71(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_70(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_72(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_71(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_73(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_72(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_74(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_73(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_75(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_74(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_76(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_75(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_77(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_76(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_78(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_77(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_79(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_78(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_80(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_79(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_81(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_80(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_82(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_81(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_83(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_82(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_84(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_83(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_85(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_84(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_86(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_85(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_87(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_86(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_88(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_87(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_89(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_88(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_90(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_89(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_91(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_90(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_92(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_91(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_93(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_92(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_94(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_93(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_95(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_94(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_96(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_95(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_97(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_96(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_98(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_97(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_99(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_98(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_100(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_99(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_101(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_100(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_102(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_101(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_103(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_102(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_104(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_103(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_105(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_104(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_106(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_105(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_107(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_106(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_108(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_107(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_109(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_108(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_110(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_109(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_111(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_110(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_112(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_111(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_113(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_112(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_114(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_113(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_115(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_114(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_116(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_115(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_117(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_116(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_118(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_117(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_119(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_118(OBJ, __VA_ARGS__))
-
-#define MFX_ReFunc_Spread_120(OBJ, FUNC_1, FUNC_2,...)\
-    MFX_ReFunc_Case(OBJ, FUNC_1)\
-    MFX_ReFunc_Case(OBJ, FUNC_2)\
-    CONNECT(MFX_ReFunc_Spread_119(OBJ, __VA_ARGS__))
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_0(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_1(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_1(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_2(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_2(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_3(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_3(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_4(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_4(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_5(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_5(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_6(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_6(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_7(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_7(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_8(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_8(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_9(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_9(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_10(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_10(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_11(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_11(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_12(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_12(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_13(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_13(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_14(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_14(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_15(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_15(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_16(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_16(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_17(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_17(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_18(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_18(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_19(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_19(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_20(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_20(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_21(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_21(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_22(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_22(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_23(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_23(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_24(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_24(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_25(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_25(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_26(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_26(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_27(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_27(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_28(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_28(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_29(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_29(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_30(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_30(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_31(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_31(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_32(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_32(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_33(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_33(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_34(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_34(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_35(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_35(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_36(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_36(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_37(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_37(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_38(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_38(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_39(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_39(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_40(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_40(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_41(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_41(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_42(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_42(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_43(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_43(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_44(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_44(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_45(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_45(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_46(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_46(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_47(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_47(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_48(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_48(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_49(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_49(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_50(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_50(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_51(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_51(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_52(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_52(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_53(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_53(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_54(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_54(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_55(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_55(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_56(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_56(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_57(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_57(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_58(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_58(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_59(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_59(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_60(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_60(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_61(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_61(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_62(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_62(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_63(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_63(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_64(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_64(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_65(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_65(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_66(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_66(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_67(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_67(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_68(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_68(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_69(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_69(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_70(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_70(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_71(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_71(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_72(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_72(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_73(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_73(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_74(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_74(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_75(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_75(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_76(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_76(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_77(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_77(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_78(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_78(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_79(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_79(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_80(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_80(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_81(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_81(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_82(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_82(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_83(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_83(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_84(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_84(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_85(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_85(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_86(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_86(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_87(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_87(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_88(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_88(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_89(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_89(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_90(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_90(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_91(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_91(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_92(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_92(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_93(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_93(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_94(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_94(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_95(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_95(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_96(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_96(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_97(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_97(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_98(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_98(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_99(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_99(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_100(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_100(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_101(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_101(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_102(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_102(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_103(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_103(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_104(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_104(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_105(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_105(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_106(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_106(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_107(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_107(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_108(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_108(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_109(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_109(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_110(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_110(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_111(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_111(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_112(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_112(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_113(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_113(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_114(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_114(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_115(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_115(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_116(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_116(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_117(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_117(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_118(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_118(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_119(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_119(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)\
+    CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_120(OBJ, __VA_ARGS__))
+
+#define __MFXOBJ_REFLECTIONFUNC_SPREADCASE_120(OBJ, FUNC_1, FUNC_2, ...)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_1)\
+    MFXOBJ_REFLECTIONFUNC_CASE(OBJ, FUNC_2)
 
 }
 

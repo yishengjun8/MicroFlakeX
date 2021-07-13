@@ -8,7 +8,7 @@ class MfxTest :
     public MfxBase
 {
 
-    MfxObject;
+    MFXOBJ_ENABLE_REFLECTION;
 
 public:
     MfxReturn test001(int a);

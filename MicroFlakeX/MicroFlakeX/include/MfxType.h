@@ -41,7 +41,7 @@ namespace MicroFlakeX
     class MfxRect :
         public MfxBase
     {
-        MfxObject;
+        MFXOBJ_ENABLE_REFLECTION;
     public:
         MfxRect();
         MfxRect(MfxBase& set);
@@ -74,7 +74,7 @@ namespace MicroFlakeX
         ~MfxRect();
 
     public:
-        MfxReturn Clone(pMfxBase* ret);
+        MfxReturn Clone(MfxBase** ret);
 
         MfxBase& operator=(MfxBase& rhs);
 
@@ -210,15 +210,15 @@ namespace MicroFlakeX
     public:
         /* 和 */
         MfxReturn Union(const MfxRect* set, MfxRect* ret)const;
-        MfxReturn Union_Widely(pMfxBase set, MfxRect* ret);
+        MfxReturn Union_Widely(MfxBase* set, MfxRect* ret);
 
         /* 交 */
         MfxReturn Intersect(const MfxRect* set, MfxRect* ret)const;
-        MfxReturn Intersect_Widely(pMfxBase set, MfxRect* ret);
+        MfxReturn Intersect_Widely(MfxBase* set, MfxRect* ret);
 
         /* 移动到最近的内部矩形 */
         MfxReturn InsideRect(const MfxRect* set, MfxRect* ret)const;
-        //MfxReturn InsideRect_Widely(pMfxBase set, MfxRect* ret);
+        //MfxReturn InsideRect_Widely(MfxBase* set, MfxRect* ret);
 
     public:
         /* 偏移 */
@@ -250,7 +250,7 @@ namespace MicroFlakeX
     class MfxSize :
         public MfxBase
     {
-        MfxObject;
+        MFXOBJ_ENABLE_REFLECTION;
     public:
         MfxSize();
         MfxSize(MfxBase& set);
@@ -268,7 +268,7 @@ namespace MicroFlakeX
         ~MfxSize();
 
     public:
-        MfxReturn Clone(pMfxBase* ret) const;
+        MfxReturn Clone(MfxBase** ret) const;
 
         MfxBase& operator=(MfxBase& rhs);
 
@@ -348,7 +348,7 @@ namespace MicroFlakeX
     class MfxPoint :
         public MfxBase
     {
-        MfxObject;
+        MFXOBJ_ENABLE_REFLECTION;
     public:
         MfxPoint();
         MfxPoint(MfxBase& set);
@@ -366,7 +366,7 @@ namespace MicroFlakeX
         ~MfxPoint();
 
     public:
-        MfxReturn Clone(pMfxBase* ret)const;
+        MfxReturn Clone(MfxBase** ret)const;
 
         MfxBase& operator=(MfxBase& rhs);
 
@@ -443,7 +443,7 @@ namespace MicroFlakeX
     class MfxColor :
         public MfxBase
     {
-        MfxObject;
+        MFXOBJ_ENABLE_REFLECTION;
     public:
         MfxColor();
         MfxColor(MfxBase& set);
@@ -457,7 +457,7 @@ namespace MicroFlakeX
         ~MfxColor();
 
     public:
-        MfxReturn Clone(pMfxBase* ret)const;
+        MfxReturn Clone(MfxBase** ret)const;
 
         MfxBase& operator=(MfxBase& rhs);
 

@@ -13,11 +13,13 @@ WPARAM MicroFlakeX::MfxAppRun()
 	return tMsg.wParam;
 }
 
-HWND __MicroFlakeX::MfxCreateWindowsEx(pMfxUI ui, pMfxUI father, MfxRect rect,
+HWND __MicroFlakeX::MfxCreateWindowsEx(MfxUI* ui, MfxUI* father, MfxRect rect,
 	DWORD dwStyle, DWORD dwExStyle, MfxString className, MfxString windowsName)
 {
 	HWND f_hWnd = NULL;
-	father ? father->GetWnd(&f_hWnd) : 0;
+
+	//Ê¼ÖÕºöÂÔfather²ÎÊý
+	//father ? father->GetWnd(&f_hWnd) : 0;
 
 	return CreateWindowEx(dwExStyle, className.c_str(), windowsName.c_str(), dwStyle,
 		rect.myX, rect.myY, rect.myWidth, rect.myHeight, f_hWnd, NULL, GetModuleHandle(NULL), ui
@@ -37,7 +39,7 @@ LRESULT CALLBACK __MicroFlakeX::MfxAppFrameProc(HWND hWnd, MfxMessage message, W
 		}
 		else
 		{
-			pMfxUI myBind = (pMfxUI)((LPCREATESTRUCTA)lParam)->lpCreateParams;
+			MfxUI* myBind = (MfxUI*)((LPCREATESTRUCTA)lParam)->lpCreateParams;
 			myUIMap.insert(App_UI_Info_Map_Elem(hWnd, App_UI_Info(hWnd, myBind)));
 
 			MAKE_WIN32_PARAM(win32, message, hWnd, wParam, lParam);

@@ -55,7 +55,7 @@ namespace MicroFlakeX
 		/**************************************************************
 		*
 		***************************************************************/
-		MfxObject;
+		MFXOBJ_ENABLE_REFLECTION;
 
 	public:
 		virtual MfxReturn GetRect(MfxRect* ret)const;
@@ -80,7 +80,7 @@ namespace MicroFlakeX
 	class MfxCanvas :
 		public MfxBase
 	{
-		MfxObject;
+		MFXOBJ_ENABLE_REFLECTION;
 	public:
 		MfxCanvas();
 
@@ -157,7 +157,7 @@ namespace MicroFlakeX
 	class MfxImage : 
 		public MfxGraph
 	{
-		MfxObject;
+		MFXOBJ_ENABLE_REFLECTION;
 	public:
 		MfxImage();
 		MfxImage(const MfxImage* set) : MfxImage(set->myIWICBitmap, set->myRect) {};
@@ -237,7 +237,7 @@ namespace MicroFlakeX
 	class MfxWords :
 		public MfxGraph
 	{
-		MfxObject;
+		MFXOBJ_ENABLE_REFLECTION;
 	public:
 		MfxWords();
 		MfxWords(const MfxWords* set) :MfxWords(set->myText, set->myRect, set->myTextLayout->GetFontSize(), set->myTextLayout) {};
@@ -329,7 +329,7 @@ namespace MicroFlakeX
 	class MfxRectangle :
 		public MfxGraph
 	{
-		MfxObject;
+		MFXOBJ_ENABLE_REFLECTION;
 	public:
 		MfxRectangle();
 
@@ -395,7 +395,7 @@ namespace MicroFlakeX
 	class MfxEllipse :
 		public MfxGraph
 	{
-		MfxObject;
+		MFXOBJ_ENABLE_REFLECTION;
 	public:
 		MfxEllipse();
 

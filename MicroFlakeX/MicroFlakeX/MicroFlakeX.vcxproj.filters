@@ -146,5 +146,8 @@
     <ClCompile Include="MfxTransitions.cpp">
       <Filter>源文件\MfxExplain</Filter>
     </ClCompile>
+    <ClCompile Include="MfxBase\MfxClient.cpp">
+      <Filter>源文件\MfxBase</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

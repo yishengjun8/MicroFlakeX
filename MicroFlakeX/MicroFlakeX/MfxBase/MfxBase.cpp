@@ -12,16 +12,16 @@ MicroFlakeX::MfxBase::MfxBase()
 
 MicroFlakeX::MfxBase::~MfxBase()
 {
-	MfxSignal_Link::ReceiverDelete(this);
-	MfxSignal_UnLink::ReceiverDelete(this);
+	MfxSignal::ReceiverDelete(this);
+	MfxClient::ReceiverDelete(this);
 	DeleteCriticalSection(&myCriticalSection);
 }
 
-MfxReturn MicroFlakeX::MfxBase::Clone(pMfxBase* ret) const
+MfxReturn MicroFlakeX::MfxBase::Clone(MfxBase** ret) const
 {
 	*ret = nullptr;
 
-	return Mfx_Return_Fail;
+	return MfxReturn_Failed;
 }
 
 
@@ -47,13 +47,13 @@ bool MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 ****************************************************************/
 MfxReturn MicroFlakeX::MfxBase::Reflection(MfxString recvFunc ...)
 {
-	return Mfx_Return_Fail;
+	return MfxReturn_Failed;
 }
 
 MfxReturn MicroFlakeX::MfxBase::GetObjectName(MfxString* ret)
 {
 	*ret = MfxText("MfxBase");
-	return Mfx_Return_Fine;
+	return MfxReturn_Seccess;
 }
 
 
