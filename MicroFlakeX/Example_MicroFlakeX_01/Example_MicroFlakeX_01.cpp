@@ -6,7 +6,7 @@ int main()
 {
     MyUI myUI;
 
-    std::cout << "Hello World!\n";
+    std::cout << "Hello MicroFlakeX!\n";
 
     myUI.WND_SHOW();
 

@@ -42,13 +42,13 @@ LRESULT CALLBACK __MicroFlakeX::MfxAppFrameProc(HWND hWnd, MfxMessage message, W
 			MfxUI* myBind = (MfxUI*)((LPCREATESTRUCTA)lParam)->lpCreateParams;
 			myUIMap.insert(App_UI_Info_Map_Elem(hWnd, App_UI_Info(hWnd, myBind)));
 
-			MAKE_WIN32_PARAM(win32, message, hWnd, wParam, lParam);
+			MFX_MAKE_WIN32_PARAM(win32, message, hWnd, wParam, lParam);
 			return myBind->Send_Message(win32);
 		}
 	}
 	else
 	{
-		MAKE_WIN32_PARAM(win32, message, hWnd, wParam, lParam);
+		MFX_MAKE_WIN32_PARAM(win32, message, hWnd, wParam, lParam);
 		MfxReturn ret = t_Itera->second.myUI->Send_Message(win32);
 
 		message == WM_DESTROY ? myUIMap.erase(t_Itera)->first : 0;

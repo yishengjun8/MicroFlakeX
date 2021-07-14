@@ -190,7 +190,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(ProcMessage)
 
     ProcFlakesMessage(param);
 
-    auto t_Iter = myMessageMap.find(getMSG);
+    auto t_Iter = myMessageMap.find(MFXPARAM_GET_MSG);
     if (t_Iter != myMessageMap.end())
     {
         if (!t_Iter->second.empty())
@@ -203,7 +203,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(ProcMessage)
     }
     else
     {
-        tRet = DefWindowProc(getHWND, getMSG, getWPARAM, getLPARAM);
+        tRet = DefWindowProc(MFXPARAM_GET_HWND, MFXPARAM_GET_MSG, MFXPARAM_GET_WPARAM, MFXPARAM_GET_LPARAM);
     }
 
     myMemberLock.UnLock(&myMessageMap);
@@ -785,16 +785,16 @@ MfxReturn MicroFlakeX::MfxUI::WND_NORMAL()
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnTest00)
 {
-    std::cout << "__OnTest00: wParam-" << getWPARAM;
-    std::cout << " lParam-" << getLPARAM << std::endl;
+    std::cout << "__OnTest00: wParam-" << MFXPARAM_GET_WPARAM;
+    std::cout << " lParam-" << MFXPARAM_GET_LPARAM << std::endl;
 
     MFX_APPFRAME_RETURN(MfxReturn_Seccess);
 }
 
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnTest01)
 {
-    std::cout << "__OnTest01: wParam-" << getWPARAM;
-    std::cout << " lParam-" << getLPARAM << std::endl;
+    std::cout << "__OnTest01: wParam-" << MFXPARAM_GET_WPARAM;
+    std::cout << " lParam-" << MFXPARAM_GET_LPARAM << std::endl;
 
     MFX_APPFRAME_RETURN(MfxReturn_Seccess);
 }
@@ -811,7 +811,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnCreate)
 {
     myMemberLock.TryWaitLock(&myRect, &myWnd);
 
-    myWnd = getHWND;
+    myWnd = MFXPARAM_GET_HWND;
     GetWorldRect(&myRect);
     HRGN tRNG = CreateRectRgn(0, 0, myRect.myWidth, myRect.myHeight);
     MfxSize tSize(myRect.myWidth, myRect.myHeight);
@@ -897,7 +897,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnSize)
     param.SetMESSAGE(MSG_FatherSize);
     ProcFlakesMessage(param);
     
-    auto ret =  DefWindowProc(myWnd, getMSG, getWPARAM, getLPARAM);
+    auto ret =  DefWindowProc(myWnd, MFXPARAM_GET_MSG, MFXPARAM_GET_WPARAM, MFXPARAM_GET_LPARAM);
     MFX_APPFRAME_RETURN(ret);
 }
 
@@ -910,7 +910,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnMove)
     param.SetMESSAGE(MSG_FatherPoint);
     ProcFlakesMessage(param);
 
-    auto ret = DefWindowProc(myWnd, getMSG, getWPARAM, getLPARAM);
+    auto ret = DefWindowProc(myWnd, MFXPARAM_GET_MSG, MFXPARAM_GET_WPARAM, MFXPARAM_GET_LPARAM);
     MFX_APPFRAME_RETURN(ret);
 }
 
@@ -996,7 +996,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnPaintMaskDC)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnFlakeInsert)
 {
-    MfxFlake* tpFlake = getParam_0(pMfxFlake);
+    MfxFlake* tpFlake = MFXPARAM_GET_0(pMfxFlake);
     if (tpFlake)
     {
         myMemberLock.WaitLock(&myFlakeSet);
@@ -1034,7 +1034,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnFlakeInsert)
 
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnFlakeRemove)
 {
-    MfxFlake* tpFlake = getParam_0(pMfxFlake);
+    MfxFlake* tpFlake = MFXPARAM_GET_0(pMfxFlake);
     if (tpFlake)
     {
         myMemberLock.WaitLock(&myFlakeSet);
@@ -1096,10 +1096,10 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnWin32Timer)
     auto tRet = MfxReturn_Failed;
     myMemberLock.WaitLock(&myTimerMap);
 
-    auto t_Iter = myTimerMap.find(getWPARAM);
+    auto t_Iter = myTimerMap.find(MFXPARAM_GET_WPARAM);
     if (t_Iter != myTimerMap.end())
     {
-        MfxParam msgParam(getMSG);
+        MfxParam msgParam(MFXPARAM_GET_MSG);
         msgParam.push_back(t_Iter->second);
         tRet = (this->*t_Iter->second.recvFunc)(msgParam);
     }
@@ -1112,7 +1112,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnWin32Timer)
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnInsertWin32Timer)
 {
     auto tRet = MfxReturn_Failed;
-    Win32_Timer_Info tTimer = getParam_0(Win32_Timer_Info);
+    Win32_Timer_Info tTimer = MFXPARAM_GET_0(Win32_Timer_Info);
 
     myMemberLock.WaitLock(&myTimerMap);
     bool tIns = myTimerMap.insert(Win32_Timer_Info_Map_Elem(tTimer.myID, tTimer)).second;
@@ -1130,7 +1130,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnInsertWin32Timer)
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnRemoveWin32Timer)
 {
     auto tRet = MfxReturn_Failed;
-    ULONG tTimer = getParam_0(ULONG);
+    ULONG tTimer = MFXPARAM_GET_0(ULONG);
 
     myMemberLock.WaitLock(&myTimerMap);
 
@@ -1162,7 +1162,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnFlakeEvent)
 
     myMemberLock.WaitLock(&myFlakeEventMap);
 
-    FlakeEvent_Info tInfo = getParam_0(FlakeEvent_Info);
+    FlakeEvent_Info tInfo = MFXPARAM_GET_0(FlakeEvent_Info);
 
     auto t_Iter = myFlakeEventMap.find(tInfo);
     if (t_Iter != myFlakeEventMap.end())
@@ -1185,8 +1185,8 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnRemoveFlakeEvent)
 {
     MfxReturn tRet = MfxReturn_Failed;
 
-    FlakeEvent_Info tFlakeEvent = getParam_0(FlakeEvent_Info);
-    MfxString tRecvFuncName = getParam_1(MfxString);
+    FlakeEvent_Info tFlakeEvent = MFXPARAM_GET_0(FlakeEvent_Info);
+    MfxString tRecvFuncName = MFXPARAM_GET_1(MfxString);
 
     myMemberLock.WaitLock(&myFlakeEventMap);
 
@@ -1213,8 +1213,8 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnPushBackFlakeEvent)
 {
     myMemberLock.WaitLock(&myFlakeEventMap);
 
-    FlakeEvent_Info tFlakeEvent = getParam_0(FlakeEvent_Info);
-    UI_UIRecvFunc_Info tRecvInfo = getParam_1(UI_UIRecvFunc_Info);
+    FlakeEvent_Info tFlakeEvent = MFXPARAM_GET_0(FlakeEvent_Info);
+    UI_UIRecvFunc_Info tRecvInfo = MFXPARAM_GET_1(UI_UIRecvFunc_Info);
 
 Begin:
     auto t_Iter = myFlakeEventMap.find(tFlakeEvent);
@@ -1237,8 +1237,8 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnPushFrontFlakeEvent)
 {
     myMemberLock.WaitLock(&myFlakeEventMap);
 
-    FlakeEvent_Info tFlakeEvent = getParam_0(FlakeEvent_Info);
-    UI_UIRecvFunc_Info tRecvInfo = getParam_1( UI_UIRecvFunc_Info);
+    FlakeEvent_Info tFlakeEvent = MFXPARAM_GET_0(FlakeEvent_Info);
+    UI_UIRecvFunc_Info tRecvInfo = MFXPARAM_GET_1( UI_UIRecvFunc_Info);
 
 Begin:
     auto t_Iter = myFlakeEventMap.find(tFlakeEvent);
@@ -1299,7 +1299,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnSetBackColor)
 
     myMemberLock.TryWaitLock(&myBackRectangle, &myBackColor, &myCanvas);
 
-    myBackColor = getParam_0(MfxColor);
+    myBackColor = MFXPARAM_GET_0(MfxColor);
     myBackRectangle.SetFillColor(&myBackColor);
 
     myMemberLock.UnLock(&myBackRectangle, &myBackColor, &myCanvas);
@@ -1315,7 +1315,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnSetMaskColor)
 
     myMemberLock.TryWaitLock(&myMaskRectangle, &myMaskColor, &myCanvas);
 
-    myMaskColor = getParam_0(MfxColor);
+    myMaskColor = MFXPARAM_GET_0(MfxColor);
     myMaskRectangle.SetFillColor(&myMaskColor);
 
     myMemberLock.UnLock(&myMaskRectangle, &myBackColor, &myCanvas);
@@ -1334,13 +1334,13 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCPaint)
 
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCActivate)
 {
-    auto ret = getWPARAM ? 0 : 1;
+    auto ret = MFXPARAM_GET_WPARAM ? 0 : 1;
     MFX_APPFRAME_RETURN(ret);
 }
 
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCHitTest)
 {
-    MfxReturn ret = DefWindowProc(myWnd, getMSG, getWPARAM, getLPARAM);
+    MfxReturn ret = DefWindowProc(myWnd, MFXPARAM_GET_MSG, MFXPARAM_GET_WPARAM, MFXPARAM_GET_LPARAM);
 
     if (ret == HTHELP
         || ret == HTCLOSE
@@ -1361,13 +1361,13 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCHitTest)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCMouseMove)
 {
-    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCMOUSEMOVE, getWPARAM, getLPARAM);
+    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCMOUSEMOVE, MFXPARAM_GET_WPARAM, MFXPARAM_GET_LPARAM);
     MFX_APPFRAME_RETURN(ret);
 }
 
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCMouseHover)
 {
-    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCMOUSEHOVER, getWPARAM, getLPARAM);
+    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCMOUSEHOVER, MFXPARAM_GET_WPARAM, MFXPARAM_GET_LPARAM);
     MFX_APPFRAME_RETURN(ret);
 }
 
@@ -1378,19 +1378,19 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCMouseHover)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCLButtonUp)
 {
-    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCLBUTTONUP, getWPARAM, getLPARAM);
+    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCLBUTTONUP, MFXPARAM_GET_WPARAM, MFXPARAM_GET_LPARAM);
     MFX_APPFRAME_RETURN(ret);
 }
 
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCLButtonDown)
 {
-    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCLBUTTONDOWN, getWPARAM, getLPARAM);
+    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCLBUTTONDOWN, MFXPARAM_GET_WPARAM, MFXPARAM_GET_LPARAM);
     MFX_APPFRAME_RETURN(ret);
 }
 
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCLButtonDouble)
 {
-    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCLBUTTONDBLCLK, getWPARAM, getLPARAM);
+    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCLBUTTONDBLCLK, MFXPARAM_GET_WPARAM, MFXPARAM_GET_LPARAM);
     MFX_APPFRAME_RETURN(ret);
 }
 
@@ -1401,18 +1401,18 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCLButtonDouble)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCRButtonUp)
 {
-    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCRBUTTONUP, getWPARAM, getLPARAM);
+    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCRBUTTONUP, MFXPARAM_GET_WPARAM, MFXPARAM_GET_LPARAM);
     MFX_APPFRAME_RETURN(ret);
 }
 
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCRButtonDown)
 {
-    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCRBUTTONDOWN, getWPARAM, getLPARAM);
+    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCRBUTTONDOWN, MFXPARAM_GET_WPARAM, MFXPARAM_GET_LPARAM);
     MFX_APPFRAME_RETURN(ret);
 }
 
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnNCRButtonDouble)
 {
-    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCRBUTTONDBLCLK, getWPARAM, getLPARAM);
+    auto ret = myMutexFocus ? 0 : DefWindowProc(myWnd, WM_NCRBUTTONDBLCLK, MFXPARAM_GET_WPARAM, MFXPARAM_GET_LPARAM);
     MFX_APPFRAME_RETURN(ret);
 }

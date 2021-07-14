@@ -222,7 +222,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(ProcMessage)
 
 	myMemberLock.WaitLock(&myMessageMap);
 
-	auto t_Iter = myMessageMap.find(getMSG);
+	auto t_Iter = myMessageMap.find(MFXPARAM_GET_MSG);
 	if (t_Iter != myMessageMap.end())
 	{
 		if (!t_Iter->second.empty())
@@ -668,7 +668,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnTest001)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetPaper)
 {
-	Paper_Infor t_PaperValue = getParam_0(Paper_Infor);
+	Paper_Infor t_PaperValue = MFXPARAM_GET_0(Paper_Infor);
 
 	myMemberLock.TryWaitLock(&myFather, &myWnd, &myCanvas);
 
@@ -742,7 +742,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetFloor)
 
 	myMemberLock.TryWaitLock(&myFloor, &myFather);
 
-	myFloor = getParam_0(MfxFloor);
+	myFloor = MFXPARAM_GET_0(MfxFloor);
 	myFather ? myFather->Reflection(MfxText("Send_Message"), msgParam) : 0;
 
 	myMemberLock.UnLock(&myFloor, &myFather);
@@ -805,7 +805,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnFatherSize)
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRect)
 {
-	MfxRect tSetRect = getParam_0(MfxRect);
+	MfxRect tSetRect = MFXPARAM_GET_0(MfxRect);
 
 	myMemberLock.TryWaitLock(&myEdgeRect);
 	MfxRect tEdgeRect = myEdgeRect;
@@ -845,7 +845,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRect)
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnPercentRect)
 {
-	MfxRect tSetPercentRect = getParam_0(MfxRect);
+	MfxRect tSetPercentRect = MFXPARAM_GET_0(MfxRect);
 
 	myMemberLock.WaitLock(&myPercentRect);
 	myPercentRect.SetRect(&tSetPercentRect);
@@ -1304,7 +1304,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetTitle)
 {
 	myMemberLock.TryWaitLock(&myTitle, &myWords);
 
-	myTitle = getParam_0(MfxString);
+	myTitle = MFXPARAM_GET_0(MfxString);
 
 	myWords.SetText(myTitle);
 
@@ -1326,7 +1326,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetBackColor)
 
 	myMemberLock.TryWaitLock(&myBackRectangle, &myBackColor, &myCanvas);
 
-	myBackColor = getParam_0(MfxColor);
+	myBackColor = MFXPARAM_GET_0(MfxColor);
 	myBackRectangle.SetFillColor(&myBackColor);
 
 	myMemberLock.UnLock(&myBackRectangle, &myBackColor, &myCanvas);
@@ -1347,7 +1347,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetMaskColor)
 
 	myMemberLock.TryWaitLock(&myMaskRectangle, &myMaskColor, &myCanvas);
 
-	myMaskColor = getParam_0(MfxColor);
+	myMaskColor = MFXPARAM_GET_0(MfxColor);
 	myMaskRectangle.SetFillColor(&myMaskColor);
 
 	myMemberLock.UnLock(&myMaskRectangle, &myBackColor, &myCanvas);
@@ -1363,7 +1363,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetTitleColor)
 {
 	myMemberLock.TryWaitLock(&myWords, &myTitleColor, &myCanvas);
 
-	myTitleColor = getParam_0(MfxColor);
+	myTitleColor = MFXPARAM_GET_0(MfxColor);
 	myWords.SetTextColor(&myTitleColor);
 
 	myMemberLock.UnLock(&myWords, &myTitleColor, &myCanvas);
@@ -1380,7 +1380,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetBackFrameSize)
 {
 	myMemberLock.TryWaitLock(&myBackFrameSize, &myBackRectangle, &myCanvas);
 
-	myBackFrameSize = getParam_0(double);
+	myBackFrameSize = MFXPARAM_GET_0(double);
 	myBackRectangle.SetFrameSize(myBackFrameSize);
 
 	myMemberLock.UnLock(&myBackFrameSize, &myBackRectangle, &myCanvas);
@@ -1397,7 +1397,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetMaskFrameSize)
 {
 	myMemberLock.TryWaitLock(&myMaskFrameSize, &myMaskRectangle, &myCanvas);
 
-	myMaskFrameSize = getParam_0(double);
+	myMaskFrameSize = MFXPARAM_GET_0(double);
 	myMaskRectangle.SetFrameSize(myMaskFrameSize);
 
 	myMemberLock.UnLock(&myMaskFrameSize, &myMaskRectangle, &myCanvas);
@@ -1423,7 +1423,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnFlakeEvent)
 
 	myMemberLock.WaitLock(&myFlakeEventMap);
 
-	FlakeEvent_Info tInfo = getParam_0(FlakeEvent_Info);
+	FlakeEvent_Info tInfo = MFXPARAM_GET_0(FlakeEvent_Info);
 
 	auto t_Iter = myFlakeEventMap.find(tInfo);
 	if (t_Iter != myFlakeEventMap.end())
@@ -1446,8 +1446,8 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRemoveFlakeEvent)
 {
 	MfxReturn tRet = MfxReturn_Failed;
 
-	FlakeEvent_Info tFlakeEvent = getParam_0(FlakeEvent_Info);
-	MfxString tRecvFuncName = getParam_1(MfxString);
+	FlakeEvent_Info tFlakeEvent = MFXPARAM_GET_0(FlakeEvent_Info);
+	MfxString tRecvFuncName = MFXPARAM_GET_1(MfxString);
 
 	myMemberLock.WaitLock(&myFlakeEventMap);
 
@@ -1474,8 +1474,8 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnPushBackFlakeEvent)
 {
 	myMemberLock.WaitLock(&myFlakeEventMap);
 
-	FlakeEvent_Info tFlakeEvent = getParam_0(FlakeEvent_Info);
-	Flake_RecvFunc_Infor tRecvInfo = getParam_1(Flake_RecvFunc_Infor);
+	FlakeEvent_Info tFlakeEvent = MFXPARAM_GET_0(FlakeEvent_Info);
+	Flake_RecvFunc_Infor tRecvInfo = MFXPARAM_GET_1(Flake_RecvFunc_Infor);
 
 Begin:
 	auto t_Iter = myFlakeEventMap.find(tFlakeEvent);
@@ -1498,8 +1498,8 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnPushFrontFlakeEvent)
 {
 	myMemberLock.WaitLock(&myFlakeEventMap);
 
-	FlakeEvent_Info tFlakeEvent = getParam_0(FlakeEvent_Info);
-	Flake_RecvFunc_Infor tRecvInfo = getParam_1(Flake_RecvFunc_Infor);
+	FlakeEvent_Info tFlakeEvent = MFXPARAM_GET_0(FlakeEvent_Info);
+	Flake_RecvFunc_Infor tRecvInfo = MFXPARAM_GET_1(Flake_RecvFunc_Infor);
 
 Begin:
 	auto t_Iter = myFlakeEventMap.find(tFlakeEvent);

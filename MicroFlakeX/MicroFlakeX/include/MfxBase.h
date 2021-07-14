@@ -172,18 +172,18 @@ namespace MicroFlakeX
 		CRITICAL_SECTION* myCriticalSection;
 	};
 
-#define getParam(param, type, place)  (std::any_cast<type&>(param[place]))
-#define getParam_Safe(param, type, place)  (param.IsSafe(place) ? (std::any_cast<type&>(param[place])) : type())
+#define MFXPARAM_GET(param, type, place)  (std::any_cast<type&>(param[place]))
+#define MFXPARAM_GET_SAFE(param, type, place)  (param.IsSafe(place) ? (std::any_cast<type&>(param[place])) : type())
 
-#define getParam_0(type) getParam_Safe(param, type, 0) 
-#define getParam_1(type) getParam_Safe(param, type, 1) 
-#define getParam_2(type) getParam_Safe(param, type, 2) 
-#define getParam_3(type) getParam_Safe(param, type, 3) 
-#define getParam_4(type) getParam_Safe(param, type, 4) 
-#define getParam_5(type) getParam_Safe(param, type, 5) 
-#define getParam_6(type) getParam_Safe(param, type, 6) 
-#define getParam_7(type) getParam_Safe(param, type, 7) 
-#define getParam_8(type) getParam_Safe(param, type, 8) 
+#define MFXPARAM_GET_0(type) MFXPARAM_GET_SAFE(param, type, 0) 
+#define MFXPARAM_GET_1(type) MFXPARAM_GET_SAFE(param, type, 1) 
+#define MFXPARAM_GET_2(type) MFXPARAM_GET_SAFE(param, type, 2) 
+#define MFXPARAM_GET_3(type) MFXPARAM_GET_SAFE(param, type, 3) 
+#define MFXPARAM_GET_4(type) MFXPARAM_GET_SAFE(param, type, 4) 
+#define MFXPARAM_GET_5(type) MFXPARAM_GET_SAFE(param, type, 5) 
+#define MFXPARAM_GET_6(type) MFXPARAM_GET_SAFE(param, type, 6) 
+#define MFXPARAM_GET_7(type) MFXPARAM_GET_SAFE(param, type, 7) 
+#define MFXPARAM_GET_8(type) MFXPARAM_GET_SAFE(param, type, 8) 
 
 	class MfxParam
 	{
@@ -192,9 +192,11 @@ namespace MicroFlakeX
 		static void* operator new[](size_t);
 	protected:
 		PVOID* myPVOID;
+		MfxMessage* myMessage;
+
 		INT32* myUseCount;
 		MfxReturn* myReturn;
-		MfxMessage* myMessage;
+
 		std::vector<std::any>* myParam;
 	public:
 		MfxParam();
@@ -224,6 +226,35 @@ namespace MicroFlakeX
 			myParam->push_back(std::forward<T>(val));
 		}
 	};
+
+	template<typename T, typename ... Args>
+	constexpr inline MfxParam __MFX_MAKE_PARAM(MfxParam& param, T&& set, Args&&... arg)
+	{
+		param.push_back(std::forward<T>(set));
+		return __MFX_MAKE_PARAM(param, std::forward<Args>(arg)...);
+	}
+
+	template<typename T, typename ... Args>
+	constexpr inline MfxParam __MFX_MAKE_PARAM(MfxParam& param, T&& set)
+	{
+		param.push_back(std::forward<T>(set));
+		return param;
+	}
+
+	template<typename ... Args>
+	constexpr inline MfxParam MFX_MAKE_PARAM(PVOID pvoid, Args&&... arg)
+	{
+		MfxParam tParam(pvoid);
+		return __MFX_MAKE_PARAM(tParam, std::forward<Args>(arg)...);
+	}
+
+	template<typename ... Args>
+	constexpr inline MfxParam MFX_MAKE_PARAM(MfxMessage message, Args&&... arg)
+	{
+		MfxParam tParam(message);
+		return __MFX_MAKE_PARAM(tParam, std::forward<Args>(arg)...);
+	}
+
 }
 
 
@@ -518,7 +549,7 @@ namespace MicroFlakeX
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc, 
-					getParam_0(T1)
+					MFXPARAM_GET_0(T1)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -556,7 +587,7 @@ namespace MicroFlakeX
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					getParam_0(T1), getParam_1(T2)
+					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -595,8 +626,8 @@ namespace MicroFlakeX
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					getParam_0(T1), getParam_1(T2),
-					getParam_2(T3)
+					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2),
+					MFXPARAM_GET_2(T3)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -635,8 +666,8 @@ namespace MicroFlakeX
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					getParam_0(T1), getParam_1(T2),
-					getParam_2(T3), getParam_3(T4)
+					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2),
+					MFXPARAM_GET_2(T3), MFXPARAM_GET_3(T4)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -678,9 +709,9 @@ namespace MicroFlakeX
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					getParam_0(T1), getParam_1(T2),
-					getParam_2(T3), getParam_3(T4),
-					getParam_4(T5)
+					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2),
+					MFXPARAM_GET_2(T3), MFXPARAM_GET_3(T4),
+					MFXPARAM_GET_4(T5)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -721,9 +752,9 @@ namespace MicroFlakeX
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					getParam_0(T1), getParam_1(T2),
-					getParam_2(T3), getParam_3(T4),
-					getParam_4(T5), ParamVal_5(T6)
+					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2),
+					MFXPARAM_GET_2(T3), MFXPARAM_GET_3(T4),
+					MFXPARAM_GET_4(T5), MFXPARAM_GET_5(T6)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -766,10 +797,10 @@ namespace MicroFlakeX
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					getParam_0(T1), getParam_1(T2),
-					getParam_2(T3), getParam_3(T4),
-					getParam_4(T5), ParamVal_5(T6),
-					ParamVal_6(T7)
+					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2),
+					MFXPARAM_GET_2(T3), MFXPARAM_GET_3(T4),
+					MFXPARAM_GET_4(T5), MFXPARAM_GET_5(T6),
+					MFXPARAM_GET_6(T7)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -812,10 +843,10 @@ namespace MicroFlakeX
 			for (auto& iter : tThis->myReceiver)
 			{
 				iter.recvObject->Reflection(iter.recvFunc,
-					getParam_0(T1), getParam_1(T2),
-					getParam_2(T3), getParam_3(T4),
-					getParam_4(T5), ParamVal_5(T6),
-					ParamVal_6(T7), ParamVal_7(T8)
+					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2),
+					MFXPARAM_GET_2(T3), MFXPARAM_GET_3(T4),
+					MFXPARAM_GET_4(T5), MFXPARAM_GET_5(T6),
+					MFXPARAM_GET_6(T7), MFXPARAM_GET_7(T8)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -868,7 +899,7 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(getParam_0(MfxString)
+				iter->Reflection(MFXPARAM_GET_0(MfxString)
 				);
 			}
 
@@ -906,8 +937,8 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(getParam_0(MfxString),
-					getParam_1(T1)
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
+					MFXPARAM_GET_1(T1)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -945,8 +976,8 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(getParam_0(MfxString),
-					getParam_1(T1), getParam_2(T2)
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
+					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -986,9 +1017,9 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(getParam_0(MfxString),
-					getParam_1(T1), getParam_2(T2),
-					getParam_3(T3)
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
+					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
+					MFXPARAM_GET_3(T3)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -1026,9 +1057,9 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(getParam_0(MfxString),
-					getParam_1(T1), getParam_2(T2),
-					getParam_3(T3), getParam_4(T4)
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
+					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
+					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -1069,10 +1100,10 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(getParam_0(MfxString),
-					getParam_1(T1), getParam_2(T2),
-					getParam_3(T3), getParam_4(T4),
-					ParamVal_5(T5)
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
+					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
+					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4),
+					MFXPARAM_GET_5(T5)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -1112,10 +1143,10 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(getParam_0(MfxString),
-					getParam_1(T1), getParam_2(T2),
-					getParam_3(T3), getParam_4(T4),
-					ParamVal_5(T5), ParamVal_6(T6)
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
+					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
+					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4),
+					MFXPARAM_GET_5(T5), MFXPARAM_GET_6(T6)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -1157,11 +1188,11 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(getParam_0(MfxString),
-					getParam_1(T1), getParam_2(T2),
-					getParam_3(T3), getParam_4(T4),
-					ParamVal_5(T5), ParamVal_6(T6),
-					ParamVal_7(T7)
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
+					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
+					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4),
+					MFXPARAM_GET_5(T5), MFXPARAM_GET_6(T6),
+					MFXPARAM_GET_7(T7)
 				);
 			}
 			return MfxReturn_Seccess;
@@ -1203,11 +1234,11 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)param.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(getParam_0(MfxString),
-					getParam_1(T1), getParam_2(T2),
-					getParam_3(T3), getParam_4(T4),
-					ParamVal_5(T5), ParamVal_6(T6),
-					ParamVal_7(T7), ParamVal_8(T8)
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
+					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
+					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4),
+					MFXPARAM_GET_5(T5), MFXPARAM_GET_6(T6),
+					MFXPARAM_GET_7(T7), MFXPARAM_GET_8(T8)
 				);
 			}
 			return MfxReturn_Seccess;

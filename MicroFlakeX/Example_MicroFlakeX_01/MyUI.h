@@ -7,11 +7,15 @@ using namespace MicroFlakeX;
 class MyUI :
     public MfxUI
 {
-    MFXOBJ_ENABLE_REFLECTION;
+    //MFXOBJ_ENABLE_REFLECTION;
+
 public:
     MyUI();
+
     MfxReturn MFX_CALLBACK(Test__00);
     MfxReturn MFX_CALLBACK(Test__01);
+
+    MfxReturn MFX_CALLBACK(Test__02);
 
     MfxFlake myFlake;
 };
