@@ -48,7 +48,7 @@ void MicroFlakeX::MfxSignal::RemoveReceiver(MfxBase* recvObject)
 	}
 }
 
-void MicroFlakeX::MfxSignal::RemoveReceiver(MfxBase* recvObject, MfxString recvFunc)
+void MicroFlakeX::MfxSignal::RemoveReceiver(MfxBase* recvObject, MfxStringW recvFunc)
 {
 	for (auto iter = myReceiver.begin(); iter != myReceiver.end(); iter++)
 	{
@@ -60,12 +60,12 @@ void MicroFlakeX::MfxSignal::RemoveReceiver(MfxBase* recvObject, MfxString recvF
 	}
 }
 
-void MicroFlakeX::MfxSignal::PushBackReceiver(MfxBase* recvObject, MfxString recvFunc)
+void MicroFlakeX::MfxSignal::PushBackReceiver(MfxBase* recvObject, MfxStringW recvFunc)
 {
 	myReceiver.push_back(MfxReceiver_Info(recvObject, recvFunc));
 }
 
-void MicroFlakeX::MfxSignal::PushFrontReceiver(MfxBase* recvObject, MfxString recvFunc)
+void MicroFlakeX::MfxSignal::PushFrontReceiver(MfxBase* recvObject, MfxStringW recvFunc)
 {
 	myReceiver.push_front(MfxReceiver_Info(recvObject, recvFunc));
 }

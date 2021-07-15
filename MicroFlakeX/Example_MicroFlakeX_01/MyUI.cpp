@@ -12,7 +12,6 @@ MyUI::MyUI()
 	myFlake.SetRect(&tRect); 
 	myFlake.OpenLButtonMove();
 
-
 	UI_ADDRECV_TIMER(100, 1000, MyUI, Test__00);
 	UI_ADDRECV_FLAKEEVENT(&myFlake, FLAKE_EVENT_LButtonClick, MyUI, Test__01);
 }
@@ -23,9 +22,7 @@ MfxReturn MyUI::MFX_CALLBACK(Test__00)
 
 	MessageBox(myWnd, MfxText("Win32Timer"), MfxText("Test__000"), 0);
 
-	MfxParam tParam = MFX_MAKE_PARAM(NULL, 100, 90, MfxPoint(100, 100), 70, 60);
-
-	Test__02(tParam);
+	Test__02(MFX_MAKE_PARAM(100, 90, MfxPoint(100, 100), 70, 60));
 
 	return MfxReturn_Seccess;
 }
@@ -39,10 +36,10 @@ MfxReturn MyUI::MFX_CALLBACK(Test__01)
 
 MfxReturn MyUI::MFX_CALLBACK(Test__02)
 {
-	std::cout << getParam_0(int) << std::endl;
-	std::cout << getParam_1(int) << std::endl;
+	std::cout << MFXPARAM_GET_0(int) << std::endl;
+	std::cout << MFXPARAM_GET_1(int) << std::endl;
 
-	MfxPoint a = getParam_2(MfxPoint);
+	MfxPoint a = MFXPARAM_GET_2(MfxPoint);
 
 	std::cout << a.myX << a.myY << std::endl;
 

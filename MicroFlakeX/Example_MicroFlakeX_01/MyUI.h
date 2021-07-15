@@ -14,9 +14,9 @@ public:
 
     MfxReturn MFX_CALLBACK(Test__00);
     MfxReturn MFX_CALLBACK(Test__01);
-
     MfxReturn MFX_CALLBACK(Test__02);
 
+protected:
     MfxFlake myFlake;
 };
 

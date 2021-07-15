@@ -28,19 +28,19 @@ int ccccc()
 
 int ccout(int a)
 {
-    cout << "ccout" << a << endl;
+    std::cout << "ccout" << a << endl;
     return a;
 }
 
 int cccout(int a, int b)
 {
-    cout << "ccout" << a << " " << b << endl;
+    std::cout << "ccout" << a << " " << b << endl;
     return a;
 }
 
 int ccccout(int a, int b, int c)
 {
-    cout << "cccout" << a << " " << b << " " << c << endl;
+    std::cout << "cccout" << a << " " << b << " " << c << endl;
     return a;
 }
 
@@ -112,7 +112,7 @@ void BINDFOR(T set, int num, int arg)
 int test2()
 {
     using namespace std::placeholders;
-    cout << Mfx_GetFuncArgc(ccout) << endl;
+    std::cout << Mfx_GetFuncArgc(ccout) << endl;
 
     //for (int i = 0; i < Mfx_GetFuncArgc(ccout); i++)
     {
@@ -122,17 +122,17 @@ int test2()
     //BINDFOR(ccout, 1, 200);
 
     BIND myBind(ccout, 100);
-    cout << myBind() << endl;
+    std::cout << myBind() << endl;
 
     BIND myBind2(cccout, 100);
     BIND myBind2_(&myBind2, 200);
-    cout << myBind2_() << endl;
+    std::cout << myBind2_() << endl;
 
 
     BIND myBind3(ccccout, 100);
     BIND myBind3_(&myBind3, 200);
     BIND myBind3__(&myBind3_, 300);
-    cout << myBind3__() << endl;
+    std::cout << myBind3__() << endl;
 
     return 66;
 
@@ -155,16 +155,19 @@ int main()
     int begin, out, fo = 0;
 
 
+    mySignal.PostSignal(10);
+    myClient.PostClient(L"test001", 10);
+
     while (fo < 4)
     {
-        cout << "————————————————————\ntimes = " << times << endl;
+        std::cout << "————————————————————\ntimes = " << times << std::endl;
         begin = clock();
         for (int i = 0; i < times; i++)
         {
             myTest.test001(10);
         }
         out = clock() - begin;
-        cout << "Direct:" << out << endl;
+        std::cout << "Direct:" << out << std::endl;
 
         begin = clock();
         for (int i = 0; i < times; i++)
@@ -172,7 +175,7 @@ int main()
             mySignal.SendSignal(10);
         }
         out = clock() - begin;
-        cout << "MfxSignal:" << out << endl;
+        std::cout << "MfxSignal:" << out << std::endl;
 
         begin = clock();
         for (int i = 0; i < times; i++)
@@ -180,13 +183,13 @@ int main()
             myClient.SendClient(L"test001", 10);
         }
         out = clock() - begin;
-        cout << "MfxClient:" << out << endl;
+        std::cout << "MfxClient:" << out << std::endl;
 
         fo++;
         times *= 2;
     }
     int tta;
-    cin >> tta;
+    std::cin >> tta;
     return clock() - a;
 }
 

@@ -18,7 +18,7 @@ IWICImagingFactory*& MfxGraph::myIWICImagingFactory = gIWICImagingFactory;
 
 std::vector<MfxSignal*> MicroFlakeX::MfxSignal::MfxSignal_Vector;
 std::vector<MfxClient*> MicroFlakeX::MfxClient::MfxClient_Vector;
-std::unordered_map<MfxString, __MicroFlakeX::MfxFactoryHand*> __MicroFlakeX::MfxFactoryHand::MfxFactoryHand_Map;
+std::unordered_map<MfxStringW, __MicroFlakeX::MfxFactoryHand*> __MicroFlakeX::MfxFactoryHand::MfxFactoryHand_Map;
 
 
 BOOL APIENTRY DllMain(HMODULE hModule,
@@ -33,21 +33,21 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 
         hr = CoInitialize(NULL);
         if (FAILED(hr))
-            throw MfxText("CoInitialize Failed");
+            throw MfxTextW("CoInitialize Failed");
 
         hr = ::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &gID2DFactory);
         if (FAILED(hr))
-            throw MfxText("D2D1CreateFactory Failed");
+            throw MfxTextW("D2D1CreateFactory Failed");
 
         hr = ::DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(gIDWriteFactory),
             reinterpret_cast<IUnknown**>(&gIDWriteFactory));
         if (FAILED(hr))
-            throw MfxText("IDWriteFactory Failed");
+            throw MfxTextW("IDWriteFactory Failed");
 
         hr = ::CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER,
             IID_PPV_ARGS(&gIWICImagingFactory));
         if (FAILED(hr))
-            throw MfxText("IWICImagingFactory Failed");
+            throw MfxTextW("IWICImagingFactory Failed");
 
         hr = MfxGraph::myIDWriteFactory->CreateTextFormat(
             L"Helvetica",                  // Font family name 微软雅黑 Arial Garamond Helvetica 等任意字体名
@@ -60,7 +60,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
             &(MfxWords::gDefTextFormat)    // Pointer to recieve the created object
         );
         if (FAILED(hr))
-            throw MfxText("gDefTextFormat Failed");
+            throw MfxTextW("gDefTextFormat Failed");
 
 
         WNDCLASSEX tempWC{ 0 };
@@ -78,12 +78,12 @@ BOOL APIENTRY DllMain(HMODULE hModule,
         tempWC.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
 
         tempWC.lpszMenuName = 0;
-        tempWC.lpszClassName = MfxText("MfxNormalUI");
+        tempWC.lpszClassName = MfxTextW("MfxNormalUI");
         tempWC.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
         if (!RegisterClassEx(&tempWC))
         {
-            MessageBox(NULL, MfxText("MfxNormalUI Registration Failed!"), MfxText("Error!"), MB_ICONEXCLAMATION | MB_OK);
+            MessageBox(NULL, MfxTextW("MfxNormalUI Registration Failed!"), MfxTextW("Error!"), MB_ICONEXCLAMATION | MB_OK);
         }
 
     }break;

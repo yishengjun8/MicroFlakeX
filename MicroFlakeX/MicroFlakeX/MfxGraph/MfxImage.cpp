@@ -30,7 +30,7 @@ MicroFlakeX::MfxImage::MfxImage()
 	myBitmapUpdateFlage = false;
 }
 
-MicroFlakeX::MfxImage::MfxImage(const MfxString* path, const MfxRect* set)
+MicroFlakeX::MfxImage::MfxImage(const MfxStringW* path, const MfxRect* set)
 {
 	myCanvas = nullptr;
 	myRenderTarget = nullptr;
@@ -81,7 +81,7 @@ MfxReturn MicroFlakeX::MfxImage::Clone(MfxImage** ret) const
 {
 	*ret = new MfxImage(myIWICBitmap, &myRect);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -105,21 +105,21 @@ MfxReturn MicroFlakeX::MfxImage::Paint()
 
 	myMemberLock.UnLock(&myRenderTarget, &myRect, &myID2D1Bitmap);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
-MfxReturn MicroFlakeX::MfxImage::FromFile(MfxString* path, MfxSize* set)
+MfxReturn MicroFlakeX::MfxImage::FromFile(MfxStringW* path, MfxSize* set)
 {
 	ResetIWICBitmapFromFile(path, set);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxImage::FromColor(MfxColor* color, MfxSize* set)
 {
 	ResetIWICBitmapFromColor(color, set);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -131,7 +131,7 @@ MfxReturn MicroFlakeX::MfxImage::FromColor(MfxColor* color, MfxSize* set)
 MfxReturn MicroFlakeX::MfxImage::GetCanvas(MfxCanvas** ret)const
 {
 	*ret = myCanvas;
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxImage::GetIWICBitmap(IWICBitmap** ret)
@@ -146,7 +146,7 @@ MfxReturn MicroFlakeX::MfxImage::GetIWICBitmap(IWICBitmap** ret)
 MfxReturn MicroFlakeX::MfxImage::GetID2D1Bitmap(ID2D1Bitmap** ret)
 {
 	*ret = myID2D1Bitmap;
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxImage::GetGdipBitmap(Gdiplus::Bitmap** ret)
@@ -164,13 +164,13 @@ MfxReturn MicroFlakeX::MfxImage::GetHICON(HICON* ret)
 
 	if (MFX_FAILED(GetGdipBitmap(&tBitmap)))
 	{
-		return MfxReturn_Failed;
+		return MFXRET_FAILED;
 	}
 
 	tBitmap->GetHICON(ret);
 	SafeDelete(tBitmap);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxImage::GetHBITMAP(MfxColor* set, HBITMAP* ret)
@@ -179,7 +179,7 @@ MfxReturn MicroFlakeX::MfxImage::GetHBITMAP(MfxColor* set, HBITMAP* ret)
 
 	if (MFX_FAILED(GetGdipBitmap(&tBitmap)))
 	{
-		return MfxReturn_Failed;
+		return MFXRET_FAILED;
 	}
 	
 	Gdiplus::Color tColor;
@@ -188,7 +188,7 @@ MfxReturn MicroFlakeX::MfxImage::GetHBITMAP(MfxColor* set, HBITMAP* ret)
 	tBitmap->GetHBITMAP(tColor, ret);
 	SafeDelete(tBitmap);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -205,7 +205,7 @@ MfxReturn MicroFlakeX::MfxImage::SetCanvas(MfxCanvas* set)
 
 	Update_Canvas();
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxImage::SetIWICBitmap(IWICBitmap* set)
@@ -218,7 +218,7 @@ MfxReturn MicroFlakeX::MfxImage::SetIWICBitmap(IWICBitmap* set)
 
 	myMemberLock.UnLock(&myIWICBitmap, &myBitmapUpdateFlage);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -253,7 +253,7 @@ MfxReturn MicroFlakeX::MfxImage::Update_Canvas()
 
 		myMemberLock.UnLock(&myRenderTarget, &myID2D1Bitmap);
 	}
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 /**************************************************************
@@ -261,7 +261,7 @@ MfxReturn MicroFlakeX::MfxImage::Update_Canvas()
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromFile(const MfxString* path, const  MfxSize* set)
+MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromFile(const MfxStringW* path, const  MfxSize* set)
 {
 	myMemberLock.TryWaitLock(&myIWICBitmap, &myBitmapUpdateFlage);
 
@@ -271,7 +271,7 @@ MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromFile(const MfxString* path, 
 
 	myMemberLock.UnLock(&myIWICBitmap, &myBitmapUpdateFlage);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromColor(const MfxColor* color, const  MfxSize* set)
@@ -284,5 +284,5 @@ MfxReturn MicroFlakeX::MfxImage::ResetIWICBitmapFromColor(const MfxColor* color,
 
 	myMemberLock.UnLock(&myIWICBitmap, &myBitmapUpdateFlage);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }

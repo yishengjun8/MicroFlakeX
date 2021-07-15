@@ -2,7 +2,7 @@
 
 namespace MicroFlakeX
 {
-	class MFX_DLL_EXPORT MfxBase;
+	class MFX_PORT MfxBase;
 	typedef MfxBase* pMfxBase;
 
 #define MFXOBJ_ENABLE_REFLECTION __MFXOBJ_ENABLE_REFLECTION
@@ -32,17 +32,17 @@ namespace MicroFlakeX
 
 	typedef std::uint64_t MfxHash;
 
-#define MFXRET_SECCESS ((MfxReturn)0)
-#define MFXRET_FAILED ((MfxReturn)-1)
-#define MFXRET_NOTFIND ((MfxReturn)1)
-#define MFXRET_UNKNOW ((MfxReturn)2)
-#define MFXRET_WINACCEPT ((MfxReturn)0)
+#define MfxReturn_Seccess ((MfxReturn)0)
+#define MfxReturn_Failed ((MfxReturn)-1)
+#define MfxReturn_NotFind ((MfxReturn)1)
+#define MfxReturn_Unknow ((MfxReturn)2)
+#define MfxReturn_WinAccept ((MfxReturn)0)
 
-#define MFX_SECCESS(MR) (((MfxReturn)(MR)) == MFXRET_SECCESS)
-#define MFX_FAILED(MR) (((MfxReturn)(MR)) == MFXRET_FAILED)
+#define MFX_SECCESS(MR) (((MfxReturn)(MR)) == MfxReturn_Seccess)
+#define MFX_FAILED(MR) (((MfxReturn)(MR)) == MfxReturn_Failed)
 
-#define MFX_NOTFIND(MR) (((MfxReturn)(MR)) == MFXRET_NOTFIND)
-#define MFX_UNKNOW(MR) (((MfxReturn)(MR)) == MFXRET_UNKNOW)
+#define MFX_NOTFIND(MR) (((MfxReturn)(MR)) == MfxReturn_NotFind)
+#define MFX_UNKNOW(MR) (((MfxReturn)(MR)) == MfxReturn_Unknow)
 
 #define MFX_IF_SECCESS(MR) if(MFX_SECCESS(MR))
 #define MFX_IF_FAILED(MR) if(MFX_FAILED(MR))
@@ -50,11 +50,22 @@ namespace MicroFlakeX
 #define MFX_IF_UNKNOW(MR) if(MFX_UNKNOW(MR))
 
 
-#define MfxStringA std::string
-#define MfxStringW std::wstring
+#define MfxString __MfxString
+#define MfxText(str) __MfxText(str)
+#define MfxStrHash(str) __MfxStrHash(str)
 
-#define MfxTextA(STR) STR
-#define MfxTextW(STR) L##STR
+#ifdef UNICODE
+#define __MfxCout std::wcout
+#define __MfxText(str) L##str
+#define __MfxString std::wstring
+#define __MfxStrHash(str) MfxGetHash_StrW(str)
+
+#elif 
+#define __MfxCout std::cout
+#define __MfxText(str) str
+#define __MfxString std::string;
+#define __MfxStrHash(str) MfxGetHash_StrA(MfxText(str))
+#endif
 
 	template<class lhsT, class rhsT = lhsT>
 	bool pFloorCompare(lhsT* lhs, rhsT* rhs)
@@ -74,8 +85,9 @@ namespace MicroFlakeX
 	template<class lhsT, class rhsT>\
 	friend bool FloorCompare(lhsT& lhs, rhsT& rhs);
 
-	constexpr MfxHash MFX_STRING_HASH_A(char const* str, MfxHash hash = 0)
+	constexpr MfxHash MfxGetHash_StrA(char const* str)
 	{
+		MfxHash hash = 0;
 		while (MfxHash ch = *str++)
 		{
 			hash = hash * 131 + ch;   // may be: 31、131、1313、13131、131313 ...
@@ -83,8 +95,9 @@ namespace MicroFlakeX
 		return hash;
 	}
 
-	constexpr MfxHash MFX_STRING_HASH_W(wchar_t const* str, MfxHash hash = 0)
+	constexpr MfxHash MfxGetHash_StrW(wchar_t const* str)
 	{
+		MfxHash hash = 0;
 		while (MfxHash ch = *str++)
 		{
 			hash = hash * 131 + ch;   // may be: 31、131、1313、13131、131313 ...
@@ -153,9 +166,9 @@ namespace MicroFlakeX
 ****************************************************************/
 namespace MicroFlakeX
 {
-	class MFX_DLL_EXPORT MfxParam;
-	class MFX_DLL_EXPORT MfxMemberLock;
-	class MFX_DLL_EXPORT MfxCriticalLock;
+	class MFX_PORT MfxParam;
+	class MFX_PORT MfxMemberLock;
+	class MFX_PORT MfxCriticalLock;
 
 	typedef MfxMemberLock* pMfxMemberLock;
 
@@ -192,8 +205,6 @@ namespace MicroFlakeX
 	protected:
 		PVOID* myPVOID;
 		MfxMessage* myMessage;
-		MfxStringA* myStringA;
-		MfxStringW* myStringW;
 
 		INT32* myUseCount;
 		MfxReturn* myReturn;
@@ -203,12 +214,7 @@ namespace MicroFlakeX
 		MfxParam();
 		MfxParam(PVOID pvoid);
 		MfxParam(MfxMessage msg);
-		MfxParam(MfxStringA str);
-		MfxParam(MfxStringW str);
 		MfxParam(const MfxParam& rhs);
-	protected:
-		void Release();
-	public:
 		~MfxParam();
 
 		std::any& operator [] (const int i);
@@ -217,25 +223,14 @@ namespace MicroFlakeX
 		bool IsSafe(const int i);
 
 		MfxNum GetParamSize();
-	
-
-		bool IsPVOID();
-		bool IsRETURN();
-		bool IsMESSAGE();
-		bool IsSTRINGA();
-		bool IsSTRINGW();
 
 		PVOID GetPVOID();
 		MfxReturn GetRETURN();
 		MfxMessage GetMESSAGE();
-		MfxStringA GetSTRINGA();
-		MfxStringW GetSTRINGW();
 
 		MfxParam& SetPVOID(PVOID set);
 		MfxParam& SetRETURN(MfxReturn set);
 		MfxParam& SetMESSAGE(MfxMessage set);
-		MfxParam& SetSTRINGA(MfxStringA set);
-		MfxParam& SetSTRINGW(MfxStringW set);
 
 		template<class T>
 		void push_back(T&& val)
@@ -385,8 +380,8 @@ namespace MicroFlakeX
 		virtual bool operator==(MfxBase& rhs);
 
 	public:
-		virtual MfxReturn Reflection(MfxStringW recvFunc...);
-		virtual MfxReturn GetObjectName(MfxStringW* ret);
+		virtual MfxReturn Reflection(MfxString recvFunc...);
+		virtual MfxReturn GetObjectName(MfxString* ret);
 	protected:
 		MfxMemberLock myMemberLock;
 	private:
@@ -416,13 +411,13 @@ namespace MicroFlakeX
 	* 参数二：回调对象方法名字
 	* 参数三：传递给回调方法的MfxParam。
 	****************************************************************/
-	MFX_DLL_EXPORT MfxReturn MfxBeginNewThread(MfxBase* object, MfxStringW recvFunc, MfxParam param);
+	MFX_PORT MfxReturn MfxBeginNewThread(MfxBase* object, MfxString recvFunc, MfxParam param);
 
 	/***************************************************************
 	* 参数一：回调函数指针
 	* 参数二：传递给回调方法的MfxParam
 	****************************************************************/
-	MFX_DLL_EXPORT MfxReturn MfxBeginNewThread_Widely(pThreadFunc pThreadFunc, MfxParam param);
+	MFX_PORT MfxReturn MfxBeginNewThread_Widely(pThreadFunc pThreadFunc, MfxParam param);
 
 	/***************************************************************
 	* 参数一：返回一个计时器ID
@@ -433,7 +428,7 @@ namespace MicroFlakeX
 	* 参数六：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
 	* 参数七：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
 	****************************************************************/
-	MFX_DLL_EXPORT MfxReturn MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxStringW recvFunc, MfxParam param, MfxTime delay = 0, LONGLONG begin = -10000000, MfxTime randTime = 0);
+	MFX_PORT MfxReturn MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxString recvFunc, MfxParam param, MfxTime delay = 0, LONGLONG begin = -10000000, MfxTime randTime = 0);
 
 	/***************************************************************
 	* 参数一：返回一个计时器ID
@@ -443,19 +438,19 @@ namespace MicroFlakeX
 	* 参数五：计时器多久之后开始，单位为100纳秒，-1秒为立即开始。-1（秒） = -10000000（100纳秒）
 	* 参数六：计时器每次开始的时候是否有微小的随机性，单位为ms。随机性指，在定时器每次调用的时候，随机提前或者延后几毫秒。
 	****************************************************************/
-	MFX_DLL_EXPORT MfxReturn MfxBeginNewTimer_Widely(PTP_TIMER& pTimer, pThreadFunc pThreadFunc, MfxParam param, MfxTime delay = 0, LONGLONG begin = -10000000, MfxTime randTime = 0);
+	MFX_PORT MfxReturn MfxBeginNewTimer_Widely(PTP_TIMER& pTimer, pThreadFunc pThreadFunc, MfxParam param, MfxTime delay = 0, LONGLONG begin = -10000000, MfxTime randTime = 0);
 
 	/***************************************************************
 	* 参数一：计时器ID，根据id删除对应的计时器
 	****************************************************************/
-	MFX_DLL_EXPORT MfxReturn MfxCloseTimer(PTP_TIMER& pTimer);
+	MFX_PORT MfxReturn MfxCloseTimer(PTP_TIMER& pTimer);
 
 	/***************************************************************
 	*	MicroFlakeX 工厂 - 通过字符串创建对象
 	*	1、该子类必须声明了 MFXOBJ_ENABLE_REFLECTION 宏
 	*	2、该子类必须实现了 MFXOBJ_REFLECTION_BEGININIT(OBJ) 和 MFXOBJ_REFLECTION_ENDINIT(OBJ, FATHER)辅助宏
 	****************************************************************/
-	MFX_DLL_EXPORT MfxReturn MfxFactory(MfxStringW object, MfxBase** ret);
+	MFX_PORT MfxReturn MfxFactory(MfxString object, MfxBase** ret);
 }
 
 
@@ -466,8 +461,8 @@ namespace MicroFlakeX
 ****************************************************************/
 namespace MicroFlakeX
 {
-	class MFX_DLL_EXPORT MfxSignal;
-	class MFX_DLL_EXPORT MfxClient;
+	class MFX_PORT MfxSignal;
+	class MFX_PORT MfxClient;
 
 	/***************************************************************
 	*	MicroFlakeX信号槽
@@ -480,12 +475,12 @@ namespace MicroFlakeX
 	private:
 		struct MfxReceiver_Info
 		{
-			MfxReceiver_Info(MfxBase* recvObject, MfxStringW recvFunc)
+			MfxReceiver_Info(MfxBase* recvObject, MfxString recvFunc)
 			{
 				this->recvFunc = recvFunc;
 				this->recvObject = recvObject;
 			}
-			MfxStringW recvFunc;
+			MfxString recvFunc;
 			MfxBase* recvObject;
 		};
 
@@ -496,9 +491,9 @@ namespace MicroFlakeX
 		virtual ~MfxSignal();
 
 		void RemoveReceiver(MfxBase* recvObject);
-		void RemoveReceiver(MfxBase* recvObject, MfxStringW recvFunc);
-		void PushBackReceiver(MfxBase* recvObject, MfxStringW recvFunc);
-		void PushFrontReceiver(MfxBase* recvObject, MfxStringW recvFunc);
+		void RemoveReceiver(MfxBase* recvObject, MfxString recvFunc);
+		void PushBackReceiver(MfxBase* recvObject, MfxString recvFunc);
+		void PushFrontReceiver(MfxBase* recvObject, MfxString recvFunc);
 
 	protected:
 		std::deque<MfxReceiver_Info> myReceiver;
@@ -515,25 +510,10 @@ namespace MicroFlakeX
 			}
 		}
 
-		template<typename ... Args>
-		void SendSignal(Args&&... arg)
-		{
-			for (auto& iter : myReceiver)
-			{
-				iter.recvObject->Reflection(iter.recvFunc, std::forward<Args>(arg)...);
-			}
-		}
-
 		void PostSignal()
 		{
 			MfxParam tParam(this);
 			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_0), tParam);
-		}
-
-		template<typename ... Args>
-		void PostSignal(Args&&... arg)
-		{
-			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<Args...>), MFX_MAKE_PARAM(std::forward<Args>(arg)...).SetPVOID(this));
 		}
 
 	private:
@@ -545,10 +525,38 @@ namespace MicroFlakeX
 				iter.recvObject->Reflection(iter.recvFunc);
 			}
 
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
 
-		/*********************************************************/
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<typename ... Args>
+		void SendSignal(Args&&... arg)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter.recvObject->Reflection(iter.recvFunc, std::forward<Args>(arg)...);
+			}
+		}
+
+
+	public:
+		template<typename ... Args>
+		void PostSignal(Args&&... arg)
+		{
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<Args...>), MFX_MAKE_PARAM(std::forward<Args>(arg)...).SetPVOID(this));
+		}
+
+	public:
+		template<typename T1>
+		void PostSignal(T1&& A1)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(std::forward<T1>(A1));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1>), tParam);
+		}
 	private:
 		template<typename T1>
 		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
@@ -560,9 +568,33 @@ namespace MicroFlakeX
 					MFXPARAM_GET_0(T1)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
-		/*********************************************************/
+
+
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2>
+		void SendSignal(T1&& A1, T2&& A2)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter.recvObject->Reflection(iter.recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2)
+				);
+			}
+		}
+
+		template<class T1, class T2>
+		void PostSignal(T1&& A1, T2&& A2)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2>), tParam);
+		}
+
 	private:
 		template<class T1, class T2>
 		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
@@ -574,10 +606,34 @@ namespace MicroFlakeX
 					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
 
-		/*********************************************************/
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2, class T3>
+		void SendSignal(T1&& A1, T2&& A2, T3&& A3)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter.recvObject->Reflection(iter.recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3)
+				);
+			}
+		}
+
+		template<class T1, class T2, class T3>
+		void PostSignal(T1&& A1, T2&& A2, T3&& A3)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3>), tParam);
+		}
+
 	private:
 		template<class T1, class T2, class T3>
 		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
@@ -590,10 +646,34 @@ namespace MicroFlakeX
 					MFXPARAM_GET_2(T3)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
 
-		/*********************************************************/
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2, class T3, class T4>
+		void SendSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter.recvObject->Reflection(iter.recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3), std::forward<T4>(A4)
+				);
+			}
+		}
+
+		template<class T1, class T2, class T3, class T4>
+		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4>), tParam);
+		}
+
 	private:
 		template<class T1, class T2, class T3, class T4>
 		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
@@ -606,11 +686,37 @@ namespace MicroFlakeX
 					MFXPARAM_GET_2(T3), MFXPARAM_GET_3(T4)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
 
 
-		/*********************************************************/
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2, class T3, class T4, class T5>
+		void SendSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter.recvObject->Reflection(iter.recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3), std::forward<T4>(A4),
+					std::forward<T5>(A5)
+				);
+			}
+		}
+
+		template<class T1, class T2, class T3, class T4, class T5>
+		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			tParam.push_back(std::forward<T5>(A5));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4, T5>), tParam);
+		}
+
 	private:
 		template<class T1, class T2, class T3, class T4, class T5>
 		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
@@ -624,10 +730,36 @@ namespace MicroFlakeX
 					MFXPARAM_GET_4(T5)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
 
-		/*********************************************************/
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2, class T3, class T4, class T5, class T6>
+		void SendSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter.recvObject->Reflection(iter.recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3), std::forward<T4>(A4),
+					std::forward<T5>(A5), std::forward<T6>(A6)
+				);
+			}
+		}
+
+		template<class T1, class T2, class T3, class T4, class T5, class T6>
+		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4, T5, T6>), tParam);
+		}
+
 	private:
 		template<class T1, class T2, class T3, class T4, class T5, class T6>
 		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
@@ -641,10 +773,38 @@ namespace MicroFlakeX
 					MFXPARAM_GET_4(T5), MFXPARAM_GET_5(T6)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
 
-		/*********************************************************/
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
+		void SendSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter.recvObject->Reflection(iter.recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3), std::forward<T4>(A4),
+					std::forward<T5>(A5), std::forward<T6>(A6),
+					std::forward<T7>(A7)
+				);
+			}
+		}
+
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
+		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
+			tParam.push_back(std::forward<T7>(A7)); 
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4, T5, T6, T7>), tParam);
+		}
+
 	private:
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
 		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
@@ -659,10 +819,38 @@ namespace MicroFlakeX
 					MFXPARAM_GET_6(T7)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
 
-		/*********************************************************/
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
+		void SendSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7, T8&& A8)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter.recvObject->Reflection(iter.recvFunc, 
+					std::forward<T1>(A1), std::forward<T2>(A2), 
+					std::forward<T3>(A3), std::forward<T4>(A4),
+					std::forward<T5>(A5), std::forward<T6>(A6),
+					std::forward<T7>(A7), std::forward<T8>(A8)
+				);
+			}
+		}
+
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
+		void PostSignal(T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7, T8&& A8)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
+			tParam.push_back(std::forward<T7>(A7)); tParam.push_back(std::forward<T8>(A8));
+			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<T1, T2, T3, T4, T5, T6, T7, T8>), tParam);
+		}
+
 	private:
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
 		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
@@ -677,7 +865,7 @@ namespace MicroFlakeX
 					MFXPARAM_GET_6(T7), MFXPARAM_GET_7(T8)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
 
 
@@ -706,7 +894,7 @@ namespace MicroFlakeX
 		*  根据参数长度不同，重载信号发送函数
 		****************************************************************/
 	public:
-		void SendClient(MfxStringW recvFunc)
+		void SendClient(MfxString recvFunc)
 		{
 			for (auto& iter : myReceiver)
 			{
@@ -714,24 +902,11 @@ namespace MicroFlakeX
 			}
 		}
 
-		template<typename ... Args>
-		void SendClient(MfxStringW recvFunc, Args&&... arg)
+		void PostClient(MfxString recvFunc)
 		{
-			for (auto& iter : myReceiver)
-			{
-				iter->Reflection(recvFunc, std::forward<Args>(arg)...);
-			}
-		}
-
-		void PostClient(MfxStringW recvFunc)
-		{
-			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_0), MFX_MAKE_PARAM(recvFunc).SetPVOID(this));
-		}
-
-		template<typename ... Args>
-		void PostClient(MfxStringW recvFunc, Args&&... arg)
-		{
-			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<Args...>), MFX_MAKE_PARAM(recvFunc, std::forward<Args>(arg)...).SetPVOID(this));
+			MfxParam tParam(this);
+			tParam.push_back(recvFunc);
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_0), tParam);
 		}
 
 	private:
@@ -740,14 +915,37 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW)
+				iter->Reflection(MFXPARAM_GET_0(MfxString)
 				);
 			}
 
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
 
-		/*********************************************************/
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1>
+		void SendClient(MfxString recvFunc, T1&& A1)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->Reflection(recvFunc,
+					std::forward<T1>(A1)
+				);
+			}
+		}
+
+		template<class T1>
+		void PostClient(MfxString recvFunc, T1&& A1)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(recvFunc);
+			tParam.push_back(std::forward<T1>(A1));
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1>), tParam);
+		}
+
 	private:
 		template<class T1>
 		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
@@ -755,15 +953,38 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
 					MFXPARAM_GET_1(T1)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
 
 
-		/*********************************************************/
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2>
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->Reflection(recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2)
+				);
+			}
+		}
+
+		template<class T1, class T2>
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(recvFunc);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2>), tParam);
+		}
+
 	private:
 		template<class T1, class T2>
 		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
@@ -771,15 +992,40 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
 					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
 
 
-		/*********************************************************/
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2, class T3>
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->Reflection(recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3)
+				);
+			}
+		}
+
+		template<class T1, class T2, class T3>
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(recvFunc);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3));
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2, T3>), tParam);
+		}
+
 	private:
 		template<class T1, class T2, class T3>
 		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
@@ -787,15 +1033,39 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
 					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
 					MFXPARAM_GET_3(T3)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
+		}
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2, class T3, class T4>
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->Reflection(recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3), std::forward<T4>(A4)
+				);
+			}
 		}
 
-		/*********************************************************/
+		template<class T1, class T2, class T3, class T4>
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(recvFunc);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2, T3, T4>), tParam);
+		}
+
 	private:
 		template<class T1, class T2, class T3, class T4>
 		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
@@ -803,15 +1073,42 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
 					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
 					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
 
-		/*********************************************************/
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2, class T3, class T4, class T5>
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->Reflection(recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3), std::forward<T4>(A4),
+					std::forward<T5>(A5)
+				);
+			}
+		}
+
+		template<class T1, class T2, class T3, class T4, class T5>
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(recvFunc);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			tParam.push_back(std::forward<T5>(A5));
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2, T3, T4, T5>), tParam);
+		}
+
 	private:
 		template<class T1, class T2, class T3, class T4, class T5>
 		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
@@ -819,16 +1116,42 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
 					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
 					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4),
 					MFXPARAM_GET_5(T5)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
+		}
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2, class T3, class T4, class T5, class T6>
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->Reflection(recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3), std::forward<T4>(A4),
+					std::forward<T5>(A5), std::forward<T6>(A6)
+				);
+			}
 		}
 
-		/*********************************************************/
+		template<class T1, class T2, class T3, class T4, class T5, class T6>
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(recvFunc);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2, T3, T4, T5, T6>), tParam);
+		}
+
 	private:
 		template<class T1, class T2, class T3, class T4, class T5, class T6>
 		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
@@ -836,16 +1159,44 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
 					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
 					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4),
 					MFXPARAM_GET_5(T5), MFXPARAM_GET_6(T6)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
+		}
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->Reflection(recvFunc,
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3), std::forward<T4>(A4),
+					std::forward<T5>(A5), std::forward<T6>(A6),
+					std::forward<T7>(A7)
+				);
+			}
 		}
 
-		/*********************************************************/
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(recvFunc);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
+			tParam.push_back(std::forward<T7>(A7));
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2, T3, T4, T5, T6, T7>), tParam);
+		}
+
 	private:
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
 		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
@@ -853,17 +1204,45 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
 					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
 					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4),
 					MFXPARAM_GET_5(T5), MFXPARAM_GET_6(T6),
 					MFXPARAM_GET_7(T7)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
+		}
+		/***************************************************************
+		*
+		****************************************************************/
+	public:
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
+		void SendClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7, T8&& A8)
+		{
+			for (auto& iter : myReceiver)
+			{
+				iter->Reflection(recvFunc, 
+					std::forward<T1>(A1), std::forward<T2>(A2),
+					std::forward<T3>(A3), std::forward<T4>(A4),
+					std::forward<T5>(A5), std::forward<T6>(A6),
+					std::forward<T7>(A7), std::forward<T8>(A8)
+				);
+			}
 		}
 
-		/*********************************************************/
+		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
+		void PostClient(MfxString recvFunc, T1&& A1, T2&& A2, T3&& A3, T4&& A4, T5&& A5, T6&& A6, T7&& A7, T8&& A8)
+		{
+			MfxParam tParam(this);
+			tParam.push_back(recvFunc);
+			tParam.push_back(std::forward<T1>(A1)); tParam.push_back(std::forward<T2>(A2));
+			tParam.push_back(std::forward<T3>(A3)); tParam.push_back(std::forward<T4>(A4));
+			tParam.push_back(std::forward<T5>(A5)); tParam.push_back(std::forward<T6>(A6));
+			tParam.push_back(std::forward<T7>(A7)); tParam.push_back(std::forward<T8>(A8));
+			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<T1, T2, T3, T4, T5, T6, T7, T8>), tParam);
+		}
+
 	private:
 		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
 		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
@@ -871,14 +1250,14 @@ namespace MicroFlakeX
 			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
+				iter->Reflection(MFXPARAM_GET_0(MfxString),
 					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
 					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4),
 					MFXPARAM_GET_5(T5), MFXPARAM_GET_6(T6),
 					MFXPARAM_GET_7(T7), MFXPARAM_GET_8(T8)
 				);
 			}
-			return MFXRET_SECCESS;
+			return MfxReturn_Seccess;
 		}
 	};
 }
@@ -899,26 +1278,26 @@ namespace __MicroFlakeX
 	****************************************************************/
 	using namespace MicroFlakeX;
 
-	MFX_DLL_EXPORT VOID CALLBACK MfxThreadCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val);
-	MFX_DLL_EXPORT VOID CALLBACK MfxThreadCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val);
+	MFX_PORT VOID CALLBACK MfxThreadCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val);
+	MFX_PORT VOID CALLBACK MfxThreadCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val);
 
-	MFX_DLL_EXPORT VOID CALLBACK MfxTimerCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
-	MFX_DLL_EXPORT VOID CALLBACK MfxTimerCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
+	MFX_PORT VOID CALLBACK MfxTimerCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
+	MFX_PORT VOID CALLBACK MfxTimerCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
 
-	class MFX_DLL_EXPORT MfxFactoryHand
+	class MFX_PORT MfxFactoryHand
 	{
-		friend MfxReturn MicroFlakeX::MfxFactory(MfxStringW object, MfxBase** ret);
+		friend MfxReturn MicroFlakeX::MfxFactory(MfxString object, MfxBase** ret);
 	public:
-		MfxFactoryHand(MfxStringW object);
+		MfxFactoryHand(MfxString object);
 		virtual MfxReturn Creat(MicroFlakeX::MfxBase** ret) = 0;
 		virtual ~MfxFactoryHand();
 	public:
-		MfxReturn RemoveObject(MfxStringW object);
-		MfxReturn RegisterObject(MfxStringW object, MfxFactoryHand* hand);
+		MfxReturn RemoveObject(MfxString object);
+		MfxReturn RegisterObject(MfxString object, MfxFactoryHand* hand);
 
 	private:
-		MfxStringW myObjectName;
-		static std::unordered_map<MfxStringW, MfxFactoryHand*> MfxFactoryHand_Map;
+		MfxString myObjectName;
+		static std::unordered_map<MfxString, MfxFactoryHand*> MfxFactoryHand_Map;
 	};
 
 }
@@ -1181,8 +1560,8 @@ namespace __MicroFlakeX
 {
 #define __MFXOBJ_ENABLE_REFLECTION \
 public:\
-	MfxReturn Reflection(MfxStringW recvFunc...);\
-	MfxReturn GetObjectName(MfxStringW* ret);
+	MfxReturn Reflection(MfxString recvFunc...);\
+	MfxReturn GetObjectName(MfxString* ret);
 
 
 
@@ -1194,17 +1573,17 @@ public:\
 #define __MFXOBJ_REFLECTION_INIT_0(OBJ)\
 using namespace MicroFlakeX;\
 using namespace __MicroFlakeX;\
-MfxReturn OBJ::GetObjectName(MfxStringW* ret)\
+MfxReturn OBJ::GetObjectName(MfxString* ret)\
 {\
-	*ret = MfxTextW(#OBJ);\
-	return MFXRET_SECCESS;\
+	*ret = MfxText(#OBJ);\
+	return MfxReturn_Seccess;\
 }\
 \
 class OBJ##FactoryHand\
 	: public MfxFactoryHand\
 {\
 public:\
-	OBJ##FactoryHand(MfxStringW object)\
+	OBJ##FactoryHand(MfxString object)\
 		: MfxFactoryHand(object)\
 	{
 
@@ -1219,17 +1598,17 @@ public:\
 	MfxReturn Creat(MfxBase** ret)\
 	{\
 		*ret = new OBJ;\
-		return MFXRET_SECCESS;\
+		return MfxReturn_Seccess;\
 	}\
 };\
-OBJ##FactoryHand OBJ##Hand(MfxTextW(#OBJ));\
-MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
+OBJ##FactoryHand OBJ##Hand(MfxText(#OBJ));\
+MfxReturn OBJ::Reflection(MfxString recvFunc...)\
 {\
-	MfxReturn ret = MFXRET_FAILED;\
+	MfxReturn ret = MfxReturn_Failed;\
 	va_list argc;\
 	va_start(argc, recvFunc);\
 	BeginSwitch:\
-	switch (MFX_STRING_HASH_W(recvFunc.c_str()))\
+	switch (MfxStrHash(recvFunc.c_str()))\
 	{
 
 
@@ -1237,15 +1616,15 @@ MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
 	*
 	****************************************************************/
 #define __MFXOBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ) \
-		case MFX_STRING_HASH_W(MfxTextW("Reflection")):\
+		case MfxStrHash(MfxText("Reflection")):\
 		{\
-			recvFunc = va_arg(argc, MfxStringW);\
+			recvFunc = va_arg(argc, MfxString);\
 			argc = va_arg(argc, va_list);\
 			goto BeginSwitch;\
 		}\
 		default:\
 		{\
-			ret = FATHER_OBJ::Reflection(MfxTextW("Reflection"), recvFunc, argc); \
+			ret = FATHER_OBJ::Reflection(MfxText("Reflection"), recvFunc, argc); \
 			va_end(argc);\
 			return ret;\
 		}\
@@ -1255,7 +1634,7 @@ MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
 	template<typename T, typename T_This>
 	inline MicroFlakeX::MfxReturn __T_MFXOBJ_REFLECTIONFUNC_CASE_EX(T_This pThis, T pFunc, va_list argc)
 	{
-		MicroFlakeX::MfxReturn ret = MFXRET_FAILED;
+		MicroFlakeX::MfxReturn ret = MfxReturn_Failed;
 		if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 0)
 		{
 			ret = (pThis->*pFunc)();
@@ -1342,7 +1721,7 @@ MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
 	*	MFXOBJ_REFLECTIONFUNC_CASE_EX注册宏
 	****************************************************************/
 #define __MFXOBJ_REFLECTIONFUNC_CASE_EX(OBJ, AUTO_FUNC)\
-	case MFX_STRING_HASH_W(MfxTextW(#AUTO_FUNC)):\
+	case MfxStrHash(MfxText(#AUTO_FUNC)):\
 	{\
 		ret = __T_MFXOBJ_REFLECTIONFUNC_CASE_EX(this, &OBJ::AUTO_FUNC, argc);\
 		va_end(argc); \

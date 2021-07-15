@@ -62,7 +62,7 @@ MfxReturn MicroFlakeX::MfxGlide::Clone(MfxBase** ret)const
 {
 	*ret = new MfxGlide(this);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxBase& MicroFlakeX::MfxGlide::operator=(MfxBase& rhs)
@@ -140,31 +140,31 @@ MfxReturn MicroFlakeX::MfxGlide::GetFPS(UINT* ret)
 {
 	*ret = myFPS;
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::GetBindObject(MfxBase** object)
 {
 	*object = myBindObject;
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::SetFPS(const UINT set)
 {
 	myFPS = set;
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::BindObject(MfxBase* object)
 {
 	myBindObject = object;
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
-MfxReturn MicroFlakeX::MfxGlide::BindObjectName(MfxString groupName, MfxGulid_WidelyType value)
+MfxReturn MicroFlakeX::MfxGlide::BindObjectName(MfxStringW groupName, MfxGulid_WidelyType value)
 {
 	myWidelyTypeMap[groupName] = value;
 
@@ -174,10 +174,10 @@ MfxReturn MicroFlakeX::MfxGlide::BindObjectName(MfxString groupName, MfxGulid_Wi
 	MfxFactory(myWidelyTypeMap[groupName].setObjectName, &(myWidelyTypeMap[groupName].myGetObject_Set));
 	MfxFactory(myWidelyTypeMap[groupName].getObjectName, &(myWidelyTypeMap[groupName].myGetObject_Begin));
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
-MfxReturn MicroFlakeX::MfxGlide::Add_GetSetFuncName(MfxString groupName, MfxString getFuncName, MfxString setFuncName, pEaseGulid easeGulid)
+MfxReturn MicroFlakeX::MfxGlide::Add_GetSetFuncName(MfxStringW groupName, MfxStringW getFuncName, MfxStringW setFuncName, pEaseGulid easeGulid)
 {
 	auto tFind = myWidelyTypeMap.find(groupName);
 
@@ -186,7 +186,7 @@ MfxReturn MicroFlakeX::MfxGlide::Add_GetSetFuncName(MfxString groupName, MfxStri
 		tFind->second.myGulidTypePair.push_back(MfxGulid_GetSet_FuncName(getFuncName, setFuncName, easeGulid));
 	}
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::Stop()
@@ -197,14 +197,14 @@ MfxReturn MicroFlakeX::MfxGlide::Stop()
 		myPTP_TIMER = 0;
 	}
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::Begin()
 {
 	if (!myBindObject || !myBindObjectType_Keyframe.size())
 	{
-		return MfxReturn_Failed;
+		return MFXRET_FAILED;
 	}
 
 	if (!myBegin)
@@ -217,9 +217,9 @@ MfxReturn MicroFlakeX::MfxGlide::Begin()
 		}
 	}
 
-	MfxBeginNewTimer(myPTP_TIMER, this, MfxText("EachFrame"), MfxParam(), 1000 / myFPS);
+	MfxBeginNewTimer(myPTP_TIMER, this, MfxTextW("EachFrame"), MfxParam(), 1000 / myFPS);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::Pause()
@@ -229,7 +229,7 @@ MfxReturn MicroFlakeX::MfxGlide::Pause()
 		MfxCloseTimer(myPTP_TIMER);
 		myPTP_TIMER = 0;
 	}
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxGlide::Clear()
@@ -241,7 +241,7 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam param)
 {
 	if (myPTP_TIMER == 0)
 	{
-		return MfxReturn_Seccess;
+		return MFXRET_SECCESS;
 	}
 
 	int i = myBindObjectType_Keyframe.size();
@@ -260,7 +260,7 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam param)
 			MfxCloseTimer(myPTP_TIMER);
 			myPTP_TIMER = 0;
 		}
-		return MfxReturn_Seccess;
+		return MFXRET_SECCESS;
 	}
 
 	for (auto& tKeyObjectType : myBindObjectType_Keyframe)
@@ -314,10 +314,10 @@ MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam param)
 			tKeyObjectType.second.pop();
 		}
 	}
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
-MfxReturn MicroFlakeX::MfxGlide::MfxAddKeyframe(MfxString groupName, MfxBase* set, LONGLONG delay)
+MfxReturn MicroFlakeX::MfxGlide::MfxAddKeyframe(MfxStringW groupName, MfxBase* set, LONGLONG delay)
 {
 	Begin:
 	auto tFind = myBindObjectType_Keyframe.find(groupName);
@@ -333,5 +333,5 @@ MfxReturn MicroFlakeX::MfxGlide::MfxAddKeyframe(MfxString groupName, MfxBase* se
 		goto Begin;
 	}
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }

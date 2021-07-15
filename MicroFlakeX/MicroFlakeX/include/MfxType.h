@@ -2,11 +2,11 @@
 
 namespace MicroFlakeX
 {
-    class MFX_PORT MfxRect;
-    class MFX_PORT MfxSize;
-    class MFX_PORT MfxPoint;
+    class MFX_DLL_EXPORT MfxRect;
+    class MFX_DLL_EXPORT MfxSize;
+    class MFX_DLL_EXPORT MfxPoint;
 
-    class MFX_PORT MfxColor;
+    class MFX_DLL_EXPORT MfxColor;
     /***************************************************************
     *	MfxType	³£ÓÃÈÝÆ÷
     ****************************************************************/

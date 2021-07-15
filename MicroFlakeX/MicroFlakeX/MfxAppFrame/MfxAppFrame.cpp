@@ -14,7 +14,7 @@ WPARAM MicroFlakeX::MfxAppRun()
 }
 
 HWND __MicroFlakeX::MfxCreateWindowsEx(MfxUI* ui, MfxUI* father, MfxRect rect,
-	DWORD dwStyle, DWORD dwExStyle, MfxString className, MfxString windowsName)
+	DWORD dwStyle, DWORD dwExStyle, MfxStringW className, MfxStringW windowsName)
 {
 	HWND f_hWnd = NULL;
 

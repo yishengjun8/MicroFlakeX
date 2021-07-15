@@ -4,7 +4,7 @@
 
 namespace MicroFlakeX
 {
-	class MFX_PORT MfxButton;
+	class MFX_DLL_EXPORT MfxButton;
 }
 
 namespace MicroFlakeX

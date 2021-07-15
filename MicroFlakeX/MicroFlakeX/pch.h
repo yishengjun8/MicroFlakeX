@@ -41,7 +41,7 @@
 #pragma comment(lib, "DWrite.lib")
 
 
-#define MFX_PORT __declspec(dllexport)
+#define MFX_DLL_EXPORT __declspec(dllexport)
 
 #include "MfxBase.h"
 #include "MfxType.h"

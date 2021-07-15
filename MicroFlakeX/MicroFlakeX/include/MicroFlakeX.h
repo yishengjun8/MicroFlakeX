@@ -43,7 +43,7 @@
 #pragma comment(lib, "D2D1.lib")
 #pragma comment(lib, "DWrite.lib")
 
-#define MFX_PORT __declspec(dllimport)
+#define MFX_DLL_EXPORT __declspec(dllimport)
 #include "MfxBase.h"
 #include "MfxType.h"
 #include "MfxGraph.h"

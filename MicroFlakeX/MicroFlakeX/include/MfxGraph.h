@@ -2,16 +2,16 @@
 
 namespace MicroFlakeX
 {
-	class MFX_PORT MfxGraph;
+	class MFX_DLL_EXPORT MfxGraph;
 
-	class MFX_PORT MfxCanvas;
+	class MFX_DLL_EXPORT MfxCanvas;
 
-	class MFX_PORT MfxImage;
-	class MFX_PORT MfxWords;
+	class MFX_DLL_EXPORT MfxImage;
+	class MFX_DLL_EXPORT MfxWords;
 
 
-	class MFX_PORT MfxEllipse;
-	class MFX_PORT MfxRectangle;
+	class MFX_DLL_EXPORT MfxEllipse;
+	class MFX_DLL_EXPORT MfxRectangle;
 
 
 	typedef MfxCanvas* pMfxCanvas;
@@ -35,11 +35,11 @@ namespace MicroFlakeX
 		static MfxReturn GetID2D1DCRenderTarget(ID2D1RenderTarget** ret, const  HDC set, const  MfxRect rect);
 		static MfxReturn GetID2D1HwndRenderTarget(ID2D1RenderTarget** ret, const HWND set, const  MfxSize size);
 
-		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, const MfxString path, const MfxSize size);
+		static MfxReturn IWICBitmapFromFile(IWICBitmap** ret, const MfxStringW path, const MfxSize size);
 		static MfxReturn IWICBitmapFromColor(IWICBitmap** ret, const  MfxColor color, const  MfxSize size);
 		static MfxReturn IWICBitmapFromGdipBitmap(IWICBitmap** ret, const Gdiplus::Bitmap* set, const  MfxRect rect);
 
-		static MfxReturn ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, const MfxString path, const  MfxSize size);
+		static MfxReturn ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, const MfxStringW path, const  MfxSize size);
 		static MfxReturn ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID2D1RenderTarget* pRendTar, IWICBitmap* bitmap, const MfxSize size);
 
 		static MfxReturn GdipBitmapFromIWICBitmap(Gdiplus::Bitmap** ret, IWICBitmap* set, const MfxRect rect);
@@ -172,13 +172,13 @@ namespace MicroFlakeX
 		MfxImage(const MfxColor* color, const  MfxSize& set) :MfxImage(color, &set) {};
 		MfxImage(const MfxColor* color, const  MfxSize&& set) :MfxImage(color, &set) {};
 
-		MfxImage(const MfxString* path, const MfxRect* set);
-		MfxImage(const MfxString* path, const MfxRect& set) :MfxImage(path, &set) {};
-		MfxImage(const MfxString* path, const MfxRect&& set) :MfxImage(path, &set) {};
+		MfxImage(const MfxStringW* path, const MfxRect* set);
+		MfxImage(const MfxStringW* path, const MfxRect& set) :MfxImage(path, &set) {};
+		MfxImage(const MfxStringW* path, const MfxRect&& set) :MfxImage(path, &set) {};
 
-		MfxImage(const MfxString* path, const  MfxSize* set) :MfxImage(path, MfxRect(set)) {};
-		MfxImage(const MfxString* path, const  MfxSize& set) :MfxImage(path, &set) {};
-		MfxImage(const MfxString* path, const  MfxSize&& set) :MfxImage(path, &set) {};
+		MfxImage(const MfxStringW* path, const  MfxSize* set) :MfxImage(path, MfxRect(set)) {};
+		MfxImage(const MfxStringW* path, const  MfxSize& set) :MfxImage(path, &set) {};
+		MfxImage(const MfxStringW* path, const  MfxSize&& set) :MfxImage(path, &set) {};
 
 		MfxImage(IWICBitmap* tIWICBitmap, const MfxRect* set);
 		MfxImage(IWICBitmap* tIWICBitmap, const  MfxRect& set) :MfxImage(tIWICBitmap, &set) {};
@@ -206,7 +206,7 @@ namespace MicroFlakeX
 		MfxReturn SetCanvas(MfxCanvas* set);
 		MfxReturn GetCanvas(MfxCanvas** ret)const;
 
-		MfxReturn FromFile(MfxString* path, MfxSize* set);
+		MfxReturn FromFile(MfxStringW* path, MfxSize* set);
 		MfxReturn FromColor(MfxColor* color, MfxSize* set);
 
 	public:
@@ -224,7 +224,7 @@ namespace MicroFlakeX
 	public:
 		MfxReturn Update_Canvas();
 
-		MfxReturn ResetIWICBitmapFromFile(const MfxString* path, const MfxSize* set);
+		MfxReturn ResetIWICBitmapFromFile(const MfxStringW* path, const MfxSize* set);
 		MfxReturn ResetIWICBitmapFromColor(const MfxColor* color, const MfxSize *set);
 	};
 }
@@ -244,29 +244,29 @@ namespace MicroFlakeX
 		MfxWords(const MfxWords& set) :MfxWords(&set) {};
 		MfxWords(const MfxWords&& set) noexcept :MfxWords(&set) {};
 
-		MfxWords(const MfxString str, const MfxRect* set);
-		MfxWords(const MfxString str, const MfxRect& set) :MfxWords(str, &set) {};
-		MfxWords(const MfxString str, const MfxRect&& set) :MfxWords(str, &set) {};
+		MfxWords(const MfxStringW str, const MfxRect* set);
+		MfxWords(const MfxStringW str, const MfxRect& set) :MfxWords(str, &set) {};
+		MfxWords(const MfxStringW str, const MfxRect&& set) :MfxWords(str, &set) {};
 
-		MfxWords(const MfxString str, const MfxSize* set) :MfxWords(str, MfxRect(set)) {};
-		MfxWords(const MfxString str, const MfxSize& set) :MfxWords(str, &set) {};
-		MfxWords(const MfxString str, const MfxSize&& set) :MfxWords(str, &set) {};
+		MfxWords(const MfxStringW str, const MfxSize* set) :MfxWords(str, MfxRect(set)) {};
+		MfxWords(const MfxStringW str, const MfxSize& set) :MfxWords(str, &set) {};
+		MfxWords(const MfxStringW str, const MfxSize&& set) :MfxWords(str, &set) {};
 
-		MfxWords(const MfxString str, const MfxRect* set, const FLOAT size);
-		MfxWords(const MfxString str, const MfxRect& set, const FLOAT size) :MfxWords(str, &set, size) {};
-		MfxWords(const MfxString str, const MfxRect&& set, const FLOAT size) :MfxWords(str, &set, size) {};
+		MfxWords(const MfxStringW str, const MfxRect* set, const FLOAT size);
+		MfxWords(const MfxStringW str, const MfxRect& set, const FLOAT size) :MfxWords(str, &set, size) {};
+		MfxWords(const MfxStringW str, const MfxRect&& set, const FLOAT size) :MfxWords(str, &set, size) {};
 
-		MfxWords(const MfxString str, const MfxSize* set, const FLOAT size) :MfxWords(str, MfxRect(set)) {};
-		MfxWords(const MfxString str, const MfxSize& set, const FLOAT size) :MfxWords(str, &set, size) {};
-		MfxWords(const MfxString str, const MfxSize&& set, const FLOAT size) :MfxWords(str, &set, size) {};
+		MfxWords(const MfxStringW str, const MfxSize* set, const FLOAT size) :MfxWords(str, MfxRect(set)) {};
+		MfxWords(const MfxStringW str, const MfxSize& set, const FLOAT size) :MfxWords(str, &set, size) {};
+		MfxWords(const MfxStringW str, const MfxSize&& set, const FLOAT size) :MfxWords(str, &set, size) {};
 
-		MfxWords(const MfxString str, const MfxRect* set, const FLOAT size, IDWriteTextFormat* format);
-		MfxWords(const MfxString str, const MfxRect& set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
-		MfxWords(const MfxString str, const MfxRect&& set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
+		MfxWords(const MfxStringW str, const MfxRect* set, const FLOAT size, IDWriteTextFormat* format);
+		MfxWords(const MfxStringW str, const MfxRect& set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
+		MfxWords(const MfxStringW str, const MfxRect&& set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
 
-		MfxWords(const MfxString str, const MfxSize* set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, MfxRect(set), size, format) {};
-		MfxWords(const MfxString str, const MfxSize& set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
-		MfxWords(const MfxString str, const MfxSize&& set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
+		MfxWords(const MfxStringW str, const MfxSize* set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, MfxRect(set), size, format) {};
+		MfxWords(const MfxStringW str, const MfxSize& set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
+		MfxWords(const MfxStringW str, const MfxSize&& set, const FLOAT size, IDWriteTextFormat* format) :MfxWords(str, &set, size, format) {};
 
 		virtual ~MfxWords();
 
@@ -275,7 +275,7 @@ namespace MicroFlakeX
 		static IDWriteTextFormat* gDefTextFormat;
 
 	protected:
-		MfxString myText;
+		MfxStringW myText;
 		MfxColor myColor;
 		ID2D1SolidColorBrush* myTextBrush;
 		bool myTextBrushUpdateFlage;
@@ -292,10 +292,10 @@ namespace MicroFlakeX
 		MfxReturn GetCanvas(MfxCanvas** ret);
 
 	public:
-		MfxReturn GetText(MfxString* ret);
+		MfxReturn GetText(MfxStringW* ret);
 		MfxReturn GetTextSize(FLOAT* ret);
 
-		MfxReturn GetFontName(MfxString* ret);
+		MfxReturn GetFontName(MfxStringW* ret);
 		MfxReturn GetTextColor(MfxColor* ret);
 
 		MfxReturn GetTextFormat(IDWriteTextFormat** ret);
@@ -307,10 +307,10 @@ namespace MicroFlakeX
 		MfxReturn SetRect(const MfxRect* set);
 		MfxReturn SetSize(const MfxSize* set);
 
-		MfxReturn SetText(const MfxString set);
+		MfxReturn SetText(const MfxStringW set);
 		MfxReturn SetTextSize(const FLOAT set);
 
-		MfxReturn SetFontName(const MfxString set);
+		MfxReturn SetFontName(const MfxStringW set);
 		MfxReturn SetTextColor(const MfxColor* set);
 
 		MfxReturn SetTextFormat(IDWriteTextFormat* set);

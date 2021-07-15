@@ -56,8 +56,8 @@ MicroFlakeX::MfxSize::MfxSize(MfxBase& set)
 {
 	LONG tSW = 0, tSH = 0;
 
-	set.Reflection(MfxText("GetWidth"), &tSW);
-	set.Reflection(MfxText("GetHeight"), &tSH);
+	set.Reflection(MfxTextW("GetWidth"), &tSW);
+	set.Reflection(MfxTextW("GetHeight"), &tSH);
 
 	SetWidth(tSW);
 	SetHeight(tSH);
@@ -98,7 +98,7 @@ MicroFlakeX::MfxSize::~MfxSize()
 MfxReturn MicroFlakeX::MfxSize::Clone(MfxBase** ret)const
 {
 	*ret = new MfxSize(*this);
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -111,11 +111,11 @@ MfxBase& MicroFlakeX::MfxSize::operator=(MfxBase& rhs)
 {
 	LONG tRW = 0, tRH = 0;
 
-	if (MFX_SECCESS(rhs.Reflection(MfxText("GetWidth"), &tRW)))
+	if (MFX_SECCESS(rhs.Reflection(MfxTextW("GetWidth"), &tRW)))
 	{
 		SetWidth(tRW);
 	}
-	if (MFX_SECCESS(rhs.Reflection(MfxText("GetHeight"), &tRH)))
+	if (MFX_SECCESS(rhs.Reflection(MfxTextW("GetHeight"), &tRH)))
 	{
 		SetHeight(tRH);
 	}
@@ -215,8 +215,8 @@ bool MicroFlakeX::MfxSize::operator==(MfxBase& rhs)
 	GetWidth(&tW);
 	GetHeight(&tH);
 
-	if (MFX_SECCESS(rhs.Reflection(MfxText("GetWidth"), &tRW))
-		&& MFX_SECCESS(rhs.Reflection(MfxText("GetHeight"), &tRH))
+	if (MFX_SECCESS(rhs.Reflection(MfxTextW("GetWidth"), &tRW))
+		&& MFX_SECCESS(rhs.Reflection(MfxTextW("GetHeight"), &tRH))
 		)
 	{
 		return tW == tRW && tH == tRH;
@@ -314,7 +314,7 @@ MfxReturn MicroFlakeX::MfxSize::Reset(const LONG setWidth, const LONG setHeight)
 	SetWidth(setWidth);
 	SetHeight(setHeight);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -349,7 +349,7 @@ MfxReturn MicroFlakeX::MfxSize::GetSIZE(SIZE* ret)const
 	ret->cx = tW;
 	ret->cy = tH;
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -368,7 +368,7 @@ MfxReturn MicroFlakeX::MfxSize::GetGdipSize(Gdiplus::Size* ret)const
 	ret->Width = tW;
 	ret->Height = tH;
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetGdipSizeF(Gdiplus::SizeF* ret)const
@@ -381,7 +381,7 @@ MfxReturn MicroFlakeX::MfxSize::GetGdipSizeF(Gdiplus::SizeF* ret)const
 	ret->Width = tW;
 	ret->Height = tH;
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeF(D2D1_SIZE_F* ret)const
@@ -394,7 +394,7 @@ MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeF(D2D1_SIZE_F* ret)const
 	ret->width = tW;
 	ret->height = tH;
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeU(D2D1_SIZE_U* ret)const
@@ -407,7 +407,7 @@ MfxReturn MicroFlakeX::MfxSize::GetD2D1SizeU(D2D1_SIZE_U* ret)const
 	ret->width = tW;
 	ret->height = tH;
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -426,7 +426,7 @@ MfxReturn MicroFlakeX::MfxSize::SetSize(const MfxSize* set)
 	SetWidth(tSW);
 	SetHeight(tSH);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -440,7 +440,7 @@ MfxReturn MicroFlakeX::MfxSize::SetSIZE(const SIZE* set)
 	SetWidth(set->cx);
 	SetHeight(set->cy);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -454,7 +454,7 @@ MfxReturn MicroFlakeX::MfxSize::SetGdipSize(const Gdiplus::Size* set)
 	SetWidth(set->Width);
 	SetHeight(set->Height);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxSize::SetGdipSizeF(const Gdiplus::SizeF* set)
@@ -462,7 +462,7 @@ MfxReturn MicroFlakeX::MfxSize::SetGdipSizeF(const Gdiplus::SizeF* set)
 	SetWidth(set->Width);
 	SetHeight(set->Height);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxSize::SetD2D1SizeF(const D2D1_SIZE_F* set)
@@ -470,7 +470,7 @@ MfxReturn MicroFlakeX::MfxSize::SetD2D1SizeF(const D2D1_SIZE_F* set)
 	SetWidth(set->width);
 	SetHeight(set->height);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxSize::SetD2D1SizeU(const D2D1_SIZE_U* set)
@@ -478,7 +478,7 @@ MfxReturn MicroFlakeX::MfxSize::SetD2D1SizeU(const D2D1_SIZE_U* set)
 	SetWidth(set->width);
 	SetHeight(set->height);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -491,14 +491,14 @@ MfxReturn MicroFlakeX::MfxSize::GetWidth(LONG* ret)const
 {
 	*ret = myWidth;
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxSize::GetHeight(LONG* ret)const
 {
 	*ret = myHeight;
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -515,7 +515,7 @@ MfxReturn MicroFlakeX::MfxSize::SetWidth(const LONG set)
 
 	myMemberLock.UnLock(&myWidth);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxSize::SetHeight(const LONG set)
@@ -526,7 +526,7 @@ MfxReturn MicroFlakeX::MfxSize::SetHeight(const LONG set)
 
 	myMemberLock.UnLock(&myHeight);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -545,7 +545,7 @@ MfxReturn MicroFlakeX::MfxSize::Inflate(const LONG setX, const LONG setY)
 	SetWidth(tW + 2 * setX);
 	SetHeight(tH + 2 * setY);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
 
 
@@ -563,5 +563,5 @@ MfxReturn MicroFlakeX::MfxSize::IsEmpty(bool* ret)
 
 	*ret = (tW <= 0 || tH <= 0);
 
-	return MfxReturn_Seccess;
+	return MFXRET_SECCESS;
 }
