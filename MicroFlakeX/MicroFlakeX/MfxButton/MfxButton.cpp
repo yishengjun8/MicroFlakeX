@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "MfxButton.h"
 
-MFXOBJ_REFLECTION_INIT(MfxButton)
-MFXOBJ_REFLECTION_ENDINIT(MfxButton, MfxFlake);
+MFX_OBJ_REFLECTION_INIT(MfxButton)
+MFX_OBJ_REFLECTION_ENDINIT(MfxButton, MfxFlake);
 
 MicroFlakeX::MfxButton::MfxButton(MfxRect set, MfxBase* father) : MfxFlake(set, father)
 {

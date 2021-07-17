@@ -5,14 +5,14 @@ using namespace MicroFlakeX;
 using namespace __MicroFlakeX;
 
 
-void MicroFlakeX::MfxMemberLock::InsertMemberLock(void* resour)
+inline void MicroFlakeX::MfxMemberLock::InsertMemberLock(void* resour)
 {
 	myMutexResour.insert(myResour(resour, CRITICAL_SECTION()));
 
 	InitializeCriticalSection(&myMutexResour[resour]);
 }
 
-void MicroFlakeX::MfxMemberLock::WaitLock(void* const first)
+inline void MicroFlakeX::MfxMemberLock::WaitLock(void* const first)
 {
 	auto tFind = myMutexResour.find(const_cast<void*>(first));
 	if (tFind == myMutexResour.end())
@@ -26,7 +26,7 @@ void MicroFlakeX::MfxMemberLock::WaitLock(void* const first)
 	}
 }
 
-bool MicroFlakeX::MfxMemberLock::TryLock(void* first)
+inline bool MicroFlakeX::MfxMemberLock::TryLock(void* first)
 {
 	bool ret = false;
 	auto tFind = myMutexResour.find(const_cast<void*>(first));
@@ -43,7 +43,7 @@ bool MicroFlakeX::MfxMemberLock::TryLock(void* first)
 	return ret;
 }
 
-void MicroFlakeX::MfxMemberLock::UnLock(void* first)
+inline void MicroFlakeX::MfxMemberLock::UnLock(void* first)
 {
 	auto tFind = myMutexResour.find(const_cast<void*>(first));
 	if (tFind == myMutexResour.end())

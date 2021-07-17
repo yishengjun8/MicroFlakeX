@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "MfxBase.h"
 
+using namespace MicroFlakeX;
+
 typedef std::unordered_map<MfxStringW, __MicroFlakeX::MfxFactoryHand*>::value_type MfxFactoryValue;
 
 __MicroFlakeX::MfxFactoryHand::MfxFactoryHand(MfxStringW object)
@@ -22,7 +24,7 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxFactory(MfxStringW object, MfxBase** ret)
 		return iter->second->Creat(ret);
 	}
 
-	return MFXRET_FAILED;
+	return MFX_RET_FAILED;
 }
 
 MicroFlakeX::MfxReturn __MicroFlakeX::MfxFactoryHand::RemoveObject(MfxStringW object)
@@ -32,11 +34,11 @@ MicroFlakeX::MfxReturn __MicroFlakeX::MfxFactoryHand::RemoveObject(MfxStringW ob
 	{
 		MfxFactoryHand_Map.erase(tIter);
 	}
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MicroFlakeX::MfxReturn __MicroFlakeX::MfxFactoryHand::RegisterObject(MfxStringW object, MfxFactoryHand* hand)
 {
 	auto ret = MfxFactoryHand_Map.insert(MfxFactoryValue(object, hand));
-	return ret.second ? MFXRET_SECCESS : MFXRET_FAILED;
+	return ret.second ? MFX_RET_SECCESS : MFX_RET_FAILED;
 }

@@ -10,17 +10,89 @@ using namespace __MicroFlakeX;
 
 
 
+void FuncTest0(int a) {};
+void FuncTest1(int a, char b) {};
+void FuncTest2(int a, char b, double c) {};
+
+class GetFuncArgType
+{
+public:
+    GetFuncArgType() {};
+    ~GetFuncArgType() {};
+
+    /**
+    template<typename T>
+    auto GetArgType(int num, T pFunc)
+    {
+        return 10;
+    }
+    /**/
+
+    template <class R, class A1, class... Args>
+    auto GetArgType(const int begin, const int over, R(*pFunc)(A1, Args...) )
+    {
+        if constexpr (sizeof...(Args) == 10)
+        {
+            //std::cout << begin << " " << over << endl;
+            return A1();
+        }
+        else
+        {
+            std::cout << begin << " " << over << endl;
+            return GetArgType(begin + 1, over, pFunc);
+        }
+    };
+
+    //template<typename A1, typename ... Args, typename ... RetArgs>
+    //auto GetArg(const int begin, const int over, A1, Args...)
+    //{
+    //}
+
+};
+
+
+
+
+int mainsssssssssssssss()
+{
+    MyClass set; MfxTest myTest; MfxSignal mySignal; MfxClient myClient;
+    myClient.PushBackReceiver(&myTest);
+    mySignal.PushBackReceiver(&myTest, L"test002");
+
+    mySignal.SendSignal(MyClass());
+    mySignal.PostSignal(set);
+
+    Sleep(10);
+    std::cout << "MfxSignal OVER" << endl << endl;
+
+
+    myClient.SendClient(L"test002", set);
+    myClient.PostClient(L"test002", set);
+
+    Sleep(10);
+    std::cout << "MfxClient OVER" << endl << endl;
+
+
+    //GetFuncArgType myArgTest;
+
+   // (myArgTest.GetArgType(0, 2, &FuncTest2));// a = 10;
+
+    //cout << a;
+    return 0;
+}
+
+
 int ccccc()
 {
     MfxBase* tes = new MfxRect;
 
-    MfxString name;
+    MfxStringW name;
 
     tes->GetObjectName(&name);
 
     //auto fun = &(tes->Reflection);
 
-    wcout << name;
+    std::wcout << name;
 
     return 0;
 }
@@ -112,7 +184,6 @@ void BINDFOR(T set, int num, int arg)
 int test2()
 {
     using namespace std::placeholders;
-    std::cout << Mfx_GetFuncArgc(ccout) << endl;
 
     //for (int i = 0; i < Mfx_GetFuncArgc(ccout); i++)
     {
@@ -141,6 +212,8 @@ int test2()
 
 int main()
 {
+
+    /**/
     int a = clock();
     MfxTest myTest;
 

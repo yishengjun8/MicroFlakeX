@@ -41,7 +41,7 @@ namespace MicroFlakeX
     class MfxRect :
         public MfxBase
     {
-        MFXOBJ_ENABLE_REFLECTION;
+        MFX_OBJ_ENABLE_REFLECTION;
     public:
         MfxRect();
         MfxRect(MfxBase& set);
@@ -250,7 +250,7 @@ namespace MicroFlakeX
     class MfxSize :
         public MfxBase
     {
-        MFXOBJ_ENABLE_REFLECTION;
+        MFX_OBJ_ENABLE_REFLECTION;
     public:
         MfxSize();
         MfxSize(MfxBase& set);
@@ -348,7 +348,7 @@ namespace MicroFlakeX
     class MfxPoint :
         public MfxBase
     {
-        MFXOBJ_ENABLE_REFLECTION;
+        MFX_OBJ_ENABLE_REFLECTION;
     public:
         MfxPoint();
         MfxPoint(MfxBase& set);
@@ -443,7 +443,7 @@ namespace MicroFlakeX
     class MfxColor :
         public MfxBase
     {
-        MFXOBJ_ENABLE_REFLECTION;
+        MFX_OBJ_ENABLE_REFLECTION;
     public:
         MfxColor();
         MfxColor(MfxBase& set);

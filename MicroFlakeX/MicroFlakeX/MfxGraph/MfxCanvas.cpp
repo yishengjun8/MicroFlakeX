@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "MfxGraph.h"
 
-MFXOBJ_REFLECTION_INIT(MfxCanvas)
+MFX_OBJ_REFLECTION_INIT(MfxCanvas)
 {
 	//添加一些需要提前初始化的代码
 }
-MFXOBJ_REFLECTION_ENDINIT(MfxCanvas, MfxBase, \
+MFX_OBJ_REFLECTION_ENDINIT(MfxCanvas, MfxBase, \
 	GetDC, \
 	GetWnd, \
 	GetBackColor, \
@@ -101,21 +101,21 @@ MfxReturn MicroFlakeX::MfxCanvas::GetDC(HDC* ret)const
 {
 	*ret = myDC;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetWnd(HWND* ret)const
 {
 	*ret = myWnd;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetBackColor(MfxColor* ret)const
 {
 	myBackColor.GetColor(ret);
 	
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 
@@ -128,35 +128,35 @@ MfxReturn MicroFlakeX::MfxCanvas::SetDC(HDC set)
 {
 	if (myDC || myWnd)
 	{
-		return MFXRET_FAILED;
+		return MFX_RET_FAILED;
 	}
 
 	myDC = set;
 
 	MfxGraph::GetID2D1DCRenderTarget(&myRenderTarget, set, myRect);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::SetWnd(HWND set)
 {
 	if (myDC || myWnd)
 	{
-		return MFXRET_FAILED;
+		return MFX_RET_FAILED;
 	}
 
 	myWnd = set;
 
 	MfxGraph::GetID2D1HwndRenderTarget(&myRenderTarget, set, MfxSize(myRect));
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::SetBackColor(MfxColor* set)
 {
 	myBackColor = set;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 
@@ -188,10 +188,10 @@ MfxReturn MicroFlakeX::MfxCanvas::PaintBegin(MfxRect* clip)
 
 		myPaintFlag = true;
 
-		return MFXRET_SECCESS;
+		return MFX_RET_SECCESS;
 	}
 
-	return MFXRET_FAILED;
+	return MFX_RET_FAILED;
 
 }
 
@@ -212,17 +212,17 @@ MfxReturn MicroFlakeX::MfxCanvas::PaintFinish()
 
 		myPaintFlag = false;
 
-		return MFXRET_SECCESS;
+		return MFX_RET_SECCESS;
 	}
 
-	return MFXRET_FAILED;
+	return MFX_RET_FAILED;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::PaintCheck(bool* ret)const
 {
 	*ret = myPaintFlag;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 
@@ -235,7 +235,7 @@ MfxReturn MicroFlakeX::MfxCanvas::GetRenderTarget(ID2D1RenderTarget** ret)const
 {
 	*ret = myRenderTarget;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 
@@ -254,7 +254,7 @@ MfxReturn MicroFlakeX::MfxCanvas::SetRect(MfxRect* set)
 		myRect.GetD2D1SizeU(&tSize);
 		((ID2D1HwndRenderTarget*)myRenderTarget)->Resize(tSize);
 
-		return MFXRET_SECCESS;
+		return MFX_RET_SECCESS;
 	}
 	else if (myDC)
 	{
@@ -262,10 +262,10 @@ MfxReturn MicroFlakeX::MfxCanvas::SetRect(MfxRect* set)
 		myRect.GetRECT(&rc);
 		((ID2D1DCRenderTarget*)myRenderTarget)->BindDC(myDC, &rc);
 
-		return MFXRET_SECCESS;
+		return MFX_RET_SECCESS;
 	}
 
-	return MFXRET_FAILED;
+	return MFX_RET_FAILED;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize* set)
@@ -278,7 +278,7 @@ MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize* set)
 		myRect.GetD2D1SizeU(&tSize);
 		((ID2D1HwndRenderTarget*)myRenderTarget)->Resize(tSize);
 
-		return MFXRET_SECCESS;
+		return MFX_RET_SECCESS;
 	}
 	else if (myDC)
 	{
@@ -286,10 +286,10 @@ MfxReturn MicroFlakeX::MfxCanvas::SetSize(MfxSize* set)
 		myRect.GetRECT(&rc);
 		((ID2D1DCRenderTarget*)myRenderTarget)->BindDC(myDC, &rc);
 
-		return MFXRET_SECCESS;
+		return MFX_RET_SECCESS;
 	}
 
-	return MFXRET_FAILED;
+	return MFX_RET_FAILED;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::SetPoint(MfxPoint* set)
@@ -302,29 +302,29 @@ MfxReturn MicroFlakeX::MfxCanvas::SetPoint(MfxPoint* set)
 		myRect.GetRECT(&rc);
 		((ID2D1DCRenderTarget*)myRenderTarget)->BindDC(myDC, &rc);
 
-		return MFXRET_SECCESS;
+		return MFX_RET_SECCESS;
 	}
 
-	return MFXRET_FAILED;
+	return MFX_RET_FAILED;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetRect(MfxRect* set)const
 {
 	myRect.GetRect(set);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetSize(MfxSize* set)const
 {
 	myRect.GetSize(set);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxCanvas::GetPoint(MfxPoint* set)const
 {
 	myRect.GetPoint(set);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }

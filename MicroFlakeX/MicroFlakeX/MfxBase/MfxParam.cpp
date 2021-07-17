@@ -165,7 +165,7 @@ MfxStringW MicroFlakeX::MfxParam::GetSTRINGW()
 	return *myStringW;
 }
 
-MfxParam& MicroFlakeX::MfxParam::SetPVOID(PVOID set)
+MfxParam& MicroFlakeX::MfxParam::SetPVOID(const PVOID set)
 {
 	if (myPVOID)
 	{
@@ -179,7 +179,7 @@ MfxParam& MicroFlakeX::MfxParam::SetPVOID(PVOID set)
 	return *this;
 }
 
-MfxParam& MicroFlakeX::MfxParam::SetRETURN(MfxReturn set)
+MfxParam& MicroFlakeX::MfxParam::SetRETURN(const MfxReturn set)
 {
 	if (myReturn)
 	{
@@ -193,7 +193,7 @@ MfxParam& MicroFlakeX::MfxParam::SetRETURN(MfxReturn set)
 	return *this;
 }
 
-MfxParam& MicroFlakeX::MfxParam::SetMESSAGE(MfxMessage set)
+MfxParam& MicroFlakeX::MfxParam::SetMESSAGE(const MfxMessage set)
 {
 	if (myReturn)
 	{
@@ -207,7 +207,7 @@ MfxParam& MicroFlakeX::MfxParam::SetMESSAGE(MfxMessage set)
 	return *this;
 }
 
-MfxParam& MicroFlakeX::MfxParam::SetSTRINGA(MfxStringA set)
+MfxParam& MicroFlakeX::MfxParam::SetSTRINGA(const MfxStringA set)
 {
 	if (myStringA)
 	{
@@ -221,7 +221,7 @@ MfxParam& MicroFlakeX::MfxParam::SetSTRINGA(MfxStringA set)
 	return *this;
 }
 
-MfxParam& MicroFlakeX::MfxParam::SetSTRINGW(MfxStringW set)
+MfxParam& MicroFlakeX::MfxParam::SetSTRINGW(const MfxStringW set)
 {
 	if (myStringW)
 	{

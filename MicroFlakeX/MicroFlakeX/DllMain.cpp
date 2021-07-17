@@ -33,21 +33,21 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 
         hr = CoInitialize(NULL);
         if (FAILED(hr))
-            throw MfxTextW("CoInitialize Failed");
+            throw MFX_TXT_W("CoInitialize Failed");
 
         hr = ::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &gID2DFactory);
         if (FAILED(hr))
-            throw MfxTextW("D2D1CreateFactory Failed");
+            throw MFX_TXT_W("D2D1CreateFactory Failed");
 
         hr = ::DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(gIDWriteFactory),
             reinterpret_cast<IUnknown**>(&gIDWriteFactory));
         if (FAILED(hr))
-            throw MfxTextW("IDWriteFactory Failed");
+            throw MFX_TXT_W("IDWriteFactory Failed");
 
         hr = ::CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER,
             IID_PPV_ARGS(&gIWICImagingFactory));
         if (FAILED(hr))
-            throw MfxTextW("IWICImagingFactory Failed");
+            throw MFX_TXT_W("IWICImagingFactory Failed");
 
         hr = MfxGraph::myIDWriteFactory->CreateTextFormat(
             L"Helvetica",                  // Font family name 微软雅黑 Arial Garamond Helvetica 等任意字体名
@@ -60,7 +60,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
             &(MfxWords::gDefTextFormat)    // Pointer to recieve the created object
         );
         if (FAILED(hr))
-            throw MfxTextW("gDefTextFormat Failed");
+            throw MFX_TXT_W("gDefTextFormat Failed");
 
 
         WNDCLASSEX tempWC{ 0 };
@@ -78,12 +78,12 @@ BOOL APIENTRY DllMain(HMODULE hModule,
         tempWC.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
 
         tempWC.lpszMenuName = 0;
-        tempWC.lpszClassName = MfxTextW("MfxNormalUI");
+        tempWC.lpszClassName = MFX_TXT_W("MfxNormalUI");
         tempWC.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
         if (!RegisterClassEx(&tempWC))
         {
-            MessageBox(NULL, MfxTextW("MfxNormalUI Registration Failed!"), MfxTextW("Error!"), MB_ICONEXCLAMATION | MB_OK);
+            MessageBox(NULL, MFX_TXT_W("MfxNormalUI Registration Failed!"), MFX_TXT_W("Error!"), MB_ICONEXCLAMATION | MB_OK);
         }
 
     }break;

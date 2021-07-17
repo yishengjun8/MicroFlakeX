@@ -46,14 +46,14 @@ MfxReturn MicroFlakeX::MfxBeginNewThread(MfxBase* object, MfxStringW recvFunc, M
 {
 	MfxWork_AutoFunc* tWork = new MfxWork_AutoFunc(object, recvFunc, param);
 
-	return TrySubmitThreadpoolCallback(&MfxThreadCallBack, tWork, NULL) ? MFXRET_SECCESS : MFXRET_FAILED;
+	return TrySubmitThreadpoolCallback(&MfxThreadCallBack, tWork, NULL) ? MFX_RET_SECCESS : MFX_RET_FAILED;
 }
 
 MfxReturn MicroFlakeX::MfxBeginNewThread_Widely(pThreadFunc pThreadFunc, MfxParam param)
 {
 	MfxWork_Widel* tWork = new MfxWork_Widel(pThreadFunc, param);
 
-	return TrySubmitThreadpoolCallback(&MfxThreadCallBack_Widely, tWork, NULL) ? MFXRET_SECCESS : MFXRET_FAILED;
+	return TrySubmitThreadpoolCallback(&MfxThreadCallBack_Widely, tWork, NULL) ? MFX_RET_SECCESS : MFX_RET_FAILED;
 }
 
 MfxReturn MicroFlakeX::MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxStringW recvFunc, MfxParam param, MfxTime delay, LONGLONG begin, MfxTime randTime)
@@ -75,7 +75,7 @@ MfxReturn MicroFlakeX::MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxS
 
 	MfxThreadServer_Map.insert(MfxThreadServer_Map_Elem(pTimer, tWork));
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MFX_DLL_EXPORT MfxReturn MicroFlakeX::MfxBeginNewTimer_Widely(PTP_TIMER& pTimer, pThreadFunc pThreadFunc, MfxParam param, MfxTime delay, LONGLONG begin, MfxTime randTime)
@@ -97,7 +97,7 @@ MFX_DLL_EXPORT MfxReturn MicroFlakeX::MfxBeginNewTimer_Widely(PTP_TIMER& pTimer,
 
 	MfxThreadServer_Widel_Map.insert(MfxThreadServer_Widel_Map_Elem(pTimer, tWork));
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 
@@ -112,7 +112,7 @@ MfxReturn MicroFlakeX::MfxCloseTimer(PTP_TIMER& pTimer)
 		MfxThreadServer_Map.erase(tFind);
 	}
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 VOID CALLBACK __MicroFlakeX::MfxThreadCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val)

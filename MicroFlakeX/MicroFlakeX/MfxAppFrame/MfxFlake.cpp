@@ -2,8 +2,8 @@
 #include "MfxAppFrame.h"
 
 
-MFXOBJ_REFLECTION_INIT(MfxFlake)
-MFXOBJ_REFLECTION_ENDINIT(MfxFlake, MfxBase, \
+MFX_OBJ_REFLECTION_INIT(MfxFlake)
+MFX_OBJ_REFLECTION_ENDINIT(MfxFlake, MfxBase, \
 	Send_Message, \
 	Post_Message, \
 	\
@@ -73,7 +73,7 @@ void MicroFlakeX::MfxFlake::RegisterRecvFunc()
 
 	//std::cout << GET_ARGS_NUM(TestArgs(2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)) << std::endl;
 
-	Mfx_GetFuncArgc(&MfxFlake::CloseRButtonMove);
+	GetFuncArgNum(&MfxFlake::CloseRButtonMove);
 
 	FLAKE_RECV(WM_NCMOUSEMOVE, __OnNCMouseMove);
 	FLAKE_RECV(WM_NCMOUSEHOVER, __OnNCMouseHover);
@@ -151,7 +151,7 @@ void MicroFlakeX::MfxFlake::InitData_Flake()
 	myFloor = 66;
 	myPercentRectFlag = true;
 
-	myTitle = MfxTextW("MfxFlake");
+	myTitle = MFX_TXT_W("MfxFlake");
 
 	myMouseFloat = false;
 	myLButtonClickFlag = false;
@@ -195,13 +195,13 @@ MicroFlakeX::MfxFlake::MfxFlake(MfxRect set, MfxBase* father)
 	MfxFlake::InitData_Flake();
 	MfxFlake::RegisterRecvFunc();
 
-	father ? father->Reflection(MfxTextW("Send_Message"), MFX_MAKE_PARAM(this).SetMESSAGE(MSG_FlakeInsert)) : 0;
+	father ? father->Reflection(MFX_TXT_W("Send_Message"), MFX_MAKE_PARAM(this).SetMESSAGE(MSG_FlakeInsert)) : 0;
 }
 
 MicroFlakeX::MfxFlake::~MfxFlake()
 {
 	myMemberLock.WaitLock(&myFather);
-	myFather ? myFather->Reflection(MfxTextW("Send_Message"), MFX_MAKE_PARAM(this).SetMESSAGE(MSG_FlakeRemove)) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("Send_Message"), MFX_MAKE_PARAM(this).SetMESSAGE(MSG_FlakeRemove)) : 0;
 	myMemberLock.UnLock(&myFather);
 }
 
@@ -212,7 +212,7 @@ MicroFlakeX::MfxFlake::~MfxFlake()
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(ProcMessage)
 {
-	MfxReturn t_Ret = MFXRET_FAILED;
+	MfxReturn t_Ret = MFX_RET_FAILED;
 
 	myMemberLock.WaitLock(&myMessageMap);
 
@@ -240,7 +240,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(Send_Message)
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(Post_Message)
 {
-	return MfxBeginNewThread(this, MfxTextW("Send_Message"), MFX_CALLBACK_PARAM);
+	return MfxBeginNewThread(this, MFX_TXT_W("Send_Message"), MFX_CALLBACK_PARAM);
 }
 
 
@@ -252,7 +252,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(Post_Message)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::RemoveFlakeMessage(MfxMessage message, MfxStringW name)
 {
-	auto tRet = MFXRET_FAILED;
+	auto tRet = MFX_RET_FAILED;
 
 	myMemberLock.WaitLock(&myMessageMap);
 
@@ -264,7 +264,7 @@ MfxReturn MicroFlakeX::MfxFlake::RemoveFlakeMessage(MfxMessage message, MfxStrin
 			if ((*i).myRecvFuncName == name)
 			{
 				t_Iter->second.erase(i);
-				tRet = MFXRET_SECCESS;
+				tRet = MFX_RET_SECCESS;
 				break;
 			}
 		}
@@ -292,7 +292,7 @@ MfxReturn MicroFlakeX::MfxFlake::PushBackFlakeMessage(MfxMessage message, Flake_
 
 	myMemberLock.UnLock(&myMessageMap);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::PushFrontFlakeMessage(MfxMessage message, Flake_RecvFunc_Infor msgValue)
@@ -313,7 +313,7 @@ MfxReturn MicroFlakeX::MfxFlake::PushFrontFlakeMessage(MfxMessage message, Flake
 
 	myMemberLock.UnLock(&myMessageMap);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 /********************************************************************************
@@ -351,7 +351,7 @@ MfxReturn MicroFlakeX::MfxFlake::ClosePercentRect()
 
 MfxReturn MicroFlakeX::MfxFlake::ChickPercentRect()
 {
-	return  myPercentRectFlag ? MFXRET_SECCESS : MFXRET_FAILED;
+	return  myPercentRectFlag ? MFX_RET_SECCESS : MFX_RET_FAILED;
 }
 
 
@@ -364,25 +364,25 @@ MfxReturn MicroFlakeX::MfxFlake::ChickPercentRect()
 MfxReturn MicroFlakeX::MfxFlake::GetWnd(HWND* ret)
 {
 	*ret = myWnd;
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::GetFather(MfxBase** ret)
 {
 	*ret = myFather;
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::GetFloor(MfxFloor* ret)
 {
 	*ret = myFloor;
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::GetCanvas(MfxCanvas** ret)
 {
 	*ret = myCanvas;
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::SetFloor(MfxFloor floor)
@@ -401,35 +401,35 @@ MfxReturn MicroFlakeX::MfxFlake::GetRect(MfxRect* ret)
 {
 	*ret = myRect;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::GetSize(MfxSize* ret)
 {
 	*ret = myRect;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::GetPoint(MfxPoint* ret)
 {
 	*ret = myRect;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::GetEdgeRect(MfxRect* ret)
 {
 	*ret = myEdgeRect;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::GetTitle(MfxStringW* ret)
 {
 	*ret = myTitle;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::GetTitleSize(DOUBLE* ret)
@@ -441,14 +441,14 @@ MfxReturn MicroFlakeX::MfxFlake::GetBackColor(MfxColor* ret)
 {
 	*ret = myBackColor;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::GetMaskColor(MfxColor* ret)
 {
 	*ret = myMaskColor;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::GetTitleColor(MfxColor* ret)
@@ -457,19 +457,19 @@ MfxReturn MicroFlakeX::MfxFlake::GetTitleColor(MfxColor* ret)
 	*ret = myTitleColor;
 	myMemberLock.UnLock(&myTitleColor);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::GetBackFrameSize(MfxReal* ret)
 {
 	*ret = myBackFrameSize;
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::GetMaskFrameSize(MfxReal* ret)
 {
 	*ret = myMaskFrameSize;
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 
@@ -488,7 +488,7 @@ MfxReturn MicroFlakeX::MfxFlake::SetRect(MfxRect* set)
 		Send_Message(MFX_MAKE_PARAM().SetMESSAGE(FLAKE_MSG_RecalculatPercentRect));
 	}
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::SetSize(MfxSize* set)
@@ -506,7 +506,7 @@ MfxReturn MicroFlakeX::MfxFlake::SetSize(MfxSize* set)
 		Send_Message(MFX_MAKE_PARAM().SetMESSAGE(FLAKE_MSG_RecalculatPercentRect));
 	}
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::SetPoint(MfxPoint* set)
@@ -524,7 +524,7 @@ MfxReturn MicroFlakeX::MfxFlake::SetPoint(MfxPoint* set)
 		Send_Message(MFX_MAKE_PARAM().SetMESSAGE(FLAKE_MSG_RecalculatPercentRect));
 	}
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::SetEdgeRect(MfxRect* set)
@@ -533,7 +533,7 @@ MfxReturn MicroFlakeX::MfxFlake::SetEdgeRect(MfxRect* set)
 	myEdgeRect = set;
 	myMemberLock.UnLock(&myEdgeRect);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::SetTitle(MfxStringW set)
@@ -584,28 +584,28 @@ MfxReturn MicroFlakeX::MfxFlake::OpenLButtonMove()
 {
 	myLButtonMoveFlag = true;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::CloseLButtonMove()
 {
 	myLButtonMoveFlag = false;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::OpenRButtonMove()
 {
 	myRButtonMoveFlag = true;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxFlake::CloseRButtonMove()
 {
 	myRButtonMoveFlag = false;
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 
@@ -618,7 +618,7 @@ MfxReturn MicroFlakeX::MfxFlake::CloseRButtonMove()
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnTest001)
 {
 	MessageBox(myWnd, L"__OnTest001", L"__OnTest001", 0);
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 /********************************************************************************
@@ -633,7 +633,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetPaper)
 
 	myMemberLock.TryWaitLock(&myFather, &myWnd, &myCanvas);
 
-	myFather ? myFather->Reflection(MfxTextW("Send_Message"), MFX_MAKE_PARAM(this).SetMESSAGE(MSG_FlakeRemove)) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("Send_Message"), MFX_MAKE_PARAM(this).SetMESSAGE(MSG_FlakeRemove)) : 0;
 
 	myFather = t_PaperValue.myFather;
 	myWnd = t_PaperValue.myWnd;
@@ -660,14 +660,14 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetPaper)
 		Send_Message(MFX_MAKE_PARAM().SetMESSAGE(FLAKE_MSG_RecalculatPercentRect));
 	}
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRemovePaper)
 {
 	myMemberLock.TryWaitLock(&myFather, &myWnd, &myCanvas);
 
-	myFather ? myFather->Reflection(MfxTextW("Send_Message"), MFX_MAKE_PARAM(this).SetMESSAGE(MSG_FlakeRemove)) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("Send_Message"), MFX_MAKE_PARAM(this).SetMESSAGE(MSG_FlakeRemove)) : 0;
 
 	myFather = NULL;
 	myWnd = NULL;
@@ -689,7 +689,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRemovePaper)
 
 	myMemberLock.UnLock(&myCanvas);
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetFloor)
@@ -697,11 +697,11 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetFloor)
 	myMemberLock.TryWaitLock(&myFloor, &myFather);
 
 	myFloor = MFXPARAM_GET_0(MfxFloor);
-	myFather ? myFather->Reflection(MfxTextW("Send_Message"), MFX_MAKE_PARAM().SetMESSAGE(MSG_FlakeFloorChange)) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("Send_Message"), MFX_MAKE_PARAM().SetMESSAGE(MSG_FlakeFloorChange)) : 0;
 
 	myMemberLock.UnLock(&myFloor, &myFather);
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 
@@ -721,7 +721,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnPaintBackDC)
 	myWords.Paint();
 	myMemberLock.UnLock(&myWords);
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnPaintMaskDC)
@@ -730,7 +730,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnPaintMaskDC)
 	myMaskRectangle.Paint();
 	myMemberLock.UnLock(&myMaskRectangle);
 
-	return MFXRET_FAILED;
+	return MFX_RET_FAILED;
 }
 
 
@@ -745,7 +745,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnFatherSize)
 	bool tChick = false;
 
 	myMemberLock.WaitLock(&myFather);
-	myFather ? myFather->Reflection(MfxTextW("ChickPercentRect"), &tChick) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("ChickPercentRect"), &tChick) : 0;
 	myMemberLock.UnLock(&myFather);
 
 	if (myPercentRectFlag || tChick)
@@ -753,7 +753,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnFatherSize)
 		Send_Message(MFX_MAKE_PARAM().SetMESSAGE(FLAKE_MSG_RecalculatRect));
 	}
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRect)
@@ -787,13 +787,13 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRect)
 
 	myMemberLock.TryWaitLock(&myFather, &myRect);
 
-	myFather ? myFather->Reflection(MfxTextW("UnionInvalidateRect"), myRect, max(myBackFrameSize, myMaskFrameSize)) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect, max(myBackFrameSize, myMaskFrameSize)) : 0;
 	myRect.SetRect(&tSetRect);
-	myFather ? myFather->Reflection(MfxTextW("UnionInvalidateRect"), myRect, max(myBackFrameSize, myMaskFrameSize)) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect, max(myBackFrameSize, myMaskFrameSize)) : 0;
 
 	myMemberLock.UnLock(&myFather, &myRect);
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnPercentRect)
@@ -804,7 +804,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnPercentRect)
 	myPercentRect.SetRect(&tSetPercentRect);
 	myMemberLock.UnLock(&myPercentRect);
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 
@@ -821,9 +821,9 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRecalculatRect)
 	if (!myFather)
 	{
 		myMemberLock.UnLock(&myFather);
-		return MFXRET_FAILED;
+		return MFX_RET_FAILED;
 	}
-	myFather->Reflection(MfxTextW("GetSize"), &t_UISize);
+	myFather->Reflection(MFX_TXT_W("GetSize"), &t_UISize);
 	myMemberLock.UnLock(&myFather);
 
 	myMemberLock.WaitLock(&myPercentRect);
@@ -838,7 +838,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRecalculatRect)
 
 	Send_Message(MFX_MAKE_PARAM(t_RecalculatRect).SetMESSAGE(FLAKE_MSG_Rect));
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRecalculatPercentRect)
@@ -849,9 +849,9 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRecalculatPercentRect)
 	if (!myFather)
 	{
 		myMemberLock.UnLock(&myFather);
-		return MFXRET_FAILED;
+		return MFX_RET_FAILED;
 	}
-	myFather->Reflection(MfxTextW("GetSize"), &t_UISize);
+	myFather->Reflection(MFX_TXT_W("GetSize"), &t_UISize);
 	myMemberLock.UnLock(&myFather);
 
 
@@ -866,7 +866,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRecalculatPercentRect)
 
 	Send_Message(MFX_MAKE_PARAM(t_RecalculatPercentRect).SetMESSAGE(FLAKE_MSG_PercentRect));
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 
@@ -880,14 +880,14 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnOpenPercentRect)
 {
 	myPercentRectFlag = true;
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnClosePercentRect)
 {
 	myPercentRectFlag = false;
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 
@@ -959,7 +959,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnMouseMove)
 {
 	MfxPoint mousePos;
 
-	myFather ? myFather->Reflection(MfxTextW("GetLocalMousePos"), &mousePos) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("GetLocalMousePos"), &mousePos) : 0;
 
 	myMemberLock.WaitLock(&myRect);
 	MfxRect t_Rect = myRect;
@@ -969,11 +969,11 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnMouseMove)
 	t_Rect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
-		if (MFX_SECCESS(myFather ? myFather->Reflection(MfxTextW("SetMutexFocus"), this) : MFXRET_FAILED)) //获取互斥焦点成功
+		if (MFX_SECCESS(myFather ? myFather->Reflection(MFX_TXT_W("SetMutexFocus"), this) : MFX_RET_FAILED)) //获取互斥焦点成功
 		{
 			myMouseFloat = true; //成功悬浮
 
-			myFather ? myFather->Reflection(MfxTextW("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_MouseFloat)).SetMESSAGE(MSG_FlakeEvent)) : 0;
+			myFather ? myFather->Reflection(MFX_TXT_W("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_MouseFloat)).SetMESSAGE(MSG_FlakeEvent)) : 0;
 		}
 		else
 		{
@@ -987,7 +987,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnMouseMove)
 		myLButtonClickFlag = false;
 		myRButtonClickFlag = false;
 
-		myFather ? myFather->Reflection(MfxTextW("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_MouseFloatOver)).SetMESSAGE(MSG_FlakeEvent)) : 0;
+		myFather ? myFather->Reflection(MFX_TXT_W("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_MouseFloatOver)).SetMESSAGE(MSG_FlakeEvent)) : 0;
 	}
 
 	//开始移动
@@ -996,7 +996,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnMouseMove)
 	if ((myLButtonPress && myLButtonMoveFlag) ||
 		(myRButtonPress && myRButtonMoveFlag))
 	{
-		if (MFX_SECCESS(myFather ? myFather->Reflection(MfxTextW("LockMutexFocus"), this) : MFXRET_FAILED))
+		if (MFX_SECCESS(myFather ? myFather->Reflection(MFX_TXT_W("LockMutexFocus"), this) : MFX_RET_FAILED))
 		{
 			myMemberLock.WaitLock(&myButtonMoveBegin);
 
@@ -1007,28 +1007,28 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnMouseMove)
 
 			myMemberLock.UnLock(&myButtonMoveBegin);
 
-			myFather ? myFather->Reflection(MfxTextW("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_FollowTheMouse), t_Point).SetMESSAGE(MSG_FlakeEvent)) : 0;
+			myFather ? myFather->Reflection(MFX_TXT_W("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_FollowTheMouse), t_Point).SetMESSAGE(MSG_FlakeEvent)) : 0;
 		}
 	}
 	else
 	{
-		myFather ? myFather->Reflection(MfxTextW("UnLockMutexFocus")) : 0;
+		myFather ? myFather->Reflection(MFX_TXT_W("UnLockMutexFocus")) : 0;
 	}
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnMouseHover)
 {
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnLButtonUp)
 {
 	MfxPoint mousePos;
 
-	myFather ? myFather->Reflection(MfxTextW("GetLocalMousePos"), &mousePos) : 0;
-	myFather ? myFather->Reflection(MfxTextW("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_LButtonPressOver)).SetMESSAGE(MSG_FlakeEvent)) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("GetLocalMousePos"), &mousePos) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_LButtonPressOver)).SetMESSAGE(MSG_FlakeEvent)) : 0;
 
 	myMemberLock.WaitLock(&myRect);
 	MfxRect t_Rect = myRect;
@@ -1038,14 +1038,14 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnLButtonUp)
 	t_Rect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
-		if (MFX_SECCESS(myFather ? myFather->Reflection(MfxTextW("SetMutexFocus"), this) : MFXRET_FAILED)) //获取互斥焦点成功
+		if (MFX_SECCESS(myFather ? myFather->Reflection(MFX_TXT_W("SetMutexFocus"), this) : MFX_RET_FAILED)) //获取互斥焦点成功
 		{
 			if (myLButtonClickFlag) //点击成功
 			{
 				myLButtonPress = false;
 				myLButtonClickFlag = false;
 
-				myFather ? myFather->Reflection(MfxTextW("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_LButtonClick)).SetMESSAGE(MSG_FlakeEvent)) : 0;
+				myFather ? myFather->Reflection(MFX_TXT_W("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_LButtonClick)).SetMESSAGE(MSG_FlakeEvent)) : 0;
 			}
 			else
 			{
@@ -1066,16 +1066,16 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnLButtonUp)
 		myRButtonClickFlag = false;
 	}
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnLButtonDown)
 {
 	MfxPoint mousePos;
 
-	myFather ? myFather->Reflection(MfxTextW("GetLocalMousePos"), &mousePos) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("GetLocalMousePos"), &mousePos) : 0;
 
-	//myFather ? myFather->Reflection(MfxTextW("WND_MIN")) : 0;
+	//myFather ? myFather->Reflection(MFX_TXT_W("WND_MIN")) : 0;
 
 	myMemberLock.WaitLock(&myRect);
 	MfxRect t_Rect = myRect;
@@ -1085,16 +1085,16 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnLButtonDown)
 	t_Rect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
-		if (MFX_SECCESS(myFather ? myFather->Reflection(MfxTextW("SetMutexFocus"), this) : MFXRET_FAILED)) //获取互斥焦点成功
+		if (MFX_SECCESS(myFather ? myFather->Reflection(MFX_TXT_W("SetMutexFocus"), this) : MFX_RET_FAILED)) //获取互斥焦点成功
 		{
 			myButtonMoveBegin = mousePos;
 
-			myFather ? myFather->Reflection(MfxTextW("SetKeyboardFocus"), this) : 0; //设置键盘焦点
+			myFather ? myFather->Reflection(MFX_TXT_W("SetKeyboardFocus"), this) : 0; //设置键盘焦点
 
 			myLButtonPress = true;
 			myLButtonClickFlag = true;
 
-			myFather ? myFather->Reflection(MfxTextW("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_LButtonPress)).SetMESSAGE(MSG_FlakeEvent)) : 0;
+			myFather ? myFather->Reflection(MFX_TXT_W("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_LButtonPress)).SetMESSAGE(MSG_FlakeEvent)) : 0;
 		}
 		else
 		{
@@ -1109,15 +1109,15 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnLButtonDown)
 		myLButtonClickFlag = false;
 		myRButtonClickFlag = false;
 
-		myFather ? myFather->Reflection(MfxTextW("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_LButtonPressOver)).SetMESSAGE(MSG_FlakeEvent)) : 0;
+		myFather ? myFather->Reflection(MFX_TXT_W("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_LButtonPressOver)).SetMESSAGE(MSG_FlakeEvent)) : 0;
 	}
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnLButtonDouble)
 {
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 
@@ -1125,9 +1125,9 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRButtonUp)
 {
 	MfxPoint mousePos;
 
-	myFather ? myFather->Reflection(MfxTextW("GetLocalMousePos"), &mousePos) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("GetLocalMousePos"), &mousePos) : 0;
 
-	myFather ? myFather->Reflection(MfxTextW("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_RButtonPressOver)).SetMESSAGE(MSG_FlakeEvent)) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_RButtonPressOver)).SetMESSAGE(MSG_FlakeEvent)) : 0;
 
 	myMemberLock.WaitLock(&myRect);
 	MfxRect t_Rect = myRect;
@@ -1137,14 +1137,14 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRButtonUp)
 	t_Rect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
-		if (MFX_SECCESS(myFather ? myFather->Reflection(MfxTextW("SetMutexFocus"), this) : MFXRET_FAILED)) //获取互斥焦点成功
+		if (MFX_SECCESS(myFather ? myFather->Reflection(MFX_TXT_W("SetMutexFocus"), this) : MFX_RET_FAILED)) //获取互斥焦点成功
 		{
 			if (myRButtonClickFlag) //点击成功
 			{
 				myRButtonPress = false;
 				myRButtonClickFlag = false;
 
-				myFather ? myFather->Reflection(MfxTextW("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_RButtonClick)).SetMESSAGE(MSG_FlakeEvent)) : 0;
+				myFather ? myFather->Reflection(MFX_TXT_W("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_RButtonClick)).SetMESSAGE(MSG_FlakeEvent)) : 0;
 			}
 			else
 			{
@@ -1165,14 +1165,14 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRButtonUp)
 		myRButtonClickFlag = false;
 	}
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRButtonDown)
 {
 	MfxPoint mousePos;
 
-	myFather ? myFather->Reflection(MfxTextW("GetLocalMousePos"), &mousePos) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("GetLocalMousePos"), &mousePos) : 0;
 
 	myMemberLock.WaitLock(&myRect);
 	MfxRect t_Rect = myRect;
@@ -1182,13 +1182,13 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRButtonDown)
 	t_Rect.IsPointInside(&mousePos, &tInside);
 	if (tInside)
 	{
-		if (MFX_SECCESS(myFather ? myFather->Reflection(MfxTextW("SetMutexFocus"), this) : MFXRET_FAILED)) //获取互斥焦点成功
+		if (MFX_SECCESS(myFather ? myFather->Reflection(MFX_TXT_W("SetMutexFocus"), this) : MFX_RET_FAILED)) //获取互斥焦点成功
 		{
 			myButtonMoveBegin = mousePos;
 			myRButtonPress = true;
 			myRButtonClickFlag = true;
 
-			myFather ? myFather->Reflection(MfxTextW("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_RButtonPress)).SetMESSAGE(MSG_FlakeEvent)) : 0;
+			myFather ? myFather->Reflection(MFX_TXT_W("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_RButtonPress)).SetMESSAGE(MSG_FlakeEvent)) : 0;
 		}
 		else
 		{
@@ -1203,15 +1203,15 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRButtonDown)
 		myLButtonClickFlag = false;
 		myRButtonClickFlag = false;
 
-		myFather ? myFather->Reflection(MfxTextW("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_RButtonPressOver)).SetMESSAGE(MSG_FlakeEvent)) : 0;
+		myFather ? myFather->Reflection(MFX_TXT_W("Post_Message"), MFX_MAKE_PARAM(FlakeEvent_Info(this, FLAKE_EVENT_RButtonPressOver)).SetMESSAGE(MSG_FlakeEvent)) : 0;
 	}
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRButtonDouble)
 {
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 
@@ -1231,10 +1231,10 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetTitle)
 
 
 	myMemberLock.TryWaitLock(&myFather, &myRect);
-	myFather ? myFather->Reflection(MfxTextW("UnionInvalidateRect"), myRect) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect) : 0;
 	myMemberLock.UnLock(&myFather, &myRect);
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetBackColor)
@@ -1252,10 +1252,10 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetBackColor)
 
 
 	myMemberLock.TryWaitLock(&myFather, &myRect);
-	myFather ? myFather->Reflection(MfxTextW("UnionInvalidateRect"), myRect, myBackFrameSize) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect, myBackFrameSize) : 0;
 	myMemberLock.UnLock(&myFather, &myRect);
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetMaskColor)
@@ -1272,10 +1272,10 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetMaskColor)
 	myMemberLock.UnLock(&myMaskRectangle, &myBackColor, &myCanvas);
 
 	myMemberLock.TryWaitLock(&myFather, &myRect);
-	myFather ? myFather->Reflection(MfxTextW("UnionInvalidateRect"), myRect, myMaskFrameSize) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect, myMaskFrameSize) : 0;
 	myMemberLock.UnLock(&myFather, &myRect);
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetTitleColor)
@@ -1289,10 +1289,10 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetTitleColor)
 
 
 	myMemberLock.TryWaitLock(&myFather, &myRect);
-	myFather ? myFather->Reflection(MfxTextW("UnionInvalidateRect"), myRect) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect) : 0;
 	myMemberLock.UnLock(&myFather, &myRect);
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetBackFrameSize)
@@ -1306,10 +1306,10 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetBackFrameSize)
 
 
 	myMemberLock.TryWaitLock(&myFather, &myRect);
-	myFather ? myFather->Reflection(MfxTextW("UnionInvalidateRect"), myRect, myBackFrameSize) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect, myBackFrameSize) : 0;
 	myMemberLock.UnLock(&myFather, &myRect);
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetMaskFrameSize)
@@ -1323,10 +1323,10 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetMaskFrameSize)
 
 
 	myMemberLock.TryWaitLock(&myFather, &myRect);
-	myFather ? myFather->Reflection(MfxTextW("UnionInvalidateRect"), myRect, myMaskFrameSize) : 0;
+	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect, myMaskFrameSize) : 0;
 	myMemberLock.UnLock(&myFather, &myRect);
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 
@@ -1338,7 +1338,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetMaskFrameSize)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnFlakeEvent)
 {
-	MfxReturn tRet = MFXRET_FAILED;
+	MfxReturn tRet = MFX_RET_FAILED;
 
 	myMemberLock.WaitLock(&myFlakeEventMap);
 
@@ -1363,7 +1363,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnFlakeEvent)
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRemoveFlakeEvent)
 {
-	MfxReturn tRet = MFXRET_FAILED;
+	MfxReturn tRet = MFX_RET_FAILED;
 
 	FlakeEvent_Info tFlakeEvent = MFXPARAM_GET_0(FlakeEvent_Info);
 	MfxStringW tRecvFuncName = MFXPARAM_GET_1(MfxStringW);
@@ -1378,7 +1378,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRemoveFlakeEvent)
 			if ((*i).myRecvFuncName == tRecvFuncName)
 			{
 				t_Iter->second.erase(i);
-				tRet = MFXRET_SECCESS;
+				tRet = MFX_RET_SECCESS;
 				break;
 			}
 		}
@@ -1410,7 +1410,7 @@ Begin:
 
 	myMemberLock.UnLock(&myFlakeEventMap);
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnPushFrontFlakeEvent)
@@ -1434,5 +1434,5 @@ Begin:
 
 	myMemberLock.UnLock(&myFlakeEventMap);
 
-	MFX_APPFRAME_RETURN(MFXRET_SECCESS);
+	MFX_APPFRAME_RETURN(MFX_RET_SECCESS);
 }

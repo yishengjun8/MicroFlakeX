@@ -21,7 +21,7 @@ namespace MicroFlakeX
 	class MfxButton :
 		public MfxFlake
 	{
-		MFXOBJ_ENABLE_REFLECTION;
+		MFX_OBJ_ENABLE_REFLECTION;
 	public:
 		MfxButton(MfxRect set = MfxRect(60, 60, 100, 100), MfxBase* father = nullptr);
 		~MfxButton();

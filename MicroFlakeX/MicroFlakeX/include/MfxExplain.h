@@ -131,7 +131,7 @@ namespace MicroFlakeX
     *   MfxGlide 赖于 MfxBase 的 AutoFunc。
     *
     *   MfxGlide 允许绑定一个 MfxBase 对象，每帧根据给定参数
-        自动调用 MfxBase::Reflection(MfxTextW("BindObjec"), XXX);
+        自动调用 MfxBase::Reflection(MFX_TXT_W("BindObjec"), XXX);
     *
     *   如果对象未注册 Reflection 的 BindObjec ，则会调用失败。
     *   对象必须可以Clone
@@ -140,7 +140,7 @@ namespace MicroFlakeX
     class MfxGlide :
         public MfxBase
     {
-        MFXOBJ_ENABLE_REFLECTION;
+        MFX_OBJ_ENABLE_REFLECTION;
     public:
         MfxGlide();
 
@@ -214,7 +214,7 @@ namespace MicroFlakeX
     class MfxTransitions :
         public MfxBase
     {
-        MFXOBJ_ENABLE_REFLECTION;
+        MFX_OBJ_ENABLE_REFLECTION;
     public:
         MfxTransitions();
 

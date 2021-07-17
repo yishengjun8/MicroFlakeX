@@ -5,14 +5,14 @@ namespace MicroFlakeX
 	class MFX_DLL_EXPORT MfxBase;
 	typedef MfxBase* pMfxBase;
 
-#define MFXOBJ_ENABLE_REFLECTION __MFXOBJ_ENABLE_REFLECTION
+#define MFX_OBJ_ENABLE_REFLECTION __MFX_OBJ_ENABLE_REFLECTION
 
-#define MFXOBJ_REFLECTION_INIT_0(OBJ) __MFXOBJ_REFLECTION_INIT_0(OBJ)
-#define MFXOBJ_REFLECTION_INIT_1(OBJ) __MFXOBJ_REFLECTION_INIT_1(OBJ)
-#define MFXOBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ) __MFXOBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ)
+#define MFX_OBJ_REFLECTION_INIT_0(OBJ) __MFX_OBJ_REFLECTION_INIT_0(OBJ)
+#define MFX_OBJ_REFLECTION_INIT_1(OBJ) __MFX_OBJ_REFLECTION_INIT_1(OBJ)
+#define MFX_OBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ) __MFX_OBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ)
 
-#define MFXOBJ_REFLECTION_INIT(OBJ) __MFXOBJ_REFLECTION_INIT_0(OBJ)
-#define MFXOBJ_REFLECTION_ENDINIT(OBJ, FATHER, ...) CONNECT(__MFXOBJ_REFLECTION_ENDINIT, (OBJ, FATHER, __VA_ARGS__, END))
+#define MFX_OBJ_REFLECTION_INIT(OBJ) __MFX_OBJ_REFLECTION_INIT_0(OBJ)
+#define MFX_OBJ_REFLECTION_ENDINIT(OBJ, FATHER, ...) CONNECT(__MFX_OBJ_REFLECTION_ENDINIT, (OBJ, FATHER, __VA_ARGS__, END))
 }
 
 /***************************************************************
@@ -32,41 +32,28 @@ namespace MicroFlakeX
 
 	typedef std::uint64_t MfxHash;
 
-#define MFXRET_SECCESS ((MfxReturn)0)
-#define MFXRET_FAILED ((MfxReturn)-1)
-#define MFXRET_NOTFIND ((MfxReturn)1)
-#define MFXRET_UNKNOW ((MfxReturn)2)
-#define MFXRET_WINACCEPT ((MfxReturn)0)
+	typedef std::string MfxStringA;
+	typedef std::wstring MfxStringW;
 
-#define MFX_SECCESS(MR) (((MfxReturn)(MR)) == MFXRET_SECCESS)
-#define MFX_FAILED(MR) (((MfxReturn)(MR)) == MFXRET_FAILED)
+#define MFX_TXT_A(STR) STR
+#define MFX_TXT_W(STR) L##STR
 
-#define MFX_NOTFIND(MR) (((MfxReturn)(MR)) == MFXRET_NOTFIND)
-#define MFX_UNKNOW(MR) (((MfxReturn)(MR)) == MFXRET_UNKNOW)
+#define MFX_RET_SECCESS ((MicroFlakeX::MfxReturn)0)
+#define MFX_RET_FAILED ((MicroFlakeX::MfxReturn)-1)
+#define MFX_RET_NOTFIND ((MicroFlakeX::MfxReturn)1)
+#define MFX_RET_UNKNOW ((MicroFlakeX::MfxReturn)2)
+#define MFX_RET_WINACCEPT ((MicroFlakeX::MfxReturn)0)
+
+#define MFX_SECCESS(MR) (((MicroFlakeX::MfxReturn)(MR)) == MFX_RET_SECCESS)
+#define MFX_FAILED(MR) (((MicroFlakeX::MfxReturn)(MR)) == MFX_RET_FAILED)
+
+#define MFX_NOTFIND(MR) (((MicroFlakeX::MfxReturn)(MR)) == MFX_RET_NOTFIND)
+#define MFX_UNKNOW(MR) (((MicroFlakeX::MfxReturn)(MR)) == MFX_RET_UNKNOW)
 
 #define MFX_IF_SECCESS(MR) if(MFX_SECCESS(MR))
 #define MFX_IF_FAILED(MR) if(MFX_FAILED(MR))
 #define MFX_IF_NOTFIND(MR) if(MFX_NOTFIND(MR))
 #define MFX_IF_UNKNOW(MR) if(MFX_UNKNOW(MR))
-
-
-#define MfxStringA std::string
-#define MfxStringW std::wstring
-
-#define MfxTextA(STR) STR
-#define MfxTextW(STR) L##STR
-
-	template<class lhsT, class rhsT = lhsT>
-	bool pFloorCompare(lhsT* lhs, rhsT* rhs)
-	{
-		return lhs->myFloor < rhs->myFloor;
-	}
-
-	template<class lhsT, class rhsT = lhsT>
-	bool FloorCompare(lhsT& lhs, rhsT& rhs)
-	{
-		return lhs.myFloor < rhs.myFloor;
-	}
 
 #define MFXOBJ_ENABLE_FLOORCOMPARE\
 	template<class lhsT, class rhsT>\
@@ -74,7 +61,19 @@ namespace MicroFlakeX
 	template<class lhsT, class rhsT>\
 	friend bool FloorCompare(lhsT& lhs, rhsT& rhs);
 
-	constexpr MfxHash MFX_STRING_HASH_A(char const* str, MfxHash hash = 0)
+	template<class lhsT, class rhsT = lhsT>
+	inline bool pFloorCompare(lhsT* lhs, rhsT* rhs)
+	{
+		return lhs->myFloor < rhs->myFloor;
+	}
+
+	template<class lhsT, class rhsT = lhsT>
+	inline bool FloorCompare(lhsT& lhs, rhsT& rhs)
+	{
+		return lhs.myFloor < rhs.myFloor;
+	}
+
+	constexpr inline MfxHash MFX_STRING_HASH_A(char const* str, MfxHash hash = 0)
 	{
 		while (MfxHash ch = *str++)
 		{
@@ -83,7 +82,7 @@ namespace MicroFlakeX
 		return hash;
 	}
 
-	constexpr MfxHash MFX_STRING_HASH_W(wchar_t const* str, MfxHash hash = 0)
+	constexpr inline MfxHash MFX_STRING_HASH_W(wchar_t const* str, MfxHash hash = 0)
 	{
 		while (MfxHash ch = *str++)
 		{
@@ -111,53 +110,46 @@ namespace MicroFlakeX
 		{
 			delete pPointerToDelete;
 			pPointerToDelete = nullptr;
-			return 1;
+			return true;
 		}
-		return 0;
+		return false;
 	}
 
 	template<class Pointer>
-	inline bool SafeDeleteL(Pointer*& pPointerToDelete)
+	inline bool SafeDeleteList(Pointer*& pPointerToDelete)
 	{
 		if (pPointerToDelete != nullptr)
 		{
 			delete[] pPointerToDelete;
 			pPointerToDelete = nullptr;
-			return 1;
+			return true;
 		}
-		return 0;
+		return false;
 	}
 }
 
 namespace MicroFlakeX
 {
+
+	class MFX_DLL_EXPORT MfxParam;
+	class MFX_DLL_EXPORT MfxMemberLock;
+	class MFX_DLL_EXPORT MfxCriticalLock;
+
+	typedef MfxMemberLock* pMfxMemberLock;
+
 	typedef std::set<MfxBase*> MfxBase_Set;
 	typedef std::queue<MfxBase*> MfxBase_Queue;
 	typedef std::deque<MfxBase*> MfxBase_Deque;
 	typedef std::stack<MfxBase*> MfxBase_Stack;
 	typedef std::vector<MfxBase*> MfxBase_Vector;
 
+#define MFX_CALLBACK_PARAM iParam
 	/***************************************************************
 	*	MicroFlakeX 回调函数辅助声明 - 返回值必须为MfxReturn
 	*	例：MfxReturn MFX_CALLBACK(MyCallBackFunc);
 	****************************************************************/
 #define MFX_CALLBACK(funcName) funcName(MfxParam iParam)
 #define MFX_REFLECTION(funcName) funcName(MfxParam iParam)
-
-#define MFX_CALLBACK_PARAM iParam
-}
-
-
-/***************************************************************
-*	MicroFlakeX	辅助框架
-****************************************************************/
-namespace MicroFlakeX
-{
-	class MFX_DLL_EXPORT MfxParam;
-	class MFX_DLL_EXPORT MfxMemberLock;
-	class MFX_DLL_EXPORT MfxCriticalLock;
-
-	typedef MfxMemberLock* pMfxMemberLock;
 
 	class MfxCriticalLock
 	{
@@ -231,11 +223,11 @@ namespace MicroFlakeX
 		MfxStringA GetSTRINGA();
 		MfxStringW GetSTRINGW();
 
-		MfxParam& SetPVOID(PVOID set);
-		MfxParam& SetRETURN(MfxReturn set);
-		MfxParam& SetMESSAGE(MfxMessage set);
-		MfxParam& SetSTRINGA(MfxStringA set);
-		MfxParam& SetSTRINGW(MfxStringW set);
+		MfxParam& SetPVOID(const PVOID set);
+		MfxParam& SetRETURN(const MfxReturn set);
+		MfxParam& SetMESSAGE(const MfxMessage set);
+		MfxParam& SetSTRINGA(const MfxStringA set);
+		MfxParam& SetSTRINGW(const MfxStringW set);
 
 		template<class T>
 		void push_back(T&& val)
@@ -244,34 +236,48 @@ namespace MicroFlakeX
 		}
 	};
 
-	inline MfxParam MFX_MAKE_PARAM()
+	class MFX_EXPARAM
 	{
-		MfxParam MFX_CALLBACK_PARAM;
-		return MFX_CALLBACK_PARAM;
-	}
+	public:
+		MFX_EXPARAM() { myNum = 0; };
+
+		template<typename Arg>
+		inline auto& EX_PARAM(MfxParam& param) noexcept
+		{
+			return (std::any_cast<Arg&>)(param[myNum++]);
+		}
+	protected:
+		MfxNum myNum;
+	};
 
 	template<typename ... Args>
 	constexpr inline MfxParam MFX_MAKE_PARAM(Args&&... arg)
 	{
 		MfxParam MFX_CALLBACK_PARAM;
-		return __MFX_MAKE_PARAM(MFX_CALLBACK_PARAM, std::forward<Args>(arg)...);
+		if constexpr (0 == sizeof...(Args))
+		{
+			return MFX_CALLBACK_PARAM;
+		}
+		else
+		{
+			return __MFX_MAKE_PARAM(MFX_CALLBACK_PARAM, std::forward<Args>(arg)...);
+		}
 	}
 
 	template<typename T, typename ... Args>
 	constexpr inline MfxParam __MFX_MAKE_PARAM(MfxParam& MFX_CALLBACK_PARAM, T&& set, Args&&... arg)
 	{
-		MFX_CALLBACK_PARAM.push_back(std::forward<T>(set));
-		return __MFX_MAKE_PARAM(MFX_CALLBACK_PARAM, std::forward<Args>(arg)...);
+		if constexpr (0 == sizeof...(Args))
+		{
+			MFX_CALLBACK_PARAM.push_back(std::forward<T>(set));
+			return MFX_CALLBACK_PARAM;
+		}
+		else
+		{
+			MFX_CALLBACK_PARAM.push_back(std::forward<T>(set));
+			return __MFX_MAKE_PARAM(MFX_CALLBACK_PARAM, std::forward<Args>(arg)...);
+		}
 	}
-
-	template<typename T, typename ... Args>
-	constexpr inline MfxParam __MFX_MAKE_PARAM(MfxParam& MFX_CALLBACK_PARAM, T&& set)
-	{
-		MFX_CALLBACK_PARAM.push_back(std::forward<T>(set));
-		return MFX_CALLBACK_PARAM;
-	}
-
-
 }
 
 
@@ -287,16 +293,16 @@ namespace MicroFlakeX
 		typedef std::unordered_map<void*, CRITICAL_SECTION>::value_type myResour;
 	public:
 		virtual ~MfxMemberLock();
-		void InsertMemberLock(void* resour);
+		inline void InsertMemberLock(void* resour);
 
 	public:
-		void UnLock(void* first);
-		void WaitLock(void* first);
+		inline void UnLock(void* first);
+		inline void WaitLock(void* first);
 
-		bool TryLock(void* first);
+		inline bool TryLock(void* first);
 
 		template<typename ...Args>
-		void UnLock(void* first, Args... rest)
+		inline void UnLock(void* first, Args... rest)
 		{
 			auto tFind = myMutexResour.find(const_cast<void*>(first));
 			if (tFind == myMutexResour.end())
@@ -312,13 +318,13 @@ namespace MicroFlakeX
 		}
 
 		template<typename ...Args>
-		void TryWaitLock(Args... rest)
+		inline void TryWaitLock(Args... rest)
 		{
 			while (!TryLock(rest...));
 		}
 
 		template<typename ...Args>
-		bool TryLock(void* first, Args... rest)
+		inline bool TryLock(void* first, Args... rest)
 		{
 			bool ret = false;
 			auto tFind = myMutexResour.find(const_cast<void*>(first));
@@ -353,8 +359,6 @@ namespace MicroFlakeX
 		}
 	};
 }
-
-
 
 
 
@@ -452,8 +456,8 @@ namespace MicroFlakeX
 
 	/***************************************************************
 	*	MicroFlakeX 工厂 - 通过字符串创建对象
-	*	1、该子类必须声明了 MFXOBJ_ENABLE_REFLECTION 宏
-	*	2、该子类必须实现了 MFXOBJ_REFLECTION_BEGININIT(OBJ) 和 MFXOBJ_REFLECTION_ENDINIT(OBJ, FATHER)辅助宏
+	*	1、该子类必须声明了 MFX_OBJ_ENABLE_REFLECTION 宏
+	*	2、该子类必须实现了 MFXOBJ_REFLECTION_BEGININIT(OBJ) 和 MFX_OBJ_REFLECTION_ENDINIT(OBJ, FATHER)辅助宏
 	****************************************************************/
 	MFX_DLL_EXPORT MfxReturn MfxFactory(MfxStringW object, MfxBase** ret);
 }
@@ -468,7 +472,6 @@ namespace MicroFlakeX
 {
 	class MFX_DLL_EXPORT MfxSignal;
 	class MFX_DLL_EXPORT MfxClient;
-
 	/***************************************************************
 	*	MicroFlakeX信号槽
 	*	可以一对多的发送指定信号到指定对象
@@ -507,14 +510,6 @@ namespace MicroFlakeX
 		*  根据参数长度不同，重载信号发送函数
 		****************************************************************/
 	public:
-		void SendSignal()
-		{
-			for (auto& iter : myReceiver)
-			{
-				iter.recvObject->Reflection(iter.recvFunc);
-			}
-		}
-
 		template<typename ... Args>
 		void SendSignal(Args&&... arg)
 		{
@@ -524,163 +519,31 @@ namespace MicroFlakeX
 			}
 		}
 
-		void PostSignal()
-		{
-			MfxParam tParam(this);
-			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_0), tParam);
-		}
-
 		template<typename ... Args>
 		void PostSignal(Args&&... arg)
 		{
-			MfxBeginNewThread_Widely(&(MfxSignal::ThreadSignal_Template<Args...>), MFX_MAKE_PARAM(std::forward<Args>(arg)...).SetPVOID(this));
+			MfxBeginNewThread_Widely(&(MfxSignal::SignalCall_Thread<Args...>), MFX_MAKE_PARAM(std::forward<Args>(arg)...).SetPVOID(this));
 		}
 
 	private:
-		static MfxReturn MFX_CALLBACK(ThreadSignal_0)
+		template<typename ... Args>
+		static void SignalCall(MfxBase* set, MfxStringW& recv, MfxParam& param)
+		{
+			MFX_EXPARAM exParam;
+			set->Reflection(recv, exParam.EX_PARAM<Args>(param)...);
+		}
+
+	private:
+		template<typename ... Args>
+		static MfxReturn MFX_CALLBACK(SignalCall_Thread)
 		{
 			MfxSignal* tThis = (MfxSignal*)MFX_CALLBACK_PARAM.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter.recvObject->Reflection(iter.recvFunc);
+				SignalCall<Args...>(iter.recvObject, iter.recvFunc, MFX_CALLBACK_PARAM);
 			}
-
-			return MFXRET_SECCESS;
+			return MFX_RET_SECCESS;
 		}
-
-		/*********************************************************/
-	private:
-		template<typename T1>
-		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
-		{
-			MfxSignal* tThis = (MfxSignal*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter.recvObject->Reflection(iter.recvFunc, 
-					MFXPARAM_GET_0(T1)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-		/*********************************************************/
-	private:
-		template<class T1, class T2>
-		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
-		{
-			MfxSignal* tThis = (MfxSignal*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter.recvObject->Reflection(iter.recvFunc,
-					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-		/*********************************************************/
-	private:
-		template<class T1, class T2, class T3>
-		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
-		{
-			MfxSignal* tThis = (MfxSignal*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter.recvObject->Reflection(iter.recvFunc,
-					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2),
-					MFXPARAM_GET_2(T3)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-		/*********************************************************/
-	private:
-		template<class T1, class T2, class T3, class T4>
-		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
-		{
-			MfxSignal* tThis = (MfxSignal*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter.recvObject->Reflection(iter.recvFunc,
-					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2),
-					MFXPARAM_GET_2(T3), MFXPARAM_GET_3(T4)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-
-		/*********************************************************/
-	private:
-		template<class T1, class T2, class T3, class T4, class T5>
-		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
-		{
-			MfxSignal* tThis = (MfxSignal*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter.recvObject->Reflection(iter.recvFunc,
-					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2),
-					MFXPARAM_GET_2(T3), MFXPARAM_GET_3(T4),
-					MFXPARAM_GET_4(T5)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-		/*********************************************************/
-	private:
-		template<class T1, class T2, class T3, class T4, class T5, class T6>
-		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
-		{
-			MfxSignal* tThis = (MfxSignal*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter.recvObject->Reflection(iter.recvFunc,
-					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2),
-					MFXPARAM_GET_2(T3), MFXPARAM_GET_3(T4),
-					MFXPARAM_GET_4(T5), MFXPARAM_GET_5(T6)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-		/*********************************************************/
-	private:
-		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
-		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
-		{
-			MfxSignal* tThis = (MfxSignal*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter.recvObject->Reflection(iter.recvFunc,
-					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2),
-					MFXPARAM_GET_2(T3), MFXPARAM_GET_3(T4),
-					MFXPARAM_GET_4(T5), MFXPARAM_GET_5(T6),
-					MFXPARAM_GET_6(T7)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-		/*********************************************************/
-	private:
-		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
-		static MfxReturn MFX_CALLBACK(ThreadSignal_Template)
-		{
-			MfxSignal* tThis = (MfxSignal*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter.recvObject->Reflection(iter.recvFunc,
-					MFXPARAM_GET_0(T1), MFXPARAM_GET_1(T2),
-					MFXPARAM_GET_2(T3), MFXPARAM_GET_3(T4),
-					MFXPARAM_GET_4(T5), MFXPARAM_GET_5(T6),
-					MFXPARAM_GET_6(T7), MFXPARAM_GET_7(T8)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-
 	};
 
 
@@ -706,14 +569,6 @@ namespace MicroFlakeX
 		*  根据参数长度不同，重载信号发送函数
 		****************************************************************/
 	public:
-		void SendClient(MfxStringW recvFunc)
-		{
-			for (auto& iter : myReceiver)
-			{
-				iter->Reflection(recvFunc);
-			}
-		}
-
 		template<typename ... Args>
 		void SendClient(MfxStringW recvFunc, Args&&... arg)
 		{
@@ -723,162 +578,30 @@ namespace MicroFlakeX
 			}
 		}
 
-		void PostClient(MfxStringW recvFunc)
-		{
-			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_0), MFX_MAKE_PARAM(recvFunc).SetPVOID(this));
-		}
-
 		template<typename ... Args>
 		void PostClient(MfxStringW recvFunc, Args&&... arg)
 		{
-			MfxBeginNewThread_Widely(&(MfxClient::ThreadClient_Template<Args...>), MFX_MAKE_PARAM(recvFunc, std::forward<Args>(arg)...).SetPVOID(this));
+			MfxBeginNewThread_Widely(&(MfxClient::ClientCall_Thread<Args...>), MFX_MAKE_PARAM(std::forward<Args>(arg)...).SetPVOID(this).SetSTRINGW(recvFunc));
 		}
 
 	private:
-		static MfxReturn MFX_CALLBACK(ThreadClient_0)
+		template<typename ... Args>
+		static void ClientCall(MfxBase* set, MfxParam& param)
+		{
+			MFX_EXPARAM exParam;
+			set->Reflection(param.GetSTRINGW(), exParam.EX_PARAM<Args>(param)...);
+		}
+
+	private:
+		template<typename ... Args>
+		static MfxReturn MFX_CALLBACK(ClientCall_Thread)
 		{
 			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
 			for (auto& iter : tThis->myReceiver)
 			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW)
-				);
+				ClientCall<Args...>(iter, MFX_CALLBACK_PARAM);
 			}
-
-			return MFXRET_SECCESS;
-		}
-
-		/*********************************************************/
-	private:
-		template<class T1>
-		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
-		{
-			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
-					MFXPARAM_GET_1(T1)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-
-		/*********************************************************/
-	private:
-		template<class T1, class T2>
-		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
-		{
-			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
-					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-
-		/*********************************************************/
-	private:
-		template<class T1, class T2, class T3>
-		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
-		{
-			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
-					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
-					MFXPARAM_GET_3(T3)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-		/*********************************************************/
-	private:
-		template<class T1, class T2, class T3, class T4>
-		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
-		{
-			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
-					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
-					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-		/*********************************************************/
-	private:
-		template<class T1, class T2, class T3, class T4, class T5>
-		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
-		{
-			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
-					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
-					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4),
-					MFXPARAM_GET_5(T5)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-		/*********************************************************/
-	private:
-		template<class T1, class T2, class T3, class T4, class T5, class T6>
-		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
-		{
-			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
-					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
-					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4),
-					MFXPARAM_GET_5(T5), MFXPARAM_GET_6(T6)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-		/*********************************************************/
-	private:
-		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7>
-		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
-		{
-			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
-					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
-					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4),
-					MFXPARAM_GET_5(T5), MFXPARAM_GET_6(T6),
-					MFXPARAM_GET_7(T7)
-				);
-			}
-			return MFXRET_SECCESS;
-		}
-
-		/*********************************************************/
-	private:
-		template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
-		static MfxReturn MFX_CALLBACK(ThreadClient_Template)
-		{
-			MfxClient* tThis = (MfxClient*)MFX_CALLBACK_PARAM.GetPVOID();
-			for (auto& iter : tThis->myReceiver)
-			{
-				iter->Reflection(MFXPARAM_GET_0(MfxStringW),
-					MFXPARAM_GET_1(T1), MFXPARAM_GET_2(T2),
-					MFXPARAM_GET_3(T3), MFXPARAM_GET_4(T4),
-					MFXPARAM_GET_5(T5), MFXPARAM_GET_6(T6),
-					MFXPARAM_GET_7(T7), MFXPARAM_GET_8(T8)
-				);
-			}
-			return MFXRET_SECCESS;
+			return MFX_RET_SECCESS;
 		}
 	};
 }
@@ -921,256 +644,212 @@ namespace __MicroFlakeX
 		static std::unordered_map<MfxStringW, MfxFactoryHand*> MfxFactoryHand_Map;
 	};
 
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/***************************************************************
-*	MicroFlakeX 模板反推区
-****************************************************************/
-namespace __MicroFlakeX
-{
-	/**
-	template<typename R, typename O, typename... Args>
-	constexpr const int Mfx_GetFuncArgc(R(O::*)(Args...) const)
-	{
-		return sizeof...(Args);
-	};
-	template<typename R, typename O, typename... Args>
-	constexpr const int Mfx_GetFuncArgc(R(O::*)(Args...))
-	{
-		return sizeof...(Args);
-	};
-	template<typename R, typename... Args>
-	constexpr const int Mfx_GetFuncArgc(R(*)(Args...))
-	{
-		return sizeof...(Args);
-	};
-	/**/
-
-
 	template<typename T>
-	struct MfxArgNum_;
+	struct ArgNum_;
 
 	template<typename R, class O, typename... Args>
-	struct MfxArgNum_<R(O::*)(Args...) const>
+	struct ArgNum_<R(O::*)(Args...) const>
 	{
 		static const int Argc = sizeof...(Args);
 	};
 
 	template<typename R, class O, typename... Args>
-	struct MfxArgNum_<R(O::*)(Args...)>
+	struct ArgNum_<R(O::*)(Args...)>
 	{
 		static const int Argc = sizeof...(Args);
 	};
 
 	template<typename R, typename... Args>
-	struct MfxArgNum_<R(*)(Args...)>
+	struct ArgNum_<R(*)(Args...)>
 	{
 		static const int Argc = sizeof...(Args);
 	};
 
 	template<typename T>
-	constexpr const int Mfx_GetFuncArgc(T)
+	constexpr const int GetFuncArgNum(T)
 	{
-		return MfxArgNum_<T>::Argc;
+		return ArgNum_<T>::Argc;
 	};
 
 
 
 
-
-
-
 	template <class R, class O, class... Args>
-	O Mfx_GetFuncObject(R(O::*)(Args...) const)
+	O GetFuncObject(R(O::*)(Args...) const)
 	{
 		return O();
 	};
 
 	template <class R, class O, class... Args>
-	O Mfx_GetFuncObject(R(O::*)(Args...))
+	O GetFuncObject(R(O::*)(Args...))
 	{
 		return O();
 	};
 
 	template <class R, class O, class... Args>
-	R Mfx_GetFuncRet(R(O::*)(Args...) const)
+	R GetFuncRet(R(O::*)(Args...) const)
 	{
 		return R();
 	};
 
 	template <class R, class O, class... Args>
-	R Mfx_GetFuncRet(R(O::*)(Args...))
+	R GetFuncRet(R(O::*)(Args...))
 	{
 		return R();
 	};
 
 	template <class R, class... Args>
-	R Mfx_GetFuncRet(R(*)(Args...))
+	R GetFuncRet(R(*)(Args...))
 	{
 		return R();
 	};
 
 	template <class R, class O, class A1, class... Args>
-	A1 Mfx_GetFuncArgv_1(R(O::*)(A1, Args...) const)
+	A1 GetArgsType_1(R(O::*)(A1, Args...) const)
 	{
 		return A1();
 	};
 
 	template <class R, class O, class A1, class... Args>
-	A1 Mfx_GetFuncArgv_1(R(O::*)(A1, Args...))
+	A1 GetArgsType_1(R(O::*)(A1, Args...))
 	{
 		return A1();
 	};
 
 	template <class R, class A1, class... Args>
-	A1 Mfx_GetFuncArgv_1(R(*)(A1, Args...))
+	A1 GetArgsType_1(R(*)(A1, Args...))
 	{
 		return A1();
 	};
 
 	template <class R, class O, class A1, class A2, class... Args>
-	A2 Mfx_GetFuncArgv_2(R(O::*)(A1, A2, Args...) const)
+	A2 GetArgsType_2(R(O::*)(A1, A2, Args...) const)
 	{
 		return A2();
 	};
 
 	template <class R, class O, class A1, class A2, class... Args>
-	A2 Mfx_GetFuncArgv_2(R(O::*)(A1, A2, Args...))
+	A2 GetArgsType_2(R(O::*)(A1, A2, Args...))
 	{
 		return A2();
 	};
 
 	template <class R, class A1, class A2, class... Args>
-	A2 Mfx_GetFuncArgv_2(R(*)(A1, A2, Args...))
+	A2 GetArgsType_2(R(*)(A1, A2, Args...))
 	{
 		return A2();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class... Args>
-	A3 Mfx_GetFuncArgv_3(R(O::*)(A1, A2, A3, Args...) const)
+	A3 GetArgsType_3(R(O::*)(A1, A2, A3, Args...) const)
 	{
 		return A3();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class... Args>
-	A3 Mfx_GetFuncArgv_3(R(O::*)(A1, A2, A3, Args...))
+	A3 GetArgsType_3(R(O::*)(A1, A2, A3, Args...))
 	{
 		return A3();
 	};
 
 	template <class R, class A1, class A2, class A3, class... Args>
-	A3 Mfx_GetFuncArgv_3(R(*)(A1, A2, A3, Args...))
+	A3 GetArgsType_3(R(*)(A1, A2, A3, Args...))
 	{
 		return A3();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class... Args>
-	A4 Mfx_GetFuncArgv_4(R(O::*)(A1, A2, A3, A4, Args...) const)
+	A4 GetArgsType_4(R(O::*)(A1, A2, A3, A4, Args...) const)
 	{
 		return A4();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class... Args>
-	A4 Mfx_GetFuncArgv_4(R(O::*)(A1, A2, A3, A4, Args...))
+	A4 GetArgsType_4(R(O::*)(A1, A2, A3, A4, Args...))
 	{
 		return A4();
 	};
 
 	template <class R, class A1, class A2, class A3, class A4, class... Args>
-	A4 Mfx_GetFuncArgv_4(R(*)(A1, A2, A3, A4, Args...))
+	A4 GetArgsType_4(R(*)(A1, A2, A3, A4, Args...))
 	{
 		return A4();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class... Args>
-	A5 Mfx_GetFuncArgv_5(R(O::*)(A1, A2, A3, A4, A5, Args...) const)
+	A5 GetArgsType_5(R(O::*)(A1, A2, A3, A4, A5, Args...) const)
 	{
 		return A5();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class... Args>
-	A5 Mfx_GetFuncArgv_5(R(O::*)(A1, A2, A3, A4, A5, Args...))
+	A5 GetArgsType_5(R(O::*)(A1, A2, A3, A4, A5, Args...))
 	{
 		return A5();
 	};
 
 	template <class R, class A1, class A2, class A3, class A4, class A5, class... Args>
-	A5 Mfx_GetFuncArgv_5(R(*)(A1, A2, A3, A4, A5, Args...))
+	A5 GetArgsType_5(R(*)(A1, A2, A3, A4, A5, Args...))
 	{
 		return A5();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class... Args>
-	A6 Mfx_GetFuncArgv_6(R(O::*)(A1, A2, A3, A4, A5, A6, Args...) const)
+	A6 GetArgsType_6(R(O::*)(A1, A2, A3, A4, A5, A6, Args...) const)
 	{
 		return A6();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class... Args>
-	A6 Mfx_GetFuncArgv_6(R(O::*)(A1, A2, A3, A4, A5, A6, Args...))
+	A6 GetArgsType_6(R(O::*)(A1, A2, A3, A4, A5, A6, Args...))
 	{
 		return A6();
 	};
 
 	template <class R, class A1, class A2, class A3, class A4, class A5, class A6, class... Args>
-	A6 Mfx_GetFuncArgv_6(R(*)(A1, A2, A3, A4, A5, A6, Args...))
+	A6 GetArgsType_6(R(*)(A1, A2, A3, A4, A5, A6, Args...))
 	{
 		return A6();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class... Args>
-	A7 Mfx_GetFuncArgv_7(R(O::*)(A1, A2, A3, A4, A5, A6, A7, Args...) const)
+	A7 GetArgsType_7(R(O::*)(A1, A2, A3, A4, A5, A6, A7, Args...) const)
 	{
 		return A7();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class... Args>
-	A7 Mfx_GetFuncArgv_7(R(O::*)(A1, A2, A3, A4, A5, A6, A7, Args...))
+	A7 GetArgsType_7(R(O::*)(A1, A2, A3, A4, A5, A6, A7, Args...))
 	{
 		return A7();
 	};
 
 	template <class R, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class... Args>
-	A7 Mfx_GetFuncArgv_7(R(*)(A1, A2, A3, A4, A5, A6, A7, Args...))
+	A7 GetArgsType_7(R(*)(A1, A2, A3, A4, A5, A6, A7, Args...))
 	{
 		return A7();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class... Args>
-	A8 Mfx_GetFuncArgv_8(R(O::*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...) const)
+	A8 GetArgsType_8(R(O::*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...) const)
 	{
 		return A8();
 	};
 
 	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class... Args>
-	A8 Mfx_GetFuncArgv_8(R(O::*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...))
+	A8 GetArgsType_8(R(O::*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...))
 	{
 		return A8();
 	};
 
 	template <class R, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class... Args>
-	A8 Mfx_GetFuncArgv_8(R(*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...))
+	A8 GetArgsType_8(R(*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...))
 	{
 		return A8();
 	};
+
+#define MFX_GET_FUNC_ARGS_NUM(Type) __MicroFlakeX::ArgNum_<Type>::Argc 
+#define MFX_GET_FUNC_ARGS_TYPE(pFunc, place) typename std::decay<decltype(__MicroFlakeX::GetArgsType_##place(pFunc))>::type
 }
 
 
@@ -1179,7 +858,7 @@ namespace __MicroFlakeX
 ****************************************************************/
 namespace __MicroFlakeX
 {
-#define __MFXOBJ_ENABLE_REFLECTION \
+#define __MFX_OBJ_ENABLE_REFLECTION \
 public:\
 	MfxReturn Reflection(MfxStringW recvFunc...);\
 	MfxReturn GetObjectName(MfxStringW* ret);
@@ -1191,13 +870,13 @@ public:\
 	*
 	*
 	****************************************************************/
-#define __MFXOBJ_REFLECTION_INIT_0(OBJ)\
+#define __MFX_OBJ_REFLECTION_INIT_0(OBJ)\
 using namespace MicroFlakeX;\
 using namespace __MicroFlakeX;\
 MfxReturn OBJ::GetObjectName(MfxStringW* ret)\
 {\
-	*ret = MfxTextW(#OBJ);\
-	return MFXRET_SECCESS;\
+	*ret = MFX_TXT_W(#OBJ);\
+	return MFX_RET_SECCESS;\
 }\
 \
 class OBJ##FactoryHand\
@@ -1214,18 +893,18 @@ public:\
 	*
 	*
 	****************************************************************/
-#define __MFXOBJ_REFLECTION_INIT_1(OBJ) \
+#define __MFX_OBJ_REFLECTION_INIT_1(OBJ) \
 	}\
 	MfxReturn Creat(MfxBase** ret)\
 	{\
 		*ret = new OBJ;\
-		return MFXRET_SECCESS;\
+		return MFX_RET_SECCESS;\
 	}\
 };\
-OBJ##FactoryHand OBJ##Hand(MfxTextW(#OBJ));\
+OBJ##FactoryHand OBJ##Hand(MFX_TXT_W(#OBJ));\
 MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
 {\
-	MfxReturn ret = MFXRET_FAILED;\
+	MfxReturn ret = MFX_RET_FAILED;\
 	va_list argc;\
 	va_start(argc, recvFunc);\
 	BeginSwitch:\
@@ -1236,8 +915,8 @@ MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
 	/***************************************************************
 	*
 	****************************************************************/
-#define __MFXOBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ) \
-		case MFX_STRING_HASH_W(MfxTextW("Reflection")):\
+#define __MFX_OBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ) \
+		case MFX_STRING_HASH_W(MFX_TXT_W("Reflection")):\
 		{\
 			recvFunc = va_arg(argc, MfxStringW);\
 			argc = va_arg(argc, va_list);\
@@ -1245,7 +924,7 @@ MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
 		}\
 		default:\
 		{\
-			ret = FATHER_OBJ::Reflection(MfxTextW("Reflection"), recvFunc, argc); \
+			ret = FATHER_OBJ::Reflection(MFX_TXT_W("Reflection"), recvFunc, argc); \
 			va_end(argc);\
 			return ret;\
 		}\
@@ -1255,85 +934,85 @@ MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
 	template<typename T, typename T_This>
 	inline MicroFlakeX::MfxReturn __T_MFXOBJ_REFLECTIONFUNC_CASE_EX(T_This pThis, T pFunc, va_list argc)
 	{
-		MicroFlakeX::MfxReturn ret = MFXRET_FAILED;
-		if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 0)
+		MicroFlakeX::MfxReturn ret = MFX_RET_FAILED;
+		if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 0)
 		{
 			ret = (pThis->*pFunc)();
 			return ret;
 		}
-		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 1)
+		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 1)
 		{
-			auto& A1 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_1(pFunc)));
+			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
 			ret = (pThis->*pFunc)(std::move(A1));
 			return ret;
 		}
-		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 2)
+		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 2)
 		{
-			auto& A1 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_1(pFunc)));
-			auto& A2 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_2(pFunc)));
+			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
+			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
 			ret = (pThis->*pFunc)(std::move(A1), std::move(A2));
 			return ret;
 		}
-		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 3)
+		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 3)
 		{
-			auto& A1 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_1(pFunc)));
-			auto& A2 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_2(pFunc)));
-			auto& A3 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_3(pFunc)));
+			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
+			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
+			auto& A3 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 3));
 			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3));
 			return ret;
 		}
-		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 4)
+		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 4)
 		{
-			auto& A1 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_1(pFunc)));
-			auto& A2 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_2(pFunc)));
-			auto& A3 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_3(pFunc)));
-			auto& A4 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_4(pFunc)));
+			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
+			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
+			auto& A3 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 3));
+			auto& A4 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 4));
 			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4));
 			return ret;
 		}
-		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 5)
+		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 5)
 		{
-			auto& A1 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_1(pFunc)));
-			auto& A2 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_2(pFunc)));
-			auto& A3 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_3(pFunc)));
-			auto& A4 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_4(pFunc)));
-			auto& A5 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_5(pFunc)));
+			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
+			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
+			auto& A3 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 3));
+			auto& A4 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 4));
+			auto& A5 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 5));
 			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4), std::move(A5));
 			return ret;
 		}
-		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 6)
+		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 6)
 		{
-			auto& A1 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_1(pFunc)));
-			auto& A2 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_2(pFunc)));
-			auto& A3 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_3(pFunc)));
-			auto& A4 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_4(pFunc)));
-			auto& A5 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_5(pFunc)));
-			auto& A6 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_6(pFunc)));
+			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
+			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
+			auto& A3 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 3));
+			auto& A4 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 4));
+			auto& A5 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 5));
+			auto& A6 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 6));
 			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4), std::move(A5), std::move(A6));
 			return ret;
 		}
-		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 7)
+		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 7)
 		{
-			auto& A1 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_1(pFunc)));
-			auto& A2 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_2(pFunc)));
-			auto& A3 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_3(pFunc)));
-			auto& A4 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_4(pFunc)));
-			auto& A5 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_5(pFunc)));
-			auto& A6 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_6(pFunc)));
-			auto& A7 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_7(pFunc)));
+			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
+			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
+			auto& A3 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 3));
+			auto& A4 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 4));
+			auto& A5 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 5));
+			auto& A6 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 6));
+			auto& A7 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 7));
 			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4), std::move(A5), std::move(A6), std::move(A7));
 			return ret;
 		}
-		else if constexpr (__MicroFlakeX::MfxArgNum_<T>::Argc == 8)
+		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 8)
 		{
-			auto& A1 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_1(pFunc)));
-			auto& A2 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_2(pFunc)));
-			auto& A3 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_3(pFunc)));
-			auto& A4 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_4(pFunc)));
-			auto& A5 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_5(pFunc)));
-			auto& A6 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_6(pFunc)));
-			auto& A7 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_7(pFunc)));
-			auto& A8 = va_arg(argc, decltype(__MicroFlakeX::Mfx_GetFuncArgv_8(pFunc)));
+			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
+			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
+			auto& A3 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 3));
+			auto& A4 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 4));
+			auto& A5 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 5));
+			auto& A6 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 6));
+			auto& A7 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 7));
+			auto& A8 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 8));
 			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4), std::move(A5), std::move(A6), std::move(A7), std::move(A8));
 			return ret;
 		}
@@ -1342,7 +1021,7 @@ MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
 	*	MFXOBJ_REFLECTIONFUNC_CASE_EX注册宏
 	****************************************************************/
 #define __MFXOBJ_REFLECTIONFUNC_CASE_EX(OBJ, AUTO_FUNC)\
-	case MFX_STRING_HASH_W(MfxTextW(#AUTO_FUNC)):\
+	case MFX_STRING_HASH_W(MFX_TXT_W(#AUTO_FUNC)):\
 	{\
 		ret = __T_MFXOBJ_REFLECTIONFUNC_CASE_EX(this, &OBJ::AUTO_FUNC, argc);\
 		va_end(argc); \
@@ -1353,10 +1032,10 @@ MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
 
 
 
-#define __MFXOBJ_REFLECTION_ENDINIT(OBJ, FATHER_OBJ, ...) \
-	__MFXOBJ_REFLECTION_INIT_1(OBJ)\
+#define __MFX_OBJ_REFLECTION_ENDINIT(OBJ, FATHER_OBJ, ...) \
+	__MFX_OBJ_REFLECTION_INIT_1(OBJ)\
 	CONNECT(__MFXOBJ_REFLECTIONFUNC_SPREADCASE_0(OBJ, __VA_ARGS__));\
-	__MFXOBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ);
+	__MFX_OBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ);
 
 
 #define CONNECT(A, B) A##B
@@ -1387,9 +1066,9 @@ N97, N98, N99, N100, N101, N102, N103, N104, N105, N106, N107, N108, N109, N110,
 #define __MFX_IS_END_END 0,0,0
 #define __MFX_IS_END(SYMBOL) GET_ARGS_NUM(__MFX_IS_END_##SYMBOL)
 
-const int ATEST = __MFX_IS_END(END); //3
-const int BTEST = __MFX_IS_END(pFunc); //1
-const int CTEST = __MFX_IS_END(); //2
+//const int ATEST = __MFX_IS_END(END); //3
+//const int BTEST = __MFX_IS_END(pFunc); //1
+//const int CTEST = __MFX_IS_END(); //2
 
 #define __MFXOBJ_REFLECTIONFUNC_CASE_1(OBJ, FUNC_1) __MFXOBJ_REFLECTIONFUNC_CASE_EX(OBJ, FUNC_1)
 #define __MFXOBJ_REFLECTIONFUNC_CASE_2(...)

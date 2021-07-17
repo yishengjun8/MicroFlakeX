@@ -21,7 +21,7 @@ MfxReturn MicroFlakeX::MfxBase::Clone(MfxBase** ret) const
 {
 	*ret = nullptr;
 
-	return MFXRET_FAILED;
+	return MFX_RET_FAILED;
 }
 
 
@@ -47,13 +47,13 @@ bool MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 ****************************************************************/
 MfxReturn MicroFlakeX::MfxBase::Reflection(MfxStringW recvFunc ...)
 {
-	return MFXRET_FAILED;
+	return MFX_RET_FAILED;
 }
 
 MfxReturn MicroFlakeX::MfxBase::GetObjectName(MfxStringW* ret)
 {
-	*ret = MfxTextW("MfxBase");
-	return MFXRET_SECCESS;
+	*ret = MFX_TXT_W("MfxBase");
+	return MFX_RET_SECCESS;
 }
 
 

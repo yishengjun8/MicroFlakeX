@@ -334,12 +334,12 @@ namespace MicroFlakeX
 	class MfxUI :
 		public MfxBase
 	{
-		MFXOBJ_ENABLE_REFLECTION;
+		MFX_OBJ_ENABLE_REFLECTION;
 	private:
 		void InitData_UI();
 		void RegisterRecvFunc();
 	public:
-		MfxUI(MfxRect set = MfxRect(60, 60, 400, 400), MfxStringW title = MfxTextW("MfxNormalUI"), DWORD myStyle = UI_WINDOWS_STYLE_Normal, DWORD myStyleEx = WS_EX_LAYERED, MfxUI* father = nullptr);
+		MfxUI(MfxRect set = MfxRect(60, 60, 400, 400), MfxStringW title = MFX_TXT_W("MfxNormalUI"), DWORD myStyle = UI_WINDOWS_STYLE_Normal, DWORD myStyleEx = WS_EX_LAYERED, MfxUI* father = nullptr);
 		virtual ~MfxUI();
 
 		MfxReturn CreateSuccess();
@@ -558,26 +558,26 @@ namespace MicroFlakeX
 *	在消息处理队列末尾添加一个UIMessage回调
 *	对于UI来说，并不区分Event和Message
 *********************************************************************************/
-#define UI_ADDRECV_UIMSG(Msg, myClass, recvFunc) this->PushBackUIMessage(Msg, UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxTextW(#myClass#recvFunc)));
-#define UI_FRONTRECV_UIMSG(Msg, myClass, recvFunc) this->PushFrontUIMessage(Msg, UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxTextW(#myClass#recvFunc)));
+#define UI_ADDRECV_UIMSG(Msg, myClass, recvFunc) this->PushBackUIMessage(Msg, UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MFX_TXT_W(#myClass#recvFunc)));
+#define UI_FRONTRECV_UIMSG(Msg, myClass, recvFunc) this->PushFrontUIMessage(Msg, UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MFX_TXT_W(#myClass#recvFunc)));
 
 /********************************************************************************
 *	移除一个UI消息映射
 *********************************************************************************/
-#define UI_DELRECV_UIMSG(Msg, myClass, recvFunc) this->RemoveUIMessage(Msg, MfxTextW(#myClass#recvFunc)));
+#define UI_DELRECV_UIMSG(Msg, myClass, recvFunc) this->RemoveUIMessage(Msg, MFX_TXT_W(#myClass#recvFunc)));
 
 
 
 /********************************************************************************
 *	在事件处理队列末尾添加一个FlakeEvent回调
 *********************************************************************************/
-#define UI_ADDRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) this->PushBackFlakeEvent(FlakeEvent_Info(Flake, Event), UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxTextW(#myClass#recvFunc)));
-#define UI_FRONTECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) this->PushFrontFlakeEvent(FlakeEvent_Info(Flake, Event), UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MfxTextW(#myClass#recvFunc)));
+#define UI_ADDRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) this->PushBackFlakeEvent(FlakeEvent_Info(Flake, Event), UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MFX_TXT_W(#myClass#recvFunc)));
+#define UI_FRONTECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) this->PushFrontFlakeEvent(FlakeEvent_Info(Flake, Event), UI_UIRecvFunc_Info((pUIRecvFunc)&myClass::recvFunc, MFX_TXT_W(#myClass#recvFunc)));
 
 /********************************************************************************
 *	移除一个FlakeEvent映射
 *********************************************************************************/
-#define UI_DELRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) this->RemoveFlakeEvent(FlakeEvent_Info(Flake, Event), MfxTextW(#myClass#recvFunc)));
+#define UI_DELRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) this->RemoveFlakeEvent(FlakeEvent_Info(Flake, Event), MFX_TXT_W(#myClass#recvFunc)));
 
 
 
@@ -599,7 +599,7 @@ namespace MicroFlakeX
 	class MfxFlake :
 		public MfxBase
 	{
-		MFXOBJ_ENABLE_REFLECTION;
+		MFX_OBJ_ENABLE_REFLECTION;
 		MFXOBJ_ENABLE_FLOORCOMPARE;
 	private:
 		void InitData_Flake();
@@ -805,24 +805,24 @@ namespace MicroFlakeX
 *	在消息处理队列末尾添加一个FlakeMessage回调
 *	一般情况下，用户不需要处理FlakeMessage，只需要响应FlakeEvent即可，Message包含了大量无用的消息，Event则是翻译好的有重要意义的事件
 *********************************************************************************/
-#define FLAKE_ADDRECV_FLAKEMSG(Msg, myClass, recvFunc) this->PushBackFlakeMessage(Msg, Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxTextW(#myClass#recvFunc)));
-#define FLAKE_FRONTRECV_FLAKEMSG(Msg, myClass, recvFunc) this->PushFrontFlakeMessage(Msg, Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxTextW(#myClass#recvFunc)));
+#define FLAKE_ADDRECV_FLAKEMSG(Msg, myClass, recvFunc) this->PushBackFlakeMessage(Msg, Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MFX_TXT_W(#myClass#recvFunc)));
+#define FLAKE_FRONTRECV_FLAKEMSG(Msg, myClass, recvFunc) this->PushFrontFlakeMessage(Msg, Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MFX_TXT_W(#myClass#recvFunc)));
 /********************************************************************************
 *	移除消息映射
 *********************************************************************************/
-#define FLAKE_DELRECV_FLAKEMSG(Msg, myClass, recvFunc) this->RemoveFlakeMessage(Msg, MfxTextW(#myClass#recvFunc)));
+#define FLAKE_DELRECV_FLAKEMSG(Msg, myClass, recvFunc) this->RemoveFlakeMessage(Msg, MFX_TXT_W(#myClass#recvFunc)));
 
 
 
 /********************************************************************************
 *	在事件处理队列末尾添加一个FlakeEvent回调
 *********************************************************************************/
-#define FLAKE_ADDRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) this->PushBackFlakeEvent(FlakeEvent_Info(Flake, Event), Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxTextW(#myClass#recvFunc)));
-#define FLAKE_FRONTRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) this->PushFrontFlakeEvent(FlakeEvent_Info(Flake, Event), Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MfxTextW(#myClass#recvFunc)));
+#define FLAKE_ADDRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) this->PushBackFlakeEvent(FlakeEvent_Info(Flake, Event), Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MFX_TXT_W(#myClass#recvFunc)));
+#define FLAKE_FRONTRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) this->PushFrontFlakeEvent(FlakeEvent_Info(Flake, Event), Flake_RecvFunc_Infor((pFlakeRecvFunc)&myClass::recvFunc, MFX_TXT_W(#myClass#recvFunc)));
 
 /********************************************************************************
 *	移除一个FlakeEvent映射
 *********************************************************************************/
-#define FLAKE_DELRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) this->RemoveFlakeEvent(FlakeEvent_Info(Flake, Event), MfxTextW(#myClass#recvFunc)));
+#define FLAKE_DELRECV_FLAKEEVENT(Flake, Event, myClass, recvFunc) this->RemoveFlakeEvent(FlakeEvent_Info(Flake, Event), MFX_TXT_W(#myClass#recvFunc)));
 
 }

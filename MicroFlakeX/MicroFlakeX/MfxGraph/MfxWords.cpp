@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "MfxGraph.h"
 
-MFXOBJ_REFLECTION_INIT(MfxWords)
-MFXOBJ_REFLECTION_ENDINIT(MfxWords, MfxGraph, \
+MFX_OBJ_REFLECTION_INIT(MfxWords)
+MFX_OBJ_REFLECTION_ENDINIT(MfxWords, MfxGraph, \
 	Paint, \
 	\
 	SetCanvas, \
@@ -36,7 +36,7 @@ IDWriteTextFormat* MfxWords::gDefTextFormat = nullptr;
 MicroFlakeX::MfxWords::MfxWords()
 {
 	myRect.Reset(0, 0, 100, 100);
-	myText = MfxTextW("Welcome to MfxWords");
+	myText = MFX_TXT_W("Welcome to MfxWords");
 	myColor.Reset(255, 255, 100, 100);
 	myTextBrush = nullptr;
 	myTextFormat = nullptr;
@@ -164,7 +164,7 @@ MfxReturn MicroFlakeX::MfxWords::Clone(MfxWords** ret)const
 	(*ret)->SetTextColor(&myColor);
 
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 
@@ -189,7 +189,7 @@ MfxReturn MicroFlakeX::MfxWords::Paint()
 
 	myMemberLock.UnLock(&myRenderTarget, &myTextBrush, &myTextLayout, &myRect);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetCanvas(MfxCanvas* set)
@@ -200,7 +200,7 @@ MfxReturn MicroFlakeX::MfxWords::SetCanvas(MfxCanvas* set)
 
 	Update_Canvas();
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxWords::GetCanvas(MfxCanvas** ret)
@@ -209,7 +209,7 @@ MfxReturn MicroFlakeX::MfxWords::GetCanvas(MfxCanvas** ret)
 	*ret = myCanvas;
 	myMemberLock.UnLock(&myCanvas);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 
@@ -224,7 +224,7 @@ MfxReturn MicroFlakeX::MfxWords::GetText(MfxStringW* ret)
 	*ret = myText;
 	myMemberLock.UnLock(&myText);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxWords::GetTextSize(FLOAT* ret)
@@ -233,7 +233,7 @@ MfxReturn MicroFlakeX::MfxWords::GetTextSize(FLOAT* ret)
 	*ret = myTextLayout->GetFontSize();
 	myMemberLock.UnLock(&myTextLayout);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxWords::GetFontName(MfxStringW* ret)
@@ -245,9 +245,9 @@ MfxReturn MicroFlakeX::MfxWords::GetFontName(MfxStringW* ret)
 	myMemberLock.UnLock(&myTextLayout);
 
 	*ret = fontFamilyName;
-	SafeDeleteL(fontFamilyName);
+	SafeDeleteList(fontFamilyName);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxWords::GetTextColor(MfxColor* ret)
@@ -256,7 +256,7 @@ MfxReturn MicroFlakeX::MfxWords::GetTextColor(MfxColor* ret)
 	myColor.GetColor(ret);
 	myMemberLock.UnLock(&myColor);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxWords::GetTextFormat(IDWriteTextFormat** ret)
@@ -274,7 +274,7 @@ MfxReturn MicroFlakeX::MfxWords::GetTextAlignmentX(TextAlignmentX* ret)
 	*ret = myTextLayout->GetTextAlignment();
 	myMemberLock.UnLock(&myTextLayout);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxWords::GetTextAlignmentY(TextAlignmentY* ret)
@@ -283,7 +283,7 @@ MfxReturn MicroFlakeX::MfxWords::GetTextAlignmentY(TextAlignmentY* ret)
 	*ret = myTextLayout->GetParagraphAlignment();
 	myMemberLock.UnLock(&myTextLayout);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 
@@ -304,7 +304,7 @@ MfxReturn MicroFlakeX::MfxWords::SetRect(const MfxRect* set)
 
 	myMemberLock.UnLock(&myTextLayout, &myRect);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetSize(const MfxSize* set)
@@ -317,7 +317,7 @@ MfxReturn MicroFlakeX::MfxWords::SetSize(const MfxSize* set)
 
 	myMemberLock.UnLock(&myTextLayout, &myRect);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetText(const MfxStringW set)
@@ -328,7 +328,7 @@ MfxReturn MicroFlakeX::MfxWords::SetText(const MfxStringW set)
 
 	ResetTextLayout();
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetTextSize(const FLOAT set)
@@ -337,7 +337,7 @@ MfxReturn MicroFlakeX::MfxWords::SetTextSize(const FLOAT set)
 	myTextLayout->SetFontSize(set, DWRITE_TEXT_RANGE{ 0,myText.length() });
 	myMemberLock.UnLock(&myTextLayout, &myText);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 
@@ -347,7 +347,7 @@ MfxReturn MicroFlakeX::MfxWords::SetFontName(const MfxStringW set)
 	myTextLayout->SetFontFamilyName(set.c_str(), DWRITE_TEXT_RANGE{ 0,myText.length() });
 	myMemberLock.UnLock(&myTextLayout, &myText);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetTextColor(const MfxColor* set)
@@ -357,7 +357,7 @@ MfxReturn MicroFlakeX::MfxWords::SetTextColor(const MfxColor* set)
 	myTextBrushUpdateFlage = true;
 	myMemberLock.UnLock(&myColor, &myTextBrushUpdateFlage);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetTextFormat(IDWriteTextFormat* set)
@@ -380,7 +380,7 @@ MfxReturn MicroFlakeX::MfxWords::SetTextAlignmentX(TextAlignmentX set)
 	myTextLayout->SetTextAlignment(set);
 	myMemberLock.UnLock(&myTextLayout);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 MfxReturn MicroFlakeX::MfxWords::SetTextAlignmentY(TextAlignmentY set)
@@ -389,7 +389,7 @@ MfxReturn MicroFlakeX::MfxWords::SetTextAlignmentY(TextAlignmentY set)
 	myTextLayout->SetParagraphAlignment(set);
 	myMemberLock.UnLock(&myTextLayout);
 
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
 
@@ -451,6 +451,6 @@ MfxReturn MicroFlakeX::MfxWords::Update_Canvas()
 
 		myMemberLock.UnLock(&myRenderTarget, &myTextBrush);
 	}
-	return MFXRET_SECCESS;
+	return MFX_RET_SECCESS;
 }
 
