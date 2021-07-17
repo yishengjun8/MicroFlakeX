@@ -22,7 +22,7 @@ class MfxTest :
     public MfxBase
 {
 
-    MFXOBJ_ENABLE_REFLECTION;
+    MFX_OBJ_ENABLE_REFLECTION;
 
 public:
     MfxReturn test001(int a = 10);

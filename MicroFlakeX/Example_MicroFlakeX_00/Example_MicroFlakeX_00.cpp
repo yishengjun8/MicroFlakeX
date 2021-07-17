@@ -10,107 +10,114 @@ int main()
     MfxBase* myColor = nullptr;
     MfxBase* myFlake_01 = nullptr;
 
-    MfxFactory(MfxTextW("MfxUI"), &myUI_00);
-    MfxFactory(MfxTextW("MfxFlake"), &myFlake_01);
-    MfxFactory(MfxTextW("MfxColor"), &myColor);
+    MfxFactory(MFX_TXT_W("MfxUI"), &myUI_00);
+    MfxFactory(MFX_TXT_W("MfxFlake"), &myFlake_01);
+    MfxFactory(MFX_TXT_W("MfxColor"), &myColor);
 
     /**/
-    MfxSignal mySignal;
+    MfxSignal mySignal, myTestSignal;
     MfxClient myClient;
 
-    mySignal.PushBackReceiver(myUI_00, MfxTextW("SetBackColor"));
+    myTestSignal.PushBackReceiver(myColor, MFX_TXT_W("Reset"));
+
+    mySignal.PushBackReceiver(myUI_00, MFX_TXT_W("SetBackColor"));
     myClient.PushBackReceiver(myUI_00);
 
     MfxSize uiSize(600, 600);
-    myClient.PostClient(MfxTextW("SetSize"), &uiSize);
+    myClient.PostClient(MFX_TXT_W("SetSize"), &uiSize);
 
-    myColor->Reflection(MfxTextW("Reset"), 255, 0, 255, 0);
+    myColor->Reflection(MFX_TXT_W("Reset"), 255, 255, 0, 0);
+    //myTestSignal.PostSignal(255, 255, 0, 0);
+    Sleep(10);
     mySignal.SendSignal(myColor);
 
-    myColor->Reflection(MfxTextW("Reset"), 255, 255, 255, 255);
-    myFlake_01->Reflection(MfxTextW("SetBackColor"), myColor);
 
-    myColor->Reflection(MfxTextW("Reset"), 255, 0, 0, 0);
-    myFlake_01->Reflection(MfxTextW("SetTitleColor"), myColor);
+    myColor->Reflection(MFX_TXT_W("Reset"), 255, 255, 255, 255);
+    myFlake_01->Reflection(MFX_TXT_W("SetBackColor"), myColor);
+
+    myColor->Reflection(MFX_TXT_W("Reset"), 255, 0, 0, 0);
+    myFlake_01->Reflection(MFX_TXT_W("SetTitleColor"), myColor);
 
     MfxRect flakeRect(0, 0, 100, 100);
-    myFlake_01->Reflection(MfxTextW("SetRect"), &flakeRect);
+    myFlake_01->Reflection(MFX_TXT_W("SetRect"), &flakeRect);
 
-    myFlake_01->Reflection(MfxTextW("SetTitle"), MfxStringW(MfxTextW("MFX")));
-    myFlake_01->Reflection(MfxTextW("OpenRButtonMove"));
-    myFlake_01->Reflection(MfxTextW("OpenLButtonMove"));
+    myFlake_01->Reflection(MFX_TXT_W("SetTitle"), MfxStringW(MFX_TXT_W("MFX")));
+    myFlake_01->Reflection(MFX_TXT_W("OpenRButtonMove"));
+    myFlake_01->Reflection(MFX_TXT_W("OpenLButtonMove"));
 
-    myUI_00->Reflection(MfxTextW("InsertFlake"), myFlake_01);
+    myUI_00->Reflection(MFX_TXT_W("InsertFlake"), myFlake_01);
 
     MfxGlide myGlide;
 
     myGlide.SetFPS(90);
     myGlide.BindObject(myFlake_01);
 
-    myGlide.BindObjectName(MfxTextW("group_1"),
-        MfxGulid_WidelyType(MfxTextW("MfxSize"), MfxTextW("MfxSize"), MfxTextW("GetSize"), MfxTextW("SetSize")));
-    myGlide.Add_GetSetFuncName(MfxTextW("group_1"), MfxTextW("GetWidth"), MfxTextW("SetWidth"));
-    myGlide.Add_GetSetFuncName(MfxTextW("group_1"), MfxTextW("GetHeight"), MfxTextW("SetHeight"));
+    myGlide.BindObjectName(MFX_TXT_W("group_1"),
+        MfxGulid_WidelyType(MFX_TXT_W("MfxSize"), MFX_TXT_W("MfxSize"), MFX_TXT_W("GetSize"), MFX_TXT_W("SetSize")));
+    myGlide.Add_GetSetFuncName(MFX_TXT_W("group_1"), MFX_TXT_W("GetWidth"), MFX_TXT_W("SetWidth"));
+    myGlide.Add_GetSetFuncName(MFX_TXT_W("group_1"), MFX_TXT_W("GetHeight"), MFX_TXT_W("SetHeight"));
 
-    myGlide.BindObjectName(MfxTextW("group_2"),
-        MfxGulid_WidelyType(MfxTextW("MfxPoint"), MfxTextW("MfxPoint"), MfxTextW("GetPoint"), MfxTextW("SetPoint")));
-    myGlide.Add_GetSetFuncName(MfxTextW("group_2"), MfxTextW("GetX"), MfxTextW("SetX"));
-    myGlide.Add_GetSetFuncName(MfxTextW("group_2"), MfxTextW("GetY"), MfxTextW("SetY"));
+    myGlide.BindObjectName(MFX_TXT_W("group_2"),
+        MfxGulid_WidelyType(MFX_TXT_W("MfxPoint"), MFX_TXT_W("MfxPoint"), MFX_TXT_W("GetPoint"), MFX_TXT_W("SetPoint")));
+    myGlide.Add_GetSetFuncName(MFX_TXT_W("group_2"), MFX_TXT_W("GetX"), MFX_TXT_W("SetX"));
+    myGlide.Add_GetSetFuncName(MFX_TXT_W("group_2"), MFX_TXT_W("GetY"), MFX_TXT_W("SetY"));
 
-    myGlide.BindObjectName(MfxTextW("group_3"),
-        MfxGulid_WidelyType(MfxTextW("MfxColor"), MfxTextW("MfxColor"), MfxTextW("GetBackColor"), MfxTextW("SetBackColor")));
-    myGlide.Add_GetSetFuncName(MfxTextW("group_3"), MfxTextW("GetA"), MfxTextW("SetA"));
-    myGlide.Add_GetSetFuncName(MfxTextW("group_3"), MfxTextW("GetR"), MfxTextW("SetR"));
-    myGlide.Add_GetSetFuncName(MfxTextW("group_3"), MfxTextW("GetG"), MfxTextW("SetG"));
-    myGlide.Add_GetSetFuncName(MfxTextW("group_3"), MfxTextW("GetB"), MfxTextW("SetB"));
+    myGlide.BindObjectName(MFX_TXT_W("group_3"),
+        MfxGulid_WidelyType(MFX_TXT_W("MfxColor"), MFX_TXT_W("MfxColor"), MFX_TXT_W("GetBackColor"), MFX_TXT_W("SetBackColor")));
+    myGlide.Add_GetSetFuncName(MFX_TXT_W("group_3"), MFX_TXT_W("GetA"), MFX_TXT_W("SetA"));
+    myGlide.Add_GetSetFuncName(MFX_TXT_W("group_3"), MFX_TXT_W("GetR"), MFX_TXT_W("SetR"));
+    myGlide.Add_GetSetFuncName(MFX_TXT_W("group_3"), MFX_TXT_W("GetG"), MFX_TXT_W("SetG"));
+    myGlide.Add_GetSetFuncName(MFX_TXT_W("group_3"), MFX_TXT_W("GetB"), MFX_TXT_W("SetB"));
 
-    myGlide.BindObjectName(MfxTextW("group_4"),
-        MfxGulid_WidelyType(MfxTextW("MfxColor"), MfxTextW("MfxColor"), MfxTextW("GetTitleColor"), MfxTextW("SetTitleColor")));
-    myGlide.Add_GetSetFuncName(MfxTextW("group_4"), MfxTextW("GetA"), MfxTextW("SetA"));
-    myGlide.Add_GetSetFuncName(MfxTextW("group_4"), MfxTextW("GetR"), MfxTextW("SetR"));
-    myGlide.Add_GetSetFuncName(MfxTextW("group_4"), MfxTextW("GetG"), MfxTextW("SetG"));
-    myGlide.Add_GetSetFuncName(MfxTextW("group_4"), MfxTextW("GetB"), MfxTextW("SetB"));
+    myGlide.BindObjectName(MFX_TXT_W("group_4"),
+        MfxGulid_WidelyType(MFX_TXT_W("MfxColor"), MFX_TXT_W("MfxColor"), MFX_TXT_W("GetTitleColor"), MFX_TXT_W("SetTitleColor")));
+    myGlide.Add_GetSetFuncName(MFX_TXT_W("group_4"), MFX_TXT_W("GetA"), MFX_TXT_W("SetA"));
+    myGlide.Add_GetSetFuncName(MFX_TXT_W("group_4"), MFX_TXT_W("GetR"), MFX_TXT_W("SetR"));
+    myGlide.Add_GetSetFuncName(MFX_TXT_W("group_4"), MFX_TXT_W("GetG"), MFX_TXT_W("SetG"));
+    myGlide.Add_GetSetFuncName(MFX_TXT_W("group_4"), MFX_TXT_W("GetB"), MFX_TXT_W("SetB"));
 
     MfxSize keySize(300, 300);
-    myGlide.MfxAddKeyframe(MfxTextW("group_1"), &keySize, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_1"), &keySize, 1500);
     keySize.Reset(100, 100);
-    myGlide.MfxAddKeyframe(MfxTextW("group_1"), &keySize, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_1"), &keySize, 1500);
     keySize.Reset(300, 300);
-    myGlide.MfxAddKeyframe(MfxTextW("group_1"), &keySize, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_1"), &keySize, 1500);
     keySize.Reset(300, 300);
-    myGlide.MfxAddKeyframe(MfxTextW("group_1"), &keySize, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_1"), &keySize, 1500);
 
 
     MfxPoint keyPoint(300, 0);
-    myGlide.MfxAddKeyframe(MfxTextW("group_2"), &keyPoint, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_2"), &keyPoint, 1500);
     keyPoint.Reset(300, 300);
-    myGlide.MfxAddKeyframe(MfxTextW("group_2"), &keyPoint, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_2"), &keyPoint, 1500);
     keyPoint.Reset(0, 300);
-    myGlide.MfxAddKeyframe(MfxTextW("group_2"), &keyPoint, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_2"), &keyPoint, 1500);
     keyPoint.Reset(0, 0);
-    myGlide.MfxAddKeyframe(MfxTextW("group_2"), &keyPoint, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_2"), &keyPoint, 1500);
 
     MfxColor keyColor(255, 0, 255, 255);
-    myGlide.MfxAddKeyframe(MfxTextW("group_3"), &keyColor, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_3"), &keyColor, 1500);
     keyColor.Reset(255, 0, 0, 255);
-    myGlide.MfxAddKeyframe(MfxTextW("group_3"), &keyColor, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_3"), &keyColor, 1500);
     keyColor.Reset(255, 50, 50, 50);
-    myGlide.MfxAddKeyframe(MfxTextW("group_3"), &keyColor, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_3"), &keyColor, 1500);
     keyColor.Reset(255, 255, 0, 0);
-    myGlide.MfxAddKeyframe(MfxTextW("group_3"), &keyColor, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_3"), &keyColor, 1500);
 
     keyColor.Reset(255, 0, 0, 255);
-    myGlide.MfxAddKeyframe(MfxTextW("group_4"), &keyColor, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_4"), &keyColor, 1500);
     keyColor.Reset(255, 0, 255, 255);
-    myGlide.MfxAddKeyframe(MfxTextW("group_4"), &keyColor, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_4"), &keyColor, 1500);
     keyColor.Reset(255, 255, 255, 255);
-    myGlide.MfxAddKeyframe(MfxTextW("group_4"), &keyColor, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_4"), &keyColor, 1500);
     keyColor.Reset(255, 255, 255, 0);
-    myGlide.MfxAddKeyframe(MfxTextW("group_4"), &keyColor, 1500);
+    myGlide.MfxAddKeyframe(MFX_TXT_W("group_4"), &keyColor, 1500);
 
     myGlide.Begin();
 
     /**/
-    myUI_00->Reflection(MfxTextW("WND_SHOW"));
+
+
+    myUI_00->Reflection(MFX_TXT_W("WND_SHOW"));
     return MfxAppRun();
 }

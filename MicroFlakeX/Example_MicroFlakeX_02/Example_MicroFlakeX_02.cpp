@@ -20,27 +20,11 @@ public:
     GetFuncArgType() {};
     ~GetFuncArgType() {};
 
-    /**
-    template<typename T>
-    auto GetArgType(int num, T pFunc)
-    {
-        return 10;
-    }
-    /**/
 
-    template <class R, class A1, class... Args>
-    auto GetArgType(const int begin, const int over, R(*pFunc)(A1, Args...) )
+    template <class T, class R, class... Args>
+    MfxReturn Ex_Reflection(pMfxBase pThis, T pFunc, va_list argc, R(*)(Args...) )
     {
-        if constexpr (sizeof...(Args) == 10)
-        {
-            //std::cout << begin << " " << over << endl;
-            return A1();
-        }
-        else
-        {
-            std::cout << begin << " " << over << endl;
-            return GetArgType(begin + 1, over, pFunc);
-        }
+        return (pThis->*pFunc)(std::move(va_arg(argc, typename std::decay<decltype(Args)>::type))...);
     };
 
     //template<typename A1, typename ... Args, typename ... RetArgs>
@@ -53,7 +37,7 @@ public:
 
 
 
-int mainsssssssssssssss()
+int main()
 {
     MyClass set; MfxTest myTest; MfxSignal mySignal; MfxClient myClient;
     myClient.PushBackReceiver(&myTest);
@@ -73,11 +57,8 @@ int mainsssssssssssssss()
     std::cout << "MfxClient OVER" << endl << endl;
 
 
-    //GetFuncArgType myArgTest;
+    myTest.Reflection(L"test002", set);
 
-   // (myArgTest.GetArgType(0, 2, &FuncTest2));// a = 10;
-
-    //cout << a;
     return 0;
 }
 
@@ -210,7 +191,7 @@ int test2()
 }
 
 
-int main()
+int mainsssssssssssssssssssss()
 {
 
     /**/

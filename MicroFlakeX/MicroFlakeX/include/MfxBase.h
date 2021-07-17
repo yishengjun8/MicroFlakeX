@@ -130,7 +130,6 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-
 	class MFX_DLL_EXPORT MfxParam;
 	class MFX_DLL_EXPORT MfxMemberLock;
 	class MFX_DLL_EXPORT MfxCriticalLock;
@@ -239,12 +238,12 @@ namespace MicroFlakeX
 	class MFX_EXPARAM
 	{
 	public:
-		MFX_EXPARAM() { myNum = 0; };
+		MFX_EXPARAM(int argNum) { myNum = argNum - 1; };
 
 		template<typename Arg>
 		inline auto& EX_PARAM(MfxParam& param) noexcept
 		{
-			return (std::any_cast<Arg&>)(param[myNum++]);
+			return (std::any_cast<Arg&>)(param[myNum--]);
 		}
 	protected:
 		MfxNum myNum;
@@ -529,7 +528,7 @@ namespace MicroFlakeX
 		template<typename ... Args>
 		static void SignalCall(MfxBase* set, MfxStringW& recv, MfxParam& param)
 		{
-			MFX_EXPARAM exParam;
+			MFX_EXPARAM exParam(param.GetParamSize());
 			set->Reflection(recv, exParam.EX_PARAM<Args>(param)...);
 		}
 
@@ -588,7 +587,7 @@ namespace MicroFlakeX
 		template<typename ... Args>
 		static void ClientCall(MfxBase* set, MfxParam& param)
 		{
-			MFX_EXPARAM exParam;
+			MFX_EXPARAM exParam(param.GetParamSize());
 			set->Reflection(param.GetSTRINGW(), exParam.EX_PARAM<Args>(param)...);
 		}
 
@@ -606,20 +605,12 @@ namespace MicroFlakeX
 	};
 }
 
-
+/***************************************************************
+*	__MicroFlakeX内部函数
+*	>>	一般情况下这里的函数不需要额外的关注
+****************************************************************/
 namespace __MicroFlakeX
 {	
-	/***************************************************************
-	*	__MicroFlakeX内部函数
-	*		>>	一般情况下这里的函数不需要额外的关注
-	*
-	*	MicroFlakeX辅助函数
-	*
-	*		MicroFlakeX的子类通过 MfxFactoryHand 来注册工厂创建。
-	*		RemoveObject - 移除注册
-	*		RegisterObject - 注册工厂
-	*
-	****************************************************************/
 	using namespace MicroFlakeX;
 
 	MFX_DLL_EXPORT VOID CALLBACK MfxThreadCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val);
@@ -671,9 +662,6 @@ namespace __MicroFlakeX
 		return ArgNum_<T>::Argc;
 	};
 
-
-
-
 	template <class R, class O, class... Args>
 	O GetFuncObject(R(O::*)(Args...) const)
 	{
@@ -704,172 +692,64 @@ namespace __MicroFlakeX
 		return R();
 	};
 
-	template <class R, class O, class A1, class... Args>
-	A1 GetArgsType_1(R(O::*)(A1, Args...) const)
+	template<class T>
+	inline auto& __EXTEND_VA_LIST(va_list& argc)
 	{
-		return A1();
+		return (*(typename std::decay<T>::type*)(argc -= _INTSIZEOF(T)));
+	}
+
+	template<class... Args>
+	constexpr inline ULONG64 ArgsSize()
+	{
+		return (sizeof(Args) + ...);
+	}
+
+	template <typename T_THIS, typename OBJ, class... Args>
+	constexpr inline MicroFlakeX::MfxReturn __MFX_REFLECTION_FUNC_EXTEND(T_THIS pThis, va_list argc, MfxReturn(OBJ::* pFunc)(Args...))
+	{
+		if constexpr (sizeof...(Args) == 0)
+		{
+			return (pThis->*pFunc)();
+		}
+		else
+		{
+			va_list r_argc = argc + ArgsSize<Args...>();
+			return (pThis->*pFunc)(std::move(__EXTEND_VA_LIST<Args>(r_argc))...);
+		}
 	};
 
-	template <class R, class O, class A1, class... Args>
-	A1 GetArgsType_1(R(O::*)(A1, Args...))
+	template <typename T_THIS, typename OBJ, class... Args>
+	constexpr inline MicroFlakeX::MfxReturn __MFX_REFLECTION_FUNC_EXTEND(T_THIS pThis, va_list argc, MfxReturn(OBJ::* pFunc)(Args...)const)
 	{
-		return A1();
+		if constexpr (sizeof...(Args) == 0)
+		{
+			return (pThis->*pFunc)();
+		}
+		else
+		{
+			va_list r_argc = argc + ArgsSize<Args...>();
+			return (pThis->*pFunc)(std::move(__EXTEND_VA_LIST<Args>(r_argc))...);
+		}
 	};
 
-	template <class R, class A1, class... Args>
-	A1 GetArgsType_1(R(*)(A1, Args...))
-	{
-		return A1();
-	};
-
-	template <class R, class O, class A1, class A2, class... Args>
-	A2 GetArgsType_2(R(O::*)(A1, A2, Args...) const)
-	{
-		return A2();
-	};
-
-	template <class R, class O, class A1, class A2, class... Args>
-	A2 GetArgsType_2(R(O::*)(A1, A2, Args...))
-	{
-		return A2();
-	};
-
-	template <class R, class A1, class A2, class... Args>
-	A2 GetArgsType_2(R(*)(A1, A2, Args...))
-	{
-		return A2();
-	};
-
-	template <class R, class O, class A1, class A2, class A3, class... Args>
-	A3 GetArgsType_3(R(O::*)(A1, A2, A3, Args...) const)
-	{
-		return A3();
-	};
-
-	template <class R, class O, class A1, class A2, class A3, class... Args>
-	A3 GetArgsType_3(R(O::*)(A1, A2, A3, Args...))
-	{
-		return A3();
-	};
-
-	template <class R, class A1, class A2, class A3, class... Args>
-	A3 GetArgsType_3(R(*)(A1, A2, A3, Args...))
-	{
-		return A3();
-	};
-
-	template <class R, class O, class A1, class A2, class A3, class A4, class... Args>
-	A4 GetArgsType_4(R(O::*)(A1, A2, A3, A4, Args...) const)
-	{
-		return A4();
-	};
-
-	template <class R, class O, class A1, class A2, class A3, class A4, class... Args>
-	A4 GetArgsType_4(R(O::*)(A1, A2, A3, A4, Args...))
-	{
-		return A4();
-	};
-
-	template <class R, class A1, class A2, class A3, class A4, class... Args>
-	A4 GetArgsType_4(R(*)(A1, A2, A3, A4, Args...))
-	{
-		return A4();
-	};
-
-	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class... Args>
-	A5 GetArgsType_5(R(O::*)(A1, A2, A3, A4, A5, Args...) const)
-	{
-		return A5();
-	};
-
-	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class... Args>
-	A5 GetArgsType_5(R(O::*)(A1, A2, A3, A4, A5, Args...))
-	{
-		return A5();
-	};
-
-	template <class R, class A1, class A2, class A3, class A4, class A5, class... Args>
-	A5 GetArgsType_5(R(*)(A1, A2, A3, A4, A5, Args...))
-	{
-		return A5();
-	};
-
-	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class... Args>
-	A6 GetArgsType_6(R(O::*)(A1, A2, A3, A4, A5, A6, Args...) const)
-	{
-		return A6();
-	};
-
-	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class... Args>
-	A6 GetArgsType_6(R(O::*)(A1, A2, A3, A4, A5, A6, Args...))
-	{
-		return A6();
-	};
-
-	template <class R, class A1, class A2, class A3, class A4, class A5, class A6, class... Args>
-	A6 GetArgsType_6(R(*)(A1, A2, A3, A4, A5, A6, Args...))
-	{
-		return A6();
-	};
-
-	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class... Args>
-	A7 GetArgsType_7(R(O::*)(A1, A2, A3, A4, A5, A6, A7, Args...) const)
-	{
-		return A7();
-	};
-
-	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class... Args>
-	A7 GetArgsType_7(R(O::*)(A1, A2, A3, A4, A5, A6, A7, Args...))
-	{
-		return A7();
-	};
-
-	template <class R, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class... Args>
-	A7 GetArgsType_7(R(*)(A1, A2, A3, A4, A5, A6, A7, Args...))
-	{
-		return A7();
-	};
-
-	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class... Args>
-	A8 GetArgsType_8(R(O::*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...) const)
-	{
-		return A8();
-	};
-
-	template <class R, class O, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class... Args>
-	A8 GetArgsType_8(R(O::*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...))
-	{
-		return A8();
-	};
-
-	template <class R, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class... Args>
-	A8 GetArgsType_8(R(*)(A1, A2, A3, A4, A5, A6, A7, A8, Args...))
-	{
-		return A8();
-	};
-
-#define MFX_GET_FUNC_ARGS_NUM(Type) __MicroFlakeX::ArgNum_<Type>::Argc 
-#define MFX_GET_FUNC_ARGS_TYPE(pFunc, place) typename std::decay<decltype(__MicroFlakeX::GetArgsType_##place(pFunc))>::type
+	/***************************************************************
+	*	MFXOBJ_REFLECTIONFUNC_CASE_EX注册宏
+	****************************************************************/
+#define __MFXOBJ_REFLECTIONFUNC_CASE_EX(OBJ, AUTO_FUNC)\
+	case MFX_STRING_HASH_W(MFX_TXT_W(#AUTO_FUNC)):\
+	{\
+		ret = __MFX_REFLECTION_FUNC_EXTEND(this, argc, &OBJ::AUTO_FUNC);\
+		va_end(argc); \
+		return ret; \
+	}
 }
 
-
-/***************************************************************
-*	MicroFlakeX 辅助宏展开区
-****************************************************************/
-namespace __MicroFlakeX
-{
 #define __MFX_OBJ_ENABLE_REFLECTION \
 public:\
 	MfxReturn Reflection(MfxStringW recvFunc...);\
 	MfxReturn GetObjectName(MfxStringW* ret);
 
-
-
-	/***************************************************************
-	*
-	*
-	*
-	****************************************************************/
+/****************************************************************************************************************/
 #define __MFX_OBJ_REFLECTION_INIT_0(OBJ)\
 using namespace MicroFlakeX;\
 using namespace __MicroFlakeX;\
@@ -887,12 +767,7 @@ public:\
 		: MfxFactoryHand(object)\
 	{
 
-
-	/***************************************************************
-	*
-	*
-	*
-	****************************************************************/
+/****************************************************************************************************************/
 #define __MFX_OBJ_REFLECTION_INIT_1(OBJ) \
 	}\
 	MfxReturn Creat(MfxBase** ret)\
@@ -911,10 +786,7 @@ MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
 	switch (MFX_STRING_HASH_W(recvFunc.c_str()))\
 	{
 
-
-	/***************************************************************
-	*
-	****************************************************************/
+/****************************************************************************************************************/
 #define __MFX_OBJ_REFLECTION_INIT_2(OBJ, FATHER_OBJ) \
 		case MFX_STRING_HASH_W(MFX_TXT_W("Reflection")):\
 		{\
@@ -930,106 +802,6 @@ MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
 		}\
 	}\
 }
-
-	template<typename T, typename T_This>
-	inline MicroFlakeX::MfxReturn __T_MFXOBJ_REFLECTIONFUNC_CASE_EX(T_This pThis, T pFunc, va_list argc)
-	{
-		MicroFlakeX::MfxReturn ret = MFX_RET_FAILED;
-		if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 0)
-		{
-			ret = (pThis->*pFunc)();
-			return ret;
-		}
-		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 1)
-		{
-			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
-			ret = (pThis->*pFunc)(std::move(A1));
-			return ret;
-		}
-		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 2)
-		{
-			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
-			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
-			ret = (pThis->*pFunc)(std::move(A1), std::move(A2));
-			return ret;
-		}
-		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 3)
-		{
-			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
-			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
-			auto& A3 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 3));
-			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3));
-			return ret;
-		}
-		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 4)
-		{
-			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
-			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
-			auto& A3 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 3));
-			auto& A4 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 4));
-			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4));
-			return ret;
-		}
-		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 5)
-		{
-			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
-			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
-			auto& A3 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 3));
-			auto& A4 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 4));
-			auto& A5 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 5));
-			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4), std::move(A5));
-			return ret;
-		}
-		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 6)
-		{
-			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
-			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
-			auto& A3 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 3));
-			auto& A4 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 4));
-			auto& A5 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 5));
-			auto& A6 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 6));
-			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4), std::move(A5), std::move(A6));
-			return ret;
-		}
-		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 7)
-		{
-			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
-			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
-			auto& A3 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 3));
-			auto& A4 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 4));
-			auto& A5 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 5));
-			auto& A6 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 6));
-			auto& A7 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 7));
-			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4), std::move(A5), std::move(A6), std::move(A7));
-			return ret;
-		}
-		else if constexpr (MFX_GET_FUNC_ARGS_NUM(T) == 8)
-		{
-			auto& A1 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 1));
-			auto& A2 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 2));
-			auto& A3 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 3));
-			auto& A4 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 4));
-			auto& A5 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 5));
-			auto& A6 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 6));
-			auto& A7 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 7));
-			auto& A8 = va_arg(argc, MFX_GET_FUNC_ARGS_TYPE(pFunc, 8));
-			ret = (pThis->*pFunc)(std::move(A1), std::move(A2), std::move(A3), std::move(A4), std::move(A5), std::move(A6), std::move(A7), std::move(A8));
-			return ret;
-		}
-	}
-	/***************************************************************
-	*	MFXOBJ_REFLECTIONFUNC_CASE_EX注册宏
-	****************************************************************/
-#define __MFXOBJ_REFLECTIONFUNC_CASE_EX(OBJ, AUTO_FUNC)\
-	case MFX_STRING_HASH_W(MFX_TXT_W(#AUTO_FUNC)):\
-	{\
-		ret = __T_MFXOBJ_REFLECTIONFUNC_CASE_EX(this, &OBJ::AUTO_FUNC, argc);\
-		va_end(argc); \
-		return ret; \
-	}
-}
-
-
 
 
 #define __MFX_OBJ_REFLECTION_ENDINIT(OBJ, FATHER_OBJ, ...) \
