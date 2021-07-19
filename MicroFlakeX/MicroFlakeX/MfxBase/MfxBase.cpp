@@ -2,19 +2,17 @@
 #include "MfxBase.h"
 
 using namespace MicroFlakeX;
-using namespace __MicroFlakeX;
+using namespace MicroFlakeX;
 
 
 MicroFlakeX::MfxBase::MfxBase()
 {
-	InitializeCriticalSection(&myCriticalSection);
 }
 
 MicroFlakeX::MfxBase::~MfxBase()
 {
-	MfxSignal::ReceiverDelete(this);
-	MfxClient::ReceiverDelete(this);
-	DeleteCriticalSection(&myCriticalSection);
+	//MfxSignal::ReceiverDelete(this);
+	//MfxClient::ReceiverDelete(this);
 }
 
 MfxReturn MicroFlakeX::MfxBase::Clone(MfxBase** ret) const
@@ -47,7 +45,7 @@ bool MicroFlakeX::MfxBase::operator==(MfxBase& rhs)
 ****************************************************************/
 MfxReturn MicroFlakeX::MfxBase::Reflection(MfxStringW recvFunc ...)
 {
-	return MFX_RET_FAILED;
+	return MFX_RET_NOTFIND;
 }
 
 MfxReturn MicroFlakeX::MfxBase::GetObjectName(MfxStringW* ret)

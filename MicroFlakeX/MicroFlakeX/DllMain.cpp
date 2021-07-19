@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 
 using namespace MicroFlakeX;
-using namespace __MicroFlakeX;
+using namespace MicroFlakeX;
 
 ID2D1Factory* gID2DFactory = nullptr;
 IDWriteFactory* gIDWriteFactory = nullptr;
@@ -18,7 +18,7 @@ IWICImagingFactory*& MfxGraph::myIWICImagingFactory = gIWICImagingFactory;
 
 std::vector<MfxSignal*> MicroFlakeX::MfxSignal::MfxSignal_Vector;
 std::vector<MfxClient*> MicroFlakeX::MfxClient::MfxClient_Vector;
-std::unordered_map<MfxStringW, __MicroFlakeX::MfxFactoryHand*> __MicroFlakeX::MfxFactoryHand::MfxFactoryHand_Map;
+std::unordered_map<MfxStringW, MicroFlakeX::__MfxFactoryHand*> MicroFlakeX::__MfxFactoryHand::__MfxFactoryHand_Map;
 
 
 BOOL APIENTRY DllMain(HMODULE hModule,

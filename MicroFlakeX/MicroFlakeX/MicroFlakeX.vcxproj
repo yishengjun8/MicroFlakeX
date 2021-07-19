@@ -182,13 +182,11 @@
     <ClCompile Include="MfxAppFrame\MfxUI.cpp" />
     <ClCompile Include="MfxBase\MfxBase.cpp" />
     <ClCompile Include="MfxBase\MfxClient.cpp" />
-    <ClCompile Include="MfxBase\MfxCriticalLock.cpp" />
     <ClCompile Include="MfxBase\MfxFactory.cpp" />
     <ClCompile Include="MfxBase\MfxMemberLock.cpp" />
     <ClCompile Include="MfxBase\MfxParam.cpp" />
     <ClCompile Include="MfxBase\MfxSignal.cpp" />
     <ClCompile Include="MfxBase\MfxThread.cpp" />
-    <ClCompile Include="MfxBase\MfxThreadPool.cpp" />
     <ClCompile Include="MfxButton\MfxButton.cpp" />
     <ClCompile Include="MfxExplain\MfxExplain.cpp" />
     <ClCompile Include="MfxExplain\MfxGlide.cpp" />

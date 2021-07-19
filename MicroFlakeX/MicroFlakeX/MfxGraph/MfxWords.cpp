@@ -176,7 +176,7 @@ MfxReturn MicroFlakeX::MfxWords::Clone(MfxWords** ret)const
 MfxReturn MicroFlakeX::MfxWords::Paint()
 {
 	Update_Canvas();
-	myMemberLock.TryWaitLock(&myRenderTarget, &myTextBrush, &myTextLayout, &myRect);
+	myMemberLock.WaitLock(&myRenderTarget, &myTextBrush, &myTextLayout, &myRect);
 
 	if (myRenderTarget && myTextBrush)
 	{
@@ -296,7 +296,7 @@ MfxReturn MicroFlakeX::MfxWords::GetTextAlignmentY(TextAlignmentY* ret)
 ***************************************************************/
 MfxReturn MicroFlakeX::MfxWords::SetRect(const MfxRect* set)
 {
-	myMemberLock.TryWaitLock(&myTextLayout, &myRect);
+	myMemberLock.WaitLock(&myTextLayout, &myRect);
 
 	myRect = set;
 	myTextLayout->SetMaxWidth(myRect.myWidth);
@@ -309,7 +309,7 @@ MfxReturn MicroFlakeX::MfxWords::SetRect(const MfxRect* set)
 
 MfxReturn MicroFlakeX::MfxWords::SetSize(const MfxSize* set)
 {
-	myMemberLock.TryWaitLock(&myTextLayout, &myRect);
+	myMemberLock.WaitLock(&myTextLayout, &myRect);
 
 	myRect = set;
 	myTextLayout->SetMaxWidth(myRect.myWidth);
@@ -333,7 +333,7 @@ MfxReturn MicroFlakeX::MfxWords::SetText(const MfxStringW set)
 
 MfxReturn MicroFlakeX::MfxWords::SetTextSize(const FLOAT set)
 {
-	myMemberLock.TryWaitLock(&myTextLayout, &myText);
+	myMemberLock.WaitLock(&myTextLayout, &myText);
 	myTextLayout->SetFontSize(set, DWRITE_TEXT_RANGE{ 0,myText.length() });
 	myMemberLock.UnLock(&myTextLayout, &myText);
 
@@ -343,7 +343,7 @@ MfxReturn MicroFlakeX::MfxWords::SetTextSize(const FLOAT set)
 
 MfxReturn MicroFlakeX::MfxWords::SetFontName(const MfxStringW set)
 {
-	myMemberLock.TryWaitLock(&myTextLayout, &myText);
+	myMemberLock.WaitLock(&myTextLayout, &myText);
 	myTextLayout->SetFontFamilyName(set.c_str(), DWRITE_TEXT_RANGE{ 0,myText.length() });
 	myMemberLock.UnLock(&myTextLayout, &myText);
 
@@ -352,7 +352,7 @@ MfxReturn MicroFlakeX::MfxWords::SetFontName(const MfxStringW set)
 
 MfxReturn MicroFlakeX::MfxWords::SetTextColor(const MfxColor* set)
 {
-	myMemberLock.TryWaitLock(&myColor, &myTextBrushUpdateFlage);
+	myMemberLock.WaitLock(&myColor, &myTextBrushUpdateFlage);
 	myColor.SetColor(set);
 	myTextBrushUpdateFlage = true;
 	myMemberLock.UnLock(&myColor, &myTextBrushUpdateFlage);
@@ -400,7 +400,7 @@ MfxReturn MicroFlakeX::MfxWords::SetTextAlignmentY(TextAlignmentY set)
 ***************************************************************/
 MfxReturn MicroFlakeX::MfxWords::ResetTextLayout()
 {
-	myMemberLock.TryWaitLock(&myText, &myRect, &myTextLayout, &myTextFormat);
+	myMemberLock.WaitLock(&myText, &myRect, &myTextLayout, &myTextFormat);
 
 	SafeRelease(myTextFormat);
 	CopyTextFormat(&myTextFormat, myTextLayout);
@@ -429,7 +429,7 @@ MfxReturn MicroFlakeX::MfxWords::Update_Canvas()
 		myCanvas->GetRenderTarget(&tID2D1RenderTarget);
 
 		myMemberLock.UnLock(&myCanvas);
-		myMemberLock.TryWaitLock(&myRenderTarget, &myColor, &myTextBrush, &myTextBrushUpdateFlage);
+		myMemberLock.WaitLock(&myRenderTarget, &myColor, &myTextBrush, &myTextBrushUpdateFlage);
 		
 		if (myTextBrushUpdateFlage || (myRenderTarget != tID2D1RenderTarget))
 		{
@@ -444,7 +444,7 @@ MfxReturn MicroFlakeX::MfxWords::Update_Canvas()
 	else
 	{
 		myMemberLock.UnLock(&myCanvas);
-		myMemberLock.TryWaitLock(&myRenderTarget, &myTextBrush);
+		myMemberLock.WaitLock(&myRenderTarget, &myTextBrush);
 
 		SafeRelease(myTextBrush);
 		myRenderTarget = nullptr;

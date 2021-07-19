@@ -13,7 +13,7 @@ WPARAM MicroFlakeX::MfxAppRun()
 	return tMsg.wParam;
 }
 
-HWND __MicroFlakeX::MfxCreateWindowsEx(MfxUI* ui, MfxUI* father, MfxRect rect,
+HWND MicroFlakeX::MfxCreateWindowsEx(MfxUI* ui, MfxUI* father, MfxRect rect,
 	DWORD dwStyle, DWORD dwExStyle, MfxStringW className, MfxStringW windowsName)
 {
 	HWND f_hWnd = NULL;
@@ -26,7 +26,7 @@ HWND __MicroFlakeX::MfxCreateWindowsEx(MfxUI* ui, MfxUI* father, MfxRect rect,
 	);
 }
 
-LRESULT CALLBACK __MicroFlakeX::MfxAppFrameProc(HWND hWnd, MfxMessage message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK MicroFlakeX::MfxAppFrameProc(HWND hWnd, MfxMessage message, WPARAM wParam, LPARAM lParam)
 {
 	static App_UI_Info_Map myUIMap;
 

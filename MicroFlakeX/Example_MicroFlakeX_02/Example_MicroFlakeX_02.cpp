@@ -37,7 +37,7 @@ public:
 
 
 
-int main()
+int mainssssssssssssssssssss()
 {
     MyClass set; MfxTest myTest; MfxSignal mySignal; MfxClient myClient;
     myClient.PushBackReceiver(&myTest);
@@ -191,7 +191,7 @@ int test2()
 }
 
 
-int mainsssssssssssssssssssss()
+int main()
 {
 
     /**/

@@ -2,7 +2,7 @@
 #include "MfxBase.h"
 
 using namespace MicroFlakeX;
-using namespace __MicroFlakeX;
+using namespace MicroFlakeX;
 
 struct MfxWork_AutoFunc
 {
@@ -14,6 +14,7 @@ struct MfxWork_AutoFunc
 
 		myParam = param;
 	}
+	MfxMemberLock myMemberLock;
 	int delay;
 	MfxBase* object;
 	MfxStringW recvFunc;
@@ -46,21 +47,21 @@ MfxReturn MicroFlakeX::MfxBeginNewThread(MfxBase* object, MfxStringW recvFunc, M
 {
 	MfxWork_AutoFunc* tWork = new MfxWork_AutoFunc(object, recvFunc, param);
 
-	return TrySubmitThreadpoolCallback(&MfxThreadCallBack, tWork, NULL) ? MFX_RET_SECCESS : MFX_RET_FAILED;
+	return TrySubmitThreadpoolCallback(&__MfxThreadCallBack, tWork, NULL) ? MFX_RET_SECCESS : MFX_RET_FAILED;
 }
 
 MfxReturn MicroFlakeX::MfxBeginNewThread_Widely(pThreadFunc pThreadFunc, MfxParam param)
 {
 	MfxWork_Widel* tWork = new MfxWork_Widel(pThreadFunc, param);
 
-	return TrySubmitThreadpoolCallback(&MfxThreadCallBack_Widely, tWork, NULL) ? MFX_RET_SECCESS : MFX_RET_FAILED;
+	return TrySubmitThreadpoolCallback(&__MfxThreadCallBack_Widely, tWork, NULL) ? MFX_RET_SECCESS : MFX_RET_FAILED;
 }
 
 MfxReturn MicroFlakeX::MfxBeginNewTimer(PTP_TIMER& pTimer, MfxBase* object, MfxStringW recvFunc, MfxParam param, MfxTime delay, LONGLONG begin, MfxTime randTime)
 {
 	MfxWork_AutoFunc* tWork = new MfxWork_AutoFunc(object, recvFunc, param);
 
-	pTimer = CreateThreadpoolTimer(&MfxTimerCallBack, tWork, NULL);
+	pTimer = CreateThreadpoolTimer(&__MfxTimerCallBack, tWork, NULL);
 
 	ULARGE_INTEGER tWinTime;
 	tWinTime.QuadPart = (LONGLONG) - begin;
@@ -82,7 +83,7 @@ MFX_DLL_EXPORT MfxReturn MicroFlakeX::MfxBeginNewTimer_Widely(PTP_TIMER& pTimer,
 {
 	MfxWork_Widel* tWork = new MfxWork_Widel(pThreadFunc, param);
 
-	pTimer = CreateThreadpoolTimer(&MfxTimerCallBack_Widely, tWork, NULL);
+	pTimer = CreateThreadpoolTimer(&__MfxTimerCallBack_Widely, tWork, NULL);
 
 	ULARGE_INTEGER tWinTime;
 	tWinTime.QuadPart = (LONGLONG)-begin;
@@ -115,7 +116,7 @@ MfxReturn MicroFlakeX::MfxCloseTimer(PTP_TIMER& pTimer)
 	return MFX_RET_SECCESS;
 }
 
-VOID CALLBACK __MicroFlakeX::MfxThreadCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val)
+VOID CALLBACK MicroFlakeX::__MfxThreadCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val)
 {
 	MfxWork_AutoFunc* tWork = (MfxWork_AutoFunc*)val;
 	tWork->object->Reflection(tWork->recvFunc, tWork->myParam);
@@ -123,7 +124,7 @@ VOID CALLBACK __MicroFlakeX::MfxThreadCallBack(PTP_CALLBACK_INSTANCE instance, P
 	delete tWork;
 }
 
-VOID CALLBACK __MicroFlakeX::MfxThreadCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val)
+VOID CALLBACK MicroFlakeX::__MfxThreadCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val)
 {
 	MfxWork_Widel* tWork = (MfxWork_Widel*)val;
 	tWork->mypThreadFunc(tWork->myParam);
@@ -133,7 +134,7 @@ VOID CALLBACK __MicroFlakeX::MfxThreadCallBack_Widely(PTP_CALLBACK_INSTANCE inst
 
 
 
-VOID CALLBACK __MicroFlakeX::MfxTimerCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer)
+VOID CALLBACK MicroFlakeX::__MfxTimerCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer)
 {
 	MfxWork_AutoFunc* tWork = (MfxWork_AutoFunc*)val;
 	tWork->object->Reflection(tWork->recvFunc, tWork->myParam);
@@ -149,8 +150,10 @@ VOID CALLBACK __MicroFlakeX::MfxTimerCallBack(PTP_CALLBACK_INSTANCE instance, PV
 	}
 }
 
-VOID CALLBACK __MicroFlakeX::MfxTimerCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer)
+VOID CALLBACK MicroFlakeX::__MfxTimerCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer)
 {
+	//WaitForThreadpoolTimerCallbacks(pTimer, FALSE);
+
 	MfxWork_Widel* tWork = (MfxWork_Widel*)val;
 	tWork->mypThreadFunc(tWork->myParam);
 

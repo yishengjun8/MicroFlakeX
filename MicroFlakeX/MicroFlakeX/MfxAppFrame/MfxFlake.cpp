@@ -58,22 +58,8 @@ MFX_OBJ_REFLECTION_ENDINIT(MfxFlake, MfxBase, \
 
 
 #define FLAKE_RECV(msg, func) FLAKE_ADDRECV_FLAKEMSG(msg, MfxFlake, func)
-
-
-
-
 void MicroFlakeX::MfxFlake::RegisterRecvFunc()
 {
-	//__MFXOBJ_REFLECTIONFUNC_CASE_EX(, );
-
-
-#define TestArgs(...) __VA_ARGS__
-
-
-
-	//std::cout << GET_ARGS_NUM(TestArgs(2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,)) << std::endl;
-
-	GetFuncArgNum(&MfxFlake::CloseRButtonMove);
 
 	FLAKE_RECV(WM_NCMOUSEMOVE, __OnNCMouseMove);
 	FLAKE_RECV(WM_NCMOUSEHOVER, __OnNCMouseHover);
@@ -631,7 +617,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetPaper)
 {
 	Paper_Infor t_PaperValue = MFXPARAM_GET_0(Paper_Infor);
 
-	myMemberLock.TryWaitLock(&myFather, &myWnd, &myCanvas);
+	myMemberLock.WaitLock(&myFather, &myWnd, &myCanvas);
 
 	myFather ? myFather->Reflection(MFX_TXT_W("Send_Message"), MFX_MAKE_PARAM(this).SetMESSAGE(MSG_FlakeRemove)) : 0;
 
@@ -665,7 +651,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetPaper)
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRemovePaper)
 {
-	myMemberLock.TryWaitLock(&myFather, &myWnd, &myCanvas);
+	myMemberLock.WaitLock(&myFather, &myWnd, &myCanvas);
 
 	myFather ? myFather->Reflection(MFX_TXT_W("Send_Message"), MFX_MAKE_PARAM(this).SetMESSAGE(MSG_FlakeRemove)) : 0;
 
@@ -694,7 +680,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRemovePaper)
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetFloor)
 {
-	myMemberLock.TryWaitLock(&myFloor, &myFather);
+	myMemberLock.WaitLock(&myFloor, &myFather);
 
 	myFloor = MFXPARAM_GET_0(MfxFloor);
 	myFather ? myFather->Reflection(MFX_TXT_W("Send_Message"), MFX_MAKE_PARAM().SetMESSAGE(MSG_FlakeFloorChange)) : 0;
@@ -760,7 +746,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRect)
 {
 	MfxRect tSetRect = MFXPARAM_GET_0(MfxRect);
 
-	myMemberLock.TryWaitLock(&myEdgeRect);
+	myMemberLock.WaitLock(&myEdgeRect);
 	MfxRect tEdgeRect = myEdgeRect;
 	myMemberLock.UnLock(&myEdgeRect);
 
@@ -785,7 +771,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRect)
 	myMemberLock.UnLock(&myWords);
 
 
-	myMemberLock.TryWaitLock(&myFather, &myRect);
+	myMemberLock.WaitLock(&myFather, &myRect);
 
 	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect, max(myBackFrameSize, myMaskFrameSize)) : 0;
 	myRect.SetRect(&tSetRect);
@@ -1221,7 +1207,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnRButtonDouble)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetTitle)
 {
-	myMemberLock.TryWaitLock(&myTitle, &myWords);
+	myMemberLock.WaitLock(&myTitle, &myWords);
 
 	myTitle = MFXPARAM_GET_0(MfxStringW);
 
@@ -1230,7 +1216,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetTitle)
 	myMemberLock.UnLock(&myTitle, &myWords);
 
 
-	myMemberLock.TryWaitLock(&myFather, &myRect);
+	myMemberLock.WaitLock(&myFather, &myRect);
 	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect) : 0;
 	myMemberLock.UnLock(&myFather, &myRect);
 
@@ -1239,11 +1225,11 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetTitle)
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetBackColor)
 {
-	myMemberLock.TryWaitLock(&myRect);
+	myMemberLock.WaitLock(&myRect);
 	MfxSize tSize(myRect);
 	myMemberLock.UnLock(&myRect);
 
-	myMemberLock.TryWaitLock(&myBackRectangle, &myBackColor, &myCanvas);
+	myMemberLock.WaitLock(&myBackRectangle, &myBackColor, &myCanvas);
 
 	myBackColor = MFXPARAM_GET_0(MfxColor);
 	myBackRectangle.SetFillColor(&myBackColor);
@@ -1251,7 +1237,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetBackColor)
 	myMemberLock.UnLock(&myBackRectangle, &myBackColor, &myCanvas);
 
 
-	myMemberLock.TryWaitLock(&myFather, &myRect);
+	myMemberLock.WaitLock(&myFather, &myRect);
 	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect, myBackFrameSize) : 0;
 	myMemberLock.UnLock(&myFather, &myRect);
 
@@ -1260,18 +1246,18 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetBackColor)
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetMaskColor)
 {
-	myMemberLock.TryWaitLock(&myRect);
+	myMemberLock.WaitLock(&myRect);
 	MfxSize tSize(myRect);
 	myMemberLock.UnLock(&myRect);
 
-	myMemberLock.TryWaitLock(&myMaskRectangle, &myMaskColor, &myCanvas);
+	myMemberLock.WaitLock(&myMaskRectangle, &myMaskColor, &myCanvas);
 
 	myMaskColor = MFXPARAM_GET_0(MfxColor);
 	myMaskRectangle.SetFillColor(&myMaskColor);
 
 	myMemberLock.UnLock(&myMaskRectangle, &myBackColor, &myCanvas);
 
-	myMemberLock.TryWaitLock(&myFather, &myRect);
+	myMemberLock.WaitLock(&myFather, &myRect);
 	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect, myMaskFrameSize) : 0;
 	myMemberLock.UnLock(&myFather, &myRect);
 
@@ -1280,7 +1266,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetMaskColor)
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetTitleColor)
 {
-	myMemberLock.TryWaitLock(&myWords, &myTitleColor, &myCanvas);
+	myMemberLock.WaitLock(&myWords, &myTitleColor, &myCanvas);
 
 	myTitleColor = MFXPARAM_GET_0(MfxColor);
 	myWords.SetTextColor(&myTitleColor);
@@ -1288,7 +1274,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetTitleColor)
 	myMemberLock.UnLock(&myWords, &myTitleColor, &myCanvas);
 
 
-	myMemberLock.TryWaitLock(&myFather, &myRect);
+	myMemberLock.WaitLock(&myFather, &myRect);
 	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect) : 0;
 	myMemberLock.UnLock(&myFather, &myRect);
 
@@ -1297,7 +1283,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetTitleColor)
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetBackFrameSize)
 {
-	myMemberLock.TryWaitLock(&myBackFrameSize, &myBackRectangle, &myCanvas);
+	myMemberLock.WaitLock(&myBackFrameSize, &myBackRectangle, &myCanvas);
 
 	myBackFrameSize = MFXPARAM_GET_0(double);
 	myBackRectangle.SetFrameSize(myBackFrameSize);
@@ -1305,7 +1291,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetBackFrameSize)
 	myMemberLock.UnLock(&myBackFrameSize, &myBackRectangle, &myCanvas);
 
 
-	myMemberLock.TryWaitLock(&myFather, &myRect);
+	myMemberLock.WaitLock(&myFather, &myRect);
 	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect, myBackFrameSize) : 0;
 	myMemberLock.UnLock(&myFather, &myRect);
 
@@ -1314,7 +1300,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetBackFrameSize)
 
 MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetMaskFrameSize)
 {
-	myMemberLock.TryWaitLock(&myMaskFrameSize, &myMaskRectangle, &myCanvas);
+	myMemberLock.WaitLock(&myMaskFrameSize, &myMaskRectangle, &myCanvas);
 
 	myMaskFrameSize = MFXPARAM_GET_0(double);
 	myMaskRectangle.SetFrameSize(myMaskFrameSize);
@@ -1322,7 +1308,7 @@ MfxReturn MicroFlakeX::MfxFlake::MFX_CALLBACK(__OnSetMaskFrameSize)
 	myMemberLock.UnLock(&myMaskFrameSize, &myMaskRectangle, &myCanvas);
 
 
-	myMemberLock.TryWaitLock(&myFather, &myRect);
+	myMemberLock.WaitLock(&myFather, &myRect);
 	myFather ? myFather->Reflection(MFX_TXT_W("UnionInvalidateRect"), myRect, myMaskFrameSize) : 0;
 	myMemberLock.UnLock(&myFather, &myRect);
 

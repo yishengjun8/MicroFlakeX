@@ -3,23 +3,23 @@
 
 using namespace MicroFlakeX;
 
-typedef std::unordered_map<MfxStringW, __MicroFlakeX::MfxFactoryHand*>::value_type MfxFactoryValue;
+typedef std::unordered_map<MfxStringW, MicroFlakeX::__MfxFactoryHand*>::value_type MfxFactoryValue;
 
-__MicroFlakeX::MfxFactoryHand::MfxFactoryHand(MfxStringW object)
+MicroFlakeX::__MfxFactoryHand::__MfxFactoryHand(MfxStringW object)
 {
 	myObjectName = object;
 	RegisterObject(myObjectName, this);
 }
 
-__MicroFlakeX::MfxFactoryHand::~MfxFactoryHand()
+MicroFlakeX::__MfxFactoryHand::~__MfxFactoryHand()
 {
 	RemoveObject(myObjectName);
 }
 
 MicroFlakeX::MfxReturn MicroFlakeX::MfxFactory(MfxStringW object, MfxBase** ret)
 {
-	auto iter = __MicroFlakeX::MfxFactoryHand::MfxFactoryHand_Map.find(object);
-	if (iter != __MicroFlakeX::MfxFactoryHand::MfxFactoryHand_Map.end())
+	auto iter = MicroFlakeX::__MfxFactoryHand::__MfxFactoryHand_Map.find(object);
+	if (iter != MicroFlakeX::__MfxFactoryHand::__MfxFactoryHand_Map.end())
 	{
 		return iter->second->Creat(ret);
 	}
@@ -27,18 +27,18 @@ MicroFlakeX::MfxReturn MicroFlakeX::MfxFactory(MfxStringW object, MfxBase** ret)
 	return MFX_RET_FAILED;
 }
 
-MicroFlakeX::MfxReturn __MicroFlakeX::MfxFactoryHand::RemoveObject(MfxStringW object)
+MicroFlakeX::MfxReturn MicroFlakeX::__MfxFactoryHand::RemoveObject(MfxStringW object)
 {
-	auto tIter = MfxFactoryHand_Map.find(object);
-	if (tIter != MfxFactoryHand_Map.end())
+	auto tIter = __MfxFactoryHand_Map.find(object);
+	if (tIter != __MfxFactoryHand_Map.end())
 	{
-		MfxFactoryHand_Map.erase(tIter);
+		__MfxFactoryHand_Map.erase(tIter);
 	}
 	return MFX_RET_SECCESS;
 }
 
-MicroFlakeX::MfxReturn __MicroFlakeX::MfxFactoryHand::RegisterObject(MfxStringW object, MfxFactoryHand* hand)
+MicroFlakeX::MfxReturn MicroFlakeX::__MfxFactoryHand::RegisterObject(MfxStringW object, __MfxFactoryHand* hand)
 {
-	auto ret = MfxFactoryHand_Map.insert(MfxFactoryValue(object, hand));
+	auto ret = __MfxFactoryHand_Map.insert(MfxFactoryValue(object, hand));
 	return ret.second ? MFX_RET_SECCESS : MFX_RET_FAILED;
 }

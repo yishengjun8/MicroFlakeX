@@ -186,7 +186,7 @@ MfxReturn MicroFlakeX::MfxUI::CreateSuccess()
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(ProcMessage)
 {
     MfxReturn tRet = MFX_RET_FAILED;
-    myMemberLock.TryWaitLock(&myMessageMap);
+    myMemberLock.WaitLock(&myMessageMap);
 
     ProcFlakesMessage(MFX_CALLBACK_PARAM);
 
@@ -402,7 +402,7 @@ MfxReturn MicroFlakeX::MfxUI::LockMutexFocus(MfxFlake* set)
 {
     auto tRet = MFX_RET_FAILED;
 
-    myMemberLock.TryWaitLock(&myMutexFocusLockFlag, &myMutexFocus);
+    myMemberLock.WaitLock(&myMutexFocusLockFlag, &myMutexFocus);
 
     if (myMutexFocusLockFlag)
     {
@@ -438,7 +438,7 @@ MfxReturn MicroFlakeX::MfxUI::SetMutexFocus(MfxFlake* set)
 {
     auto tRet = MFX_RET_FAILED;
 
-    myMemberLock.TryWaitLock(&myMutexFocusLockFlag, &myMutexFocus);
+    myMemberLock.WaitLock(&myMutexFocusLockFlag, &myMutexFocus);
 
     if (!myMutexFocus && !myMutexFocusLockFlag)
     {
@@ -471,7 +471,7 @@ MfxReturn MicroFlakeX::MfxUI::SetKeyboardFocus(MfxFlake* set)
 {
     auto tRet = MFX_RET_FAILED;
 
-    myMemberLock.TryWaitLock(&myKeyboardFocusLockFlag, &myKeyboardFocus);
+    myMemberLock.WaitLock(&myKeyboardFocusLockFlag, &myKeyboardFocus);
 
     if (!myKeyboardFocus && !myKeyboardFocusLockFlag)
     {
@@ -786,7 +786,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnTest01)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnCreate)
 {
-    myMemberLock.TryWaitLock(&myRect, &myWnd);
+    myMemberLock.WaitLock(&myRect, &myWnd);
 
     myWnd = MFXPARAM_GET_HWND;
     GetWorldRect(&myRect);
@@ -802,7 +802,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnCreate)
     myMemberLock.UnLock(&myCanvas);
 
 
-    myMemberLock.TryWaitLock(&myBackColor, &myBackRectangle, &myMaskColor, &myMaskRectangle);
+    myMemberLock.WaitLock(&myBackColor, &myBackRectangle, &myMaskColor, &myMaskRectangle);
 
     MfxColor tColor;
     myBackRectangle.SetSize(&tSize);
@@ -912,7 +912,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnPaint)
 
     if (!isEmpty)
     {
-        myMemberLock.TryWaitLock(&myCanvas, &myInvalidateRect);
+        myMemberLock.WaitLock(&myCanvas, &myInvalidateRect);
 
         myCanvas.PaintBegin(&myInvalidateRect);
         myInvalidateRect.Reset(0, 0, 0, 0);
@@ -981,7 +981,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnFlakeInsert)
             myFlakeDeque.push_back(tpFlake);
             myMemberLock.UnLock(&myFlakeDeque);
 
-            myMemberLock.TryWaitLock(&myWnd, &myCanvas);
+            myMemberLock.WaitLock(&myWnd, &myCanvas);
 
             tpFlake->Send_Message(MFX_MAKE_PARAM(Paper_Infor(this, myWnd, &myCanvas)).SetMESSAGE(FLAKE_MSG_SetPaper));
 
@@ -1261,7 +1261,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnSetBackColor)
     MfxSize tSize(myRect);
     myMemberLock.UnLock(&myRect);
 
-    myMemberLock.TryWaitLock(&myBackRectangle, &myBackColor, &myCanvas);
+    myMemberLock.WaitLock(&myBackRectangle, &myBackColor, &myCanvas);
 
     myBackColor = MFXPARAM_GET_0(MfxColor);
     myBackRectangle.SetFillColor(&myBackColor);
@@ -1277,7 +1277,7 @@ MfxReturn MicroFlakeX::MfxUI::MFX_CALLBACK(__OnSetMaskColor)
     MfxSize tSize(myRect);
     myMemberLock.UnLock(&myRect);
 
-    myMemberLock.TryWaitLock(&myMaskRectangle, &myMaskColor, &myCanvas);
+    myMemberLock.WaitLock(&myMaskRectangle, &myMaskColor, &myCanvas);
 
     myMaskColor = MFXPARAM_GET_0(MfxColor);
     myMaskRectangle.SetFillColor(&myMaskColor);

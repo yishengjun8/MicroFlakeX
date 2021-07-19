@@ -123,10 +123,10 @@ MfxReturn MicroFlakeX::MfxGraph::IWICBitmapFromFile(IWICBitmap** ret, MfxStringW
 	if (FAILED(hr))
 		throw MFX_TXT_W("CreateBitmapFromSource Failed");
 
-	__MicroFlakeX::SafeRelease(pSource);
-	__MicroFlakeX::SafeRelease(pDecoder);
-	__MicroFlakeX::SafeRelease(pScaler);
-	__MicroFlakeX::SafeRelease(pConverter);
+	MicroFlakeX::SafeRelease(pSource);
+	MicroFlakeX::SafeRelease(pDecoder);
+	MicroFlakeX::SafeRelease(pScaler);
+	MicroFlakeX::SafeRelease(pConverter);
 	return MFX_RET_SECCESS;
 }
 
@@ -229,10 +229,10 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromFile(ID2D1Bitmap** ret, ID2D1Ren
 
 	hr = pRendTar->CreateBitmapFromWicBitmap(pConverter, ret);
 
-	__MicroFlakeX::SafeRelease(pSource);
-	__MicroFlakeX::SafeRelease(pDecoder);
-	__MicroFlakeX::SafeRelease(pScaler);
-	__MicroFlakeX::SafeRelease(pConverter);
+	MicroFlakeX::SafeRelease(pSource);
+	MicroFlakeX::SafeRelease(pDecoder);
+	MicroFlakeX::SafeRelease(pScaler);
+	MicroFlakeX::SafeRelease(pConverter);
 	return MFX_RET_SECCESS;
 }
 
@@ -286,8 +286,8 @@ MfxReturn MicroFlakeX::MfxGraph::ID2D1BitmapFromIWICBitmap(ID2D1Bitmap** ret, ID
 	if (FAILED(hr))
 		throw MFX_TXT_W("CreateBitmapFromWicBitmap Failed");
 
-	__MicroFlakeX::SafeRelease(pScaler);
-	__MicroFlakeX::SafeRelease(pConverter);
+	MicroFlakeX::SafeRelease(pScaler);
+	MicroFlakeX::SafeRelease(pConverter);
 	return MFX_RET_SECCESS;
 }
 

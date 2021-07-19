@@ -239,6 +239,8 @@ MfxReturn MicroFlakeX::MfxGlide::Clear()
 
 MfxReturn MicroFlakeX::MfxGlide::EachFrame(MfxParam param)
 {
+	MfxFuncLock funcLock(&myMemberLock, this);
+
 	if (myPTP_TIMER == 0)
 	{
 		return MFX_RET_SECCESS;

@@ -317,7 +317,7 @@ namespace MicroFlakeX
 	MFX_DLL_EXPORT WPARAM MfxAppRun();
 }
 
-namespace __MicroFlakeX
+namespace MicroFlakeX
 {
 	MFX_DLL_EXPORT HWND MfxCreateWindowsEx(MfxUI* ui, MfxUI* father, MfxRect rect, DWORD dwStyle, DWORD dwExStyle,
 		MfxStringW className, MfxStringW windowsName);

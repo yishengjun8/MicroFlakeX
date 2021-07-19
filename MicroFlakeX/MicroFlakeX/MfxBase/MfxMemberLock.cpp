@@ -2,31 +2,19 @@
 #include "MfxBase.h"
 
 using namespace MicroFlakeX;
-using namespace __MicroFlakeX;
+using namespace MicroFlakeX;
 
 
-inline void MicroFlakeX::MfxMemberLock::InsertMemberLock(void* resour)
+bool MicroFlakeX::MfxMemberLock::InsertMemberLock(void* resour)
 {
 	myMutexResour.insert(myResour(resour, CRITICAL_SECTION()));
 
 	InitializeCriticalSection(&myMutexResour[resour]);
+
+	return true;
 }
 
-inline void MicroFlakeX::MfxMemberLock::WaitLock(void* const first)
-{
-	auto tFind = myMutexResour.find(const_cast<void*>(first));
-	if (tFind == myMutexResour.end())
-	{
-		InsertMemberLock(const_cast<void*>(first));
-		EnterCriticalSection(&myMutexResour[const_cast<void*>(first)]);
-	}
-	else
-	{
-		EnterCriticalSection(&tFind->second);
-	}
-}
-
-inline bool MicroFlakeX::MfxMemberLock::TryLock(void* first)
+bool MicroFlakeX::MfxMemberLock::TryLock(void* first)
 {
 	bool ret = false;
 	auto tFind = myMutexResour.find(const_cast<void*>(first));
@@ -43,7 +31,7 @@ inline bool MicroFlakeX::MfxMemberLock::TryLock(void* first)
 	return ret;
 }
 
-inline void MicroFlakeX::MfxMemberLock::UnLock(void* first)
+bool MicroFlakeX::MfxMemberLock::UnLock(void* first)
 {
 	auto tFind = myMutexResour.find(const_cast<void*>(first));
 	if (tFind == myMutexResour.end())
@@ -54,6 +42,8 @@ inline void MicroFlakeX::MfxMemberLock::UnLock(void* first)
 	{
 		LeaveCriticalSection(&myMutexResour[const_cast<void*>(first)]);
 	}
+
+	return true;
 }
 
 MicroFlakeX::MfxMemberLock::~MfxMemberLock()

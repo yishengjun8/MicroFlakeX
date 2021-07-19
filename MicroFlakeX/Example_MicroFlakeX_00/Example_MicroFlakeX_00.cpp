@@ -26,7 +26,7 @@ int main()
     MfxSize uiSize(600, 600);
     myClient.PostClient(MFX_TXT_W("SetSize"), &uiSize);
 
-    myColor->Reflection(MFX_TXT_W("Reset"), 255, 255, 0, 0);
+    myColor->Reflection(MFX_TXT_W("Reset"), 255, 255, 255, 0);
     //myTestSignal.PostSignal(255, 255, 0, 0);
     Sleep(10);
     mySignal.SendSignal(myColor);
@@ -82,7 +82,7 @@ int main()
     myGlide.MfxAddKeyframe(MFX_TXT_W("group_1"), &keySize, 1500);
     keySize.Reset(300, 300);
     myGlide.MfxAddKeyframe(MFX_TXT_W("group_1"), &keySize, 1500);
-    keySize.Reset(300, 300);
+    keySize.Reset(100, 100);
     myGlide.MfxAddKeyframe(MFX_TXT_W("group_1"), &keySize, 1500);
 
 

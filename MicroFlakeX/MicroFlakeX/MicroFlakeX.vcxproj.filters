@@ -74,9 +74,6 @@
     <ClCompile Include="MfxBase\MfxBase.cpp">
       <Filter>源文件\MfxBase</Filter>
     </ClCompile>
-    <ClCompile Include="MfxBase\MfxCriticalLock.cpp">
-      <Filter>源文件\MfxBase</Filter>
-    </ClCompile>
     <ClCompile Include="MfxBase\MfxFactory.cpp">
       <Filter>源文件\MfxBase</Filter>
     </ClCompile>
@@ -90,9 +87,6 @@
       <Filter>源文件\MfxBase</Filter>
     </ClCompile>
     <ClCompile Include="MfxBase\MfxThread.cpp">
-      <Filter>源文件\MfxBase</Filter>
-    </ClCompile>
-    <ClCompile Include="MfxBase\MfxThreadPool.cpp">
       <Filter>源文件\MfxBase</Filter>
     </ClCompile>
     <ClCompile Include="MfxType\MfxColor.cpp">

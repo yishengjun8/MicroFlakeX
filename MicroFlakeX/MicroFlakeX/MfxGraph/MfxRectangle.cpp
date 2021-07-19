@@ -84,7 +84,7 @@ MfxReturn MicroFlakeX::MfxRectangle::Paint()
 {
 	Update_Canvas();
 
-	myMemberLock.TryWaitLock(&myRenderTarget, &myRect, &myFillBrush, &myFrameBrush);
+	myMemberLock.WaitLock(&myRenderTarget, &myRect, &myFillBrush, &myFrameBrush);
 
 	bool IsEmpty = false;
 	myRect.IsEmpty(&IsEmpty);
@@ -137,7 +137,7 @@ MfxReturn MicroFlakeX::MfxRectangle::SetFrameSize(double set)
 
 MfxReturn MicroFlakeX::MfxRectangle::SetFillColor(MfxColor* set)
 {
-	myMemberLock.TryWaitLock(&myFillColor);
+	myMemberLock.WaitLock(&myFillColor);
 	myFillColor.SetColor(set);
 	myMemberLock.UnLock(&myFillColor);
 
@@ -147,7 +147,7 @@ MfxReturn MicroFlakeX::MfxRectangle::SetFillColor(MfxColor* set)
 
 MfxReturn MicroFlakeX::MfxRectangle::SetFrameColor(MfxColor* set)
 {
-	myMemberLock.TryWaitLock(&myFrameColor);
+	myMemberLock.WaitLock(&myFrameColor);
 	myFrameColor.SetColor(set);
 	myMemberLock.UnLock(&myFrameColor);
 
@@ -225,7 +225,7 @@ MfxReturn MicroFlakeX::MfxRectangle::Update_Canvas()
 		myCanvas->GetRenderTarget(&tID2D1RenderTarget);
 
 		myMemberLock.UnLock(&myCanvas);
-		myMemberLock.TryWaitLock(&myRenderTarget, &myFillColor, &myFrameColor, &myFillBrush, &myFrameBrush);
+		myMemberLock.WaitLock(&myRenderTarget, &myFillColor, &myFrameColor, &myFillBrush, &myFrameBrush);
 
 		if (tID2D1RenderTarget && (myColorUpdateFlage || (myRenderTarget != tID2D1RenderTarget)))
 		{
@@ -242,7 +242,7 @@ MfxReturn MicroFlakeX::MfxRectangle::Update_Canvas()
 	else
 	{
 		myMemberLock.UnLock(&myCanvas);
-		myMemberLock.TryWaitLock(&myRenderTarget, &myFillBrush, &myFrameBrush);
+		myMemberLock.WaitLock(&myRenderTarget, &myFillBrush, &myFrameBrush);
 
 		SafeRelease(myFillBrush);
 		SafeRelease(myFrameBrush);

@@ -2,7 +2,7 @@
 #include "MfxBase.h"
 
 using namespace MicroFlakeX;
-using namespace __MicroFlakeX;
+using namespace MicroFlakeX;
 
 
 void* MicroFlakeX::MfxParam::operator new(size_t)

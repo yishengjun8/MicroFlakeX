@@ -2,6 +2,8 @@
 
 namespace MicroFlakeX
 {
+#define MFXAPI _stdcall
+
 	class MFX_DLL_EXPORT MfxBase;
 	typedef MfxBase* pMfxBase;
 
@@ -57,23 +59,23 @@ namespace MicroFlakeX
 
 #define MFXOBJ_ENABLE_FLOORCOMPARE\
 	template<class lhsT, class rhsT>\
-	friend bool pFloorCompare(lhsT* lhs, rhsT* rhs);\
+	friend bool MFXAPI pFloorCompare(lhsT* lhs, rhsT* rhs);\
 	template<class lhsT, class rhsT>\
-	friend bool FloorCompare(lhsT& lhs, rhsT& rhs);
+	friend bool MFXAPI FloorCompare(lhsT& lhs, rhsT& rhs);
 
 	template<class lhsT, class rhsT = lhsT>
-	inline bool pFloorCompare(lhsT* lhs, rhsT* rhs)
+	inline bool MFXAPI pFloorCompare(lhsT* lhs, rhsT* rhs)
 	{
 		return lhs->myFloor < rhs->myFloor;
 	}
 
 	template<class lhsT, class rhsT = lhsT>
-	inline bool FloorCompare(lhsT& lhs, rhsT& rhs)
+	inline bool MFXAPI FloorCompare(lhsT& lhs, rhsT& rhs)
 	{
 		return lhs.myFloor < rhs.myFloor;
 	}
 
-	constexpr inline MfxHash MFX_STRING_HASH_A(char const* str, MfxHash hash = 0)
+	constexpr inline MfxHash MFXAPI MFX_STRING_HASH_A(char const* str, MfxHash hash = 0)
 	{
 		while (MfxHash ch = *str++)
 		{
@@ -82,7 +84,7 @@ namespace MicroFlakeX
 		return hash;
 	}
 
-	constexpr inline MfxHash MFX_STRING_HASH_W(wchar_t const* str, MfxHash hash = 0)
+	constexpr inline MfxHash MFXAPI MFX_STRING_HASH_W(wchar_t const* str, MfxHash hash = 0)
 	{
 		while (MfxHash ch = *str++)
 		{
@@ -92,7 +94,7 @@ namespace MicroFlakeX
 	}
 
 	template<class Interface>
-	inline bool SafeRelease(Interface*& pInterfaceToRelease)
+	inline bool MFXAPI SafeRelease(Interface*& pInterfaceToRelease)
 	{
 		if (pInterfaceToRelease != nullptr)
 		{
@@ -104,7 +106,7 @@ namespace MicroFlakeX
 	}
 
 	template<class Pointer>
-	inline bool SafeDelete(Pointer*& pPointerToDelete)
+	inline bool MFXAPI SafeDelete(Pointer*& pPointerToDelete)
 	{
 		if (pPointerToDelete != nullptr)
 		{
@@ -116,7 +118,7 @@ namespace MicroFlakeX
 	}
 
 	template<class Pointer>
-	inline bool SafeDeleteList(Pointer*& pPointerToDelete)
+	inline bool MFXAPI SafeDeleteList(Pointer*& pPointerToDelete)
 	{
 		if (pPointerToDelete != nullptr)
 		{
@@ -131,36 +133,17 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	class MFX_DLL_EXPORT MfxParam;
-	class MFX_DLL_EXPORT MfxMemberLock;
-	class MFX_DLL_EXPORT MfxCriticalLock;
-
-	typedef MfxMemberLock* pMfxMemberLock;
-
-	typedef std::set<MfxBase*> MfxBase_Set;
-	typedef std::queue<MfxBase*> MfxBase_Queue;
-	typedef std::deque<MfxBase*> MfxBase_Deque;
-	typedef std::stack<MfxBase*> MfxBase_Stack;
-	typedef std::vector<MfxBase*> MfxBase_Vector;
 
 #define MFX_CALLBACK_PARAM iParam
+
+	typedef MfxReturn(*pCallBack)(MfxParam);
+	typedef pCallBack pThreadFunc;
 	/***************************************************************
 	*	MicroFlakeX 回调函数辅助声明 - 返回值必须为MfxReturn
 	*	例：MfxReturn MFX_CALLBACK(MyCallBackFunc);
 	****************************************************************/
 #define MFX_CALLBACK(funcName) funcName(MfxParam iParam)
 #define MFX_REFLECTION(funcName) funcName(MfxParam iParam)
-
-	class MfxCriticalLock
-	{
-	private:
-		static void* operator new(size_t);
-		static void* operator new[](size_t);
-	public:
-		MfxCriticalLock(CRITICAL_SECTION* set);
-		~MfxCriticalLock();
-	protected:
-		CRITICAL_SECTION* myCriticalSection;
-	};
 
 #define MFXPARAM_GET(param, type, place)  (std::any_cast<type&>(param[place]))
 #define MFXPARAM_GET_SAFE(param, type, place)  (param.IsSafe(place) ? (std::any_cast<type&>(param[place])) : type())
@@ -208,7 +191,6 @@ namespace MicroFlakeX
 		bool IsSafe(const int i);
 
 		MfxNum GetParamSize();
-	
 
 		bool IsPVOID();
 		bool IsRETURN();
@@ -235,13 +217,14 @@ namespace MicroFlakeX
 		}
 	};
 
-	class MFX_EXPARAM
+
+	class __MFX_EXTEND_PARAM_LIST
 	{
 	public:
-		MFX_EXPARAM(int argNum) { myNum = argNum - 1; };
+		__MFX_EXTEND_PARAM_LIST(int argNum) { myNum = argNum - 1; };
 
 		template<typename Arg>
-		inline auto& EX_PARAM(MfxParam& param) noexcept
+		inline auto& EXTEND_PARAM_LIST(MfxParam& param) noexcept
 		{
 			return (std::any_cast<Arg&>)(param[myNum--]);
 		}
@@ -252,19 +235,18 @@ namespace MicroFlakeX
 	template<typename ... Args>
 	constexpr inline MfxParam MFX_MAKE_PARAM(Args&&... arg)
 	{
-		MfxParam MFX_CALLBACK_PARAM;
 		if constexpr (0 == sizeof...(Args))
 		{
-			return MFX_CALLBACK_PARAM;
+			return MfxParam();
 		}
 		else
 		{
-			return __MFX_MAKE_PARAM(MFX_CALLBACK_PARAM, std::forward<Args>(arg)...);
+			return __MFX_MAKE_PARAM(MfxParam(), std::forward<Args>(arg)...);
 		}
 	}
 
 	template<typename T, typename ... Args>
-	constexpr inline MfxParam __MFX_MAKE_PARAM(MfxParam& MFX_CALLBACK_PARAM, T&& set, Args&&... arg)
+	constexpr inline MfxParam __MFX_MAKE_PARAM(MfxParam&& MFX_CALLBACK_PARAM, T&& set, Args&&... arg)
 	{
 		if constexpr (0 == sizeof...(Args))
 		{
@@ -274,16 +256,20 @@ namespace MicroFlakeX
 		else
 		{
 			MFX_CALLBACK_PARAM.push_back(std::forward<T>(set));
-			return __MFX_MAKE_PARAM(MFX_CALLBACK_PARAM, std::forward<Args>(arg)...);
+			return __MFX_MAKE_PARAM(std::move(MFX_CALLBACK_PARAM), std::forward<Args>(arg)...);
 		}
 	}
+
 }
 
 
 namespace MicroFlakeX
 {
+	class MFX_DLL_EXPORT MfxMemberLock;
+	class MFX_DLL_EXPORT MfxFuncLock;
+
 	/***************************************************************
-	*	MfxMemberLock Mfx参数锁。
+	*	MfxMemberLock MFX参数锁。
 	****************************************************************/
 	class MfxMemberLock
 	{
@@ -292,91 +278,75 @@ namespace MicroFlakeX
 		typedef std::unordered_map<void*, CRITICAL_SECTION>::value_type myResour;
 	public:
 		virtual ~MfxMemberLock();
-		inline void InsertMemberLock(void* resour);
+		bool InsertMemberLock(void* resour);
 
 	public:
-		inline void UnLock(void* first);
-		inline void WaitLock(void* first);
+		bool UnLock(void* first);
+		bool TryLock(void* first);
 
-		inline bool TryLock(void* first);
-
+	public:
 		template<typename ...Args>
-		inline void UnLock(void* first, Args... rest)
+		inline bool UnLock(void* first, Args... rest)
 		{
-			auto tFind = myMutexResour.find(const_cast<void*>(first));
-			if (tFind == myMutexResour.end())
-			{
-				InsertMemberLock(const_cast<void*>(first));
-			}
-			else
-			{
-				LeaveCriticalSection(&myMutexResour[const_cast<void*>(first)]);
-			}
-
-			UnLock(rest...);
+			return UnLock(first) ? UnLock(rest...) : false;
 		}
 
 		template<typename ...Args>
-		inline void TryWaitLock(Args... rest)
+		inline bool WaitLock(Args... rest)
 		{
 			while (!TryLock(rest...));
+
+			return true;
 		}
 
 		template<typename ...Args>
 		inline bool TryLock(void* first, Args... rest)
 		{
-			bool ret = false;
-			auto tFind = myMutexResour.find(const_cast<void*>(first));
-			if (tFind == myMutexResour.end())
+			bool ret = TryLock(first) == true ? TryLock(rest...) : false;
+
+			if (ret == false)
 			{
-				InsertMemberLock(const_cast<void*>(first));
-				ret = TryEnterCriticalSection(&myMutexResour[const_cast<void*>(first)]);
-			}
-			else
-			{
-				ret = TryEnterCriticalSection(&tFind->second);
+				LeaveCriticalSection(&myMutexResour[const_cast<void*>(first)]);
 			}
 
-			if (ret == true)
-			{
-				ret = TryLock(rest...);
-
-				if (ret)
-				{
-					return true;
-				}
-				else
-				{
-					LeaveCriticalSection(&myMutexResour[const_cast<void*>(first)]);
-					return false;
-				}
-			}
-			else
-			{
-				return false;
-			}
+			return ret;
 		}
 	};
+
+	class MfxFuncLock
+	{
+	public:
+		MfxFuncLock(MfxMemberLock* lock, PVOID pVoid)
+		{
+			myPVOID = pVoid;
+			myMemberLock = lock;
+			myMemberLock->WaitLock(myPVOID);
+		};
+		~MfxFuncLock()
+		{
+			myMemberLock->UnLock(myPVOID);
+		}
+
+	protected:
+		PVOID myPVOID;
+		MfxMemberLock* myMemberLock;
+	};
 }
-
-
-
-
-
-
-
-
-
-
 
 /***************************************************************
 *	MicroFlakeX 基类声明
 ****************************************************************/
 namespace MicroFlakeX
-{
+{	
+	/***************************************************************
+	*	MicroFlakeX 工厂 - 通过字符串创建对象
+	*	1、该子类必须声明了 MFX_OBJ_ENABLE_REFLECTION 宏
+	*	2、该子类必须实现了 MFXOBJ_REFLECTION_BEGININIT(OBJ) 和 MFX_OBJ_REFLECTION_ENDINIT(OBJ, FATHER)辅助宏
+	****************************************************************/
+	MFX_DLL_EXPORT MfxReturn MfxFactory(MfxStringW object, MfxBase** ret);
+
 	class MfxBase
 	{
-		friend class MfxCriticalLock;
 	public:
 		MfxBase();
 		virtual ~MfxBase();
@@ -392,32 +362,15 @@ namespace MicroFlakeX
 		virtual MfxReturn GetObjectName(MfxStringW* ret);
 	protected:
 		MfxMemberLock myMemberLock;
-	private:
-		CRITICAL_SECTION myCriticalSection;
 	};
 }
-
-
-
-
-
-
-
-
-
 
 namespace MicroFlakeX
 {
 	/***************************************************************
-	*	MicroFlakeX 线程回调指针格式
-	****************************************************************/
-	typedef MfxReturn(*pThreadFunc)(MfxParam);
-
-	/***************************************************************
-	* 异步线程请勿传入局部变量指针。
-	* 参数一：回调对象指针
-	* 参数二：回调对象方法名字
-	* 参数三：传递给回调方法的MfxParam。
+	* 参数一：对象指针
+	* 参数二：对象方法名字
+	* 参数三：传递给对象方法的参数
 	****************************************************************/
 	MFX_DLL_EXPORT MfxReturn MfxBeginNewThread(MfxBase* object, MfxStringW recvFunc, MfxParam param);
 
@@ -449,28 +402,16 @@ namespace MicroFlakeX
 	MFX_DLL_EXPORT MfxReturn MfxBeginNewTimer_Widely(PTP_TIMER& pTimer, pThreadFunc pThreadFunc, MfxParam param, MfxTime delay = 0, LONGLONG begin = -10000000, MfxTime randTime = 0);
 
 	/***************************************************************
-	* 参数一：计时器ID，根据id删除对应的计时器
+	* 参数一：计时器ID，根据ID删除对应的计时器
 	****************************************************************/
 	MFX_DLL_EXPORT MfxReturn MfxCloseTimer(PTP_TIMER& pTimer);
-
-	/***************************************************************
-	*	MicroFlakeX 工厂 - 通过字符串创建对象
-	*	1、该子类必须声明了 MFX_OBJ_ENABLE_REFLECTION 宏
-	*	2、该子类必须实现了 MFXOBJ_REFLECTION_BEGININIT(OBJ) 和 MFX_OBJ_REFLECTION_ENDINIT(OBJ, FATHER)辅助宏
-	****************************************************************/
-	MFX_DLL_EXPORT MfxReturn MfxFactory(MfxStringW object, MfxBase** ret);
 }
 
-
-
-
-/***************************************************************
-*	MfxSignal Mfx信号槽
-****************************************************************/
 namespace MicroFlakeX
 {
 	class MFX_DLL_EXPORT MfxSignal;
 	class MFX_DLL_EXPORT MfxClient;
+
 	/***************************************************************
 	*	MicroFlakeX信号槽
 	*	可以一对多的发送指定信号到指定对象
@@ -528,8 +469,8 @@ namespace MicroFlakeX
 		template<typename ... Args>
 		static void SignalCall(MfxBase* set, MfxStringW& recv, MfxParam& param)
 		{
-			MFX_EXPARAM exParam(param.GetParamSize());
-			set->Reflection(recv, exParam.EX_PARAM<Args>(param)...);
+			__MFX_EXTEND_PARAM_LIST exParam(param.GetParamSize());
+			set->Reflection(recv, exParam.EXTEND_PARAM_LIST<Args>(param)...);
 		}
 
 	private:
@@ -544,7 +485,6 @@ namespace MicroFlakeX
 			return MFX_RET_SECCESS;
 		}
 	};
-
 
 	class MfxClient
 	{
@@ -587,8 +527,8 @@ namespace MicroFlakeX
 		template<typename ... Args>
 		static void ClientCall(MfxBase* set, MfxParam& param)
 		{
-			MFX_EXPARAM exParam(param.GetParamSize());
-			set->Reflection(param.GetSTRINGW(), exParam.EX_PARAM<Args>(param)...);
+			__MFX_EXTEND_PARAM_LIST exParam(param.GetParamSize());
+			set->Reflection(param.GetSTRINGW(), exParam.EXTEND_PARAM_LIST<Args>(param)...);
 		}
 
 	private:
@@ -606,102 +546,37 @@ namespace MicroFlakeX
 }
 
 /***************************************************************
-*	__MicroFlakeX内部函数
+*	MicroFlakeX内部函数
 *	>>	一般情况下这里的函数不需要额外的关注
 ****************************************************************/
-namespace __MicroFlakeX
+namespace MicroFlakeX
 {	
-	using namespace MicroFlakeX;
+	MFX_DLL_EXPORT VOID CALLBACK __MfxThreadCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val);
+	MFX_DLL_EXPORT VOID CALLBACK __MfxThreadCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val);
 
-	MFX_DLL_EXPORT VOID CALLBACK MfxThreadCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val);
-	MFX_DLL_EXPORT VOID CALLBACK MfxThreadCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val);
+	MFX_DLL_EXPORT VOID CALLBACK __MfxTimerCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
+	MFX_DLL_EXPORT VOID CALLBACK __MfxTimerCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
 
-	MFX_DLL_EXPORT VOID CALLBACK MfxTimerCallBack(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
-	MFX_DLL_EXPORT VOID CALLBACK MfxTimerCallBack_Widely(PTP_CALLBACK_INSTANCE instance, PVOID val, PTP_TIMER pTimer);
-
-	class MFX_DLL_EXPORT MfxFactoryHand
+	class MFX_DLL_EXPORT __MfxFactoryHand
 	{
 		friend MfxReturn MicroFlakeX::MfxFactory(MfxStringW object, MfxBase** ret);
 	public:
-		MfxFactoryHand(MfxStringW object);
+		__MfxFactoryHand(MfxStringW object);
 		virtual MfxReturn Creat(MicroFlakeX::MfxBase** ret) = 0;
-		virtual ~MfxFactoryHand();
+		virtual ~__MfxFactoryHand();
 	public:
 		MfxReturn RemoveObject(MfxStringW object);
-		MfxReturn RegisterObject(MfxStringW object, MfxFactoryHand* hand);
+		MfxReturn RegisterObject(MfxStringW object, __MfxFactoryHand* hand);
 
 	private:
 		MfxStringW myObjectName;
-		static std::unordered_map<MfxStringW, MfxFactoryHand*> MfxFactoryHand_Map;
-	};
-
-	template<typename T>
-	struct ArgNum_;
-
-	template<typename R, class O, typename... Args>
-	struct ArgNum_<R(O::*)(Args...) const>
-	{
-		static const int Argc = sizeof...(Args);
-	};
-
-	template<typename R, class O, typename... Args>
-	struct ArgNum_<R(O::*)(Args...)>
-	{
-		static const int Argc = sizeof...(Args);
-	};
-
-	template<typename R, typename... Args>
-	struct ArgNum_<R(*)(Args...)>
-	{
-		static const int Argc = sizeof...(Args);
-	};
-
-	template<typename T>
-	constexpr const int GetFuncArgNum(T)
-	{
-		return ArgNum_<T>::Argc;
-	};
-
-	template <class R, class O, class... Args>
-	O GetFuncObject(R(O::*)(Args...) const)
-	{
-		return O();
-	};
-
-	template <class R, class O, class... Args>
-	O GetFuncObject(R(O::*)(Args...))
-	{
-		return O();
-	};
-
-	template <class R, class O, class... Args>
-	R GetFuncRet(R(O::*)(Args...) const)
-	{
-		return R();
-	};
-
-	template <class R, class O, class... Args>
-	R GetFuncRet(R(O::*)(Args...))
-	{
-		return R();
-	};
-
-	template <class R, class... Args>
-	R GetFuncRet(R(*)(Args...))
-	{
-		return R();
+		static std::unordered_map<MfxStringW, __MfxFactoryHand*> __MfxFactoryHand_Map;
 	};
 
 	template<class T>
-	inline auto& __EXTEND_VA_LIST(va_list& argc)
+	inline auto& __MFX_EXTEND_VA_LIST(va_list& argc)
 	{
 		return (*(typename std::decay<T>::type*)(argc -= _INTSIZEOF(T)));
-	}
-
-	template<class... Args>
-	constexpr inline ULONG64 ArgsSize()
-	{
-		return (sizeof(Args) + ...);
 	}
 
 	template <typename T_THIS, typename OBJ, class... Args>
@@ -713,8 +588,8 @@ namespace __MicroFlakeX
 		}
 		else
 		{
-			va_list r_argc = argc + ArgsSize<Args...>();
-			return (pThis->*pFunc)(std::move(__EXTEND_VA_LIST<Args>(r_argc))...);
+			va_list r_argc = argc + (sizeof(Args) + ...);
+			return (pThis->*pFunc)(std::move(__MFX_EXTEND_VA_LIST<Args>(r_argc))...);
 		}
 	};
 
@@ -727,8 +602,8 @@ namespace __MicroFlakeX
 		}
 		else
 		{
-			va_list r_argc = argc + ArgsSize<Args...>();
-			return (pThis->*pFunc)(std::move(__EXTEND_VA_LIST<Args>(r_argc))...);
+			va_list r_argc = argc + (sizeof(Args) + ...);
+			return (pThis->*pFunc)(std::move(__MFX_EXTEND_VA_LIST<Args>(r_argc))...);
 		}
 	};
 
@@ -752,7 +627,7 @@ public:\
 /****************************************************************************************************************/
 #define __MFX_OBJ_REFLECTION_INIT_0(OBJ)\
 using namespace MicroFlakeX;\
-using namespace __MicroFlakeX;\
+using namespace MicroFlakeX;\
 MfxReturn OBJ::GetObjectName(MfxStringW* ret)\
 {\
 	*ret = MFX_TXT_W(#OBJ);\
@@ -760,11 +635,11 @@ MfxReturn OBJ::GetObjectName(MfxStringW* ret)\
 }\
 \
 class OBJ##FactoryHand\
-	: public MfxFactoryHand\
+	: public __MfxFactoryHand\
 {\
 public:\
 	OBJ##FactoryHand(MfxStringW object)\
-		: MfxFactoryHand(object)\
+		: __MfxFactoryHand(object)\
 	{
 
 /****************************************************************************************************************/
@@ -779,7 +654,7 @@ public:\
 OBJ##FactoryHand OBJ##Hand(MFX_TXT_W(#OBJ));\
 MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
 {\
-	MfxReturn ret = MFX_RET_FAILED;\
+	MfxReturn ret = MFX_RET_NOTFIND;\
 	va_list argc;\
 	va_start(argc, recvFunc);\
 	BeginSwitch:\
@@ -791,12 +666,17 @@ MfxReturn OBJ::Reflection(MfxStringW recvFunc...)\
 		case MFX_STRING_HASH_W(MFX_TXT_W("Reflection")):\
 		{\
 			recvFunc = va_arg(argc, MfxStringW);\
+			goto BeginSwitch;\
+		}\
+		case MFX_STRING_HASH_W(MFX_TXT_W("REFLECTION_FUNC_NOT_FIND")):\
+		{\
+			recvFunc = va_arg(argc, MfxStringW);\
 			argc = va_arg(argc, va_list);\
 			goto BeginSwitch;\
 		}\
 		default:\
 		{\
-			ret = FATHER_OBJ::Reflection(MFX_TXT_W("Reflection"), recvFunc, argc); \
+			ret = FATHER_OBJ::Reflection(MFX_TXT_W("REFLECTION_FUNC_NOT_FIND"), recvFunc, argc); \
 			va_end(argc);\
 			return ret;\
 		}\
