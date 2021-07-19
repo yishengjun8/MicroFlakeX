@@ -49,7 +49,7 @@ int main()
 
     MfxGlide myGlide;
 
-    myGlide.SetFPS(90);
+    myGlide.SetFPS(60);
     myGlide.BindObject(myFlake_01);
 
     myGlide.BindObjectName(MFX_TXT_W("group_1"),

@@ -166,7 +166,7 @@ namespace MicroFlakeX
 
         ~MfxGlide();
 
-        MfxReturn Clone(MfxBase** ret)const;
+        MfxReturn Clone(MfxBase** ret);
 
         MfxBase& operator=(MfxBase& rhs);
 
@@ -176,9 +176,9 @@ namespace MicroFlakeX
 
         bool operator==(MfxBase& rhs);
 
-        bool operator==(const MfxGlide* rhs)const;
-        bool operator==(const MfxGlide& rhs)const;
-        bool operator==(const MfxGlide&& rhs)const;
+        bool operator==(const MfxGlide* rhs) const;
+        bool operator==(const MfxGlide& rhs) const;
+        bool operator==(const MfxGlide&& rhs) const;
 
     public:
         MfxReturn SetFPS(const UINT set);

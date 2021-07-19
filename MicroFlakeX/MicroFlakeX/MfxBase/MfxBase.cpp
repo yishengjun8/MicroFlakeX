@@ -15,7 +15,7 @@ MicroFlakeX::MfxBase::~MfxBase()
 	//MfxClient::ReceiverDelete(this);
 }
 
-MfxReturn MicroFlakeX::MfxBase::Clone(MfxBase** ret) const
+MfxReturn MicroFlakeX::MfxBase::Clone(MfxBase** ret)
 {
 	*ret = nullptr;
 

@@ -74,7 +74,7 @@ MicroFlakeX::MfxRectangle::~MfxRectangle()
 	SafeRelease(myFrameBrush);
 }
 
-MfxReturn MicroFlakeX::MfxRectangle::Clone(MfxRectangle** ret) const
+MfxReturn MicroFlakeX::MfxRectangle::MFX_OBJ_ENABLE_CLONE(ret)
 {
 	*ret = new MfxRectangle(&myRect, myFillColor, myFrameColor);
 	return MFX_RET_SECCESS;
@@ -209,7 +209,7 @@ MfxReturn MicroFlakeX::MfxRectangle::CloseRounded()
 	return MFX_RET_SECCESS;
 }
 
-MfxReturn MicroFlakeX::MfxRectangle::GetReallyRect(MfxRect* ret)const
+MfxReturn MicroFlakeX::MfxRectangle::GetReallyRect(MfxRect* ret) const
 {
 	*ret = myRect;
 	ret->Inflate(ceil(myFrameSize / 2), ceil(myFrameSize / 2));

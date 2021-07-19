@@ -18,13 +18,25 @@ MicroFlakeX::__MfxFactoryHand::~__MfxFactoryHand()
 
 MicroFlakeX::MfxReturn MicroFlakeX::MfxFactory(MfxStringW object, MfxBase** ret)
 {
-	auto iter = MicroFlakeX::__MfxFactoryHand::__MfxFactoryHand_Map.find(object);
-	if (iter != MicroFlakeX::__MfxFactoryHand::__MfxFactoryHand_Map.end())
+	auto iter = __MfxFactoryHand::__MfxFactoryHand_Map.find(object);
+	if (iter != __MfxFactoryHand::__MfxFactoryHand_Map.end())
 	{
 		return iter->second->Creat(ret);
 	}
 
 	return MFX_RET_FAILED;
+}
+
+MFX_DLL_EXPORT MfxBase* MicroFlakeX::MfxFactory(MfxStringW object)
+{
+	MfxBase** ret = nullptr;
+	auto iter = __MfxFactoryHand::__MfxFactoryHand_Map.find(object);
+	if (iter != __MfxFactoryHand::__MfxFactoryHand_Map.end())
+	{
+		iter->second->Creat(ret);
+	}
+
+	return *ret;
 }
 
 MicroFlakeX::MfxReturn MicroFlakeX::__MfxFactoryHand::RemoveObject(MfxStringW object)

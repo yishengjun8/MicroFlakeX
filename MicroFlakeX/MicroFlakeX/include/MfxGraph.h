@@ -9,16 +9,15 @@ namespace MicroFlakeX
 	class MFX_DLL_EXPORT MfxImage;
 	class MFX_DLL_EXPORT MfxWords;
 
-
 	class MFX_DLL_EXPORT MfxEllipse;
 	class MFX_DLL_EXPORT MfxRectangle;
 
 
-	typedef MfxCanvas* pMfxCanvas;
-	typedef MfxImage* pMfxImage;
-	typedef MfxWords* pMfxWords;
-	typedef MfxEllipse* pMfxEllipse;
-	typedef MfxRectangle* pMfxRectangleangle;
+	typedef MfxCanvas*	pMfxCanvas;
+	typedef MfxImage*	pMfxImage;
+	typedef MfxWords*	pMfxWords;
+	typedef MfxEllipse*	pMfxEllipse;
+	typedef MfxRectangle*	pMfxRectangleangle;
 }
 
 namespace MicroFlakeX
@@ -58,9 +57,9 @@ namespace MicroFlakeX
 		MFX_OBJ_ENABLE_REFLECTION;
 
 	public:
-		virtual MfxReturn GetRect(MfxRect* ret)const;
-		virtual MfxReturn GetSize(MfxSize* ret)const;
-		virtual MfxReturn GetPoint(MfxPoint* ret)const;
+		virtual MfxReturn GetRect(MfxRect* ret) const;
+		virtual MfxReturn GetSize(MfxSize* ret) const;
+		virtual MfxReturn GetPoint(MfxPoint* ret) const;
 
 	public:
 		virtual MfxReturn SetRect(const MfxRect* set);
@@ -111,9 +110,9 @@ namespace MicroFlakeX
 		virtual ~MfxCanvas();
 
 	public:
-		MfxReturn GetDC(HDC* ret)const;
-		MfxReturn GetWnd(HWND* ret)const;
-		MfxReturn GetBackColor(MfxColor* ret)const;
+		MfxReturn GetDC(HDC* ret) const;
+		MfxReturn GetWnd(HWND* ret) const;
+		MfxReturn GetBackColor(MfxColor* ret) const;
 
 	public:
 		MfxReturn SetDC(HDC set);
@@ -125,19 +124,19 @@ namespace MicroFlakeX
 		MfxReturn PaintFinish();
 
 	public:
-		MfxReturn PaintCheck(bool* ret)const;
+		MfxReturn PaintCheck(bool* ret) const;
 
 	public:
-		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret)const;
+		MfxReturn GetRenderTarget(ID2D1RenderTarget** ret) const;
 
 	public:
 		MfxReturn SetRect(MfxRect* set);
 		MfxReturn SetSize(MfxSize* set);
 		MfxReturn SetPoint(MfxPoint* set);
 	public:
-		MfxReturn GetRect(MfxRect* ret)const;
-		MfxReturn GetSize(MfxSize* ret)const;
-		MfxReturn GetPoint(MfxPoint* ret)const;
+		MfxReturn GetRect(MfxRect* ret) const;
+		MfxReturn GetSize(MfxSize* ret) const;
+		MfxReturn GetPoint(MfxPoint* ret) const;
 	protected:
 		HDC myDC;
 		HWND myWnd;
@@ -190,7 +189,7 @@ namespace MicroFlakeX
 
 		virtual ~MfxImage();
 
-		MfxReturn Clone(MfxImage** ret) const;
+		MfxReturn MFX_OBJ_ENABLE_CLONE(ret);
 
 	protected:
 		MfxCanvas* myCanvas;
@@ -204,7 +203,7 @@ namespace MicroFlakeX
 		MfxReturn Paint();
 
 		MfxReturn SetCanvas(MfxCanvas* set);
-		MfxReturn GetCanvas(MfxCanvas** ret)const;
+		MfxReturn GetCanvas(MfxCanvas** ret) const;
 
 		MfxReturn FromFile(MfxStringW* path, MfxSize* set);
 		MfxReturn FromColor(MfxColor* color, MfxSize* set);
@@ -270,7 +269,7 @@ namespace MicroFlakeX
 
 		virtual ~MfxWords();
 
-		MfxReturn Clone(MfxWords** ret) const;
+		MfxReturn MFX_OBJ_ENABLE_CLONE(ret);
 
 		static IDWriteTextFormat* gDefTextFormat;
 
@@ -339,7 +338,7 @@ namespace MicroFlakeX
 
 		virtual ~MfxRectangle();
 
-		MfxReturn Clone(MfxRectangle** ret) const;
+		MfxReturn MFX_OBJ_ENABLE_CLONE(ret);
 
 	protected:
 		MfxCanvas* myCanvas;
@@ -383,7 +382,7 @@ namespace MicroFlakeX
 		MfxReturn CloseRounded();
 	
 	public:
-		MfxReturn GetReallyRect(MfxRect* ret)const;
+		MfxReturn GetReallyRect(MfxRect* ret) const;
 	public:
 		MfxReturn Update_Canvas();
 	};
@@ -405,7 +404,7 @@ namespace MicroFlakeX
 
 		virtual ~MfxEllipse();
 
-		MfxReturn Clone(MfxEllipse** ret) const;
+		MfxReturn MFX_OBJ_ENABLE_CLONE(ret);
 
 	protected:
 		MfxCanvas* myCanvas;
@@ -449,7 +448,7 @@ namespace MicroFlakeX
 		MfxReturn CloseRounded();
 
 	public:
-		MfxReturn GetReallyRect(MfxRect* ret)const;
+		MfxReturn GetReallyRect(MfxRect* ret) const;
 	public:
 		MfxReturn Update_Canvas();
 	};

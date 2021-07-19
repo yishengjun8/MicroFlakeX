@@ -77,7 +77,7 @@ MicroFlakeX::MfxImage::~MfxImage()
 	SafeRelease(myID2D1Bitmap);
 }
 
-MfxReturn MicroFlakeX::MfxImage::Clone(MfxImage** ret) const
+MfxReturn MicroFlakeX::MfxImage::MFX_OBJ_ENABLE_CLONE(ret)
 {
 	*ret = new MfxImage(myIWICBitmap, &myRect);
 
@@ -128,7 +128,7 @@ MfxReturn MicroFlakeX::MfxImage::FromColor(MfxColor* color, MfxSize* set)
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxImage::GetCanvas(MfxCanvas** ret)const
+MfxReturn MicroFlakeX::MfxImage::GetCanvas(MfxCanvas** ret) const
 {
 	*ret = myCanvas;
 	return MFX_RET_SECCESS;

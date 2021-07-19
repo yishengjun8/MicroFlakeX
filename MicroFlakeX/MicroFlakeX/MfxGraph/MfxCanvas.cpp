@@ -97,21 +97,21 @@ MicroFlakeX::MfxCanvas::~MfxCanvas()
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxCanvas::GetDC(HDC* ret)const
+MfxReturn MicroFlakeX::MfxCanvas::GetDC(HDC* ret) const
 {
 	*ret = myDC;
 
 	return MFX_RET_SECCESS;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::GetWnd(HWND* ret)const
+MfxReturn MicroFlakeX::MfxCanvas::GetWnd(HWND* ret) const
 {
 	*ret = myWnd;
 
 	return MFX_RET_SECCESS;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::GetBackColor(MfxColor* ret)const
+MfxReturn MicroFlakeX::MfxCanvas::GetBackColor(MfxColor* ret) const
 {
 	myBackColor.GetColor(ret);
 	
@@ -218,7 +218,7 @@ MfxReturn MicroFlakeX::MfxCanvas::PaintFinish()
 	return MFX_RET_FAILED;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::PaintCheck(bool* ret)const
+MfxReturn MicroFlakeX::MfxCanvas::PaintCheck(bool* ret) const
 {
 	*ret = myPaintFlag;
 
@@ -231,7 +231,7 @@ MfxReturn MicroFlakeX::MfxCanvas::PaintCheck(bool* ret)const
 *
 *
 ***************************************************************/
-MfxReturn MicroFlakeX::MfxCanvas::GetRenderTarget(ID2D1RenderTarget** ret)const
+MfxReturn MicroFlakeX::MfxCanvas::GetRenderTarget(ID2D1RenderTarget** ret) const
 {
 	*ret = myRenderTarget;
 
@@ -308,21 +308,21 @@ MfxReturn MicroFlakeX::MfxCanvas::SetPoint(MfxPoint* set)
 	return MFX_RET_FAILED;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::GetRect(MfxRect* set)const
+MfxReturn MicroFlakeX::MfxCanvas::GetRect(MfxRect* set) const
 {
 	myRect.GetRect(set);
 
 	return MFX_RET_SECCESS;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::GetSize(MfxSize* set)const
+MfxReturn MicroFlakeX::MfxCanvas::GetSize(MfxSize* set) const
 {
 	myRect.GetSize(set);
 
 	return MFX_RET_SECCESS;
 }
 
-MfxReturn MicroFlakeX::MfxCanvas::GetPoint(MfxPoint* set)const
+MfxReturn MicroFlakeX::MfxCanvas::GetPoint(MfxPoint* set) const
 {
 	myRect.GetPoint(set);
 

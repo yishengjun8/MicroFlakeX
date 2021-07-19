@@ -600,7 +600,7 @@ namespace MicroFlakeX
 		public MfxBase
 	{
 		MFX_OBJ_ENABLE_REFLECTION;
-		MFXOBJ_ENABLE_FLOORCOMPARE;
+		MFX_OBJ_ENABLE_FLOORCOMPARE;
 	private:
 		void InitData_Flake();
 		void RegisterRecvFunc();

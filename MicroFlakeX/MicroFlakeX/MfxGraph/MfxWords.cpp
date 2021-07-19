@@ -156,12 +156,12 @@ MicroFlakeX::MfxWords::~MfxWords()
 	SafeRelease(myTextLayout);
 }
 
-MfxReturn MicroFlakeX::MfxWords::Clone(MfxWords** ret)const
+MfxReturn MicroFlakeX::MfxWords::MFX_OBJ_ENABLE_CLONE(ret)
 {
 	*ret = new MfxWords(myText, &myRect, myTextLayout->GetFontSize(), myTextLayout);
 
-	(*ret)->SetCanvas(myCanvas);
-	(*ret)->SetTextColor(&myColor);
+	((MfxWords*)(*ret))->SetCanvas(myCanvas);
+	((MfxWords*)(*ret))->SetTextColor(&myColor);
 
 
 	return MFX_RET_SECCESS;

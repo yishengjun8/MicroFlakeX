@@ -58,7 +58,7 @@ MicroFlakeX::MfxGlide::~MfxGlide()
 	}
 }
 
-MfxReturn MicroFlakeX::MfxGlide::Clone(MfxBase** ret)const
+MfxReturn MicroFlakeX::MfxGlide::Clone(MfxBase** ret)
 {
 	*ret = new MfxGlide(this);
 
@@ -121,17 +121,17 @@ bool MicroFlakeX::MfxGlide::operator==(MfxBase& rhs)
 	return false;
 }
 
-bool MicroFlakeX::MfxGlide::operator==(const MfxGlide* rhs)const
+bool MicroFlakeX::MfxGlide::operator==(const MfxGlide* rhs) const
 {
 	return false;
 }
 
-bool MicroFlakeX::MfxGlide::operator==(const MfxGlide& rhs)const
+bool MicroFlakeX::MfxGlide::operator==(const MfxGlide& rhs) const
 {
 	return false;
 }
 
-bool MicroFlakeX::MfxGlide::operator==(const MfxGlide&& rhs)const
+bool MicroFlakeX::MfxGlide::operator==(const MfxGlide&& rhs) const
 {
 	return false;
 }

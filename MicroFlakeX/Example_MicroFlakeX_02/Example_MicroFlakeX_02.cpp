@@ -6,7 +6,6 @@
 
 using namespace std;
 using namespace MicroFlakeX;
-using namespace __MicroFlakeX;
 
 
 
@@ -34,10 +33,32 @@ public:
 
 };
 
+class TestDelete
+{
+public:
+    void Release()
+    {
+        delete this;
+    }
 
+    void Print()
+    {
+        std::cout << "TestDelete Print" << std::endl;
+    }
 
+};
 
-int mainssssssssssssssssssss()
+int main()
+{
+    TestDelete *te = new TestDelete;
+
+    te->Print();
+
+    te->Release();
+
+    te->Print();
+}
+int mainsdfsdfsdf()
 {
     MyClass set; MfxTest myTest; MfxSignal mySignal; MfxClient myClient;
     myClient.PushBackReceiver(&myTest);
@@ -191,7 +212,7 @@ int test2()
 }
 
 
-int main()
+int mainssssssssssssssssss()
 {
 
     /**/
