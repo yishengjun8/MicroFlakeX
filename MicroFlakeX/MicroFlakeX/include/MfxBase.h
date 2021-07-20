@@ -59,61 +59,6 @@ namespace MicroFlakeX
 #define MFX_IF_NOTFIND(MR) if(MFX_NOTFIND(MR))
 #define MFX_IF_UNKNOW(MR) if(MFX_UNKNOW(MR))
 
-
-
-	constexpr inline MfxHash MFXAPI MFX_STRING_HASH_A(char const* str, MfxHash hash = 0)
-	{
-		while (MfxHash ch = *str++)
-		{
-			hash = hash * 131 + ch;   // may be: 31、131、1313、13131、131313 ...
-		}
-		return hash;
-	}
-
-	constexpr inline MfxHash MFXAPI MFX_STRING_HASH_W(wchar_t const* str, MfxHash hash = 0)
-	{
-		while (MfxHash ch = *str++)
-		{
-			hash = hash * 131 + ch;   // may be: 31、131、1313、13131、131313 ...
-		}
-		return hash;
-	}
-
-	template<class Interface>
-	inline bool MFXAPI SafeRelease(Interface*& pInterfaceToRelease)
-	{
-		if (pInterfaceToRelease != nullptr)
-		{
-			pInterfaceToRelease->Release();
-			pInterfaceToRelease = nullptr;
-			return true;
-		}
-		return false;
-	}
-
-	template<class Pointer>
-	inline bool MFXAPI SafeDelete(Pointer*& pPointerToDelete)
-	{
-		if (pPointerToDelete != nullptr)
-		{
-			delete pPointerToDelete;
-			pPointerToDelete = nullptr;
-			return true;
-		}
-		return false;
-	}
-
-	template<class Pointer>
-	inline bool MFXAPI SafeDeleteList(Pointer*& pPointerToDelete)
-	{
-		if (pPointerToDelete != nullptr)
-		{
-			delete[] pPointerToDelete;
-			pPointerToDelete = nullptr;
-			return true;
-		}
-		return false;
-	}
 }
 
 namespace MicroFlakeX
@@ -254,7 +199,7 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	class MFX_DLL_EXPORT MfxMemberLock;
-	class MFX_DLL_EXPORT MfxFuncLock;
+	class MFX_DLL_EXPORT MfxTemporaryLock;
 
 	/***************************************************************
 	*	MfxMemberLock MFX参数锁。
@@ -301,24 +246,48 @@ namespace MicroFlakeX
 		}
 	};
 
-	class MfxFuncLock
+
+#define MFX_MAKE_TEMP_LOCK(...) MfxTemporaryLock tMfxTemporaryLock(&myMemberLock, __VA_ARGS__)
+
+	class MfxTemporaryLock
 	{
+	protected:
+		MfxMemberLock* myLock;
+		std::vector<PVOID> myPVOID;
 	public:
-		MfxFuncLock(MfxMemberLock* lock, PVOID pVoid)
+		template<typename ... Args>
+		MfxTemporaryLock(MfxMemberLock* lock, Args... arg)
 		{
-			myPVOID = pVoid;
-			myMemberLock = lock;
-			myMemberLock->WaitLock(myPVOID);
-		};
-		~MfxFuncLock()
-		{
-			myMemberLock->UnLock(myPVOID);
+			myLock = lock;
+			myLock->WaitLock(arg...);
+			AddUnlockList(arg...);
 		}
+		~MfxTemporaryLock()
+		{
+			for (auto& i : myPVOID)
+			{
+				myLock->UnLock(i);
+			}
+		};
 
 	protected:
-		PVOID myPVOID;
-		MfxMemberLock* myMemberLock;
+		template<typename ... Args>
+		constexpr inline void AddUnlockList(PVOID set, Args... arg)
+		{
+			if constexpr (0 == sizeof...(Args))
+			{
+				myPVOID.push_back(set);
+			}
+			else
+			{
+				myPVOID.push_back(set);
+				AddUnlockList(arg...);
+			}
+		}
 	};
+
+
+	
 }
 
 /***************************************************************
@@ -395,6 +364,7 @@ namespace MicroFlakeX
 
 	/***************************************************************
 	* 参数一：计时器ID，根据ID删除对应的计时器
+	*  删除之后将会自动将输入id赋值为nullptr
 	****************************************************************/
 	MFX_DLL_EXPORT MfxReturn MfxCloseTimer(PTP_TIMER& pTimer);
 }
@@ -604,6 +574,70 @@ namespace MicroFlakeX
 	{
 		return lhs.myFloor < rhs.myFloor;
 	}
+
+	template<typename T>
+	inline bool Swap(T& lhs, T& rhs)
+	{
+		T t_Swap = lhs;
+		lhs = rhs;
+		rhs = t_Swap;
+		return true;
+	}
+
+	constexpr inline MfxHash MFXAPI MFX_STRING_HASH_A(char const* str, MfxHash hash = 0)
+	{
+		while (MfxHash ch = *str++)
+		{
+			hash = hash * 131 + ch;   // may be: 31、131、1313、13131、131313 ...
+		}
+		return hash;
+	}
+
+	constexpr inline MfxHash MFXAPI MFX_STRING_HASH_W(wchar_t const* str, MfxHash hash = 0)
+	{
+		while (MfxHash ch = *str++)
+		{
+			hash = hash * 131 + ch;   // may be: 31、131、1313、13131、131313 ...
+		}
+		return hash;
+	}
+
+	template<class Interface>
+	inline bool MFXAPI SafeRelease(Interface*& pInterfaceToRelease)
+	{
+		if (pInterfaceToRelease != nullptr)
+		{
+			pInterfaceToRelease->Release();
+			pInterfaceToRelease = nullptr;
+			return true;
+		}
+		return false;
+	}
+
+	template<class Pointer>
+	inline bool MFXAPI SafeDelete(Pointer*& pPointerToDelete)
+	{
+		if (pPointerToDelete != nullptr)
+		{
+			delete pPointerToDelete;
+			pPointerToDelete = nullptr;
+			return true;
+		}
+		return false;
+	}
+
+	template<class Pointer>
+	inline bool MFXAPI SafeDeleteList(Pointer*& pPointerToDelete)
+	{
+		if (pPointerToDelete != nullptr)
+		{
+			delete[] pPointerToDelete;
+			pPointerToDelete = nullptr;
+			return true;
+		}
+		return false;
+	}
+
 }
 
 #define __MFX_OBJ_ENABLE_REFLECTION \

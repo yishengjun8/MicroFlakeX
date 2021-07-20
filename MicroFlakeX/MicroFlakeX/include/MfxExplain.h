@@ -2,15 +2,15 @@
 
 namespace MicroFlakeX
 {
-    class MFX_DLL_EXPORT MfxGlide;
+    class MFX_DLL_EXPORT __MfxGlide;
 
-    typedef MfxGlide* pMfxGlide;
+    typedef __MfxGlide* pMfxGlide;
 
 
     //针对每个类型做优化
     /*
     *   组合模式
-    *   MfxGlide+MfxStringW
+    *   __MfxGlide+MfxStringW
     * 
     * 
     *   1、MfxRect   __MfxGlide_Rect;
@@ -59,31 +59,31 @@ namespace MicroFlakeX
 
     typedef std::vector<MfxGulid_GetSet_FuncName> MfxGulid_GetSet_FuncName_Vector;
 
-    typedef std::queue<MfxGulid_Keyframe> MfxGulid_BindObjectType_Keyframe_Queue;
+    typedef std::queue<MfxGulid_Keyframe> MfxGulid_GroupType_Keyframe_Queue;
  
-    typedef std::map<MfxStringW, MfxGulid_BindObjectType_Keyframe_Queue> MfxGulid_BindObjectType_Keyframe_Queue_Map;
-    typedef MfxGulid_BindObjectType_Keyframe_Queue_Map::value_type MfxGulid_BindObjectType_Keyframe_Queue_Map_Pair;
+    typedef std::map<MfxStringW, MfxGulid_GroupType_Keyframe_Queue> MfxGulid_GroupType_Keyframe_Queue_Map;
+    typedef MfxGulid_GroupType_Keyframe_Queue_Map::value_type MfxGulid_GroupType_Keyframe_Queue_Map_Pair;
 
-    struct MfxGulid_WidelyType
+    struct MfxGulid_GroupDetails
     {
-        MfxGulid_WidelyType(MfxStringW getObjectName, MfxStringW setObjectName,
+        MfxGulid_GroupDetails(MfxStringW getObjectName, MfxStringW setObjectName,
             MfxStringW getObjectFuncName, MfxStringW setObjectFuncName)
         {
-            myGetObject_Set = nullptr;
-            myGetObject_Begin = nullptr;
+            this->myGetObject_Set = nullptr;
+            this->myGetObject_Begin = nullptr;
             this->getObjectName = getObjectName;
             this->setObjectName = setObjectName;
             this->getObjectFuncName = getObjectFuncName;
             this->setObjectFuncName = setObjectFuncName;
-            myBeginTime = 0;
-            myThroughTime = 0;
+            this->myBeginTime = 0;
+            this->myThroughTime = 0;
         }
-        MfxGulid_WidelyType()
+        MfxGulid_GroupDetails()
         {
-            myGetObject_Set = nullptr;
-            myGetObject_Begin = nullptr;
-            myBeginTime = 0;
-            myThroughTime = 0;
+            this->myGetObject_Set = nullptr;
+            this->myGetObject_Begin = nullptr;
+            this->myBeginTime = 0;
+            this->myThroughTime = 0;
         }
         MfxStringW getObjectName;
         MfxStringW setObjectName;
@@ -98,8 +98,8 @@ namespace MicroFlakeX
 
     };
 
-    typedef std::map<MfxStringW, MfxGulid_WidelyType> MfxGulid_WidelyType_Map;
-    typedef MfxGulid_WidelyType_Map::value_type MfxGulid_WidelyType_Map_Pair;
+    typedef std::map<MfxStringW, MfxGulid_GroupDetails> MfxGulid_GroupDetails_Map;
+    typedef MfxGulid_GroupDetails_Map::value_type MfxGulid_GroupDetails_Map_Pair;
 
     /**************************************************************
     ***************************************************************/
@@ -144,47 +144,47 @@ namespace MicroFlakeX
     MFX_DLL_EXPORT double MfxEaseInOutBounce(double x);
 
     /**************************************************************
-    *   MfxGlide 赖于 MfxBase 的 AutoFunc。
+    *   __MfxGlide 赖于 MfxBase 的 AutoFunc。
     *
-    *   MfxGlide 允许绑定一个 MfxBase 对象，每帧根据给定参数
+    *   __MfxGlide 允许绑定一个 MfxBase 对象，每帧根据给定参数
         自动调用 MfxBase::Reflection(MFX_TXT_W("BindObjec"), XXX);
     *
     *   如果对象未注册 Reflection 的 BindObjec ，则会调用失败。
     *   对象必须可以Clone
     *
     ***************************************************************/
-    class MfxGlide :
+    class __MfxGlide :
         public MfxBase
     {
         MFX_OBJ_ENABLE_REFLECTION;
     public:
-        MfxGlide();
+        __MfxGlide();
 
-        MfxGlide(const MfxGlide* set);
-        MfxGlide(const MfxGlide& set) :MfxGlide(&set) {};
-        MfxGlide(const MfxGlide&& set) noexcept :MfxGlide(&set) {};
+        __MfxGlide(const __MfxGlide* set);
+        __MfxGlide(const __MfxGlide& set) :__MfxGlide(&set) {};
+        __MfxGlide(const __MfxGlide&& set) noexcept :__MfxGlide(&set) {};
 
-        ~MfxGlide();
+        ~__MfxGlide();
 
         MfxReturn Clone(MfxBase** ret);
 
         MfxBase& operator=(MfxBase& rhs);
 
-        MfxGlide& operator=(const MfxGlide* rhs);
-        MfxGlide& operator=(const MfxGlide& rhs);
-        MfxGlide& operator=(const MfxGlide&& rhs);
+        __MfxGlide& operator=(const __MfxGlide* rhs);
+        __MfxGlide& operator=(const __MfxGlide& rhs);
+        __MfxGlide& operator=(const __MfxGlide&& rhs) noexcept;
 
         bool operator==(MfxBase& rhs);
 
-        bool operator==(const MfxGlide* rhs) const;
-        bool operator==(const MfxGlide& rhs) const;
-        bool operator==(const MfxGlide&& rhs) const;
+        bool operator==(const __MfxGlide* rhs) const;
+        bool operator==(const __MfxGlide& rhs) const;
+        bool operator==(const __MfxGlide&& rhs) const;
 
     public:
         MfxReturn SetFPS(const UINT set);
 
         MfxReturn BindObject(MfxBase* object);
-        MfxReturn BindObjectName(MfxStringW groupName, MfxGulid_WidelyType value);
+        MfxReturn BindObjectName(MfxStringW groupName, MfxGulid_GroupDetails value);
         MfxReturn Add_GetSetFuncName(MfxStringW groupName, MfxStringW getFuncName, MfxStringW setFuncName, pEaseGulid easeGulid = MfxEaseInOutQuad);
 
     public:
@@ -198,10 +198,12 @@ namespace MicroFlakeX
         MfxReturn Clear();
 
     public:
+        MfxReturn IsRun(bool* ret);
+    public:
         MfxReturn EachFrame(MfxParam param);
 
     public:
-        MfxReturn MfxAddKeyframe(MfxStringW groupName, MfxBase* set, LONGLONG delay);
+        MfxReturn AddKeyframe(MfxStringW groupName, MfxBase* set, LONGLONG delay);
 
     private:
         UINT myFPS;
@@ -210,11 +212,11 @@ namespace MicroFlakeX
 
     private:
         MfxBase* myBindObject;
-        MfxGulid_WidelyType_Map myWidelyTypeMap;
+        MfxGulid_GroupDetails_Map myGroupDetails_Map;
 
     private:
-        MfxGulid_BindObjectType_Keyframe_Queue_Map myBindObjectType_Keyframe;
-
+        MfxGulid_GroupType_Keyframe_Queue_Map* myGroupType_Keyframe;
+        MfxGulid_GroupType_Keyframe_Queue_Map* myGroupType_Keyframe_Buff;
     };
 }
 

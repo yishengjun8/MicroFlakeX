@@ -189,7 +189,7 @@
     <ClCompile Include="MfxBase\MfxThread.cpp" />
     <ClCompile Include="MfxButton\MfxButton.cpp" />
     <ClCompile Include="MfxExplain\MfxExplain.cpp" />
-    <ClCompile Include="MfxExplain\MfxGlide.cpp" />
+    <ClCompile Include="MfxExplain\__MfxGlide.cpp" />
     <ClCompile Include="MfxGraph\MfxCanvas.cpp" />
     <ClCompile Include="MfxGraph\MfxGraph.cpp" />
     <ClCompile Include="MfxGraph\MfxImage.cpp" />

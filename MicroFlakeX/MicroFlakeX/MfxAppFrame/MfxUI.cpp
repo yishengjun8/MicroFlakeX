@@ -270,7 +270,7 @@ MfxReturn MicroFlakeX::MfxUI::InsertFlake(MfxFlake* set)
 *********************************************************************************/
 MfxReturn MicroFlakeX::MfxUI::RemoveWin32Timer(ULONG setID)
 {
-    return Send_Message(MFX_MAKE_PARAM(setID).SetMESSAGE(UI_MSG_OpenPercentRect));
+    return Send_Message(MFX_MAKE_PARAM(setID).SetMESSAGE(UI_MSG_RemoveWin32Timer));
 }
 
 MfxReturn MicroFlakeX::MfxUI::InsertWin32Timer(Win32_Timer_Info timer)

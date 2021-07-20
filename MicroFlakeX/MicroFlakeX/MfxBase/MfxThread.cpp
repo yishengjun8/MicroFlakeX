@@ -113,6 +113,8 @@ MfxReturn MicroFlakeX::MfxCloseTimer(PTP_TIMER& pTimer)
 		MfxThreadServer_Map.erase(tFind);
 	}
 
+	pTimer = nullptr;
+
 	return MFX_RET_SECCESS;
 }
 

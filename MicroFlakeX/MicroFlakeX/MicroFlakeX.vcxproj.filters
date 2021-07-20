@@ -131,7 +131,7 @@
     <ClCompile Include="MfxButton\MfxButton.cpp">
       <Filter>源文件\MfxButton</Filter>
     </ClCompile>
-    <ClCompile Include="MfxExplain\MfxGlide.cpp">
+    <ClCompile Include="MfxExplain\__MfxGlide.cpp">
       <Filter>源文件\MfxExplain</Filter>
     </ClCompile>
     <ClCompile Include="MfxExplain\MfxExplain.cpp">

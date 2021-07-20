@@ -47,30 +47,30 @@ int main()
 
     myUI_00->Reflection(MFX_TXT_W("InsertFlake"), myFlake_01);
 
-    MfxGlide myGlide;
+    __MfxGlide myGlide;
 
     myGlide.SetFPS(60);
     myGlide.BindObject(myFlake_01);
 
     myGlide.BindObjectName(MFX_TXT_W("group_1"),
-        MfxGulid_WidelyType(MFX_TXT_W("MfxSize"), MFX_TXT_W("MfxSize"), MFX_TXT_W("GetSize"), MFX_TXT_W("SetSize")));
+        MfxGulid_GroupDetails(MFX_TXT_W("MfxSize"), MFX_TXT_W("MfxSize"), MFX_TXT_W("GetSize"), MFX_TXT_W("SetSize")));
     myGlide.Add_GetSetFuncName(MFX_TXT_W("group_1"), MFX_TXT_W("GetWidth"), MFX_TXT_W("SetWidth"));
     myGlide.Add_GetSetFuncName(MFX_TXT_W("group_1"), MFX_TXT_W("GetHeight"), MFX_TXT_W("SetHeight"));
 
     myGlide.BindObjectName(MFX_TXT_W("group_2"),
-        MfxGulid_WidelyType(MFX_TXT_W("MfxPoint"), MFX_TXT_W("MfxPoint"), MFX_TXT_W("GetPoint"), MFX_TXT_W("SetPoint")));
+        MfxGulid_GroupDetails(MFX_TXT_W("MfxPoint"), MFX_TXT_W("MfxPoint"), MFX_TXT_W("GetPoint"), MFX_TXT_W("SetPoint")));
     myGlide.Add_GetSetFuncName(MFX_TXT_W("group_2"), MFX_TXT_W("GetX"), MFX_TXT_W("SetX"));
     myGlide.Add_GetSetFuncName(MFX_TXT_W("group_2"), MFX_TXT_W("GetY"), MFX_TXT_W("SetY"));
 
     myGlide.BindObjectName(MFX_TXT_W("group_3"),
-        MfxGulid_WidelyType(MFX_TXT_W("MfxColor"), MFX_TXT_W("MfxColor"), MFX_TXT_W("GetBackColor"), MFX_TXT_W("SetBackColor")));
+        MfxGulid_GroupDetails(MFX_TXT_W("MfxColor"), MFX_TXT_W("MfxColor"), MFX_TXT_W("GetBackColor"), MFX_TXT_W("SetBackColor")));
     myGlide.Add_GetSetFuncName(MFX_TXT_W("group_3"), MFX_TXT_W("GetA"), MFX_TXT_W("SetA"));
     myGlide.Add_GetSetFuncName(MFX_TXT_W("group_3"), MFX_TXT_W("GetR"), MFX_TXT_W("SetR"));
     myGlide.Add_GetSetFuncName(MFX_TXT_W("group_3"), MFX_TXT_W("GetG"), MFX_TXT_W("SetG"));
     myGlide.Add_GetSetFuncName(MFX_TXT_W("group_3"), MFX_TXT_W("GetB"), MFX_TXT_W("SetB"));
 
     myGlide.BindObjectName(MFX_TXT_W("group_4"),
-        MfxGulid_WidelyType(MFX_TXT_W("MfxColor"), MFX_TXT_W("MfxColor"), MFX_TXT_W("GetTitleColor"), MFX_TXT_W("SetTitleColor")));
+        MfxGulid_GroupDetails(MFX_TXT_W("MfxColor"), MFX_TXT_W("MfxColor"), MFX_TXT_W("GetTitleColor"), MFX_TXT_W("SetTitleColor")));
     myGlide.Add_GetSetFuncName(MFX_TXT_W("group_4"), MFX_TXT_W("GetA"), MFX_TXT_W("SetA"));
     myGlide.Add_GetSetFuncName(MFX_TXT_W("group_4"), MFX_TXT_W("GetR"), MFX_TXT_W("SetR"));
     myGlide.Add_GetSetFuncName(MFX_TXT_W("group_4"), MFX_TXT_W("GetG"), MFX_TXT_W("SetG"));

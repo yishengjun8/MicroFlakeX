@@ -1,6 +1,5 @@
 #pragma once
 #include "MicroFlakeX.h"
-
 using namespace MicroFlakeX;
 
 
@@ -13,10 +12,13 @@ public:
     MyUI();
 
     MfxReturn MFX_CALLBACK(Test__00);
-    MfxReturn MFX_CALLBACK(Test__01);
+    MfxReturn MFX_CALLBACK(LButtonClick);
+    MfxReturn MFX_CALLBACK(RButtonClick);
     MfxReturn MFX_CALLBACK(Test__02);
 
 protected:
     MfxFlake myFlake;
+
+    __MfxGlide myGlide;
 };
 
