@@ -10,13 +10,17 @@ namespace MicroFlakeX
 	typedef std::int32_t       MInt32;
 	typedef std::int64_t       MInt64;
 
-	typedef std::uint8_t       MInt8_U;
-	typedef std::uint16_t      MInt16_U;
-	typedef std::uint32_t      MInt32_U;
-	typedef std::uint64_t      MInt64_U;
+	typedef std::uint8_t       MInt8U;
+	typedef std::uint16_t      MInt16U;
+	typedef std::uint32_t      MInt32U;
+	typedef std::uint64_t      MInt64U;
 
 	typedef std::float_t       MFloat;
 	typedef std::double_t      MDouble;
+
+	typedef bool			   MBool;
+	typedef wchar_t			   MCharW;
+	typedef void			   MVoid;
 }
 
 namespace MicroFlakeX
@@ -31,13 +35,13 @@ namespace MicroFlakeX
 		Accept = 8,  /* 接受用户操作并且成功执行 */
 	};
 
-	typedef MInt32_U MEvent;
-	typedef MInt32_U MMessage;
+	typedef MInt32U MEvent;
+	typedef MInt32U MMessage;
 
 	typedef MInt32 MNum;
 	typedef MInt64 MTime;
 	typedef MInt32 MFloor;
-	typedef MInt64_U MHash;
+	typedef MInt32U MHash;
 
 	enum class MUnknowMode
 	{
@@ -48,7 +52,7 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-	template<bool isHolder> struct MPlaceholder {};
+	template<MBool isHolder> struct MPlaceholder {};
 	const MPlaceholder<true> MHolder_True;
 	const MPlaceholder<false> MHolder_False;
 }
@@ -58,100 +62,55 @@ namespace MicroFlakeX
 	class MStringHash
 	{
 	public:
-		constexpr MStringHash() noexcept { m_Hash64 = 0; };
+		constexpr MStringHash() noexcept { m_Hash = 0; };
+		constexpr MStringHash(MStringHash&& rhs) noexcept { m_Hash = rhs.m_Hash; };
+		constexpr MStringHash(const MStringHash& rhs) noexcept { m_Hash = rhs.m_Hash; };
+		constexpr MStringHash& operator=(MStringHash&& rhs) noexcept { m_Hash = rhs.m_Hash; return *this; };
+		constexpr MStringHash& operator=(const MStringHash& rhs) noexcept { m_Hash = rhs.m_Hash; return *this; };
+		constexpr MStringHash(const MCharW* str) noexcept { m_Hash = MStringToHash(str); };
+		constexpr MStringHash& operator=(const MCharW* rhs) noexcept { m_Hash = MStringToHash(rhs); return *this; };
+		constexpr MStringHash(MHash&& rhs) noexcept { m_Hash = rhs; };
+		constexpr MStringHash(const MHash& rhs) noexcept { m_Hash = rhs; };
+		constexpr MStringHash& operator=(MHash&& rhs) noexcept { m_Hash = rhs; return *this; };
+		constexpr MStringHash& operator=(const MHash& rhs) noexcept { m_Hash = rhs; return *this; };
 
 	public:
-		constexpr MStringHash(MStringHash&& rhs) noexcept { m_Hash64 = rhs.m_Hash64; };
-		constexpr MStringHash(const MStringHash& rhs) noexcept { m_Hash64 = rhs.m_Hash64; };
-
-		constexpr MStringHash& operator=(MStringHash&& rhs) noexcept { m_Hash64 = rhs.m_Hash64; return *this; };
-		constexpr MStringHash& operator=(const MStringHash& rhs) noexcept { m_Hash64 = rhs.m_Hash64; return *this; };
-
-	public:
-		constexpr MStringHash(const wchar_t* str) noexcept { m_Hash64 = MStringToHash(str); };
-
-		constexpr MStringHash& operator=(const wchar_t* rhs) noexcept { m_Hash64 = MStringToHash(rhs); return *this; };
-
-	public:
-		constexpr MStringHash(MHash&& rhs) noexcept { m_Hash64 = rhs; };
-		constexpr MStringHash(const MHash& rhs) noexcept { m_Hash64 = rhs; };
-
-		constexpr MStringHash& operator=(MHash&& rhs) noexcept { m_Hash64 = rhs; return *this; };
-		constexpr MStringHash& operator=(const MHash& rhs) noexcept { m_Hash64 = rhs; return *this; };
+		constexpr operator MHash() const noexcept { return m_Hash; };
+		constexpr MBool operator==(MStringHash&& rhs) const noexcept { return m_Hash == rhs.m_Hash; };
+		constexpr MBool operator==(const MStringHash& rhs) const noexcept { return m_Hash == rhs.m_Hash; };
+		constexpr MBool operator==(MHash&& rhs) const noexcept { return m_Hash == rhs; };
+		constexpr MBool operator==(const MHash& rhs) const noexcept { return m_Hash == rhs; };
+		constexpr MBool operator!=(MStringHash&& rhs) const noexcept { return m_Hash != rhs.m_Hash; };
+		constexpr MBool operator!=(const MStringHash& rhs) const noexcept { return m_Hash != rhs.m_Hash; };
+		constexpr MBool operator!=(MHash&& rhs) const noexcept { return m_Hash != rhs; };
+		constexpr MBool operator!=(const MHash& rhs) const noexcept { return m_Hash != rhs; };
+		constexpr MBool operator<(MStringHash&& rhs) const noexcept { return m_Hash < rhs.m_Hash; };
+		constexpr MBool operator<(const MStringHash& rhs) const noexcept { return m_Hash < rhs.m_Hash; };
+		constexpr MBool operator<(MHash&& rhs) const noexcept { return m_Hash < rhs; };
+		constexpr MBool operator<(const MHash& rhs) const noexcept { return m_Hash < rhs; };
+		constexpr static MHash MStringToHash(const MCharW* str, MHash offset = 0, MInt32 seed = 131) noexcept { while (MHash ch = *str++) { offset = offset * seed + ch; }return offset; };
 
 	public:
-		constexpr operator MHash() const noexcept { return m_Hash64; };
-
-	public:
-		constexpr bool operator==(MStringHash&& rhs) const noexcept { return m_Hash64 == rhs.m_Hash64; };
-		constexpr bool operator==(const MStringHash& rhs) const noexcept { return m_Hash64 == rhs.m_Hash64; };
-
-	public:
-		constexpr static MHash MStringToHash(const wchar_t* str, MHash offset = 0, MInt32 seed = 131) noexcept { while (MHash ch = *str++) { offset = offset * seed + ch; }return offset; };
-
-	public:
-		MHash m_Hash64{ 0 };
+		MHash m_Hash{ 0 };
 	};
 }
 
 namespace MicroFlakeX
 {
-	template<typename T>
-	inline bool MSwap(T& lhs, T& rhs)
+	namespace MUtil
 	{
-		T t_Swap = lhs;
-		lhs = rhs;
-		rhs = t_Swap;
-	};
+		template<typename T>
+		inline MBool MSwap(T& lhs, T& rhs) { T t_Swap = lhs; lhs = rhs; rhs = t_Swap; };
 
-	template<typename P>
-	inline bool MDelete(P*& pPoint)
-	{
-		delete pPoint;
-		pPoint = nullptr;
-		return true;
+		template<typename P>
+		inline MBool MDelete(P*& pPoint) { if (pPoint) { delete pPoint; pPoint = nullptr; } return true; };
+
+		template<typename P>
+		inline MBool MDeleteArray(P*& pPoint) { if (pPoint) { delete[] pPoint; pPoint = nullptr; } return true; };
+
+		template<typename I>
+		inline MBool MRelease(I*& pInter) { if (pInter) { pInter->Release(); pInter = nullptr; }return true; };
 	}
-
-	template<typename P>
-	inline bool MDeleteList(P*& pPoint)
-	{
-		delete[] pPoint;
-		pPoint = nullptr;
-		return true;
-	}
-
-	template<typename P>
-	inline bool MSafeDelete(P*& pPoint)
-	{
-		if (pPoint != nullptr)
-		{
-			delete pPoint;
-			pPoint = nullptr;
-		}
-		return true;
-	}
-
-	template<typename P>
-	inline bool MSafeDeleteList(P*& pPoint)
-	{
-		if (pPoint != nullptr)
-		{
-			delete[] pPoint;
-			pPoint = nullptr;
-		}
-		return true;
-	}
-
-	template<typename I>
-	inline bool MSafeRelease(I*& pInter)
-	{
-		if (pInter != nullptr)
-		{
-			pInter->Release();
-			pInter = nullptr;
-		}
-		return true;
-	};
 }
 
 
@@ -162,183 +121,111 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-	class _MAnyBase
+	class MGENERICS_DLL_EXPORT _MAnyBase
 	{
 	public:
 		virtual ~_MAnyBase() {};
 	public:
-		virtual void* GetPoint() const = 0;
-		virtual _MAnyBase* MakeValue() const = 0;
-		virtual _MAnyBase* MakeValue_Copy() const = 0;
-		virtual _MAnyBase* MakeValue_Cite() const = 0;
+		virtual MVoid* GetPoint() const = 0;
+		virtual _MAnyBase* MakeAny() const = 0;
+		virtual _MAnyBase* MakeAnyCopy() const = 0;
+		virtual _MAnyBase* MakeAnyCite() const = 0;
 	};
 
 	template<typename _Ty, typename>
-	class _MAnyCite;
+	class MGENERICS_DLL_EXPORT _MAnyCopy;
 	template<typename _Ty, typename>
-	class _MAnyCopy;
+	class MGENERICS_DLL_EXPORT _MAnyCite;
 
-	//_Ty = decay_t<>
 	template<typename _Ty,
-		typename = typename std::enable_if_t<std::is_same_v<typename std::decay_t<_Ty>, _Ty>, _Ty>
-	>
-	class _MAnyCite
-		: public _MAnyBase
-	{
-	private:
-		_Ty* m_CiteValue;
-
-	public:
-		template<typename _ValTy>
-		_MAnyCite(_ValTy&& value)
-			: m_CiteValue(const_cast<_Ty*>(&value))
-		{
-
-		}
-
-	public:
-		void* GetPoint() const override
-		{
-			return (void*)m_CiteValue;
-		}
-
-		_MAnyBase* MakeValue() const override
-		{
-			return new _MAnyCite<_Ty>(*static_cast<_Ty*>(m_CiteValue));
-		}
-
-		_MAnyBase* MakeValue_Copy() const override
-		{
-			return new _MAnyCopy<_Ty>(*static_cast<_Ty*>(m_CiteValue));
-		}
-
-		_MAnyBase* MakeValue_Cite() const override
-		{
-			return new _MAnyCite<_Ty>(*static_cast<_Ty*>(m_CiteValue));
-		}
-	};
-
-	//_Ty = decay_t
-	template<typename _Ty,
-		typename = typename std::enable_if_t<std::is_same_v<typename std::decay_t<_Ty>, _Ty>, _Ty>
-	>
-	class _MAnyCopy
+		typename = typename std::enable_if_t<std::is_same_v<typename std::decay_t<_Ty>, _Ty>, _Ty>>
+		class MGENERICS_DLL_EXPORT _MAnyCopy
 		: public _MAnyBase
 	{
 	private:
 		_Ty m_CopyValue;
-
 	public:
 		template<typename _ValTy>
-		_MAnyCopy(_ValTy&& value)
-			: m_CopyValue(static_cast<_Ty>(value))
-		{
-		}
-
+		_MAnyCopy(_ValTy&& value) : m_CopyValue(static_cast<_Ty>(value)) {};
 	public:
-		void* GetPoint() const override
-		{
-			return (void*)&m_CopyValue;
-		}
-
-		_MAnyBase* MakeValue() const override
-		{
-			return new _MAnyCopy<_Ty>(m_CopyValue);
-		}
-
-		_MAnyBase* MakeValue_Copy() const override
-		{
-			return new _MAnyCopy<_Ty>(m_CopyValue);
-		}
-
-		_MAnyBase* MakeValue_Cite() const override
-		{
-			return new _MAnyCite<_Ty>(m_CopyValue);
-		}
+		MVoid* GetPoint() const override { return (MVoid*)&m_CopyValue; };
+		_MAnyBase* MakeAny() const override { return new _MAnyCopy<_Ty>(m_CopyValue); };
+		_MAnyBase* MakeAnyCopy() const override { return new _MAnyCopy<_Ty>(m_CopyValue); };
+		_MAnyBase* MakeAnyCite() const override { return new _MAnyCite<_Ty>(m_CopyValue); };
 	};
 
+	template<typename _Ty,
+		typename = typename std::enable_if_t<std::is_same_v<typename std::decay_t<_Ty>, _Ty>, _Ty>>
+	class MGENERICS_DLL_EXPORT _MAnyCite
+		: public _MAnyBase
+	{
+	private:
+		_Ty* m_CiteValue;
+	public:
+		template<typename _ValTy>
+		_MAnyCite(_ValTy&& value) : m_CiteValue(const_cast<_Ty*>(&value)) {};
+	public:
+		MVoid* GetPoint() const override { return (MVoid*)m_CiteValue; };
+		_MAnyBase* MakeAny() const override { return new _MAnyCite<_Ty>(*static_cast<_Ty*>(m_CiteValue)); };
+		_MAnyBase* MakeAnyCopy() const override { return new _MAnyCopy<_Ty>(*static_cast<_Ty*>(m_CiteValue)); };
+		_MAnyBase* MakeAnyCite() const override { return new _MAnyCite<_Ty>(*static_cast<_Ty*>(m_CiteValue)); };
+	};
 }
 
 namespace MicroFlakeX
 {
 	/*
-	* MAny容器可以存储任意的类型。
-	* 默认选择: 左值引用，右值拷贝。
-	*
-	* MAny保存的值会在以下两种情况下失效：
-	* 引用的临时右值，MAny会在右值变量所在的栈结束后悬空
-	* 引用的局部变量，MAny会在局部变量的作用域结束后悬空
-	*
-	* MAny工作在copy状态下时
-	* 保存的值是拷贝值，不会因为原变量析构而导致MAny悬空
-	* 保存的拷贝变量类型，为原类型的完全退化体。(退化:const、&、&&、volatile)
+	* MAny泛型容器
+	* 默认选择: 左值引用，右值拷贝
+	* 保存原类型的完全退化体。(退化:const、&、&&、volatile)
 	*/
 	class MAny
 	{
 	private:
 		MicroFlakeX::_MAnyBase* m_AnyTemp;
-
-	protected:
-		void Release();
-
 	public:
-		MAny();
-		virtual ~MAny();
-
-	public:
+		MAny() noexcept;
+		virtual ~MAny() noexcept;
 		MAny(MAny&& rhs) noexcept;
-		MAny(const MAny& rhs);
+		MAny(const MAny& rhs) noexcept;
 		MAny& operator=(MAny&& rhs) noexcept;
-		MAny& operator=(const MAny& rhs);
+		MAny& operator=(const MAny& rhs) noexcept;
 
 	public:
-		bool MakeValue(const MAny& rhs);
-		bool MakeValue_Copy(const MAny& rhs);
-		bool MakeValue_Cite(const MAny& rhs);
+		MBool RenewAny(const MAny& rhs);
+		MBool RenewAnyCopy(const MAny& rhs);
+		MBool RenewAnyCite(const MAny& rhs);
 
-		bool IsEmpty() const;
-		void* GetPoint() const;
+		MBool Release();
+		MBool IsEmpty() const;
+		MVoid* GetPoint() const;
 
 	public:
 		template<typename _Ty>
-		MAny(_Ty&& value)
-			: MAny()
+		MAny(_Ty&& value) : MAny()
 		{
-			if constexpr (std::is_rvalue_reference_v<decltype(value)>)
-			{
-				SetCopyValue(value);
-			}
-			else
-			{
-				SetCiteValue(value);
-			}
+			if constexpr (std::is_rvalue_reference_v<decltype(value)>) SetCopyValue(value);
+			else SetCiteValue(value);
 		}
 
 		template<typename _Ty>
-		MAny(bool isCopy, _Ty&& value)
-			: MAny()
+		MAny(MBool isCopy, _Ty&& value) : MAny()
 		{
-			isCopy ? SetCopyValue(value) : SetCiteValue(value);
+			if constexpr (isCopy) SetCopyValue(value);
+			else SetCiteValue(value);
 		}
 
 	public:
 		template<typename _Ty>
-		bool SetValue(_Ty&& value)
+		MBool Emplace(_Ty&& value)
 		{
-			Release();
-			if constexpr (std::is_rvalue_reference_v<decltype(value)>)
-			{
-				SetCopyValue(value);
-			}
-			else
-			{
-				SetCiteValue(value);
-			}
+			if constexpr (std::is_rvalue_reference_v<decltype(value)>) EmplaceCopy(value);
+			else EmplaceCite(value);
 			return true;
 		}
 
 		template<typename _Ty>
-		bool SetCiteValue(_Ty&& value)
+		MBool EmplaceCite(_Ty&& value)
 		{
 			Release();
 			m_AnyTemp = new MicroFlakeX::_MAnyCite<typename std::decay_t<_Ty>>(value);
@@ -346,7 +233,7 @@ namespace MicroFlakeX
 		};
 
 		template<typename _Ty>
-		bool SetCopyValue(_Ty&& value)
+		MBool EmplaceCopy(_Ty&& value)
 		{
 			Release();
 			m_AnyTemp = new MicroFlakeX::_MAnyCopy<typename std::decay_t<_Ty>>(value);
@@ -358,28 +245,30 @@ namespace MicroFlakeX
 		{
 			return std::forward<_Ty>(*(typename std::decay_t<_Ty>*)(m_AnyTemp->GetPoint()));
 		};
+
+		template<typename _Ty>
+		constexpr operator _Ty&& () noexcept
+		{
+			return std::forward<_Ty>(*(typename std::decay_t<_Ty>*)(m_AnyTemp->GetPoint()));
+		};
 	};
 }
 
 namespace MicroFlakeX
 {
 	class MGENERICS_DLL_EXPORT MTempParam;
-
 	class MGENERICS_DLL_EXPORT MCiteParam;
-	class MGENERICS_DLL_EXPORT MCopyParam;
-
 	class MGENERICS_DLL_EXPORT MSmartParam;
 }
 
 
 namespace MicroFlakeX
 {
-	/* 当此函数 */
-	struct _MParam_Info
+	struct MGENERICS_DLL_EXPORT _MParam_Info
 	{
 		MAny m_AnyList[16];
-		MInt8_U m_ParamCount{ 0 };
-		MInt8_U m_UseCount{ 1 };
+		MInt8U m_ParamCount{ 0 };
+		MInt8U m_UseCount{ 1 };
 	};
 	/*
 	* MTempParam - 保存传入参数的地址
@@ -392,30 +281,27 @@ namespace MicroFlakeX
 	class MTempParam
 	{
 		friend class MicroFlakeX::MCiteParam;
-		friend class MicroFlakeX::MCopyParam;
 		friend class MicroFlakeX::MSmartParam;
 	private:
-		static void* operator new(size_t) { return nullptr; };
-		static void* operator new[](size_t) { return nullptr; };
+		static MVoid* operator new(size_t) { return nullptr; };
+		static MVoid* operator new[](size_t) { return nullptr; };
 	private:
-		void* m_AnyList[16];
-		MInt8_U m_ParamCount;
+		MVoid* m_AnyList[16];
+		MInt8U m_ParamCount;
 
 	public:
 		MTempParam() noexcept;
 		virtual ~MTempParam() noexcept;
 
-		MInt8_U GetSize() const noexcept;
-		MAny&& GetMAny(const MInt8_U num) const noexcept;
-		void* GetPoint(const MInt8_U num) const noexcept;
+		MInt8U GetSize() const noexcept;
+		MAny&& GetMAny(const MInt8U num) const noexcept;
+		MVoid* GetPoint(const MInt8U num) const noexcept;
 
 	public:
 		MTempParam(MTempParam&& rhs) noexcept;
 		MTempParam(const MTempParam& rhs) noexcept;
 		MTempParam(MCiteParam&& rhs) noexcept;
 		MTempParam(const MCiteParam& rhs) noexcept;
-		MTempParam(MCopyParam&& rhs) noexcept;
-		MTempParam(const MCopyParam& rhs) noexcept;
 		MTempParam(MSmartParam&& rhs) noexcept;
 		MTempParam(const MSmartParam& rhs) noexcept;
 
@@ -424,40 +310,38 @@ namespace MicroFlakeX
 		MTempParam& operator=(const MTempParam& rhs) noexcept;
 		MTempParam& operator=(MCiteParam&& rhs) noexcept;
 		MTempParam& operator=(const MCiteParam& rhs) noexcept;
-		MTempParam& operator=(MCopyParam&& rhs) noexcept;
-		MTempParam& operator=(const MCopyParam& rhs) noexcept;
 		MTempParam& operator=(MSmartParam&& rhs) noexcept;
 		MTempParam& operator=(const MSmartParam& rhs) noexcept;
 
 	public:
 		template<typename _Ty>
-		constexpr _Ty&& any_cast(const MInt8_U num) const noexcept
+		constexpr _Ty&& any_cast(const MInt8U num) const noexcept
 		{
 			return std::forward<_Ty>(*(typename std::decay<_Ty>::type*)(m_AnyList[num]));
 		}
 
 		template<typename _Ty>
-		constexpr _Ty&& reverse_any_cast(const MInt8_U num) const noexcept
+		constexpr _Ty&& reverse_any_cast(const MInt8U num) const noexcept
 		{
 			return std::forward<_Ty>(*(typename std::decay<_Ty>::type*)(m_AnyList[m_ParamCount - num - 1]));
 		}
 
 		template<typename _Ty>
-		constexpr MInt8_U push_back(_Ty&& value) noexcept
+		constexpr MInt8U push_back(_Ty&& value) noexcept
 		{
 			m_AnyList[m_ParamCount++] = &value;
 			return m_ParamCount;
 		}
 
 	public:
-		template<bool isOver>
+		template<MBool isOver>
 		constexpr MTempParam(const MPlaceholder<isOver>) noexcept
 			: MTempParam()
 		{
 
 		}
 
-		template<bool isOver, typename _Ty, typename ..._ArgsTy>
+		template<MBool isOver, typename _Ty, typename ..._ArgsTy>
 		constexpr MTempParam(const MPlaceholder<isOver>, _Ty&& value, _ArgsTy&&... args) noexcept
 			: MTempParam(MHolder_True, std::forward<_ArgsTy>(args)...)
 		{
@@ -467,7 +351,6 @@ namespace MicroFlakeX
 		template<typename _Ty, typename ..._ArgsTy,
 			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MTempParam>, _Ty>,
 			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MCiteParam>, _Ty>,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MCopyParam>, _Ty>,
 			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MSmartParam>, _Ty>
 		>
 		constexpr MTempParam(_Ty&& value, _ArgsTy&&... args) noexcept
@@ -487,11 +370,10 @@ namespace MicroFlakeX
 	class MCiteParam
 	{
 		friend class MTempParam;
-		friend class MCopyParam;
 		friend class MSmartParam;
 	private:
-		static void* operator new(size_t) { return nullptr; };
-		static void* operator new[](size_t) { return nullptr; };
+		static MVoid* operator new(size_t) { return nullptr; };
+		static MVoid* operator new[](size_t) { return nullptr; };
 	private:
 		_MParam_Info* m_Info;
 
@@ -499,17 +381,15 @@ namespace MicroFlakeX
 		MCiteParam() noexcept;
 		virtual ~MCiteParam() noexcept;
 
-		MInt8_U GetSize() const noexcept;
-		MAny&& GetMAny(const MInt8_U num) const noexcept;
-		void* GetPoint(const MInt8_U num) const noexcept;
+		MInt8U GetSize() const noexcept;
+		MAny&& GetMAny(const MInt8U num) const noexcept;
+		MVoid* GetPoint(const MInt8U num) const noexcept;
 
 	public:
 		MCiteParam(MTempParam&& rhs) noexcept;
 		MCiteParam(const MTempParam& rhs) noexcept;
 		MCiteParam(MCiteParam&& rhs) noexcept;
 		MCiteParam(const MCiteParam& rhs) noexcept;
-		MCiteParam(MCopyParam&& rhs) noexcept;
-		MCiteParam(const MCopyParam& rhs) noexcept;
 		MCiteParam(MSmartParam&& rhs) noexcept;
 		MCiteParam(const MSmartParam& rhs) noexcept;
 
@@ -518,39 +398,37 @@ namespace MicroFlakeX
 		MCiteParam& operator=(const MTempParam& rhs) noexcept;
 		MCiteParam& operator=(MCiteParam&& rhs) noexcept;
 		MCiteParam& operator=(const MCiteParam& rhs) noexcept;
-		MCiteParam& operator=(MCopyParam&& rhs) noexcept;
-		MCiteParam& operator=(const MCopyParam& rhs) noexcept;
 		MCiteParam& operator=(MSmartParam&& rhs) noexcept;
 		MCiteParam& operator=(const MSmartParam& rhs) noexcept;
 
 	public:
 		template<typename _Ty>
-		_Ty&& any_cast(const MInt8_U num) const noexcept
+		_Ty&& any_cast(const MInt8U num) const noexcept
 		{
 			return std::forward<_Ty>(m_Info->m_AnyList[num].any_cast<_Ty>());
 		}
 
 		template<typename _Ty>
-		_Ty&& reverse_any_cast(const MInt8_U num) const noexcept
+		_Ty&& reverse_any_cast(const MInt8U num) const noexcept
 		{
 			return std::forward<_Ty>(m_Info->m_AnyList[m_Info->m_ParamCount - num - 1].any_cast<_Ty>());
 		}
 
 		template<typename _Ty>
-		MInt8_U push_back(_Ty&& value) noexcept
+		MInt8U push_back(_Ty&& value) noexcept
 		{
 			m_Info->m_AnyList[m_Info->m_ParamCount++].SetValue(std::forward<_Ty>(value));
 			return m_Info->m_ParamCount;
 		}
 	public:
-		template<bool isOver>
+		template<MBool isOver>
 		MCiteParam(const MPlaceholder<isOver>) noexcept
 			: MCiteParam()
 		{
 
 		}
 
-		template<bool isOver, typename _Ty, typename ..._ArgsTy>
+		template<MBool isOver, typename _Ty, typename ..._ArgsTy>
 		MCiteParam(const MPlaceholder<isOver>, _Ty&& value, _ArgsTy&&... args) noexcept
 			: MCiteParam(MHolder_True, std::forward<_ArgsTy>(args)...)
 		{
@@ -560,103 +438,12 @@ namespace MicroFlakeX
 		template<typename _Ty, typename ..._ArgsTy,
 			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MTempParam>, _Ty>,
 			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MCiteParam>, _Ty>,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MCopyParam>, _Ty>,
 			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MSmartParam>, _Ty>
 		>
 		MCiteParam(_Ty&& value, _ArgsTy&&... args) noexcept
 			: MCiteParam(MHolder_True, std::forward<_ArgsTy>(args)...)
 		{
 			m_Info->m_AnyList[m_Info->m_ParamCount++].SetValue(std::forward<_Ty>(value));
-		}
-	};
-
-	/*
-	* MCopyParam - 长期保持传入的参数
-	* 左值右值均拷贝
-	* 允许在堆上新建，展开这些参数并不会引发额外的拷贝开销。
-	* 最大参数持有为16 - 参数从右往左计算
-	*/
-	class MCopyParam
-	{
-		friend class MTempParam;
-		friend class MCiteParam;
-		friend class MSmartParam;
-	protected:
-		_MParam_Info* m_Info;
-
-	public:
-		MCopyParam() noexcept;
-		~MCopyParam() noexcept;
-
-		MInt8_U GetSize() const noexcept;
-		MAny& GetMAny(const MInt8_U num) const noexcept;
-		void* GetPoint(const MInt8_U num) const noexcept;
-
-	public:
-		MCopyParam(MTempParam&& rhs) noexcept;
-		MCopyParam(const MTempParam& rhs) noexcept;
-		MCopyParam(MCiteParam&& rhs) noexcept;
-		MCopyParam(const MCiteParam& rhs) noexcept;
-		MCopyParam(MCopyParam&& rhs) noexcept;
-		MCopyParam(const MCopyParam& rhs) noexcept;
-		MCopyParam(MSmartParam&& rhs) noexcept;
-		MCopyParam(const MSmartParam& rhs) noexcept;
-
-	public:
-		MCopyParam& operator=(MTempParam&& rhs) noexcept;
-		MCopyParam& operator=(const MTempParam& rhs) noexcept;
-		MCopyParam& operator=(MCiteParam&& rhs) noexcept;
-		MCopyParam& operator=(const MCiteParam& rhs) noexcept;
-		MCopyParam& operator=(MCopyParam&& rhs) noexcept;
-		MCopyParam& operator=(const MCopyParam& rhs) noexcept;
-		MCopyParam& operator=(MSmartParam&& rhs) noexcept;
-		MCopyParam& operator=(const MSmartParam& rhs) noexcept;
-
-	public:
-		template<typename _Ty>
-		_Ty&& any_cast(const MInt8_U num) const noexcept
-		{
-			return std::forward<_Ty>(m_Info->m_AnyList[num].any_cast<_Ty>());
-		}
-
-		template<typename _Ty>
-		_Ty&& reverse_any_cast(const MInt8_U num) const noexcept
-		{
-			return std::forward<_Ty>(m_Info->m_AnyList[m_Info->m_ParamCount - num - 1].any_cast<_Ty>());
-		}
-
-		template<typename _Ty>
-		MInt8_U push_back(_Ty&& value) noexcept
-		{
-			m_Info->m_AnyList[m_Info->m_ParamCount++].SetCopyValue(std::forward<_Ty>(value));
-			return m_Info->m_ParamCount;
-		}
-
-	public:
-		template<bool isOver>
-		MCopyParam(const MPlaceholder<isOver>)  noexcept
-			: MCopyParam()
-		{
-
-		}
-
-		template<bool isOver, typename _Ty, typename ..._ArgsTy>
-		MCopyParam(const MPlaceholder<isOver>, _Ty&& value, _ArgsTy&&... args)  noexcept
-			: MCopyParam(MHolder_True, std::forward<_ArgsTy>(args)...)
-		{
-			m_Info->m_AnyList[m_Info->m_ParamCount++].SetCopyValue(std::forward<_Ty>(value));
-		}
-
-		template<typename _Ty, typename ..._ArgsTy,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MTempParam>, _Ty>,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MCiteParam>, _Ty>,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MCopyParam>, _Ty>,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MSmartParam>, _Ty>
-		>
-		MCopyParam(_Ty&& value, _ArgsTy&&... args) noexcept
-			: MCopyParam(MHolder_True, std::forward<_ArgsTy>(args)...)
-		{
-			m_Info->m_AnyList[m_Info->m_ParamCount++].SetCopyValue(std::forward<_Ty>(value));
 		}
 	};
 
@@ -670,28 +457,25 @@ namespace MicroFlakeX
 	{
 		friend class MTempParam;
 		friend class MCiteParam;
-		friend class MCopyParam;
 	private:
 		_MParam_Info* m_Info;
 
 	protected:
-		bool Release() noexcept;
+		MBool Release() noexcept;
 
 	public:
 		MSmartParam() noexcept;
 		~MSmartParam() noexcept;
 
-		MInt8_U GetSize() const noexcept;
-		MAny& GetMAny(const MInt8_U num) const noexcept;
-		void* GetPoint(const MInt8_U num) const noexcept;
+		MInt8U GetSize() const noexcept;
+		MAny& GetMAny(const MInt8U num) const noexcept;
+		MVoid* GetPoint(const MInt8U num) const noexcept;
 
 	public:
 		MSmartParam(MTempParam&& rhs) noexcept;
 		MSmartParam(const MTempParam& rhs) noexcept;
 		MSmartParam(MCiteParam&& rhs) noexcept;
 		MSmartParam(const MCiteParam& rhs) noexcept;
-		MSmartParam(MCopyParam&& rhs) noexcept;
-		MSmartParam(const MCopyParam& rhs) noexcept;
 		MSmartParam(MSmartParam&& rhs) noexcept;
 		MSmartParam(const MSmartParam& rhs) noexcept;
 
@@ -700,39 +484,37 @@ namespace MicroFlakeX
 		MSmartParam& operator=(const MTempParam& rhs) noexcept;
 		MSmartParam& operator=(MCiteParam&& rhs) noexcept;
 		MSmartParam& operator=(const MCiteParam& rhs) noexcept;
-		MSmartParam& operator=(MCopyParam&& rhs) noexcept;
-		MSmartParam& operator=(const MCopyParam& rhs) noexcept;
 		MSmartParam& operator=(MSmartParam&& rhs) noexcept;
 		MSmartParam& operator=(const MSmartParam& rhs) noexcept;
 
 	public:
 		template<typename _Ty>
-		_Ty&& any_cast(const MInt8_U num) const noexcept
+		_Ty&& any_cast(const MInt8U num) const noexcept
 		{
 			return std::forward<_Ty>(m_Info->m_AnyList[num].any_cast<_Ty>());
 		}
 
 		template<typename _Ty>
-		_Ty&& reverse_any_cast(const MInt8_U num) const noexcept
+		_Ty&& reverse_any_cast(const MInt8U num) const noexcept
 		{
 			return std::forward<_Ty>(m_Info->m_AnyList[m_Info->m_ParamCount - num - 1].any_cast<_Ty>());
 		}
 
 		template<typename _Ty>
-		MInt8_U push_back(_Ty&& value) noexcept
+		MInt8U push_back(_Ty&& value) noexcept
 		{
 			m_Info->m_AnyList[m_Info->m_ParamCount++].SetCopyValue(std::forward<_Ty>(value));
 			return m_Info->m_ParamCount;
 		}
 	public:
-		template<bool isOver>
+		template<MBool isOver>
 		MSmartParam(const MPlaceholder<isOver>) noexcept
 			: MSmartParam()
 		{
 
 		}
 
-		template<bool isOver, typename _Ty, typename ..._ArgsTy>
+		template<MBool isOver, typename _Ty, typename ..._ArgsTy>
 		MSmartParam(const MPlaceholder<isOver>, _Ty&& value, _ArgsTy&&... args) noexcept
 			: MSmartParam(MHolder_True, std::forward<_ArgsTy>(args)...)
 		{
@@ -742,7 +524,6 @@ namespace MicroFlakeX
 		template<typename _Ty, typename ..._ArgsTy,
 			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MTempParam>, _Ty>,
 			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MCiteParam>, _Ty>,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MCopyParam>, _Ty>,
 			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MSmartParam>, _Ty>
 		>
 		MSmartParam(_Ty&& value, _ArgsTy&&... args) noexcept
@@ -774,12 +555,6 @@ namespace MicroFlakeX
 		{
 			return param.any_cast<_Ty>(m_Num++);
 		}
-
-		template<typename _Ty>
-		inline _Ty&& Extend(MicroFlakeX::MCopyParam& param) noexcept
-		{
-			return param.any_cast<_Ty>(m_Num++);
-		}
 	};
 
 }
@@ -807,8 +582,8 @@ namespace MicroFlakeX
 		MLock& operator = (const MLock& rhs) noexcept;
 
 	public:
-		bool Lock();
-		bool UnLock();
+		MBool Lock();
+		MBool UnLock();
 
 	private:
 		_mLock* m_Interface;
@@ -827,8 +602,8 @@ namespace MicroFlakeX
 		MLockHelper(MLock& rhs, MLockMode mode = ReadOnly) noexcept;
 		virtual ~MLockHelper() noexcept;
 	public:
-		bool Lock();
-		bool UnLock();
+		MBool Lock();
+		MBool UnLock();
 	private:
 
 		MLock& m_Lock;

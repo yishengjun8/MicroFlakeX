@@ -39,16 +39,30 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-	typedef MResult(*iterFunc)();
 	class MGhostWorldInput
 		: public MObject
 	{
 		M_OBJECT;
 	public:
-		MResult InsertCommand(const char* key, const char* command);
-		MResult PushBackCommand();
-
+		MResult PushBackCommand(MInt32U* command);
+		MResult GetCommand(MInt8U num, MInt32U*& command);
+		MResult IsEnd(MInt8U num, MBool& is_end);
 	public:
+		class iterator
+		{
+		private:
+			MGhostWorldInput* m_iter;
+		public:
+			MGhostWorldInput& operator*()
+			{
+				return *m_iter;
+			}
+			iterator& operator++()
+			{
 
+			}
+		};
+		iterator* begin();
+		iterator* end();
 	};
 }

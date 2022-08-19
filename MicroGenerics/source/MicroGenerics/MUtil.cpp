@@ -2,46 +2,40 @@
 
 using namespace MicroFlakeX;
 /****************************************************************************************************************/
-void MicroFlakeX::MAny::Release()
+MBool MicroFlakeX::MAny::Release()
 {
-	MSafeDelete(m_AnyTemp);
+	return MUtil::MDelete(m_AnyTemp);
 }
-bool MicroFlakeX::MAny::MakeValue(const MAny& rhs)
+bool MicroFlakeX::MAny::RenewAny(const MAny& rhs)
 {
-	Release();
-	m_AnyTemp = rhs.m_AnyTemp ? rhs.m_AnyTemp->MakeValue() : nullptr;
-	return true;
+	return m_AnyTemp = rhs.m_AnyTemp && Release() ? rhs.m_AnyTemp->MakeAny() : nullptr;
 }
-bool MicroFlakeX::MAny::MakeValue_Copy(const MAny& rhs)
+bool MicroFlakeX::MAny::RenewAnyCopy(const MAny& rhs)
 {
-	Release();
-	m_AnyTemp = rhs.m_AnyTemp ? rhs.m_AnyTemp->MakeValue_Copy() : nullptr;
-	return true;
+	return m_AnyTemp = rhs.m_AnyTemp && Release() ? rhs.m_AnyTemp->MakeAnyCopy() : nullptr;
 }
 
-bool MicroFlakeX::MAny::MakeValue_Cite(const MAny& rhs)
+bool MicroFlakeX::MAny::RenewAnyCite(const MAny& rhs)
 {
-	Release();
-	m_AnyTemp = rhs.m_AnyTemp ? rhs.m_AnyTemp->MakeValue_Cite() : nullptr;
-	return true;
+	return m_AnyTemp = rhs.m_AnyTemp && Release() ? rhs.m_AnyTemp->MakeAnyCite() : nullptr;
 }
 
 
 
-MicroFlakeX::MAny::MAny()
+MicroFlakeX::MAny::MAny() noexcept
 	: m_AnyTemp(nullptr)
 {
 }
 
-MicroFlakeX::MAny::~MAny()
+MicroFlakeX::MAny::~MAny() noexcept
 {
 	Release();
 }
 
-MicroFlakeX::MAny::MAny(const MAny& rhs)
+MicroFlakeX::MAny::MAny(const MAny& rhs) noexcept
 	: MAny()
 {
-	MakeValue(rhs);
+	RenewAny(rhs);
 }
 
 MicroFlakeX::MAny::MAny(MAny&& rhs) noexcept
@@ -59,10 +53,10 @@ MicroFlakeX::MAny& MicroFlakeX::MAny::operator=(MAny&& rhs) noexcept
 	rhs.m_AnyTemp = nullptr;
 	return *this;
 }
-MicroFlakeX::MAny& MicroFlakeX::MAny::operator=(const MAny& rhs)
+MicroFlakeX::MAny& MicroFlakeX::MAny::operator=(const MAny& rhs) noexcept
 {
 	Release();
-	MakeValue(rhs);
+	RenewAny(rhs);
 	return *this;
 }
 

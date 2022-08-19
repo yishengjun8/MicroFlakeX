@@ -191,7 +191,7 @@ namespace {
 #define __M_OBJECT_ACHIEVE_0(OBJ) \
 MicroFlakeX::MResult OBJ::FunctionCall(MicroFlakeX::MStringHash recvFunc, MicroFlakeX::MTempParam citeParam)\
 {\
-	switch (recvFunc.m_Hash64)\
+	switch (recvFunc.m_Hash)\
 	{
 
 /****************************************************************************************************************/

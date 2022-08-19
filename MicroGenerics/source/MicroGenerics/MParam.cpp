@@ -15,12 +15,12 @@ MicroFlakeX::MTempParam::~MTempParam() noexcept
 {
 }
 
-MicroFlakeX::MInt8_U MicroFlakeX::MTempParam::GetSize() const noexcept
+MicroFlakeX::MInt8U MicroFlakeX::MTempParam::GetSize() const noexcept
 {
 	return m_ParamCount;
 }
 
-void* MicroFlakeX::MTempParam::GetPoint(const MInt8_U num) const noexcept
+void* MicroFlakeX::MTempParam::GetPoint(const MInt8U num) const noexcept
 {
 	return m_AnyList[num];
 }
@@ -66,26 +66,6 @@ MicroFlakeX::MTempParam::MTempParam(const MCiteParam& rhs) noexcept
 		m_AnyList[i] = rhs.m_Info->m_AnyList[i].GetPoint();
 	}
 
-}
-
-
-MicroFlakeX::MTempParam::MTempParam(MCopyParam&& rhs) noexcept
-	: MTempParam()
-{
-	m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_ParamCount; i++)
-	{
-		m_AnyList[i] = rhs.m_Info->m_AnyList[i].GetPoint();
-	}
-}
-MicroFlakeX::MTempParam::MTempParam(const MCopyParam& rhs) noexcept
-	: MTempParam()
-{
-	m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_ParamCount; i++)
-	{
-		m_AnyList[i] = rhs.m_Info->m_AnyList[i].GetPoint();
-	}
 }
 
 
@@ -151,26 +131,6 @@ MicroFlakeX::MTempParam& MicroFlakeX::MTempParam::operator=(const MCiteParam& rh
 }
 
 
-MicroFlakeX::MTempParam& MicroFlakeX::MTempParam::operator=(MCopyParam&& rhs) noexcept
-{
-	m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_ParamCount; i++)
-	{
-		m_AnyList[i] = rhs.m_Info->m_AnyList[i].GetPoint();
-	}
-	return *this;
-}
-MicroFlakeX::MTempParam& MicroFlakeX::MTempParam::operator=(const MCopyParam& rhs) noexcept
-{
-	m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_ParamCount; i++)
-	{
-		m_AnyList[i] = rhs.m_Info->m_AnyList[i].GetPoint();
-	}
-	return *this;
-}
-
-
 MicroFlakeX::MTempParam& MicroFlakeX::MTempParam::operator=(MSmartParam&& rhs) noexcept
 {
 	m_ParamCount = rhs.m_Info->m_ParamCount;
@@ -213,12 +173,12 @@ MicroFlakeX::MCiteParam::~MCiteParam() noexcept
 	m_Info = nullptr;
 }
 
-MicroFlakeX::MInt8_U MicroFlakeX::MCiteParam::GetSize() const noexcept
+MicroFlakeX::MInt8U MicroFlakeX::MCiteParam::GetSize() const noexcept
 {
 	return m_Info->m_ParamCount;
 }
 
-void* MicroFlakeX::MCiteParam::GetPoint(const MInt8_U num) const noexcept
+void* MicroFlakeX::MCiteParam::GetPoint(const MInt8U num) const noexcept
 {
 	return m_Info->m_AnyList[num].GetPoint();
 }
@@ -231,7 +191,7 @@ MicroFlakeX::MCiteParam::MCiteParam(MTempParam&& rhs) noexcept
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].SetCopyValue(rhs.m_AnyList[i]);
+		m_Info->m_AnyList[i].EmplaceCopy(rhs.m_AnyList[i]);
 	}
 }
 MicroFlakeX::MCiteParam::MCiteParam(const MTempParam& rhs) noexcept
@@ -240,7 +200,7 @@ MicroFlakeX::MCiteParam::MCiteParam(const MTempParam& rhs) noexcept
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].SetCopyValue(rhs.m_AnyList[i]);
+		m_Info->m_AnyList[i].EmplaceCopy(rhs.m_AnyList[i]);
 	}
 }
 
@@ -265,33 +225,13 @@ MicroFlakeX::MCiteParam::MCiteParam(const MCiteParam& rhs) noexcept
 }
 
 
-MicroFlakeX::MCiteParam::MCiteParam(MCopyParam&& rhs) noexcept
-	: MCiteParam()
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Cite(rhs.m_Info->m_AnyList[i]);
-	}
-}
-MicroFlakeX::MCiteParam::MCiteParam(const MCopyParam& rhs) noexcept
-	: MCiteParam()
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Cite(rhs.m_Info->m_AnyList[i]);
-	}
-}
-
-
 MicroFlakeX::MCiteParam::MCiteParam(MSmartParam&& rhs) noexcept
 	: MCiteParam()
 {
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].MakeValue_Cite(rhs.m_Info->m_AnyList[i]);
+		m_Info->m_AnyList[i].RenewAnyCite(rhs.m_Info->m_AnyList[i]);
 	}
 }
 MicroFlakeX::MCiteParam::MCiteParam(const MSmartParam& rhs) noexcept
@@ -300,7 +240,7 @@ MicroFlakeX::MCiteParam::MCiteParam(const MSmartParam& rhs) noexcept
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].MakeValue_Cite(rhs.m_Info->m_AnyList[i]);
+		m_Info->m_AnyList[i].RenewAnyCite(rhs.m_Info->m_AnyList[i]);
 	}
 }
 
@@ -312,7 +252,7 @@ MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(MTempParam&& rhs) no
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].SetCopyValue(rhs.m_AnyList[i]);
+		m_Info->m_AnyList[i].EmplaceCopy(rhs.m_AnyList[i]);
 	}
 	return *this;
 }
@@ -321,7 +261,7 @@ MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(const MTempParam& rh
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].SetCopyValue(rhs.m_AnyList[i]);
+		m_Info->m_AnyList[i].EmplaceCopy(rhs.m_AnyList[i]);
 	}
 	return *this;
 }
@@ -347,24 +287,6 @@ MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(const MCiteParam& rh
 	return *this;
 }
 
-MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(MCopyParam&& rhs) noexcept
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Cite(rhs.m_Info->m_AnyList[i]);
-	}
-	return *this;
-}
-MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(const MCopyParam& rhs) noexcept
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Cite(rhs.m_Info->m_AnyList[i]);
-	}
-	return *this;
-}
 
 
 MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(MSmartParam&& rhs) noexcept
@@ -372,7 +294,7 @@ MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(MSmartParam&& rhs) n
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].MakeValue_Cite(rhs.m_Info->m_AnyList[i]);
+		m_Info->m_AnyList[i].RenewAnyCite(rhs.m_Info->m_AnyList[i]);
 	}
 	return *this;
 }
@@ -381,197 +303,7 @@ MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(const MSmartParam& r
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].MakeValue_Cite(rhs.m_Info->m_AnyList[i]);
-	}
-	return *this;
-}
-
-
-/********************************************************************************
-*
-*********************************************************************************/
-/********************************************************************************
-*
-*********************************************************************************/
-MicroFlakeX::MCopyParam::MCopyParam() noexcept
-	: m_Info(new_MParam_Info())
-{
-	m_Info->m_UseCount = 1;
-	m_Info->m_ParamCount = 0;
-}
-MicroFlakeX::MCopyParam::~MCopyParam() noexcept
-{
-	del_MParam_Info(m_Info);
-	m_Info = nullptr;
-}
-
-MicroFlakeX::MInt8_U MicroFlakeX::MCopyParam::GetSize() const noexcept
-{
-	return m_Info->m_ParamCount;
-}
-
-void* MicroFlakeX::MCopyParam::GetPoint(const MInt8_U num) const noexcept
-{
-	return m_Info->m_AnyList[num].GetPoint();
-}
-/********************************************************************************
-*
-*********************************************************************************/
-MicroFlakeX::MCopyParam::MCopyParam(MTempParam&& rhs) noexcept
-	: MCopyParam()
-{
-	m_Info->m_ParamCount = rhs.m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].SetCopyValue(rhs.m_AnyList[i]);
-	}
-}
-MicroFlakeX::MCopyParam::MCopyParam(const MTempParam& rhs) noexcept
-	: MCopyParam()
-{
-	m_Info->m_ParamCount = rhs.m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].SetCopyValue(rhs.m_AnyList[i]);
-	}
-}
-
-MicroFlakeX::MCopyParam::MCopyParam(MCiteParam&& rhs) noexcept
-	: MCopyParam()
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-}
-MicroFlakeX::MCopyParam::MCopyParam(const MCiteParam& rhs) noexcept
-	: MCopyParam()
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-}
-
-
-MicroFlakeX::MCopyParam::MCopyParam(MCopyParam&& rhs) noexcept
-	: MCopyParam()
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-}
-MicroFlakeX::MCopyParam::MCopyParam(const MCopyParam& rhs) noexcept
-	: MCopyParam()
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-}
-
-
-MicroFlakeX::MCopyParam::MCopyParam(MSmartParam&& rhs) noexcept
-	: MCopyParam()
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-}
-MicroFlakeX::MCopyParam::MCopyParam(const MSmartParam& rhs) noexcept
-	: MCopyParam()
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-}
-
-/********************************************************************************
-*
-*********************************************************************************/
-MicroFlakeX::MCopyParam& MicroFlakeX::MCopyParam::operator=(MTempParam&& rhs) noexcept
-{
-	m_Info->m_ParamCount = rhs.m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].SetCopyValue(rhs.m_AnyList[i]);
-	}
-	return *this;
-}
-MicroFlakeX::MCopyParam& MicroFlakeX::MCopyParam::operator=(const MTempParam& rhs) noexcept
-{
-	m_Info->m_ParamCount = rhs.m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].SetCopyValue(rhs.m_AnyList[i]);
-	}
-	return *this;
-}
-
-
-MicroFlakeX::MCopyParam& MicroFlakeX::MCopyParam::operator=(MCiteParam&& rhs) noexcept
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-	return *this;
-}
-MicroFlakeX::MCopyParam& MicroFlakeX::MCopyParam::operator=(const MCiteParam& rhs) noexcept
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-	return *this;
-}
-
-MicroFlakeX::MCopyParam& MicroFlakeX::MCopyParam::operator=(MCopyParam&& rhs) noexcept
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-	return *this;
-}
-MicroFlakeX::MCopyParam& MicroFlakeX::MCopyParam::operator=(const MCopyParam& rhs) noexcept
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-	return *this;
-}
-
-
-MicroFlakeX::MCopyParam& MicroFlakeX::MCopyParam::operator=(MSmartParam&& rhs) noexcept
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-	return *this;
-}
-MicroFlakeX::MCopyParam& MicroFlakeX::MCopyParam::operator=(const MSmartParam& rhs) noexcept
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
+		m_Info->m_AnyList[i].RenewAnyCite(rhs.m_Info->m_AnyList[i]);
 	}
 	return *this;
 }
@@ -591,12 +323,12 @@ MicroFlakeX::MSmartParam::~MSmartParam() noexcept
 	Release();
 }
 
-MicroFlakeX::MInt8_U MicroFlakeX::MSmartParam::GetSize() const noexcept
+MicroFlakeX::MInt8U MicroFlakeX::MSmartParam::GetSize() const noexcept
 {
 	return m_Info ? m_Info->m_ParamCount : 0;
 }
 
-void* MicroFlakeX::MSmartParam::GetPoint(const MInt8_U num) const noexcept
+void* MicroFlakeX::MSmartParam::GetPoint(const MInt8U num) const noexcept
 {
 	return m_Info ? m_Info->m_AnyList[num].GetPoint() : nullptr;
 }
@@ -624,7 +356,7 @@ MicroFlakeX::MSmartParam::MSmartParam(MTempParam&& rhs) noexcept
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].SetCopyValue(rhs.m_AnyList[i]);
+		m_Info->m_AnyList[i].EmplaceCopy(rhs.m_AnyList[i]);
 	}
 }
 MicroFlakeX::MSmartParam::MSmartParam(const MTempParam& rhs) noexcept
@@ -634,7 +366,7 @@ MicroFlakeX::MSmartParam::MSmartParam(const MTempParam& rhs) noexcept
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].SetCopyValue(rhs.m_AnyList[i]);
+		m_Info->m_AnyList[i].EmplaceCopy(rhs.m_AnyList[i]);
 	}
 }
 
@@ -645,7 +377,7 @@ MicroFlakeX::MSmartParam::MSmartParam(MCiteParam&& rhs) noexcept
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
+		m_Info->m_AnyList[i].RenewAnyCopy(rhs.m_Info->m_AnyList[i]);
 	}
 }
 MicroFlakeX::MSmartParam::MSmartParam(const MCiteParam& rhs) noexcept
@@ -655,31 +387,12 @@ MicroFlakeX::MSmartParam::MSmartParam(const MCiteParam& rhs) noexcept
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
+		m_Info->m_AnyList[i].RenewAnyCopy(rhs.m_Info->m_AnyList[i]);
 	}
 }
 
 
-MicroFlakeX::MSmartParam::MSmartParam(MCopyParam&& rhs) noexcept
-	: MSmartParam()
-{
-	//m_Info = new __GMSmartParam_Info;
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-}
-MicroFlakeX::MSmartParam::MSmartParam(const MCopyParam& rhs) noexcept
-	: MSmartParam()
-{
-	//m_Info = new __GMSmartParam_Info;
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-}
+
 
 MicroFlakeX::MSmartParam::MSmartParam(MSmartParam&& rhs) noexcept
 	: MSmartParam()
@@ -704,7 +417,7 @@ MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(MTempParam&& rhs) 
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].SetCopyValue(rhs.m_AnyList[i]);
+		m_Info->m_AnyList[i].EmplaceCopy(rhs.m_AnyList[i]);
 	}
 	return *this;
 }
@@ -713,7 +426,7 @@ MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(const MTempParam& 
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].SetCopyValue(rhs.m_AnyList[i]);
+		m_Info->m_AnyList[i].EmplaceCopy(rhs.m_AnyList[i]);
 	}
 	return *this;
 }
@@ -724,7 +437,7 @@ MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(MCiteParam&& rhs) 
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
+		m_Info->m_AnyList[i].RenewAnyCopy(rhs.m_Info->m_AnyList[i]);
 	}
 	return *this;
 }
@@ -733,26 +446,7 @@ MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(const MCiteParam& 
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
 	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-	return *this;
-}
-
-MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(MCopyParam&& rhs) noexcept
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
-	}
-	return *this;
-}
-MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(const MCopyParam& rhs) noexcept
-{
-	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
-	for (auto i = 0; i < m_Info->m_ParamCount; i++)
-	{
-		m_Info->m_AnyList[i].MakeValue_Copy(rhs.m_Info->m_AnyList[i]);
+		m_Info->m_AnyList[i].RenewAnyCopy(rhs.m_Info->m_AnyList[i]);
 	}
 	return *this;
 }

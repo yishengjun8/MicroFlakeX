@@ -19,7 +19,7 @@ auto& getFunctionWorkers()
 MResult MicroFlakeX::MObjectFactory(MStringHash objectName, MObject*& ret)
 {
 	MPP_THREAD_SAFE_TEMP_LOCK(ObjectWorkers);
-	auto iter = getObjectWorkers().find(objectName.m_Hash64);
+	auto iter = getObjectWorkers().find(objectName.m_Hash);
 	if (iter != getObjectWorkers().end())
 	{
 		auto mr = iter->second->Creat(ret);
@@ -34,7 +34,7 @@ MResult MicroFlakeX::MObjectFactory(MStringHash objectName, MObject*& ret)
 MResult MicroFlakeX::MFunctionCall(MStringHash funcName, MTempParam citeParam)
 {
 	MPP_THREAD_SAFE_TEMP_LOCK(FunctionWorkers);
-	auto iter = getFunctionWorkers().find(funcName.m_Hash64);
+	auto iter = getFunctionWorkers().find(funcName.m_Hash);
 	if (iter != getFunctionWorkers().end())
 	{
 		return iter->second->ReflectionCall(citeParam);
@@ -45,7 +45,7 @@ MResult MicroFlakeX::MFunctionCall(MStringHash funcName, MTempParam citeParam)
 MResult MicroFlakeX::MFuncationCheck(MStringHash funcName)
 {
 	MPP_THREAD_SAFE_TEMP_LOCK(FunctionWorkers);
-	auto iter = getFunctionWorkers().find(funcName.m_Hash64);
+	auto iter = getFunctionWorkers().find(funcName.m_Hash);
 	return (iter == getFunctionWorkers().end()) ? MicroFlakeX::MResult::NotFind : MicroFlakeX::MResult::Success;
 }
 

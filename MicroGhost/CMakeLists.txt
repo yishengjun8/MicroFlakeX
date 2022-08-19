@@ -5,7 +5,7 @@ cmake_minimum_required (VERSION 3.8)
 
 set(OBJECT_CXX_V 17)
 set(OBJECT_NAME "MicroGhost")
-set(OBJECT_INCLUDE_DIR "MicroGenerics" "MicroThread")
+set(OBJECT_INCLUDE_DIR "MicroGenerics")
 set(OBJECT_LINK_LIBRARY "")
 
 if (CMAKE_CL_64)
