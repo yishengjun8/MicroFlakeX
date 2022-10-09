@@ -9,6 +9,8 @@ namespace MicroFlakeX
 
 	class MGHOST_DLL_EXPORT MGhostWorld;
 	class MGHOST_DLL_EXPORT MGhostWorldInput;
+
+	class MGHOST_DLL_EXPORT MResource;
 }
 
 
@@ -20,8 +22,9 @@ namespace MicroFlakeX
 	{
 		M_OBJECT;
 	public:
-		MResult PhantomWorldGo(MGhostWorld& world, MGhostWorldInput& input);
-		MResult PhantomWorldResult(MGhostWorld*& world);
+		MResult PhantomWorldGoAsyn(MGhostWorld& world, MGhostWorldInput& input);
+		MResult PhantomWorldResultAwit(MGhostWorld*& world);
+
 	};
 }
 
@@ -45,24 +48,22 @@ namespace MicroFlakeX
 		M_OBJECT;
 	public:
 		MResult PushBackCommand(MInt32U* command);
+		MResult GetCommandSize(MInt32U& size);
 		MResult GetCommand(MInt8U num, MInt32U*& command);
 		MResult IsEnd(MInt8U num, MBool& is_end);
 	public:
-		class iterator
-		{
-		private:
-			MGhostWorldInput* m_iter;
-		public:
-			MGhostWorldInput& operator*()
-			{
-				return *m_iter;
-			}
-			iterator& operator++()
-			{
-
-			}
-		};
-		iterator* begin();
-		iterator* end();
 	};
+}
+
+
+namespace
+{
+
+	class Base
+	{
+
+
+	};
+
+
 }
