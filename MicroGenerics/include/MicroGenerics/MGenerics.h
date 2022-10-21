@@ -14,7 +14,7 @@ namespace MicroFlakeX
 	MGENERICS_DLL_EXPORT MResult MObjectFactory(MStringHash objectName, MObject*& ret);
 
 	/* 反射 - 函数调用 */
-	MGENERICS_DLL_EXPORT MResult MFunctionCall(MStringHash functionName, MTempParam citeParam = MTempParam());
+	MGENERICS_DLL_EXPORT MResult MFunctionCall(MStringHash functionName, MParamOnce citeParam = MParamOnce());
 
 	/* 反射 - 检查函数是否存在 */
 	MGENERICS_DLL_EXPORT MResult MFuncationCheck(MStringHash functionName);
@@ -39,7 +39,7 @@ namespace MicroFlakeX
 
 	public:
 		virtual MResult GetObjectName(const wchar_t** ret) = 0;
-		virtual MResult FunctionCall(MStringHash recv, MTempParam citeParam = MTempParam());
+		virtual MResult FunctionCall(MStringHash recv, MParamOnce citeParam = MParamOnce());
 	};
 
 
@@ -58,7 +58,7 @@ namespace MicroFlakeX
 
 	public:
 		MResult GetObjectName(const wchar_t** ret);
-		MResult FunctionCall(MStringHash recv, MTempParam citeParam = MTempParam());
+		MResult FunctionCall(MStringHash recv, MParamOnce citeParam = MParamOnce());
 
 	public:
 		MResult MForward_SetForward(MObject* set);
@@ -82,7 +82,7 @@ namespace MicroFlakeX
 		IMUnknow& operator = (const IMUnknow& rhs) = delete;
 	public:
 		virtual MResult GetObjectName(const wchar_t** ret) = 0;
-		virtual MResult FunctionCall(MStringHash recv, MTempParam citeParam = MTempParam()) = 0;
+		virtual MResult FunctionCall(MStringHash recv, MParamOnce citeParam = MParamOnce()) = 0;
 	public:
 		virtual MicroFlakeX::MResult Unknow_Release() = 0;
 		virtual MicroFlakeX::MResult Unknow_IsEmpty(bool* ret) = 0;
@@ -126,7 +126,7 @@ namespace MicroFlakeX
 		virtual ~MFunctionWorker();
 
 	public:
-		virtual MResult ReflectionCall(MTempParam citeParam) = 0;
+		virtual MResult ReflectionCall(MParamOnce citeParam) = 0;
 	
 	private:
 		MHash m_FunctionHash;
@@ -137,21 +137,21 @@ namespace MicroFlakeX
 namespace MicroFlakeX
 {
 	template <typename T_THIS, typename OBJ, typename... Args>
-	inline MResult _MObjectFunctionCall(T_THIS pThis, MTempParam& citeParam, MResult(OBJ::* pFunc)(Args...))
+	inline MResult _MObjectFunctionCall(T_THIS pThis, MParamOnce& citeParam, MResult(OBJ::* pFunc)(Args...))
 	{
 		_MParamExtend t_ParamExtend;
 		return (pThis->*pFunc)((t_ParamExtend.Extend<Args>(citeParam))...);
 	};
 
 	template <typename T_THIS, typename OBJ, typename... Args>
-	inline MResult _MObjectFunctionCall(T_THIS pThis, MTempParam& citeParam, MResult(OBJ::* pFunc)(Args...) const)
+	inline MResult _MObjectFunctionCall(T_THIS pThis, MParamOnce& citeParam, MResult(OBJ::* pFunc)(Args...) const)
 	{
 		_MParamExtend t_ParamExtend;
 		return (pThis->*pFunc)((t_ParamExtend.Extend<Args>(citeParam))...);
 	};
 
 	template <typename... Args>
-	inline MResult _MFunctionCall(MTempParam& citeParam, MResult(*pFunc)(Args...))
+	inline MResult _MFunctionCall(MParamOnce& citeParam, MResult(*pFunc)(Args...))
 	{
 		_MParamExtend t_ParamExtend;
 		return pFunc((t_ParamExtend.Extend<Args>(citeParam))...);

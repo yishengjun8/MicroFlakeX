@@ -31,7 +31,7 @@ MResult MicroFlakeX::MObjectFactory(MStringHash objectName, MObject*& ret)
 	return MicroFlakeX::MResult::Success;
 }
 
-MResult MicroFlakeX::MFunctionCall(MStringHash funcName, MTempParam citeParam)
+MResult MicroFlakeX::MFunctionCall(MStringHash funcName, MParamOnce citeParam)
 {
 	MPP_THREAD_SAFE_TEMP_LOCK(FunctionWorkers);
 	auto iter = getFunctionWorkers().find(funcName.m_Hash);
@@ -105,7 +105,7 @@ MicroFlakeX::MObject::~MObject()
 {
 }
 
-MResult MicroFlakeX::MObject::FunctionCall(MStringHash recv, MTempParam citeParam)
+MResult MicroFlakeX::MObject::FunctionCall(MStringHash recv, MParamOnce citeParam)
 {
 	return MicroFlakeX::MResult::NotFind;
 }
@@ -150,7 +150,7 @@ MResult MicroFlakeX::MForward::GetObjectName(const wchar_t** ret)
 	return !m_Forward ? MicroFlakeX::MResult::Failure : m_Forward->GetObjectName(ret);
 }
 
-MResult MicroFlakeX::MForward::FunctionCall(MStringHash recv, MTempParam citeParam)
+MResult MicroFlakeX::MForward::FunctionCall(MStringHash recv, MParamOnce citeParam)
 {
 	return !m_Forward ? MicroFlakeX::MResult::Failure : m_Forward->FunctionCall(recv, citeParam);
 }

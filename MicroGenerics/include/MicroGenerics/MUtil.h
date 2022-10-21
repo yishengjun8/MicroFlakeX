@@ -256,9 +256,9 @@ namespace MicroFlakeX
 
 namespace MicroFlakeX
 {
-	class MGENERICS_DLL_EXPORT MTempParam;
-	class MGENERICS_DLL_EXPORT MCiteParam;
-	class MGENERICS_DLL_EXPORT MSmartParam;
+	class MGENERICS_DLL_EXPORT MParamOnce;
+	class MGENERICS_DLL_EXPORT MParamRefer;
+	class MGENERICS_DLL_EXPORT MParamAsync;
 }
 
 
@@ -271,17 +271,17 @@ namespace MicroFlakeX
 		MInt8U m_UseCount{ 1 };
 	};
 	/*
-	* MTempParam - 保存传入参数的地址
+	* MParamOnce - 保存传入参数的地址
 	* 参数从最右侧开始为0号
 	* 左值引用，右值转化为左值后引用
 	* 不允许在堆上新建，传入参数均为引用，展开这些参数并不会引发拷贝开销。
 	* 传入的右值将会在最上层表达式结束后释放。GMTempParam不保留原始类型信息。
 	* 最大参数持有为16 - 参数从右往左计算
 	*/
-	class MTempParam
+	class MParamOnce
 	{
-		friend class MicroFlakeX::MCiteParam;
-		friend class MicroFlakeX::MSmartParam;
+		friend class MicroFlakeX::MParamRefer;
+		friend class MicroFlakeX::MParamAsync;
 	private:
 		static MVoid* operator new(size_t) { return nullptr; };
 		static MVoid* operator new[](size_t) { return nullptr; };
@@ -290,28 +290,28 @@ namespace MicroFlakeX
 		MInt8U m_ParamCount;
 
 	public:
-		MTempParam() noexcept;
-		virtual ~MTempParam() noexcept;
+		MParamOnce() noexcept;
+		virtual ~MParamOnce() noexcept;
 
 		MInt8U GetSize() const noexcept;
 		MAny&& GetMAny(const MInt8U num) const noexcept;
 		MVoid* GetPoint(const MInt8U num) const noexcept;
 
 	public:
-		MTempParam(MTempParam&& rhs) noexcept;
-		MTempParam(const MTempParam& rhs) noexcept;
-		MTempParam(MCiteParam&& rhs) noexcept;
-		MTempParam(const MCiteParam& rhs) noexcept;
-		MTempParam(MSmartParam&& rhs) noexcept;
-		MTempParam(const MSmartParam& rhs) noexcept;
+		MParamOnce(MParamOnce&& rhs) noexcept;
+		MParamOnce(const MParamOnce& rhs) noexcept;
+		MParamOnce(MParamRefer&& rhs) noexcept;
+		MParamOnce(const MParamRefer& rhs) noexcept;
+		MParamOnce(MParamAsync&& rhs) noexcept;
+		MParamOnce(const MParamAsync& rhs) noexcept;
 
 	public:
-		MTempParam& operator=(MTempParam&& rhs) noexcept;
-		MTempParam& operator=(const MTempParam& rhs) noexcept;
-		MTempParam& operator=(MCiteParam&& rhs) noexcept;
-		MTempParam& operator=(const MCiteParam& rhs) noexcept;
-		MTempParam& operator=(MSmartParam&& rhs) noexcept;
-		MTempParam& operator=(const MSmartParam& rhs) noexcept;
+		MParamOnce& operator=(MParamOnce&& rhs) noexcept;
+		MParamOnce& operator=(const MParamOnce& rhs) noexcept;
+		MParamOnce& operator=(MParamRefer&& rhs) noexcept;
+		MParamOnce& operator=(const MParamRefer& rhs) noexcept;
+		MParamOnce& operator=(MParamAsync&& rhs) noexcept;
+		MParamOnce& operator=(const MParamAsync& rhs) noexcept;
 
 	public:
 		template<typename _Ty>
@@ -335,42 +335,42 @@ namespace MicroFlakeX
 
 	public:
 		template<MBool isOver>
-		constexpr MTempParam(const MPlaceholder<isOver>) noexcept
-			: MTempParam()
+		constexpr MParamOnce(const MPlaceholder<isOver>) noexcept
+			: MParamOnce()
 		{
 
 		}
 
 		template<MBool isOver, typename _Ty, typename ..._ArgsTy>
-		constexpr MTempParam(const MPlaceholder<isOver>, _Ty&& value, _ArgsTy&&... args) noexcept
-			: MTempParam(MHolder_True, std::forward<_ArgsTy>(args)...)
+		constexpr MParamOnce(const MPlaceholder<isOver>, _Ty&& value, _ArgsTy&&... args) noexcept
+			: MParamOnce(MHolder_True, std::forward<_ArgsTy>(args)...)
 		{
 			m_AnyList[m_ParamCount++] = &value;
 		}
 
 		template<typename _Ty, typename ..._ArgsTy,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MTempParam>, _Ty>,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MCiteParam>, _Ty>,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MSmartParam>, _Ty>
+			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MParamOnce>, _Ty>,
+			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MParamRefer>, _Ty>,
+			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MParamAsync>, _Ty>
 		>
-		constexpr MTempParam(_Ty&& value, _ArgsTy&&... args) noexcept
-			: MTempParam(MHolder_True, std::forward<_ArgsTy>(args)...)
+		constexpr MParamOnce(_Ty&& value, _ArgsTy&&... args) noexcept
+			: MParamOnce(MHolder_True, std::forward<_ArgsTy>(args)...)
 		{
 			m_AnyList[m_ParamCount++] = &value;
 		}
 	};
 
 	/*
-	* MCiteParam - 暂时保持传入的参数
+	* MParamRefer - 暂时保持传入的参数
 	* 左值引用右值拷贝
 	* 不允许在堆上新建，展开这些参数并不会引发额外的拷贝开销。
 	* 如果引用的局部变量超出了他的作用域，那么将会引起GMCiteParam的悬空。请注意！
 	* 最大参数持有为16 - 参数从右往左计算
 	*/
-	class MCiteParam
+	class MParamRefer
 	{
-		friend class MTempParam;
-		friend class MSmartParam;
+		friend class MParamOnce;
+		friend class MParamAsync;
 	private:
 		static MVoid* operator new(size_t) { return nullptr; };
 		static MVoid* operator new[](size_t) { return nullptr; };
@@ -378,28 +378,28 @@ namespace MicroFlakeX
 		_MParam_Info* m_Info;
 
 	public:
-		MCiteParam() noexcept;
-		virtual ~MCiteParam() noexcept;
+		MParamRefer() noexcept;
+		virtual ~MParamRefer() noexcept;
 
 		MInt8U GetSize() const noexcept;
 		MAny&& GetMAny(const MInt8U num) const noexcept;
 		MVoid* GetPoint(const MInt8U num) const noexcept;
 
 	public:
-		MCiteParam(MTempParam&& rhs) noexcept;
-		MCiteParam(const MTempParam& rhs) noexcept;
-		MCiteParam(MCiteParam&& rhs) noexcept;
-		MCiteParam(const MCiteParam& rhs) noexcept;
-		MCiteParam(MSmartParam&& rhs) noexcept;
-		MCiteParam(const MSmartParam& rhs) noexcept;
+		MParamRefer(MParamOnce&& rhs) noexcept;
+		MParamRefer(const MParamOnce& rhs) noexcept;
+		MParamRefer(MParamRefer&& rhs) noexcept;
+		MParamRefer(const MParamRefer& rhs) noexcept;
+		MParamRefer(MParamAsync&& rhs) noexcept;
+		MParamRefer(const MParamAsync& rhs) noexcept;
 
 	public:
-		MCiteParam& operator=(MTempParam&& rhs) noexcept;
-		MCiteParam& operator=(const MTempParam& rhs) noexcept;
-		MCiteParam& operator=(MCiteParam&& rhs) noexcept;
-		MCiteParam& operator=(const MCiteParam& rhs) noexcept;
-		MCiteParam& operator=(MSmartParam&& rhs) noexcept;
-		MCiteParam& operator=(const MSmartParam& rhs) noexcept;
+		MParamRefer& operator=(MParamOnce&& rhs) noexcept;
+		MParamRefer& operator=(const MParamOnce& rhs) noexcept;
+		MParamRefer& operator=(MParamRefer&& rhs) noexcept;
+		MParamRefer& operator=(const MParamRefer& rhs) noexcept;
+		MParamRefer& operator=(MParamAsync&& rhs) noexcept;
+		MParamRefer& operator=(const MParamAsync& rhs) noexcept;
 
 	public:
 		template<typename _Ty>
@@ -422,41 +422,41 @@ namespace MicroFlakeX
 		}
 	public:
 		template<MBool isOver>
-		MCiteParam(const MPlaceholder<isOver>) noexcept
-			: MCiteParam()
+		MParamRefer(const MPlaceholder<isOver>) noexcept
+			: MParamRefer()
 		{
 
 		}
 
 		template<MBool isOver, typename _Ty, typename ..._ArgsTy>
-		MCiteParam(const MPlaceholder<isOver>, _Ty&& value, _ArgsTy&&... args) noexcept
-			: MCiteParam(MHolder_True, std::forward<_ArgsTy>(args)...)
+		MParamRefer(const MPlaceholder<isOver>, _Ty&& value, _ArgsTy&&... args) noexcept
+			: MParamRefer(MHolder_True, std::forward<_ArgsTy>(args)...)
 		{
 			m_Info->m_AnyList[m_Info->m_ParamCount++].SetValue(std::forward<_Ty>(value));
 		}
 
 		template<typename _Ty, typename ..._ArgsTy,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MTempParam>, _Ty>,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MCiteParam>, _Ty>,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MSmartParam>, _Ty>
+			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MParamOnce>, _Ty>,
+			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MParamRefer>, _Ty>,
+			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MParamAsync>, _Ty>
 		>
-		MCiteParam(_Ty&& value, _ArgsTy&&... args) noexcept
-			: MCiteParam(MHolder_True, std::forward<_ArgsTy>(args)...)
+		MParamRefer(_Ty&& value, _ArgsTy&&... args) noexcept
+			: MParamRefer(MHolder_True, std::forward<_ArgsTy>(args)...)
 		{
 			m_Info->m_AnyList[m_Info->m_ParamCount++].SetValue(std::forward<_Ty>(value));
 		}
 	};
 
 	/*
-	* MSmartParam - MCopyParam的智能指针升级版
+	* MParamAsync - MCopyParam的智能指针升级版
 	* 允许在堆上新建，传入参数强制拷贝，展开这些参数并不会引发额外的拷贝开销。
 	* 内部有引用计数，当所有的引用计数归零，销毁传入的参数
 	* 最大参数持有为16 - 参数从右往左计算
 	*/
-	class MSmartParam
+	class MParamAsync
 	{
-		friend class MTempParam;
-		friend class MCiteParam;
+		friend class MParamOnce;
+		friend class MParamRefer;
 	private:
 		_MParam_Info* m_Info;
 
@@ -464,28 +464,28 @@ namespace MicroFlakeX
 		MBool Release() noexcept;
 
 	public:
-		MSmartParam() noexcept;
-		~MSmartParam() noexcept;
+		MParamAsync() noexcept;
+		~MParamAsync() noexcept;
 
 		MInt8U GetSize() const noexcept;
 		MAny& GetMAny(const MInt8U num) const noexcept;
 		MVoid* GetPoint(const MInt8U num) const noexcept;
 
 	public:
-		MSmartParam(MTempParam&& rhs) noexcept;
-		MSmartParam(const MTempParam& rhs) noexcept;
-		MSmartParam(MCiteParam&& rhs) noexcept;
-		MSmartParam(const MCiteParam& rhs) noexcept;
-		MSmartParam(MSmartParam&& rhs) noexcept;
-		MSmartParam(const MSmartParam& rhs) noexcept;
+		MParamAsync(MParamOnce&& rhs) noexcept;
+		MParamAsync(const MParamOnce& rhs) noexcept;
+		MParamAsync(MParamRefer&& rhs) noexcept;
+		MParamAsync(const MParamRefer& rhs) noexcept;
+		MParamAsync(MParamAsync&& rhs) noexcept;
+		MParamAsync(const MParamAsync& rhs) noexcept;
 
 	public:
-		MSmartParam& operator=(MTempParam&& rhs) noexcept;
-		MSmartParam& operator=(const MTempParam& rhs) noexcept;
-		MSmartParam& operator=(MCiteParam&& rhs) noexcept;
-		MSmartParam& operator=(const MCiteParam& rhs) noexcept;
-		MSmartParam& operator=(MSmartParam&& rhs) noexcept;
-		MSmartParam& operator=(const MSmartParam& rhs) noexcept;
+		MParamAsync& operator=(MParamOnce&& rhs) noexcept;
+		MParamAsync& operator=(const MParamOnce& rhs) noexcept;
+		MParamAsync& operator=(MParamRefer&& rhs) noexcept;
+		MParamAsync& operator=(const MParamRefer& rhs) noexcept;
+		MParamAsync& operator=(MParamAsync&& rhs) noexcept;
+		MParamAsync& operator=(const MParamAsync& rhs) noexcept;
 
 	public:
 		template<typename _Ty>
@@ -508,26 +508,26 @@ namespace MicroFlakeX
 		}
 	public:
 		template<MBool isOver>
-		MSmartParam(const MPlaceholder<isOver>) noexcept
-			: MSmartParam()
+		MParamAsync(const MPlaceholder<isOver>) noexcept
+			: MParamAsync()
 		{
 
 		}
 
 		template<MBool isOver, typename _Ty, typename ..._ArgsTy>
-		MSmartParam(const MPlaceholder<isOver>, _Ty&& value, _ArgsTy&&... args) noexcept
-			: MSmartParam(MHolder_True, std::forward<_ArgsTy>(args)...)
+		MParamAsync(const MPlaceholder<isOver>, _Ty&& value, _ArgsTy&&... args) noexcept
+			: MParamAsync(MHolder_True, std::forward<_ArgsTy>(args)...)
 		{
 			m_Info->m_AnyList[m_Info->m_ParamCount++].SetCopyValue(std::forward<_Ty>(value));
 		}
 
 		template<typename _Ty, typename ..._ArgsTy,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MTempParam>, _Ty>,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MCiteParam>, _Ty>,
-			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MSmartParam>, _Ty>
+			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MParamOnce>, _Ty>,
+			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MParamRefer>, _Ty>,
+			typename = typename std::enable_if_t<!std::is_same_v<typename std::decay_t<_Ty>, MParamAsync>, _Ty>
 		>
-		MSmartParam(_Ty&& value, _ArgsTy&&... args) noexcept
-			: MSmartParam(MHolder_True, std::forward<_ArgsTy>(args)...)
+		MParamAsync(_Ty&& value, _ArgsTy&&... args) noexcept
+			: MParamAsync(MHolder_True, std::forward<_ArgsTy>(args)...)
 		{
 			m_Info->m_AnyList[m_Info->m_ParamCount++].SetCopyValue(std::forward<_Ty>(value));
 		}
@@ -545,13 +545,13 @@ namespace MicroFlakeX
 	public:
 		_MParamExtend(MicroFlakeX::MInt8 begin = 0) { m_Num = begin; };
 		template<typename _Ty>
-		inline _Ty&& Extend(MicroFlakeX::MTempParam& param) noexcept
+		inline _Ty&& Extend(MicroFlakeX::MParamOnce& param) noexcept
 		{
 			return param.any_cast<_Ty>(m_Num++);
 		}
 
 		template<typename _Ty>
-		inline _Ty&& Extend(MicroFlakeX::MCiteParam& param) noexcept
+		inline _Ty&& Extend(MicroFlakeX::MParamRefer& param) noexcept
 		{
 			return param.any_cast<_Ty>(m_Num++);
 		}

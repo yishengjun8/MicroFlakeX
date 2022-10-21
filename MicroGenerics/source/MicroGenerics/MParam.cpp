@@ -7,20 +7,20 @@ M_OBJECT_POOL_ACHIEVE(_MParam_Info);
 /********************************************************************************
 *
 *********************************************************************************/
-MicroFlakeX::MTempParam::MTempParam() noexcept
+MicroFlakeX::MParamOnce::MParamOnce() noexcept
 	: m_AnyList(), m_ParamCount(0)
 {
 }
-MicroFlakeX::MTempParam::~MTempParam() noexcept
+MicroFlakeX::MParamOnce::~MParamOnce() noexcept
 {
 }
 
-MicroFlakeX::MInt8U MicroFlakeX::MTempParam::GetSize() const noexcept
+MicroFlakeX::MInt8U MicroFlakeX::MParamOnce::GetSize() const noexcept
 {
 	return m_ParamCount;
 }
 
-void* MicroFlakeX::MTempParam::GetPoint(const MInt8U num) const noexcept
+void* MicroFlakeX::MParamOnce::GetPoint(const MInt8U num) const noexcept
 {
 	return m_AnyList[num];
 }
@@ -28,8 +28,8 @@ void* MicroFlakeX::MTempParam::GetPoint(const MInt8U num) const noexcept
 /********************************************************************************
 *
 *********************************************************************************/
-MicroFlakeX::MTempParam::MTempParam(MTempParam&& rhs) noexcept
-	: MTempParam()
+MicroFlakeX::MParamOnce::MParamOnce(MParamOnce&& rhs) noexcept
+	: MParamOnce()
 {
 	m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_ParamCount; i++)
@@ -37,8 +37,8 @@ MicroFlakeX::MTempParam::MTempParam(MTempParam&& rhs) noexcept
 		m_AnyList[i] = rhs.m_AnyList[i];
 	}
 }
-MicroFlakeX::MTempParam::MTempParam(const MTempParam& rhs) noexcept
-	: MTempParam()
+MicroFlakeX::MParamOnce::MParamOnce(const MParamOnce& rhs) noexcept
+	: MParamOnce()
 {
 	m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_ParamCount; i++)
@@ -48,8 +48,8 @@ MicroFlakeX::MTempParam::MTempParam(const MTempParam& rhs) noexcept
 }
 
 
-MicroFlakeX::MTempParam::MTempParam(MCiteParam&& rhs) noexcept
-	: MTempParam()
+MicroFlakeX::MParamOnce::MParamOnce(MParamRefer&& rhs) noexcept
+	: MParamOnce()
 {
 	m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_ParamCount; i++)
@@ -57,8 +57,8 @@ MicroFlakeX::MTempParam::MTempParam(MCiteParam&& rhs) noexcept
 		m_AnyList[i] = rhs.m_Info->m_AnyList[i].GetPoint();
 	}
 }
-MicroFlakeX::MTempParam::MTempParam(const MCiteParam& rhs) noexcept
-	: MTempParam()
+MicroFlakeX::MParamOnce::MParamOnce(const MParamRefer& rhs) noexcept
+	: MParamOnce()
 {
 	m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_ParamCount; i++)
@@ -69,8 +69,8 @@ MicroFlakeX::MTempParam::MTempParam(const MCiteParam& rhs) noexcept
 }
 
 
-MicroFlakeX::MTempParam::MTempParam(MSmartParam&& rhs) noexcept
-	: MTempParam()
+MicroFlakeX::MParamOnce::MParamOnce(MParamAsync&& rhs) noexcept
+	: MParamOnce()
 {
 	m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_ParamCount; i++)
@@ -78,8 +78,8 @@ MicroFlakeX::MTempParam::MTempParam(MSmartParam&& rhs) noexcept
 		m_AnyList[i] = rhs.m_Info->m_AnyList[i].GetPoint();
 	}
 }
-MicroFlakeX::MTempParam::MTempParam(const MSmartParam& rhs) noexcept
-	: MTempParam()
+MicroFlakeX::MParamOnce::MParamOnce(const MParamAsync& rhs) noexcept
+	: MParamOnce()
 {
 	m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_ParamCount; i++)
@@ -90,7 +90,7 @@ MicroFlakeX::MTempParam::MTempParam(const MSmartParam& rhs) noexcept
 /********************************************************************************
 *
 *********************************************************************************/
-MTempParam& MicroFlakeX::MTempParam::operator=(MTempParam&& rhs) noexcept
+MParamOnce& MicroFlakeX::MParamOnce::operator=(MParamOnce&& rhs) noexcept
 {
 	m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_ParamCount; i++)
@@ -99,7 +99,7 @@ MTempParam& MicroFlakeX::MTempParam::operator=(MTempParam&& rhs) noexcept
 	}
 	return *this;
 }
-MTempParam& MicroFlakeX::MTempParam::operator=(const MTempParam& rhs) noexcept
+MParamOnce& MicroFlakeX::MParamOnce::operator=(const MParamOnce& rhs) noexcept
 {
 	m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_ParamCount; i++)
@@ -111,7 +111,7 @@ MTempParam& MicroFlakeX::MTempParam::operator=(const MTempParam& rhs) noexcept
 }
 
 
-MicroFlakeX::MTempParam& MicroFlakeX::MTempParam::operator=(MCiteParam&& rhs) noexcept
+MicroFlakeX::MParamOnce& MicroFlakeX::MParamOnce::operator=(MParamRefer&& rhs) noexcept
 {
 	m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_ParamCount; i++)
@@ -120,7 +120,7 @@ MicroFlakeX::MTempParam& MicroFlakeX::MTempParam::operator=(MCiteParam&& rhs) no
 	}
 	return *this;
 }
-MicroFlakeX::MTempParam& MicroFlakeX::MTempParam::operator=(const MCiteParam& rhs) noexcept
+MicroFlakeX::MParamOnce& MicroFlakeX::MParamOnce::operator=(const MParamRefer& rhs) noexcept
 {
 	m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_ParamCount; i++)
@@ -131,7 +131,7 @@ MicroFlakeX::MTempParam& MicroFlakeX::MTempParam::operator=(const MCiteParam& rh
 }
 
 
-MicroFlakeX::MTempParam& MicroFlakeX::MTempParam::operator=(MSmartParam&& rhs) noexcept
+MicroFlakeX::MParamOnce& MicroFlakeX::MParamOnce::operator=(MParamAsync&& rhs) noexcept
 {
 	m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_ParamCount; i++)
@@ -140,7 +140,7 @@ MicroFlakeX::MTempParam& MicroFlakeX::MTempParam::operator=(MSmartParam&& rhs) n
 	}
 	return *this;
 }
-MicroFlakeX::MTempParam& MicroFlakeX::MTempParam::operator=(const MSmartParam& rhs) noexcept
+MicroFlakeX::MParamOnce& MicroFlakeX::MParamOnce::operator=(const MParamAsync& rhs) noexcept
 {
 	m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_ParamCount; i++)
@@ -161,32 +161,32 @@ MicroFlakeX::MTempParam& MicroFlakeX::MTempParam::operator=(const MSmartParam& r
 /********************************************************************************
 *
 *********************************************************************************/
-MicroFlakeX::MCiteParam::MCiteParam() noexcept
+MicroFlakeX::MParamRefer::MParamRefer() noexcept
 	: m_Info(new_MParam_Info())
 {
 	m_Info->m_UseCount = 1;
 	m_Info->m_ParamCount = 0;
 }
-MicroFlakeX::MCiteParam::~MCiteParam() noexcept
+MicroFlakeX::MParamRefer::~MParamRefer() noexcept
 {
 	del_MParam_Info(m_Info);
 	m_Info = nullptr;
 }
 
-MicroFlakeX::MInt8U MicroFlakeX::MCiteParam::GetSize() const noexcept
+MicroFlakeX::MInt8U MicroFlakeX::MParamRefer::GetSize() const noexcept
 {
 	return m_Info->m_ParamCount;
 }
 
-void* MicroFlakeX::MCiteParam::GetPoint(const MInt8U num) const noexcept
+void* MicroFlakeX::MParamRefer::GetPoint(const MInt8U num) const noexcept
 {
 	return m_Info->m_AnyList[num].GetPoint();
 }
 /********************************************************************************
 *
 *********************************************************************************/
-MicroFlakeX::MCiteParam::MCiteParam(MTempParam&& rhs) noexcept
-	: MCiteParam()
+MicroFlakeX::MParamRefer::MParamRefer(MParamOnce&& rhs) noexcept
+	: MParamRefer()
 {
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -194,8 +194,8 @@ MicroFlakeX::MCiteParam::MCiteParam(MTempParam&& rhs) noexcept
 		m_Info->m_AnyList[i].EmplaceCopy(rhs.m_AnyList[i]);
 	}
 }
-MicroFlakeX::MCiteParam::MCiteParam(const MTempParam& rhs) noexcept
-	: MCiteParam()
+MicroFlakeX::MParamRefer::MParamRefer(const MParamOnce& rhs) noexcept
+	: MParamRefer()
 {
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -204,8 +204,8 @@ MicroFlakeX::MCiteParam::MCiteParam(const MTempParam& rhs) noexcept
 	}
 }
 
-MicroFlakeX::MCiteParam::MCiteParam(MCiteParam&& rhs) noexcept
-	: MCiteParam()
+MicroFlakeX::MParamRefer::MParamRefer(MParamRefer&& rhs) noexcept
+	: MParamRefer()
 {
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -214,8 +214,8 @@ MicroFlakeX::MCiteParam::MCiteParam(MCiteParam&& rhs) noexcept
 	}
 	rhs.m_Info->m_ParamCount = 0;
 }
-MicroFlakeX::MCiteParam::MCiteParam(const MCiteParam& rhs) noexcept
-	: MCiteParam()
+MicroFlakeX::MParamRefer::MParamRefer(const MParamRefer& rhs) noexcept
+	: MParamRefer()
 {
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -225,8 +225,8 @@ MicroFlakeX::MCiteParam::MCiteParam(const MCiteParam& rhs) noexcept
 }
 
 
-MicroFlakeX::MCiteParam::MCiteParam(MSmartParam&& rhs) noexcept
-	: MCiteParam()
+MicroFlakeX::MParamRefer::MParamRefer(MParamAsync&& rhs) noexcept
+	: MParamRefer()
 {
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -234,8 +234,8 @@ MicroFlakeX::MCiteParam::MCiteParam(MSmartParam&& rhs) noexcept
 		m_Info->m_AnyList[i].RenewAnyCite(rhs.m_Info->m_AnyList[i]);
 	}
 }
-MicroFlakeX::MCiteParam::MCiteParam(const MSmartParam& rhs) noexcept
-	: MCiteParam()
+MicroFlakeX::MParamRefer::MParamRefer(const MParamAsync& rhs) noexcept
+	: MParamRefer()
 {
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -247,7 +247,7 @@ MicroFlakeX::MCiteParam::MCiteParam(const MSmartParam& rhs) noexcept
 /********************************************************************************
 *
 *********************************************************************************/
-MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(MTempParam&& rhs) noexcept
+MicroFlakeX::MParamRefer& MicroFlakeX::MParamRefer::operator=(MParamOnce&& rhs) noexcept
 {
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -256,7 +256,7 @@ MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(MTempParam&& rhs) no
 	}
 	return *this;
 }
-MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(const MTempParam& rhs) noexcept
+MicroFlakeX::MParamRefer& MicroFlakeX::MParamRefer::operator=(const MParamOnce& rhs) noexcept
 {
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -267,7 +267,7 @@ MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(const MTempParam& rh
 }
 
 
-MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(MCiteParam&& rhs) noexcept
+MicroFlakeX::MParamRefer& MicroFlakeX::MParamRefer::operator=(MParamRefer&& rhs) noexcept
 {
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -277,7 +277,7 @@ MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(MCiteParam&& rhs) no
 	rhs.m_Info->m_ParamCount = 0;
 	return *this;
 }
-MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(const MCiteParam& rhs) noexcept
+MicroFlakeX::MParamRefer& MicroFlakeX::MParamRefer::operator=(const MParamRefer& rhs) noexcept
 {
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -289,7 +289,7 @@ MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(const MCiteParam& rh
 
 
 
-MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(MSmartParam&& rhs) noexcept
+MicroFlakeX::MParamRefer& MicroFlakeX::MParamRefer::operator=(MParamAsync&& rhs) noexcept
 {
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -298,7 +298,7 @@ MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(MSmartParam&& rhs) n
 	}
 	return *this;
 }
-MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(const MSmartParam& rhs) noexcept
+MicroFlakeX::MParamRefer& MicroFlakeX::MParamRefer::operator=(const MParamAsync& rhs) noexcept
 {
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -312,28 +312,28 @@ MicroFlakeX::MCiteParam& MicroFlakeX::MCiteParam::operator=(const MSmartParam& r
 /********************************************************************************
 *
 *********************************************************************************/
-MicroFlakeX::MSmartParam::MSmartParam() noexcept
+MicroFlakeX::MParamAsync::MParamAsync() noexcept
 	: m_Info(new_MParam_Info())
 {
 	m_Info->m_UseCount = 1;
 	m_Info->m_ParamCount = 0;
 }
-MicroFlakeX::MSmartParam::~MSmartParam() noexcept
+MicroFlakeX::MParamAsync::~MParamAsync() noexcept
 {
 	Release();
 }
 
-MicroFlakeX::MInt8U MicroFlakeX::MSmartParam::GetSize() const noexcept
+MicroFlakeX::MInt8U MicroFlakeX::MParamAsync::GetSize() const noexcept
 {
 	return m_Info ? m_Info->m_ParamCount : 0;
 }
 
-void* MicroFlakeX::MSmartParam::GetPoint(const MInt8U num) const noexcept
+void* MicroFlakeX::MParamAsync::GetPoint(const MInt8U num) const noexcept
 {
 	return m_Info ? m_Info->m_AnyList[num].GetPoint() : nullptr;
 }
 
-bool MicroFlakeX::MSmartParam::Release() noexcept
+bool MicroFlakeX::MParamAsync::Release() noexcept
 {
 	if (m_Info)
 	{
@@ -349,8 +349,8 @@ bool MicroFlakeX::MSmartParam::Release() noexcept
 /********************************************************************************
 *
 *********************************************************************************/
-MicroFlakeX::MSmartParam::MSmartParam(MTempParam&& rhs) noexcept
-	: MSmartParam()
+MicroFlakeX::MParamAsync::MParamAsync(MParamOnce&& rhs) noexcept
+	: MParamAsync()
 {
 	//m_Info = new __GMSmartParam_Info;
 	m_Info->m_ParamCount = rhs.m_ParamCount;
@@ -359,8 +359,8 @@ MicroFlakeX::MSmartParam::MSmartParam(MTempParam&& rhs) noexcept
 		m_Info->m_AnyList[i].EmplaceCopy(rhs.m_AnyList[i]);
 	}
 }
-MicroFlakeX::MSmartParam::MSmartParam(const MTempParam& rhs) noexcept
-	: MSmartParam()
+MicroFlakeX::MParamAsync::MParamAsync(const MParamOnce& rhs) noexcept
+	: MParamAsync()
 {
 	//m_Info = new __GMSmartParam_Info;
 	m_Info->m_ParamCount = rhs.m_ParamCount;
@@ -370,8 +370,8 @@ MicroFlakeX::MSmartParam::MSmartParam(const MTempParam& rhs) noexcept
 	}
 }
 
-MicroFlakeX::MSmartParam::MSmartParam(MCiteParam&& rhs) noexcept
-	: MSmartParam()
+MicroFlakeX::MParamAsync::MParamAsync(MParamRefer&& rhs) noexcept
+	: MParamAsync()
 {
 	//m_Info = new __GMSmartParam_Info;
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
@@ -380,8 +380,8 @@ MicroFlakeX::MSmartParam::MSmartParam(MCiteParam&& rhs) noexcept
 		m_Info->m_AnyList[i].RenewAnyCopy(rhs.m_Info->m_AnyList[i]);
 	}
 }
-MicroFlakeX::MSmartParam::MSmartParam(const MCiteParam& rhs) noexcept
-	: MSmartParam()
+MicroFlakeX::MParamAsync::MParamAsync(const MParamRefer& rhs) noexcept
+	: MParamAsync()
 {
 	//m_Info = new __GMSmartParam_Info;
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
@@ -394,15 +394,15 @@ MicroFlakeX::MSmartParam::MSmartParam(const MCiteParam& rhs) noexcept
 
 
 
-MicroFlakeX::MSmartParam::MSmartParam(MSmartParam&& rhs) noexcept
-	: MSmartParam()
+MicroFlakeX::MParamAsync::MParamAsync(MParamAsync&& rhs) noexcept
+	: MParamAsync()
 {
 	Release();
 	m_Info = rhs.m_Info;
 	rhs.m_Info = nullptr;
 }
-MicroFlakeX::MSmartParam::MSmartParam(const MSmartParam& rhs) noexcept
-	: MSmartParam()
+MicroFlakeX::MParamAsync::MParamAsync(const MParamAsync& rhs) noexcept
+	: MParamAsync()
 {
 	Release();
 	m_Info = rhs.m_Info;
@@ -412,7 +412,7 @@ MicroFlakeX::MSmartParam::MSmartParam(const MSmartParam& rhs) noexcept
 /********************************************************************************
 *
 *********************************************************************************/
-MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(MTempParam&& rhs) noexcept
+MicroFlakeX::MParamAsync& MicroFlakeX::MParamAsync::operator=(MParamOnce&& rhs) noexcept
 {
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -421,7 +421,7 @@ MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(MTempParam&& rhs) 
 	}
 	return *this;
 }
-MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(const MTempParam& rhs) noexcept
+MicroFlakeX::MParamAsync& MicroFlakeX::MParamAsync::operator=(const MParamOnce& rhs) noexcept
 {
 	m_Info->m_ParamCount = rhs.m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -432,7 +432,7 @@ MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(const MTempParam& 
 }
 
 
-MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(MCiteParam&& rhs) noexcept
+MicroFlakeX::MParamAsync& MicroFlakeX::MParamAsync::operator=(MParamRefer&& rhs) noexcept
 {
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -441,7 +441,7 @@ MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(MCiteParam&& rhs) 
 	}
 	return *this;
 }
-MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(const MCiteParam& rhs) noexcept
+MicroFlakeX::MParamAsync& MicroFlakeX::MParamAsync::operator=(const MParamRefer& rhs) noexcept
 {
 	m_Info->m_ParamCount = rhs.m_Info->m_ParamCount;
 	for (auto i = 0; i < m_Info->m_ParamCount; i++)
@@ -452,14 +452,14 @@ MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(const MCiteParam& 
 }
 
 
-MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(MSmartParam&& rhs) noexcept
+MicroFlakeX::MParamAsync& MicroFlakeX::MParamAsync::operator=(MParamAsync&& rhs) noexcept
 {
 	Release();
 	m_Info = rhs.m_Info;
 	rhs.m_Info = nullptr;
 	return *this;
 }
-MicroFlakeX::MSmartParam& MicroFlakeX::MSmartParam::operator=(const MSmartParam& rhs) noexcept
+MicroFlakeX::MParamAsync& MicroFlakeX::MParamAsync::operator=(const MParamAsync& rhs) noexcept
 {
 	Release();
 	m_Info = rhs.m_Info;

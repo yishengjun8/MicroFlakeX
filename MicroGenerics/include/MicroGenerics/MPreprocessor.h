@@ -160,7 +160,7 @@ class FUNCNAME##MFunctionWorker \
 { \
     public: \
 	    FUNCNAME##MFunctionWorker() : MFunctionWorker(MSTR(#FUNCNAME)){}; \
-	    MicroFlakeX::MResult ReflectionCall(MTempParam tempParam)\
+	    MicroFlakeX::MResult ReflectionCall(MParamOnce tempParam)\
 	    {\
 		    return MicroFlakeX::_MFunctionCall(tempParam,FUNCNAME);\
 	    }\
@@ -172,7 +172,7 @@ FUNCNAME##MFunctionWorker FUNCNAME##Hand;
 #define __M_OBJECT_DEFINE\
 	public:\
 	MicroFlakeX::MResult GetObjectName(const wchar_t** ret);\
-	MicroFlakeX::MResult FunctionCall(MicroFlakeX::MStringHash recv, MicroFlakeX::MTempParam citeParam = MicroFlakeX::MTempParam());
+	MicroFlakeX::MResult FunctionCall(MicroFlakeX::MStringHash recv, MicroFlakeX::MParamOnce citeParam = MicroFlakeX::MParamOnce());
 
 
 /****************************************************************************************************************/
@@ -189,7 +189,7 @@ FUNCNAME##MFunctionWorker FUNCNAME##Hand;
 namespace {
 /****************************************************************************************************************/
 #define __M_OBJECT_ACHIEVE_0(OBJ) \
-MicroFlakeX::MResult OBJ::FunctionCall(MicroFlakeX::MStringHash recvFunc, MicroFlakeX::MTempParam citeParam)\
+MicroFlakeX::MResult OBJ::FunctionCall(MicroFlakeX::MStringHash recvFunc, MicroFlakeX::MParamOnce citeParam)\
 {\
 	switch (recvFunc.m_Hash)\
 	{
